@@ -30,6 +30,7 @@
         
         SizeChanged="Window_SizeChanged"
         StateChanged="Window_StateChanged"
+        Mouse.MouseMove="Window_MouseMove"
         DataContext="{StaticResource MainViewModel}">
     
     <!-- 

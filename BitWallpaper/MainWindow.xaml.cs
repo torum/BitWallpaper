@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
 using BitWallpaper.Helpers;
+using BitWallpaper.ViewModels;
 
 namespace BitWallpaper
 {
@@ -23,10 +24,16 @@ namespace BitWallpaper
     /// </summary>
     public partial class MainWindow
     {
+
+        System.Windows.Threading.DispatcherTimer dispatcherMouseTimer = new System.Windows.Threading.DispatcherTimer();
+
         public MainWindow()
         {
             InitializeComponent();
 
+            Closing += (this.DataContext as MainViewModel).OnWindowClosing;
+
+            Loaded += (this.DataContext as MainViewModel).OnWindowLoaded;
 
             RestoreButton.Visibility = Visibility.Collapsed;
             MaxButton.Visibility = Visibility.Visible;
@@ -51,6 +58,21 @@ namespace BitWallpaper
             // ウィンドウを最背面にセット
             //Helpers.WindowExtensions.SetAlwaysOnBottom(this, true);
 
+
+            // マウス非表示のタイマー起動
+            dispatcherMouseTimer.Tick += new EventHandler(MouseTimer);
+            dispatcherMouseTimer.Interval = new TimeSpan(0, 0, 3);
+            //dispatcherMouseTimer.Start();
+
+        }
+
+        private void MouseTimer(object source, EventArgs e)
+        {
+            if (this.WindowState == WindowState.Maximized)
+            {
+                Mouse.OverrideCursor = Cursors.None;
+                this.Cursor = Cursors.None;
+            }
         }
 
         public void BringToForeground()
@@ -66,7 +88,6 @@ namespace BitWallpaper
             //this.Topmost = false;
             this.Focus();
         }
-
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -383,11 +404,16 @@ namespace BitWallpaper
             {
                 RestoreButton.Visibility = Visibility.Collapsed;
                 MaxButton.Visibility = Visibility.Visible;
+
+                dispatcherMouseTimer.Stop();
             }
             else if (this.WindowState == WindowState.Maximized)
             {
                 RestoreButton.Visibility = Visibility.Visible;
                 MaxButton.Visibility = Visibility.Collapsed;
+
+                dispatcherMouseTimer.Start();
+
             }
 
         }
@@ -410,6 +436,12 @@ namespace BitWallpaper
         private void MinButton_Click(object sender, RoutedEventArgs e)
         {
             this.WindowState = WindowState.Minimized;
+        }
+
+        private void Window_MouseMove(object sender, MouseEventArgs e)
+        {
+            this.Cursor = null;
+            Mouse.OverrideCursor = null;
         }
     }
 

@@ -9,6 +9,13 @@ using BitWallpaper.Models.Clients;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Controls;
+using System.Xml;
+using System.Xml.Linq;
+using System.Windows.Data;
+using System.Windows.Input;
+using System.IO;
+using System.ComponentModel;
 
 namespace BitWallpaper.ViewModels
 {
@@ -1509,6 +1516,200 @@ namespace BitWallpaper.ViewModels
             }
         }
 
+        // 起動時の処理
+        public void OnWindowLoaded(object sender, RoutedEventArgs e)
+        {
+            // データ保存フォルダの取得
+            var AppDataFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            AppDataFolder = AppDataFolder + System.IO.Path.DirectorySeparatorChar + _appDeveloper + System.IO.Path.DirectorySeparatorChar + _appName;
+            // 存在していなかったら作成
+            System.IO.Directory.CreateDirectory(AppDataFolder);
+
+            #region == アプリ設定のロード  ==
+
+            // 設定ファイルのパス
+            var AppConfigFilePath = AppDataFolder + System.IO.Path.DirectorySeparatorChar + _appName + ".config";
+
+            // アプリ設定情報の読み込み
+            if (File.Exists(AppConfigFilePath))
+            {
+                XDocument xdoc = XDocument.Load(AppConfigFilePath);
+
+                #region == ウィンドウ関連 ==
+
+                if (sender is Window)
+                {
+                    // Main Window element
+                    var mainWindow = xdoc.Root.Element("MainWindow");
+                    if (mainWindow != null)
+                    {
+                        var hoge = mainWindow.Attribute("top");
+                        if (hoge != null)
+                        {
+                            (sender as Window).Top = double.Parse(hoge.Value);
+                        }
+
+                        hoge = mainWindow.Attribute("left");
+                        if (hoge != null)
+                        {
+                            (sender as Window).Left = double.Parse(hoge.Value);
+                        }
+
+                        hoge = mainWindow.Attribute("height");
+                        if (hoge != null)
+                        {
+                            (sender as Window).Height = double.Parse(hoge.Value);
+                        }
+
+                        hoge = mainWindow.Attribute("width");
+                        if (hoge != null)
+                        {
+                            (sender as Window).Width = double.Parse(hoge.Value);
+                        }
+
+                        hoge = mainWindow.Attribute("state");
+                        if (hoge != null)
+                        {
+                            if (hoge.Value == "Maximized")
+                            {
+                                (sender as Window).WindowState = WindowState.Maximized;
+                            }
+                            else if (hoge.Value == "Normal")
+                            {
+                                (sender as Window).WindowState = WindowState.Normal;
+                            }
+                            else if (hoge.Value == "Minimized")
+                            {
+                                (sender as Window).WindowState = WindowState.Normal;
+                            }
+                        }
+
+                    }
+
+                }
+
+                #endregion
+
+            }
+
+            #endregion
+
+
+        }
+
+        // 終了時の処理
+        public void OnWindowClosing(object sender, CancelEventArgs e)
+        {
+            // データ保存フォルダの取得
+            var AppDataFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            AppDataFolder = AppDataFolder + System.IO.Path.DirectorySeparatorChar + _appDeveloper + System.IO.Path.DirectorySeparatorChar + _appName;
+            // 存在していなかったら作成
+            System.IO.Directory.CreateDirectory(AppDataFolder);
+
+            #region == アプリ設定の保存 ==
+
+            // 設定ファイルのパス
+            var AppConfigFilePath = AppDataFolder + System.IO.Path.DirectorySeparatorChar + _appName + ".config";
+
+            // 設定ファイル用のXMLオブジェクト
+            XmlDocument doc = new XmlDocument();
+            XmlDeclaration xmlDeclaration = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
+            doc.InsertBefore(xmlDeclaration, doc.DocumentElement);
+
+            // Root Document Element
+            XmlElement root = doc.CreateElement(string.Empty, "App", string.Empty);
+            doc.AppendChild(root);
+
+            XmlAttribute attrs = doc.CreateAttribute("Version");
+            attrs.Value = _appVer;
+            root.SetAttributeNode(attrs);
+
+            #region == ウィンドウ関連 ==
+
+            if (sender is Window)
+            {
+                // Main Window element
+                XmlElement mainWindow = doc.CreateElement(string.Empty, "MainWindow", string.Empty);
+
+                // Main Window attributes
+                attrs = doc.CreateAttribute("height");
+                if ((sender as Window).WindowState == WindowState.Maximized)
+                {
+                    attrs.Value = (sender as Window).RestoreBounds.Height.ToString();
+                }
+                else
+                {
+                    attrs.Value = (sender as Window).Height.ToString();
+                }
+                mainWindow.SetAttributeNode(attrs);
+
+                attrs = doc.CreateAttribute("width");
+                if ((sender as Window).WindowState == WindowState.Maximized)
+                {
+                    attrs.Value = (sender as Window).RestoreBounds.Width.ToString();
+                }
+                else
+                {
+                    attrs.Value = (sender as Window).Width.ToString();
+
+                }
+                mainWindow.SetAttributeNode(attrs);
+
+                attrs = doc.CreateAttribute("top");
+                if ((sender as Window).WindowState == WindowState.Maximized)
+                {
+                    attrs.Value = (sender as Window).RestoreBounds.Top.ToString();
+                }
+                else
+                {
+                    attrs.Value = (sender as Window).Top.ToString();
+                }
+                mainWindow.SetAttributeNode(attrs);
+
+                attrs = doc.CreateAttribute("left");
+                if ((sender as Window).WindowState == WindowState.Maximized)
+                {
+                    attrs.Value = (sender as Window).Left.ToString();
+                }
+                else
+                {
+                    attrs.Value = (sender as Window).RestoreBounds.Left.ToString();
+                }
+                    
+                mainWindow.SetAttributeNode(attrs);
+
+                attrs = doc.CreateAttribute("state");
+                if ((sender as Window).WindowState == WindowState.Maximized)
+                {
+                    attrs.Value = "Maximized";
+                }
+                else if ((sender as Window).WindowState == WindowState.Normal)
+                {
+                    attrs.Value = "Normal";
+
+                }
+                else if ((sender as Window).WindowState == WindowState.Minimized)
+                {
+                    attrs.Value = "Minimized";
+                }
+                mainWindow.SetAttributeNode(attrs);
+
+                // set Main Window element to root.
+                root.AppendChild(mainWindow);
+
+            }
+
+            #endregion
+
+
+            // 設定ファイルの保存
+            doc.Save(AppConfigFilePath);
+
+            #endregion
+
+        }
+
+
         #endregion
 
         #region == メソッド ==
@@ -1588,7 +1789,7 @@ namespace BitWallpaper.ViewModels
 
             // TODO 取得中フラグセット。
 
-            Debug.WriteLine("1hour取得開始 " + pair.ToString());
+            //Debug.WriteLine("1hour取得開始 " + pair.ToString());
 
             List <Ohlcv> ListOhlcvsOneHour = new List<Ohlcv>();
 
@@ -2340,7 +2541,7 @@ namespace BitWallpaper.ViewModels
 
                 if ((p == Pairs.mona_btc) || p == Pairs.bcc_btc)
                 {
-                    Debug.WriteLine(p.ToString() + " skipping.");
+                    //Debug.WriteLine(p.ToString() + " skipping.");
                     continue;
                 }
                 else
