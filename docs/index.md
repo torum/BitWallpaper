@@ -10,7 +10,7 @@
   
 ### スクリーンショット：
 
-![alt text](https://github.com/torum/Bitbank/blob/master/docs/Images/BitWallpaper-screenshot.jpg?raw=true)
+![alt text](https://github.com/torum/BitWallpaper/blob/master/docs/Images/BitWallpaper-screenshot.jpg?raw=true)
 
 ### 必要構成：
 - Windows 10
