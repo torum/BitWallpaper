@@ -16,6 +16,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.IO;
 using System.ComponentModel;
+using BitWallpaper.Common;
 
 namespace BitWallpaper.ViewModels
 {
@@ -38,6 +39,24 @@ namespace BitWallpaper.ViewModels
             get
             {
                 return _appName + " " + _appVer;
+            }
+        }
+
+
+        private bool _showSettings = false;
+        public bool ShowSettings
+        {
+            get
+            {
+                return _showSettings;
+            }
+            set
+            {
+                if (_showSettings == value) return;
+
+                _showSettings = value;
+                this.NotifyPropertyChanged("ShowSettings");
+
             }
         }
 
@@ -1027,14 +1046,22 @@ namespace BitWallpaper.ViewModels
 
         #endregion
 
+
+        #region == タイマー ==
+
         System.Windows.Threading.DispatcherTimer dispatcherTimerTickOtherPairs = new System.Windows.Threading.DispatcherTimer();
         System.Windows.Threading.DispatcherTimer dispatcherChartTimer = new System.Windows.Threading.DispatcherTimer();
+
+        #endregion
 
         /// <summary>
         /// メインのビューモデル
         /// </summary>
         public MainViewModel()
         {
+            ShowSettingsCommand = new RelayCommand(ShowSettingsCommand_Execute, ShowSettingsCommand_CanExecute);
+            SettingsCancelCommand = new RelayCommand(SettingsCancelCommand_Execute, SettingsCancelCommand_CanExecute);
+            SettingsOKCommand = new RelayCommand(SettingsOKCommand_Execute, SettingsOKCommand_CanExecute);
 
             #region == チャートのイニシャライズ ==
 
@@ -1198,13 +1225,10 @@ namespace BitWallpaper.ViewModels
             dispatcherTimerTickOtherPairs.Interval = new TimeSpan(0, 0, 1);
             dispatcherTimerTickOtherPairs.Start();
             
-            
-            // Chart表示のタイマー起動
+            // Chart更新のタイマー
             dispatcherChartTimer.Tick += new EventHandler(ChartTimer);
             dispatcherChartTimer.Interval = new TimeSpan(0, 1, 0);
             //dispatcherChartTimer.Start();
-            
-
             
         }
 
@@ -3265,6 +3289,43 @@ namespace BitWallpaper.ViewModels
         }
 
         #endregion
+
+        #endregion
+
+        #region == コマンド ==
+
+        // 設定画面表示
+        public ICommand ShowSettingsCommand { get; }
+        public bool ShowSettingsCommand_CanExecute()
+        {
+            return true;
+        }
+        public void ShowSettingsCommand_Execute()
+        {
+            ShowSettings = true;
+        }
+
+        // 設定画面キャンセルボタン
+        public ICommand SettingsCancelCommand { get; }
+        public bool SettingsCancelCommand_CanExecute()
+        {
+            return true;
+        }
+        public void SettingsCancelCommand_Execute()
+        {
+            ShowSettings = false;
+        }
+
+        // 設定画面OKボタン
+        public ICommand SettingsOKCommand { get; }
+        public bool SettingsOKCommand_CanExecute()
+        {
+            return true;
+        }
+        public void SettingsOKCommand_Execute()
+        {
+            ShowSettings = false;
+        }
 
         #endregion
 

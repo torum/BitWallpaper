@@ -16,6 +16,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Interop;
 using BitWallpaper.Helpers;
 using BitWallpaper.ViewModels;
+using System.Diagnostics;
 
 namespace BitWallpaper
 {
@@ -443,6 +444,13 @@ namespace BitWallpaper
             this.Cursor = null;
             Mouse.OverrideCursor = null;
         }
+
+        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            e.Handled = true;
+        }
+
     }
 
 }

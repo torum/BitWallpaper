@@ -43,8 +43,8 @@
     <Grid x:Name="BackgroundGrid" Background="Transparent">
         <Rectangle x:Name="AcrylicBackground" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="#111111" Opacity="0.3" helpers:EnableDragHelper.EnableDrag="True"></Rectangle>
 
-        <Image x:Name="BackgroundImage" Stretch="Fill" Opacity="0.8" Visibility="Visible"></Image>
-        
+        <Image x:Name="BackgroundImage" Stretch="Fill" Opacity="0.8" Visibility="Visible"/>
+
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
@@ -94,7 +94,15 @@
                             -->
                         </Viewbox>
 
-                        <ComboBox Grid.Row="1" Grid.Column="1" x:Name="CandleTypesComboBox" ItemsSource="{Binding CandleTypesDictionary}" SelectedValue="{Binding SelectedCandleType}" SelectedValuePath="Key" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="24 0 0 0" Padding="0 0 0 0" Background="Transparent" Style="{StaticResource ComboBoxFlatStyle}">
+
+
+                        <TextBlock Text="{Binding ChartLoadingInfo}" Foreground="Gray" Margin="24 0 0 0" VerticalAlignment="Center"/>
+
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right" Margin="3 0 3 3">
+                        
+                        <ComboBox Grid.Row="1" Grid.Column="1" x:Name="CandleTypesComboBox" ItemsSource="{Binding CandleTypesDictionary}" SelectedValue="{Binding SelectedCandleType}" SelectedValuePath="Key" VerticalAlignment="Center" Margin="12 0 12 0" Padding="0 0 0 0" Background="Transparent" Style="{StaticResource ComboBoxFlatStyle}">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -103,13 +111,19 @@
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
-
-                        <TextBlock Text="{Binding ChartLoadingInfo}" Foreground="Gray" Margin="24 0 0 0" VerticalAlignment="Center"/>
-
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right" Margin="3 3 6 3">
-
+                        
+                        <Button x:Name="SettingsButton" Style="{StaticResource PathButton}" Width="16" Height="16" Margin="3 0 3 0" Opacity="0.5" Command="{Binding ShowSettingsCommand}"
+                                Content="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,
+8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,
+11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,
+4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,
+2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,
+5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,
+12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,
+18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,
+21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,
+18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z">
+                        </Button>
                         <Button x:Name="MinButton" Style="{StaticResource PathButton}" Width="12" Height="12" Margin="3" Opacity="0.5" Click="MinButton_Click">
                             M20,14H4V10H20
                         </Button>
@@ -355,6 +369,335 @@
 
 
             </Grid>
+
+            <!-- 設定画面 -->
+            <Grid x:Name="settings" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Background="#212121" Visibility="{Binding ShowSettings, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TabControl Grid.Row="0" TabStripPlacement="Left" BorderThickness="0" Margin="0" Background="#121212">
+
+                    <TabControl.Resources>
+
+                        <Style x:Key="SettingsTabFocusVisualStyle">
+                            <Setter Property="Control.Template">
+                                <Setter.Value>
+                                    <ControlTemplate>
+                                        <Rectangle Margin="1" StrokeThickness="1" StrokeDashArray="1 2" Stroke="DarkGray"/>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+
+                        <Style x:Key="SettingsTabItemStyle" TargetType="{x:Type TabItem}">
+                            <Setter Property="Foreground" Value="Gray" />
+                            <Setter Property="FocusVisualStyle" Value="{StaticResource SettingsTabFocusVisualStyle}"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type TabItem}">
+                                        <Border Name="Border" BorderThickness="0 0 0 1" BorderBrush="Transparent" Background="Gray">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <!-- ぼかし背景を合わせる -->
+                                                <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="#111111" Opacity="0.8"></Rectangle>
+
+                                                <Border Name="HeaderBorder" Grid.Row="0" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Margin="0 0 0 0" BorderThickness="0 0 0 0" HorizontalAlignment="Center" CornerRadius="0">
+                                                    <ContentPresenter x:Name="ContentSite" HorizontalAlignment="Center" VerticalAlignment="Center" ContentSource="Header" RecognizesAccessKey="True" />
+                                                </Border>
+                                            </Grid>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <MultiTrigger>
+                                                <MultiTrigger.Conditions>
+                                                    <Condition Property="IsSelected" Value="False" />
+                                                    <Condition Property="IsMouseOver" Value="True" />
+                                                </MultiTrigger.Conditions>
+                                                <Setter TargetName="HeaderBorder" Property="Background" Value="DarkGray" />
+                                                <Setter TargetName="HeaderBorder" Property="BorderBrush" Value="DarkGray" />
+                                                <Setter TargetName="HeaderBorder" Property="BorderThickness" Value="0 0 0 1" />
+
+                                                <Setter Property="Foreground" Value="Black" />
+                                            </MultiTrigger>
+
+                                            <MultiTrigger>
+                                                <MultiTrigger.Conditions>
+                                                    <Condition Property="IsSelected" Value="True" />
+                                                    <Condition Property="IsMouseOver" Value="True" />
+                                                </MultiTrigger.Conditions>
+                                                <!--
+                                                <Setter TargetName="HeaderBorder" Property="Background" Value="{StaticResource BoardBackground}" />
+                                                -->
+                                                <Setter TargetName="HeaderBorder" Property="BorderBrush" Value="Gray" />
+                                                <Setter TargetName="HeaderBorder" Property="BorderThickness" Value="0 0 0 1" />
+
+                                                <Setter Property="Foreground" Value="Gray" />
+                                            </MultiTrigger>
+
+                                            <Trigger Property="IsSelected" Value="True">
+
+                                                <Setter Property="Margin" Value="0 0 0 0" />
+
+                                                <Setter Property="Panel.ZIndex" Value="0" />
+                                                <!--
+                                                <Setter TargetName="HeaderBorder" Property="Background" Value="{StaticResource BoardBackground}" />
+                                                <Setter TargetName="HeaderBorder" Property="BorderBrush" Value="{StaticResource AccentWarmLightColor}" />
+                                                -->
+                                                <Setter TargetName="HeaderBorder" Property="BorderThickness" Value="0 0 0 1" />
+
+                                                <Setter Property="Foreground" Value="LightGray" />
+
+                                            </Trigger>
+
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter TargetName="Border" Property="Background" Value="gray" />
+                                                <Setter TargetName="Border" Property="BorderBrush" Value="#FFC9C7BA" />
+                                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+
+                    </TabControl.Resources>
+
+                    <TabItem Header="全般" Width="100" Height="48" Style="{StaticResource SettingsTabItemStyle}">
+
+                        <Border Padding="12">
+
+                            <StackPanel>
+                                <Border BorderBrush="DimGray" BorderThickness="0 0 0 0.5" Margin="3" Padding="3">
+                                    <Label Padding="0" Content="このアプリケーションについて" Style="{StaticResource SectionTitle}"/>
+                                </Border>
+
+
+                                <TextBlock Padding="6" TextWrapping="Wrap">
+                                このアプリケーションは、ビットバンク（Bitbank.cc） が公開しているAPIとデータを利用しています。
+                                </TextBlock>
+
+                                <TextBlock Padding="6">
+                                <Run Text="Bitbank :"></Run>
+                                <Hyperlink NavigateUri="https://bitbank.cc/" RequestNavigate="Hyperlink_RequestNavigate">https://bitbank.cc/</Hyperlink>
+                                </TextBlock>
+
+                                <Border BorderBrush="DimGray" BorderThickness="0 0 0 0.5" Margin="3" Padding="3">
+                                    <Label Padding="0" Content="プライバシーについて" Style="{StaticResource SectionTitle}"/>
+                                </Border>
+                                <TextBlock Padding="6" TextWrapping="Wrap">
+                                本アプリケーションは、アプリケーション状態を保存しチャート関係のデータを取得する以外、個人情報を含む一切の情報を収集・保存及び送信することはありません。
+                                </TextBlock>
+
+                                <Border BorderBrush="DimGray" BorderThickness="0 0 0 0.5" Margin="3" Padding="3">
+                                    <Label Padding="0" Content="免責" Style="{StaticResource SectionTitle}"/>
+                                </Border>
+                                <TextBlock Padding="6" TextWrapping="Wrap">
+                                開発する上で、間違いのないように作っていますが、万が一不具合等で損害が発生しても、開発者はいかなる責任もとれませんので、ご承知おきください。
+                                </TextBlock>
+<!--
+                                <Border BorderBrush="DimGray" BorderThickness="0 0 0 0.5" Margin="3" Padding="3">
+                                    <Label Padding="0" Content="ウェブサイト" Style="{StaticResource SectionTitle}"/>
+                                </Border>
+                                <TextBlock Padding="6">
+                                <Run Text=""></Run>
+                                <Hyperlink NavigateUri="https://torum.github.io/Bitbank/" RequestNavigate="Hyperlink_RequestNavigate">https://torum.github.io/Bitbank/</Hyperlink>
+                                </TextBlock>
+-->
+                                <Border BorderBrush="DimGray" BorderThickness="0 0 0 0.5" Margin="3" Padding="3">
+                                    <Label Padding="0" Content="Twitter" Style="{StaticResource SectionTitle}"/>
+                                </Border>
+                                <TextBlock Padding="6">
+                                <Run Text=""></Run>
+                                <Hyperlink NavigateUri="https://twitter.com/torum_apps" RequestNavigate="Hyperlink_RequestNavigate">https://twitter.com/torum_apps</Hyperlink>
+                                </TextBlock>
+
+
+                            </StackPanel>
+
+                        </Border>
+                    </TabItem>
+
+                    <TabItem Header="ライセンス" Width="100" Height="48" Style="{StaticResource SettingsTabItemStyle}">
+
+                        <TabControl Margin="12">
+
+                            <TabItem Header="使用許諾契約書 (EULA)" Padding="6">
+
+                                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top">
+
+
+                                    <TextBlock TextWrapping="Wrap" Padding="6">
+ソフトウェアの使用許諾書
+    <LineBreak/>
+    <LineBreak/>                            
+第１条 （本契約の成立）<LineBreak/>
+ご利用者（甲）が、本ソフトウェアの使用もしくはインストールを行った時点で、本契約書記載の内容に同意いただいたものとみな
+し、本ソフトウェアの開発者（以下開発者、乙）もしくは開発者が再使用許諾権を付与した者（以下あわせて「開発者」といいます）との間で、本契約が有効に成立す
+るものといたします。
+                                <LineBreak/><LineBreak/>
+第２条 （使用許諾）<LineBreak/>
+1. ご利用者は、無償で本ソフトウェアを、日本国内において、個人としての使用に限定して、無料で使用することができま
+す。（法人の商用利用は別途お問い合わせください）
+                                <LineBreak/>
+2. ご利用者は、本ソフトウェアを改変したり、再発布することはできません。
+                                <LineBreak/>
+3. ご利用者は、本条項に基づき本ソフトウェアの使用権のみを取得し、本ソフトウェアの著作権、所有権その他のいかなる権利
+も取得しません。
+                                <LineBreak/>
+4. 本契約はご利用者に対し、本ソフトウェアの改訂版(アドオンパック)、変更、機能強化、サービスパック、またはその他のサ
+ポートサービスを受ける権利を付与するものではありません。
+                                <LineBreak/>
+5. ご利用者は、本ソフトウェアを、直接的、間接的を問わず、日本国、米国およびその他の国の全ての法律・規則に違反して輸
+出してはいけません。
+                                <LineBreak/><LineBreak/>
+第３条 （保証責任）<LineBreak/>
+1. 開発者は、別途記載するライブラリを除き、本ソフトウェアの著作権を有し、または著作権者から再使用許諾する権利を受けていることを保証します。
+                                    <LineBreak/>
+2. 開発者は、本ソフトウェアのご利用者の使用目的への適合性および法律上の瑕疵担保責任を含め一切の保証を行いません。
+                                <LineBreak/><LineBreak/>
+第４条 （責任の範囲）<LineBreak/>
+1. 前条に関わらず、ご利用者が本ソフトウェアを使用したことによりご利用者に直接的結果として発生した損害に対し開発者は責任を負いません。
+                                <LineBreak/>
+3. 開発者は、開発者の判断により第三者に本契約記載の業務を委託することができるものとします。ただし、委託にあた
+っての責任は、全て開発者の責任においてなされるものとします。
+                                <LineBreak/><LineBreak/>
+第５条 （権利の譲渡）<LineBreak/>
+ご利用者は、当社の書面による事前の承諾なく下記の行為を行ってはいけません。<LineBreak/>
+①． 本ソフトウェアの複製物を第三者に譲渡、貸与、占有移転すること<LineBreak/>
+②． 本契約上の地位または本契約に基づく権利義務を第三者に移転、譲渡、担保の用に供すること
+                                <LineBreak/><LineBreak/>
+第６条 （本契約の終了）<LineBreak/>
+ご利用者が本契約の条項に違反し、開発者が違反の是正を催告した後、２週間以内に是正されなかった場合、当社は本契約を解
+約し、ご利用者の本ソフトウェアの使用を終了させることができます。
+                                <LineBreak/><LineBreak/>
+第７条 （契約の変更）<LineBreak/>
+本契約の変更は、開発者の判断で、変更できるものとします。
+                                <LineBreak/><LineBreak/>
+第８条 （協議）<LineBreak/>
+本契約に規定されていない事項または本契約の解釈に疑義が生じた場合は、甲および乙は、誠意をもって協議するものとし
+ます。
+                                <LineBreak/><LineBreak/>
+第９条 （合意管轄裁判所）<LineBreak/>
+本契約に関して紛争を生じ、裁判による解決を必要とする場合には、東京地方裁判所を第一審の専属合意管轄裁判所としま
+す。<LineBreak/><LineBreak/>
+以上
+                                
+                                <LineBreak/>
+
+
+                                    </TextBlock>
+
+                                </ScrollViewer>
+
+                            </TabItem>
+
+                            <TabItem Header="使用ライブラリ等" Padding="6">
+
+                                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top">
+
+                                    <StackPanel Margin="6 6 50 6">
+
+                                        <StackPanel Margin="0 0 0 0">
+                                            <TextBlock TextWrapping="Wrap">
+                                        本ソフトウェアは下記のライブラリを使用しています。
+                                        <LineBreak/>
+                                            </TextBlock>
+
+                                            <TextBlock TextWrapping="Wrap" FontWeight="Bold">
+                                    Live Chart for WPF<LineBreak/>
+                                            </TextBlock>
+
+                                            <TextBlock TextWrapping="Wrap" Padding="6">
+The MIT License (MIT)<LineBreak/>
+<LineBreak/>
+Copyright (c) 2016 Alberto Rodriguez and LiveCharts contributors<LineBreak/>
+<LineBreak/>
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+<LineBreak/><LineBreak/>
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+<LineBreak/><LineBreak/>
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+                                            </TextBlock>
+                                        </StackPanel>
+
+                                        <StackPanel Margin="0 24 0 0">
+                                            <TextBlock TextWrapping="Wrap" FontWeight="Bold">
+                                    FluentWPF<LineBreak/>
+                                            </TextBlock>
+
+                                            <TextBlock TextWrapping="Wrap" Padding="6">
+                                        MIT License
+<LineBreak/><LineBreak/>
+Copyright (c) 2016 minami_SC
+<LineBreak/><LineBreak/>
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+<LineBreak/><LineBreak/>
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+<LineBreak/><LineBreak/>
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+                                            </TextBlock>
+
+                                        </StackPanel>
+                                        
+                                    </StackPanel>
+
+                                </ScrollViewer>
+
+                            </TabItem>
+
+                        </TabControl>
+
+                    </TabItem>
+
+                </TabControl>
+
+                <Border Grid.Row="1" Height="48" Margin="101.5 0 0 0">
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <Button Width="80" Content="キャンセル(_C)" Margin="0 0 24 0" Padding="3" IsCancel="True" Command="{Binding SettingsCancelCommand}" Visibility="Hidden"></Button>
+                        <Button Width="80" Content="_OK" Margin="0 0 32 0" Padding="3" IsDefault="True" Command="{Binding SettingsOKCommand}"></Button>
+                    </StackPanel>
+
+                </Border>
+
+
+            </Grid>
+
         </Grid>
 
     </Grid>

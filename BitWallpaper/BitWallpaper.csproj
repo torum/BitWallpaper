@@ -69,6 +69,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Common\Converters.cs" />
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Helpers\EnableDragHelper.cs" />
     <Compile Include="Helpers\MaximizeDoubleClickHelper.cs" />

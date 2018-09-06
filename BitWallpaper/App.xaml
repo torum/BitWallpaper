@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:BitWallpaper"
              xmlns:vms="clr-namespace:BitWallpaper.ViewModels"
+             xmlns:common="clr-namespace:BitWallpaper.Common"
              StartupUri="MainWindow.xaml"
              Startup="AppOnStartup">
     <Application.Resources>
@@ -11,7 +12,9 @@
             <!-- データコンテキスト -->
             <vms:MainViewModel x:Key="MainViewModel" />
 
-
+            <!-- BooleanToVisibilityConverterの、 Collapsed 版　-->
+            <common:BoolToVisibilityCollapsedConverter x:Key="BoolToVisibilityCollapsedConverter" TrueValue="Visible" FalseValue="Collapsed" />
+            
 
             <SolidColorBrush x:Key="NormalTextColor" Color="#FFE8EDF9"/>
 
@@ -28,7 +31,12 @@
                 <Setter Property="Foreground" Value="LightGray" />
             </Style>
 
-
+            <Style x:Key="SectionTitle" TargetType="{x:Type Label}">
+                <Setter Property="Foreground" Value="LightGray" />
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter Property="Margin" Value="3 0 0 0" />
+            </Style>
 
             <ResourceDictionary.MergedDictionaries>
 
