@@ -504,15 +504,15 @@
                                 <TextBlock Padding="6" TextWrapping="Wrap">
                                 開発する上で、間違いのないように作っていますが、万が一不具合等で損害が発生しても、開発者はいかなる責任もとれませんので、ご承知おきください。
                                 </TextBlock>
-<!--
+
                                 <Border BorderBrush="DimGray" BorderThickness="0 0 0 0.5" Margin="3" Padding="3">
                                     <Label Padding="0" Content="ウェブサイト" Style="{StaticResource SectionTitle}"/>
                                 </Border>
                                 <TextBlock Padding="6">
                                 <Run Text=""></Run>
-                                <Hyperlink NavigateUri="https://torum.github.io/Bitbank/" RequestNavigate="Hyperlink_RequestNavigate">https://torum.github.io/Bitbank/</Hyperlink>
+                                <Hyperlink NavigateUri="https://torum.github.io/BitWallpaper/" RequestNavigate="Hyperlink_RequestNavigate">https://torum.github.io/BitWallpaper/</Hyperlink>
                                 </TextBlock>
--->
+
                                 <Border BorderBrush="DimGray" BorderThickness="0 0 0 0.5" Margin="3" Padding="3">
                                     <Label Padding="0" Content="Twitter" Style="{StaticResource SectionTitle}"/>
                                 </Border>

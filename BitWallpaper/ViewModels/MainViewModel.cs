@@ -274,7 +274,7 @@ namespace BitWallpaper.ViewModels
         };
 
         // 選択されたロウソク足タイプ
-        public CandleTypes _selectedCandleType = CandleTypes.OneHour; // デフォ //CandleTypes.OneMin;
+        public CandleTypes _selectedCandleType = CandleTypes.OneHour; // デフォ。変更注意。起動時のロードと合わせる。
         public CandleTypes SelectedCandleType
         {
             get
@@ -283,12 +283,12 @@ namespace BitWallpaper.ViewModels
             }
             set
             {
+
                 if (_selectedCandleType == value)
                     return;
 
                 _selectedCandleType = value;
                 this.NotifyPropertyChanged("SelectedCandleType");
-                //this.NotifyPropertyChanged("SelectedCandleType");
 
                 // 
                 if (_selectedCandleType == CandleTypes.OneMin)
@@ -354,6 +354,9 @@ namespace BitWallpaper.ViewModels
                 }
                 else
                 {
+
+                    Debug.WriteLine("■" + _selectedCandleType.ToString() + " チャート表示、設定範囲外");
+
                     return;
 
                     // デフォルト 1日の期間で表示
@@ -362,6 +365,7 @@ namespace BitWallpaper.ViewModels
 
                 }
 
+                Debug.WriteLine(_selectedCandleType.ToString() + " チャート表示");
 
                 // チャート表示
                 //LoadChart();
@@ -390,7 +394,7 @@ namespace BitWallpaper.ViewModels
         }
 
         // 選択されたチャート表示期間 
-        private ChartSpans _chartSpan = ChartSpans.ThreeDay; // デフォ //ChartSpans.OneHour;
+        private ChartSpans _chartSpan = ChartSpans.ThreeDay; 
         public ChartSpans SelectedChartSpan
         {
             get
@@ -424,6 +428,9 @@ namespace BitWallpaper.ViewModels
                 this.NotifyPropertyChanged("ZoomingMode");
             }
         }
+
+
+        #region == チャートデータ用のプロパティ ==
 
         /*
         // チャートデータ保持
@@ -1043,9 +1050,9 @@ namespace BitWallpaper.ViewModels
             }
         }
 
-
         #endregion
 
+        #endregion
 
         #region == タイマー ==
 
@@ -1637,6 +1644,12 @@ namespace BitWallpaper.ViewModels
                             SelectedCandleType = CandleTypes.OneHour;
                         }
                     }
+                    else
+                    {
+                        // TODO other candle types
+
+                        SelectedCandleType = CandleTypes.OneHour;
+                    }
 
                 }
                 else
@@ -1655,20 +1668,19 @@ namespace BitWallpaper.ViewModels
 
             #endregion
 
+            //SelectedCandleType = で表示できるので、これは不要だが、デフォと同じ場合のみ、手動で表示させる。
+            if (SelectedCandleType == CandleTypes.OneHour)
+            {
+                Task.Run(async () =>
+                {
+                    await Task.Run(() => DisplayCharts());
+
+                });
+            }
+
             // チャート更新のタイマー起動
             dispatcherChartTimer.Start();
 
-            /*
-             * 
-             *  SelectedCandleType = で表示できるので、これは不要。
-             * 
-            // チャートの表示
-            Task.Run(async () =>
-            {
-                await Task.Run(() => DisplayCharts());
-
-            });
-            */
 
         }
 
