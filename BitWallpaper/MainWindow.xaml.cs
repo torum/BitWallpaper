@@ -61,7 +61,7 @@ namespace BitWallpaper
 
             // マウス非表示のタイマー起動
             dispatcherMouseTimer.Tick += new EventHandler(MouseTimer);
-            dispatcherMouseTimer.Interval = new TimeSpan(0, 0, 3);
+            dispatcherMouseTimer.Interval = new TimeSpan(0, 0, 6);
             //dispatcherMouseTimer.Start();
 
         }
@@ -99,7 +99,7 @@ namespace BitWallpaper
 
             // 幅
             double appWidth = this.ActualWidth;
-            double boxWidth = (appWidth - 60) / 3;
+            double boxWidth = (appWidth - 40) / 3;
 
             // WrapPanes's width
             coins_wrap.Width = appWidth;
@@ -116,7 +116,7 @@ namespace BitWallpaper
 
             // 高さ
             double appHeight = this.ActualHeight;
-            double boxHeight = ((appHeight - 60) / 2);
+            double boxHeight = ((appHeight - 40) / 2);
 
             btc_box.Height = boxHeight;
             ltc_box.Height = boxHeight;

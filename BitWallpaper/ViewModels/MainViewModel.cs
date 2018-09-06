@@ -241,21 +241,21 @@ namespace BitWallpaper.ViewModels
         // ロウソク足タイプ　コンボボックス表示用
         public Dictionary<CandleTypes, string> CandleTypesDictionary { get; } = new Dictionary<CandleTypes, string>()
         {
-            {CandleTypes.OneMin, "１分"},
+            {CandleTypes.OneMin, "1m"},
             //{CandleTypes.FiveMin, "５分" },
             //{CandleTypes.FifteenMin, "１５分"},
             //{CandleTypes.ThirteenMin, "３０分" },
-            {CandleTypes.OneHour, "１時間" },
+            {CandleTypes.OneHour, "1h" },
             //{CandleTypes.FourHour, "４時間"},
             //{CandleTypes.EightHour, "８時間" },
             //{CandleTypes.TwelveHour, "１２時間"},
-            {CandleTypes.OneDay, "１日" },
+            {CandleTypes.OneDay, "1d" },
             //{CandleTypes.OneWeek, "１週間"},
 
         };
 
         // 選択されたロウソク足タイプ
-        public CandleTypes _selectedCandleType = CandleTypes.OneHour;
+        public CandleTypes _selectedCandleType = CandleTypes.OneHour; // デフォ //CandleTypes.OneMin;
         public CandleTypes SelectedCandleType
         {
             get
@@ -280,7 +280,7 @@ namespace BitWallpaper.ViewModels
                     {
                         // デフォルト 一時間の期間で表示
                         SelectedChartSpan = ChartSpans.OneHour;
-                        return;
+                        //return;
                     }
 
                     // または、3時間
@@ -300,7 +300,7 @@ namespace BitWallpaper.ViewModels
                     {
                         // デフォルト 3日の期間で表示
                         SelectedChartSpan = ChartSpans.ThreeDay;
-                        return;
+                        //return;
                     }
 
 
@@ -319,8 +319,8 @@ namespace BitWallpaper.ViewModels
                     if ((SelectedChartSpan != ChartSpans.OneMonth) && (SelectedChartSpan != ChartSpans.TwoMonth) && (SelectedChartSpan != ChartSpans.OneYear) && (SelectedChartSpan != ChartSpans.FiveYear))
                     {
                         // デフォルト 1ヵ月の期間で表示
-                        SelectedChartSpan = ChartSpans.OneMonth;
-                        return;
+                        SelectedChartSpan = ChartSpans.TwoMonth;
+                        //return;
                     }
 
                     //
@@ -346,6 +346,7 @@ namespace BitWallpaper.ViewModels
 
                 // チャート表示
                 //LoadChart();
+                DisplayCharts();
 
             }
         }
@@ -370,7 +371,7 @@ namespace BitWallpaper.ViewModels
         }
 
         // 選択されたチャート表示期間 
-        private ChartSpans _chartSpan = ChartSpans.ThreeDay;
+        private ChartSpans _chartSpan = ChartSpans.ThreeDay; // デフォ //ChartSpans.OneHour;
         public ChartSpans SelectedChartSpan
         {
             get
@@ -1026,6 +1027,9 @@ namespace BitWallpaper.ViewModels
 
         #endregion
 
+        System.Windows.Threading.DispatcherTimer dispatcherTimerTickOtherPairs = new System.Windows.Threading.DispatcherTimer();
+        System.Windows.Threading.DispatcherTimer dispatcherChartTimer = new System.Windows.Threading.DispatcherTimer();
+
         /// <summary>
         /// メインのビューモデル
         /// </summary>
@@ -1190,25 +1194,17 @@ namespace BitWallpaper.ViewModels
             #endregion
 
             // Ticker（他の通貨用）のタイマー起動
-            System.Windows.Threading.DispatcherTimer dispatcherTimerTickOtherPairs = new System.Windows.Threading.DispatcherTimer();
             dispatcherTimerTickOtherPairs.Tick += new EventHandler(TickerTimerOtherPairs);
             dispatcherTimerTickOtherPairs.Interval = new TimeSpan(0, 0, 1);
             dispatcherTimerTickOtherPairs.Start();
             
             
             // Chart表示のタイマー起動
-            System.Windows.Threading.DispatcherTimer dispatcherChartTimer = new System.Windows.Threading.DispatcherTimer();
             dispatcherChartTimer.Tick += new EventHandler(ChartTimer);
             dispatcherChartTimer.Interval = new TimeSpan(0, 1, 0);
-            dispatcherChartTimer.Start();
+            //dispatcherChartTimer.Start();
             
 
-            // チャートの表示
-            Task.Run(async () =>
-            {
-                await Task.Run(() => DisplayCharts());
-
-            });
             
         }
 
@@ -1227,7 +1223,7 @@ namespace BitWallpaper.ViewModels
                         continue;
                     }
 
-                    UpdateCandlestick(pair);
+                    UpdateCandlestick(pair, SelectedCandleType);
 
                 }
             }
@@ -1590,10 +1586,65 @@ namespace BitWallpaper.ViewModels
 
                 #endregion
 
+                #region == チャート関連 ==
+
+                var chartSetting = xdoc.Root.Element("Chart");
+                if (chartSetting != null)
+                {
+                    var hoge = chartSetting.Attribute("candleType");
+                    if (hoge != null)
+                    {
+                        if (hoge.Value == CandleTypes.OneMin.ToString())
+                        {
+                            SelectedCandleType = CandleTypes.OneMin;
+                        }
+                        else if (hoge.Value == CandleTypes.OneHour.ToString())
+                        {
+                            SelectedCandleType = CandleTypes.OneHour;
+                        }
+                        else if (hoge.Value == CandleTypes.OneDay.ToString())
+                        {
+                            SelectedCandleType = CandleTypes.OneDay;
+                        }
+                        else
+                        {
+                            // TODO other candle types
+
+                            SelectedCandleType = CandleTypes.OneHour;
+                        }
+                    }
+
+                }
+                else
+                {
+                    // デフォのチャート、キャンドルタイプ指定
+                    SelectedCandleType = CandleTypes.OneHour;
+                }
+
+                #endregion
+            }
+            else
+            {
+                // デフォのチャート、キャンドルタイプ指定
+                SelectedCandleType = CandleTypes.OneHour;
             }
 
             #endregion
 
+            // チャート更新のタイマー起動
+            dispatcherChartTimer.Start();
+
+            /*
+             * 
+             *  SelectedCandleType = で表示できるので、これは不要。
+             * 
+            // チャートの表示
+            Task.Run(async () =>
+            {
+                await Task.Run(() => DisplayCharts());
+
+            });
+            */
 
         }
 
@@ -1669,13 +1720,12 @@ namespace BitWallpaper.ViewModels
                 attrs = doc.CreateAttribute("left");
                 if ((sender as Window).WindowState == WindowState.Maximized)
                 {
-                    attrs.Value = (sender as Window).Left.ToString();
+                    attrs.Value = (sender as Window).RestoreBounds.Left.ToString();
                 }
                 else
                 {
-                    attrs.Value = (sender as Window).RestoreBounds.Left.ToString();
+                    attrs.Value = (sender as Window).Left.ToString();
                 }
-                    
                 mainWindow.SetAttributeNode(attrs);
 
                 attrs = doc.CreateAttribute("state");
@@ -1698,6 +1748,36 @@ namespace BitWallpaper.ViewModels
                 root.AppendChild(mainWindow);
 
             }
+
+            #endregion
+
+            #region == チャート関連 ==
+
+            XmlElement chartSetting = doc.CreateElement(string.Empty, "Chart", string.Empty);
+
+            attrs = doc.CreateAttribute("candleType");
+
+            if (SelectedCandleType == CandleTypes.OneMin)
+            {
+                attrs.Value = CandleTypes.OneMin.ToString();
+            }
+            else if (SelectedCandleType == CandleTypes.OneHour)
+            {
+                attrs.Value = CandleTypes.OneHour.ToString();
+            }
+            else if (SelectedCandleType == CandleTypes.OneDay)
+            {
+                attrs.Value = CandleTypes.OneDay.ToString();
+            }
+            else
+            {
+                // TODO
+                attrs.Value = "";
+            }
+
+            chartSetting.SetAttributeNode(attrs);
+
+            root.AppendChild(chartSetting);
 
             #endregion
 
@@ -1776,7 +1856,7 @@ namespace BitWallpaper.ViewModels
         }
 
         // 初回に各種Candlestickをまとめて取得
-        private async Task<bool> GetCandlesticks(Pairs pair)
+        private async Task<bool> GetCandlesticks(Pairs pair, CandleTypes ct)
         {
             //ChartLoadingInfo = "チャートデータを取得中....";
 
@@ -1787,166 +1867,27 @@ namespace BitWallpaper.ViewModels
 
             #region == OhlcvsOneHour 1hour毎のデータ ==
 
-            // TODO 取得中フラグセット。
+            List<Ohlcv> ListOhlcvsOneHour = new List<Ohlcv>();
 
-            //Debug.WriteLine("1hour取得開始 " + pair.ToString());
-
-            List <Ohlcv> ListOhlcvsOneHour = new List<Ohlcv>();
-
-            // 一時間のロウソク足タイプなら今日、昨日、一昨日、その前の１週間分の1hourデータを取得する必要あり。
-            ListOhlcvsOneHour = await GetCandlestick(pair, CandleTypes.OneHour, dtToday);
-            if (ListOhlcvsOneHour != null)
+            if (ct == CandleTypes.OneHour)
             {
-                // 逆順にする
-                ListOhlcvsOneHour.Reverse();
+                // TODO 取得中フラグセット。
 
-                await Task.Delay(300);
-                // 昨日
-                DateTime dtTarget = dtToday.AddDays(-1);
+                Debug.WriteLine("今日の1hour取得開始 " + pair.ToString());
 
-                List<Ohlcv> res = await GetCandlestick(pair, CandleTypes.OneHour, dtTarget);
-                if (res != null)
+                // 一時間のロウソク足タイプなら今日、昨日、一昨日、その前の１週間分の1hourデータを取得する必要あり。
+                ListOhlcvsOneHour = await GetCandlestick(pair, CandleTypes.OneHour, dtToday);
+                if (ListOhlcvsOneHour != null)
                 {
                     // 逆順にする
-                    res.Reverse();
+                    ListOhlcvsOneHour.Reverse();
 
-                    foreach (var r in res)
-                    {
-                        ListOhlcvsOneHour.Add(r);
-                    }
-
-                    await Task.Delay(300);
-                    // 一昨日
-                    dtTarget = dtTarget.AddDays(-1);
-                    List<Ohlcv> last2 = await GetCandlestick(pair, CandleTypes.OneHour, dtTarget);
-                    if (last2 != null)
-                    {
-                        // 逆順にする
-                        last2.Reverse();
-
-                        foreach (var l in last2)
-                        {
-                            ListOhlcvsOneHour.Add(l);
-                        }
-                        
-                        await Task.Delay(300);
-                        // ３日前
-                        dtTarget = dtTarget.AddDays(-1);
-                        List<Ohlcv> last3 = await GetCandlestick(pair, CandleTypes.OneHour, dtTarget);
-                        if (last3 != null)
-                        {
-                            // 逆順にする
-                            last3.Reverse();
-
-                            foreach (var l in last3)
-                            {
-                                ListOhlcvsOneHour.Add(l);
-                            }
-                            /*
-                            await Task.Delay(300);
-                            // 4日前
-                            dtTarget = dtTarget.AddDays(-1);
-                            List<Ohlcv> last4 = await GetCandlestick(pair, CandleTypes.OneHour, dtTarget);
-                            if (last4 != null)
-                            {
-                                // 逆順にする
-                                last4.Reverse();
-
-                                foreach (var l in last4)
-                                {
-                                    ListOhlcvsOneHour.Add(l);
-                                }
-
-                                await Task.Delay(300);
-                                // 5日前
-                                dtTarget = dtTarget.AddDays(-1);
-                                List<Ohlcv> last5 = await GetCandlestick(pair, CandleTypes.OneHour, dtTarget);
-                                if (last5 != null)
-                                {
-                                    // 逆順にする
-                                    last5.Reverse();
-
-                                    foreach (var l in last5)
-                                    {
-                                        ListOhlcvsOneHour.Add(l);
-                                    }
-
-                                    await Task.Delay(300);
-                                    // 6日前
-                                    dtTarget = dtTarget.AddDays(-1);
-                                    List<Ohlcv> last6 = await GetCandlestick(pair, CandleTypes.OneHour, dtTarget);
-                                    if (last6 != null)
-                                    {
-                                        // 逆順にする
-                                        last6.Reverse();
-
-                                        foreach (var l in last6)
-                                        {
-                                            ListOhlcvsOneHour.Add(l);
-                                        }
-
-                                        await Task.Delay(300);
-                                        // 7日前
-                                        dtTarget = dtTarget.AddDays(-1);
-                                        List<Ohlcv> last7 = await GetCandlestick(pair, CandleTypes.OneHour, dtTarget);
-                                        if (last7 != null)
-                                        {
-                                            // 逆順にする
-                                            last7.Reverse();
-
-                                            foreach (var l in last7)
-                                            {
-                                                ListOhlcvsOneHour.Add(l);
-                                            }
-                                        }
-
-
-                                    }
-                                    
-                                }
-
-                            }
-                            */
-                        }
-                        
-                    }
-
-
-                }
-            }
-
-            // TODO 取得中フラグ解除。
-
-            #endregion
-
-            /*
-            await Task.Delay(600);
-
-            #region == OhlcvsOneMin 1min毎のデータ ==
-
-            // TODO 取得中フラグセット。
-
-            Debug.WriteLine("今日の1min取得開始 " + pair.ToString());
-
-            List<Ohlcv> ListOhlcvsOneMin = new List<Ohlcv>();
-
-            // 一分毎のロウソク足タイプなら今日と昨日の1minデータを取得する必要あり。
-            ListOhlcvsOneMin = await GetCandlestick(pair, CandleTypes.OneMin, dtToday);
-            if (ListOhlcvsOneMin != null)
-            {
-                // 逆順にする
-                ListOhlcvsOneMin.Reverse();
-
-                await Task.Delay(500);
-
-                // 00:00:00から23:59:59分までしか取れないので、 3時間分取るには、00:00:00から3:00までは 最新のデータとるには日付を１日マイナスする
-                if (dtToday.Hour <= 3) // < 3
-                {
-                    Debug.WriteLine("昨日の1min取得開始");
+                    Debug.WriteLine("昨日の1hour取得開始 " + pair.ToString());
+                    await Task.Delay(200);
                     // 昨日
                     DateTime dtTarget = dtToday.AddDays(-1);
 
-                    List<Ohlcv> res = await GetCandlestick(pair, CandleTypes.OneMin, dtTarget);
+                    List<Ohlcv> res = await GetCandlestick(pair, CandleTypes.OneHour, dtTarget);
                     if (res != null)
                     {
                         // 逆順にする
@@ -1954,74 +1895,237 @@ namespace BitWallpaper.ViewModels
 
                         foreach (var r in res)
                         {
-                            ListOhlcvsOneMin.Add(r);
+                            ListOhlcvsOneHour.Add(r);
                         }
+
+                        Debug.WriteLine("一昨日の1hour取得開始 " + pair.ToString());
+                        await Task.Delay(200);
+                        // 一昨日
+                        dtTarget = dtTarget.AddDays(-1);
+                        List<Ohlcv> last2 = await GetCandlestick(pair, CandleTypes.OneHour, dtTarget);
+                        if (last2 != null)
+                        {
+                            // 逆順にする
+                            last2.Reverse();
+
+                            foreach (var l in last2)
+                            {
+                                ListOhlcvsOneHour.Add(l);
+                            }
+
+                            Debug.WriteLine("３日前の1hour取得開始 " + pair.ToString());
+                            await Task.Delay(200);
+                            // ３日前
+                            dtTarget = dtTarget.AddDays(-1);
+                            List<Ohlcv> last3 = await GetCandlestick(pair, CandleTypes.OneHour, dtTarget);
+                            if (last3 != null)
+                            {
+                                // 逆順にする
+                                last3.Reverse();
+
+                                foreach (var l in last3)
+                                {
+                                    ListOhlcvsOneHour.Add(l);
+                                }
+                                /*
+                                await Task.Delay(300);
+                                // 4日前
+                                dtTarget = dtTarget.AddDays(-1);
+                                List<Ohlcv> last4 = await GetCandlestick(pair, CandleTypes.OneHour, dtTarget);
+                                if (last4 != null)
+                                {
+                                    // 逆順にする
+                                    last4.Reverse();
+
+                                    foreach (var l in last4)
+                                    {
+                                        ListOhlcvsOneHour.Add(l);
+                                    }
+
+                                    await Task.Delay(300);
+                                    // 5日前
+                                    dtTarget = dtTarget.AddDays(-1);
+                                    List<Ohlcv> last5 = await GetCandlestick(pair, CandleTypes.OneHour, dtTarget);
+                                    if (last5 != null)
+                                    {
+                                        // 逆順にする
+                                        last5.Reverse();
+
+                                        foreach (var l in last5)
+                                        {
+                                            ListOhlcvsOneHour.Add(l);
+                                        }
+
+                                        await Task.Delay(300);
+                                        // 6日前
+                                        dtTarget = dtTarget.AddDays(-1);
+                                        List<Ohlcv> last6 = await GetCandlestick(pair, CandleTypes.OneHour, dtTarget);
+                                        if (last6 != null)
+                                        {
+                                            // 逆順にする
+                                            last6.Reverse();
+
+                                            foreach (var l in last6)
+                                            {
+                                                ListOhlcvsOneHour.Add(l);
+                                            }
+
+                                            await Task.Delay(300);
+                                            // 7日前
+                                            dtTarget = dtTarget.AddDays(-1);
+                                            List<Ohlcv> last7 = await GetCandlestick(pair, CandleTypes.OneHour, dtTarget);
+                                            if (last7 != null)
+                                            {
+                                                // 逆順にする
+                                                last7.Reverse();
+
+                                                foreach (var l in last7)
+                                                {
+                                                    ListOhlcvsOneHour.Add(l);
+                                                }
+                                            }
+
+
+                                        }
+
+                                    }
+
+                                }
+                                */
+                            }
+
+                        }
+
+
                     }
                 }
-            }
 
-            // TODO 取得中フラグ解除。
+                // TODO 取得中フラグ解除。
+
+            }
 
             #endregion
 
-            await Task.Delay(600);
+            await Task.Delay(200);
+
+            #region == OhlcvsOneMin 1min毎のデータ ==
+
+            List<Ohlcv> ListOhlcvsOneMin = new List<Ohlcv>();
+
+            if (ct == CandleTypes.OneMin)
+            {
+                // TODO 取得中フラグセット。
+
+                Debug.WriteLine("今日の1min取得開始 " + pair.ToString());
+
+                // 一分毎のロウソク足タイプなら今日と昨日の1minデータを取得する必要あり。
+                ListOhlcvsOneMin = await GetCandlestick(pair, CandleTypes.OneMin, dtToday);
+                if (ListOhlcvsOneMin != null)
+                {
+                    // 逆順にする
+                    ListOhlcvsOneMin.Reverse();
+
+                    await Task.Delay(200);
+
+                    // 00:00:00から23:59:59分までしか取れないので、 3時間分取るには、00:00:00から3:00までは 最新のデータとるには日付を１日マイナスする
+                    if (dtToday.Hour <= 3) // < 3
+                    {
+                        Debug.WriteLine("昨日の1min取得開始");
+                        // 昨日
+                        DateTime dtTarget = dtToday.AddDays(-1);
+
+                        List<Ohlcv> res = await GetCandlestick(pair, CandleTypes.OneMin, dtTarget);
+                        if (res != null)
+                        {
+                            // 逆順にする
+                            res.Reverse();
+
+                            foreach (var r in res)
+                            {
+                                ListOhlcvsOneMin.Add(r);
+                            }
+                        }
+                    }
+                }
+
+                // TODO 取得中フラグ解除。
+            }
+
+            #endregion
+
+            await Task.Delay(200);
 
             #region == OhlcvsOneDay 1day毎のデータ ==
 
-            // TODO 取得中フラグセット。
-
-            // 1日のロウソク足タイプなら今年、去年、２年前、３年前、４年前、５年前の1hourデータを取得する必要あり。(５年前は止めた)
-
-
             List<Ohlcv> ListOhlcvsOneDay = new List<Ohlcv>();
 
-            ListOhlcvsOneDay = await GetCandlestick(pair, CandleTypes.OneDay, dtToday);
-            if (ListOhlcvsOneDay != null)
+            if (ct == CandleTypes.OneDay)
             {
-                // 逆順にする
-                ListOhlcvsOneDay.Reverse();
+                // TODO 取得中フラグセット。
 
-                await Task.Delay(300);
-                // 今年
-                DateTime dtTarget = dtToday.AddYears(-1);
+                // 1日のロウソク足タイプなら今年、去年、２年前、３年前、４年前、５年前の1hourデータを取得する必要あり。(５年前は止めた)
 
-                List<Ohlcv> res = await GetCandlestick(pair, CandleTypes.OneDay, dtTarget);
-                if (res != null)
+                Debug.WriteLine("今年のOneDay取得開始 " + pair.ToString());
+
+                ListOhlcvsOneDay = await GetCandlestick(pair, CandleTypes.OneDay, dtToday);
+                if (ListOhlcvsOneDay != null)
                 {
                     // 逆順にする
-                    res.Reverse();
+                    ListOhlcvsOneDay.Reverse();
 
-                    foreach (var r in res)
+                    if (dtToday.Month < 3)
                     {
-                        ListOhlcvsOneDay.Add(r);
-                    }
+                        Debug.WriteLine("去年のOneDay取得開始 " + pair.ToString());
 
-                    await Task.Delay(300);
-                    // 去年
-                    dtTarget = dtTarget.AddYears(-1);
-                    List<Ohlcv> last = await GetCandlestick(pair, CandleTypes.OneDay, dtTarget);
-                    if (last != null)
-                    {
-                        // 逆順にする
-                        last.Reverse();
+                        await Task.Delay(300);
+                        // 去年
+                        DateTime dtTarget = dtToday.AddYears(-1);
 
-                        foreach (var l in last)
+                        List<Ohlcv> res = await GetCandlestick(pair, CandleTypes.OneDay, dtTarget);
+                        if (res != null)
                         {
-                            ListOhlcvsOneDay.Add(l);
+                            // 逆順にする
+                            res.Reverse();
+
+                            foreach (var r in res)
+                            {
+                                ListOhlcvsOneDay.Add(r);
+                            }
+
+                            /*
+                            Debug.WriteLine("一昨年のOneDay取得開始 " + pair.ToString());
+
+                            await Task.Delay(300);
+                            // 一昨年
+                            dtTarget = dtTarget.AddYears(-1);
+                            List<Ohlcv> last = await GetCandlestick(pair, CandleTypes.OneDay, dtTarget);
+                            if (last != null)
+                            {
+                                // 逆順にする
+                                last.Reverse();
+
+                                foreach (var l in last)
+                                {
+                                    ListOhlcvsOneDay.Add(l);
+                                }
+
+
+                                // (５年前は止めた)
+                            }
+                            */
+
                         }
 
-
-                        // (５年前は止めた)
                     }
 
-                }
-            }
 
-            // TODO 取得中フラグ解除。
+                }
+
+                // TODO 取得中フラグ解除。
+            }
 
             #endregion
 
-            */
 
             ChartLoadingInfo = "";
 
@@ -2029,45 +2133,37 @@ namespace BitWallpaper.ViewModels
             {
                 if (ListOhlcvsOneHour != null)
                     OhlcvsOneHourBtc = ListOhlcvsOneHour;
-                /*
                 if (ListOhlcvsOneMin != null)
                     OhlcvsOneMinBtc = ListOhlcvsOneMin;
                 if (ListOhlcvsOneDay != null)
                     OhlcvsOneDayBtc = ListOhlcvsOneDay;
-                */
             }
             else if (pair == Pairs.xrp_jpy)
             {
                 if (ListOhlcvsOneHour != null)
                     OhlcvsOneHourXrp = ListOhlcvsOneHour;
-                /*
                 if (ListOhlcvsOneMin != null)
                     OhlcvsOneMinXrp = ListOhlcvsOneMin;
                 if (ListOhlcvsOneDay != null)
                     OhlcvsOneDayXrp = ListOhlcvsOneDay;
-                */
             }
             else if (pair == Pairs.eth_btc)
             {
                 if (ListOhlcvsOneHour != null)
                     OhlcvsOneHourEth = ListOhlcvsOneHour;
-                /*
                 if (ListOhlcvsOneMin != null)
                     OhlcvsOneMinEth = ListOhlcvsOneMin;
                 if (ListOhlcvsOneDay != null)
                     OhlcvsOneDayEth = ListOhlcvsOneDay;
-                */
             }
             else if (pair == Pairs.mona_jpy)
             {
                 if (ListOhlcvsOneHour != null)
                     OhlcvsOneHourMona = ListOhlcvsOneHour;
-                /*
                 if (ListOhlcvsOneMin != null)
                     OhlcvsOneMinMona = ListOhlcvsOneMin;
                 if (ListOhlcvsOneDay != null)
                     OhlcvsOneDayMona = ListOhlcvsOneDay;
-                */
             }
             else if (pair == Pairs.mona_btc)
             {
@@ -2077,12 +2173,10 @@ namespace BitWallpaper.ViewModels
             {
                 if (ListOhlcvsOneHour != null)
                     OhlcvsOneHourLtc = ListOhlcvsOneHour;
-                /*
                 if (ListOhlcvsOneMin != null)
                     OhlcvsOneMinLtc = ListOhlcvsOneMin;
                 if (ListOhlcvsOneDay != null)
                     OhlcvsOneDayLtc = ListOhlcvsOneDay;
-                */
             }
             else if (pair == Pairs.bcc_btc)
             {
@@ -2092,12 +2186,10 @@ namespace BitWallpaper.ViewModels
             {
                 if (ListOhlcvsOneHour != null)
                     OhlcvsOneHourBch = ListOhlcvsOneHour;
-                /*
                 if (ListOhlcvsOneMin != null)
                     OhlcvsOneMinBch = ListOhlcvsOneMin;
                 if (ListOhlcvsOneDay != null)
                     OhlcvsOneDayBch = ListOhlcvsOneDay;
-                */
             }
 
             return true;
@@ -2105,14 +2197,14 @@ namespace BitWallpaper.ViewModels
         }
 
         // チャートを読み込み表示する。
-        private void LoadChart(Pairs pair)
+        private void LoadChart(Pairs pair, CandleTypes ct)
         {
             // TODO 個別にロードして、初期表示を早くする。
 
             //ChartLoadingInfo = "チャートをロード中....";
             //Debug.WriteLine("LoadChart... " + pair.ToString());
 
-            CandleTypes ct = SelectedCandleType;
+            //CandleTypes ct = SelectedCandleType;
 
             List<Ohlcv> lst = null;
             int span = 0;
@@ -2524,11 +2616,11 @@ namespace BitWallpaper.ViewModels
         // 初回、データロードを確認して、チャートをロードする。
         private async void DisplayChart(Pairs pair)
         {
-            bool bln = await GetCandlesticks(pair);
+            bool bln = await GetCandlesticks(pair, SelectedCandleType);
 
             if (bln == true)
             {
-                LoadChart(pair);
+                LoadChart(pair, SelectedCandleType);
             }
         }
 
@@ -2546,11 +2638,11 @@ namespace BitWallpaper.ViewModels
                 }
                 else
                 {
-                    bool bln = await GetCandlesticks(p);
+                    bool bln = await GetCandlesticks(p, SelectedCandleType);
 
                     if (bln == true)
                     {
-                        LoadChart(p);
+                        LoadChart(p, SelectedCandleType);
                     }
 
                 }
@@ -2572,7 +2664,7 @@ namespace BitWallpaper.ViewModels
                 }
                 else
                 {
-                    LoadChart(pair);
+                    LoadChart(pair, SelectedCandleType);
                 }
             }
             else if (_chartSpan == ChartSpans.ThreeHour)
@@ -2583,7 +2675,7 @@ namespace BitWallpaper.ViewModels
                 }
                 else
                 {
-                    LoadChart(pair);
+                    LoadChart(pair, SelectedCandleType);
                 }
             }
             else if (_chartSpan == ChartSpans.OneDay)
@@ -2594,7 +2686,7 @@ namespace BitWallpaper.ViewModels
                 }
                 else
                 {
-                    LoadChart(pair);
+                    LoadChart(pair, SelectedCandleType);
                 }
             }
             else if (_chartSpan == ChartSpans.ThreeDay)
@@ -2605,7 +2697,7 @@ namespace BitWallpaper.ViewModels
                 }
                 else
                 {
-                    LoadChart(pair);
+                    LoadChart(pair, SelectedCandleType);
                 }
             }
             else if (_chartSpan == ChartSpans.OneWeek)
@@ -2616,7 +2708,7 @@ namespace BitWallpaper.ViewModels
                 }
                 else
                 {
-                    LoadChart(pair);
+                    LoadChart(pair, SelectedCandleType);
                 }
             }
             else if (_chartSpan == ChartSpans.OneMonth)
@@ -2627,7 +2719,7 @@ namespace BitWallpaper.ViewModels
                 }
                 else
                 {
-                    LoadChart(pair);
+                    LoadChart(pair, SelectedCandleType);
                 }
             }
             else if (_chartSpan == ChartSpans.TwoMonth)
@@ -2638,7 +2730,7 @@ namespace BitWallpaper.ViewModels
                 }
                 else
                 {
-                    LoadChart(pair);
+                    LoadChart(pair, SelectedCandleType);
                 }
             }
             else if (_chartSpan == ChartSpans.OneYear)
@@ -2649,7 +2741,7 @@ namespace BitWallpaper.ViewModels
                 }
                 else
                 {
-                    LoadChart(pair);
+                    LoadChart(pair, SelectedCandleType);
                 }
             }
             else if (_chartSpan == ChartSpans.FiveYear)
@@ -2660,16 +2752,17 @@ namespace BitWallpaper.ViewModels
                 }
                 else
                 {
-                    LoadChart(pair);
+                    LoadChart(pair, SelectedCandleType);
                 }
             }
 
         }
 
         // タイマーで、最新のロウソク足データを取得して追加する。
-        private async void UpdateCandlestick(Pairs pair)
+        private async void UpdateCandlestick(Pairs pair, CandleTypes ct)
         {
             //ChartLoadingInfo = "チャートデータの更新中....";
+            await Task.Delay(600);
 
             // 今日の日付セット。UTCで。
             DateTime dtToday = DateTime.Now.ToUniversalTime();
@@ -2726,67 +2819,69 @@ namespace BitWallpaper.ViewModels
                 ListOhlcvsOneDay = OhlcvsOneDayBch;
             }
 
-            /*
-
             #region == １分毎のデータ ==
 
-            if (ListOhlcvsOneMin.Count > 0)
+            if (ct == CandleTypes.OneMin)
             {
-                dtLastUpdate = ListOhlcvsOneMin[0].TimeStamp;
-
-                //Debug.WriteLine(dtLastUpdate.ToString());
-
-                List<Ohlcv> latestOneMin = new List<Ohlcv>();
-
-                latestOneMin = await GetCandlestick(pair, CandleTypes.OneMin, dtToday);
-
-                if (latestOneMin != null)
+                if (ListOhlcvsOneMin.Count > 0)
                 {
-                    //latestOneMin.Reverse();
+                    dtLastUpdate = ListOhlcvsOneMin[0].TimeStamp;
 
-                    if (latestOneMin.Count > 0)
+                    //Debug.WriteLine(dtLastUpdate.ToString());
+
+                    List<Ohlcv> latestOneMin = new List<Ohlcv>();
+
+                    latestOneMin = await GetCandlestick(pair, CandleTypes.OneMin, dtToday);
+
+                    if (latestOneMin != null)
                     {
-                        foreach (var hoge in latestOneMin)
+                        //latestOneMin.Reverse();
+
+                        if (latestOneMin.Count > 0)
                         {
-
-                            // 全てのポイントが同じ場合、スキップする。変なデータ？ 本家もスキップしている。
-                            if ((hoge.Open == hoge.High) && (hoge.Open == hoge.Low) && (hoge.Open == hoge.Close) && (hoge.Volume == 0))
-                            {
-                                continue;
-                            }
-
-                            //Debug.WriteLine(hoge.TimeStamp.ToString()+" : "+ dtLastUpdate.ToString());
-
-                            if (hoge.TimeStamp >= dtLastUpdate)
+                            foreach (var hoge in latestOneMin)
                             {
 
-                                if (hoge.TimeStamp == dtLastUpdate)
+                                // 全てのポイントが同じ場合、スキップする。変なデータ？ 本家もスキップしている。
+                                if ((hoge.Open == hoge.High) && (hoge.Open == hoge.Low) && (hoge.Open == hoge.Close) && (hoge.Volume == 0))
                                 {
-                                    // 更新前の最後のポイントを更新する。最終データは中途半端なので。
-
-                                    //Debug.WriteLine("１分毎のチャートデータ更新: " + hoge.TimeStamp.ToString());
-
-                                    ListOhlcvsOneMin[0].Open = hoge.Open;
-                                    ListOhlcvsOneMin[0].High = hoge.High;
-                                    ListOhlcvsOneMin[0].Low = hoge.Low;
-                                    ListOhlcvsOneMin[0].Close = hoge.Close;
-                                    ListOhlcvsOneMin[0].TimeStamp = hoge.TimeStamp;
-
-                                    UpdateLastCandle(pair, CandleTypes.OneMin, hoge);
-
-                                    //Debug.WriteLine(hoge.TimeStamp.ToString()+" : "+ dtLastUpdate.ToString());
+                                    continue;
                                 }
-                                else
+
+                                //Debug.WriteLine(hoge.TimeStamp.ToString()+" : "+ dtLastUpdate.ToString());
+
+                                if (hoge.TimeStamp >= dtLastUpdate)
                                 {
-                                    // 新規ポイントを追加する。
 
-                                    //Debug.WriteLine("１分毎のチャートデータ追加: " + hoge.TimeStamp.ToString());
+                                    if (hoge.TimeStamp == dtLastUpdate)
+                                    {
+                                        // 更新前の最後のポイントを更新する。最終データは中途半端なので。
 
-                                    ListOhlcvsOneMin.Insert(0, hoge);
+                                        //Debug.WriteLine("１分毎のチャートデータ更新: " + hoge.TimeStamp.ToString());
 
-                                    AddCandle(pair, CandleTypes.OneMin, hoge);
+                                        ListOhlcvsOneMin[0].Open = hoge.Open;
+                                        ListOhlcvsOneMin[0].High = hoge.High;
+                                        ListOhlcvsOneMin[0].Low = hoge.Low;
+                                        ListOhlcvsOneMin[0].Close = hoge.Close;
+                                        ListOhlcvsOneMin[0].TimeStamp = hoge.TimeStamp;
 
-                                    dtLastUpdate = hoge.TimeStamp;
+                                        UpdateLastCandle(pair, CandleTypes.OneMin, hoge);
+
+                                        //Debug.WriteLine(hoge.TimeStamp.ToString()+" : "+ dtLastUpdate.ToString());
+                                    }
+                                    else
+                                    {
+                                        // 新規ポイントを追加する。
+
+                                        //Debug.WriteLine("１分毎のチャートデータ追加: " + hoge.TimeStamp.ToString());
+
+                                        ListOhlcvsOneMin.Insert(0, hoge);
+
+                                        AddCandle(pair, CandleTypes.OneMin, hoge);
+
+                                        dtLastUpdate = hoge.TimeStamp;
+                                    }
+
                                 }
 
                             }
@@ -2796,76 +2891,79 @@ namespace BitWallpaper.ViewModels
                     }
 
                 }
-
             }
 
             #endregion
 
-            */
 
             #region == １時間毎のデータ ==
 
-            if (ListOhlcvsOneHour.Count > 0)
+            if (ct == CandleTypes.OneMin)
             {
-                dtLastUpdate = ListOhlcvsOneHour[0].TimeStamp;
-
-                TimeSpan ts = dtLastUpdate - dtToday;
-
-                if (ts.TotalHours >= 1)
+                if (ListOhlcvsOneHour.Count > 0)
                 {
-                    //Debug.WriteLine(dtLastUpdate.ToString());
+                    dtLastUpdate = ListOhlcvsOneHour[0].TimeStamp;
 
-                    List<Ohlcv> latestOneHour = new List<Ohlcv>();
+                    TimeSpan ts = dtLastUpdate - dtToday;
 
-                    latestOneHour = await GetCandlestick(pair, CandleTypes.OneHour, dtToday);
-
-                    if (latestOneHour != null)
+                    if (ts.TotalHours >= 1)
                     {
-                        //latestOneMin.Reverse();
+                        //Debug.WriteLine(dtLastUpdate.ToString());
 
-                        if (latestOneHour.Count > 0)
+                        List<Ohlcv> latestOneHour = new List<Ohlcv>();
+
+                        latestOneHour = await GetCandlestick(pair, CandleTypes.OneHour, dtToday);
+
+                        if (latestOneHour != null)
                         {
-                            foreach (var hoge in latestOneHour)
+                            //latestOneMin.Reverse();
+
+                            if (latestOneHour.Count > 0)
                             {
-
-                                // 全てのポイントが同じ場合、スキップする。変なデータ？ 本家もスキップしている。
-                                if ((hoge.Open == hoge.High) && (hoge.Open == hoge.Low) && (hoge.Open == hoge.Close) && (hoge.Volume == 0))
-                                {
-                                    continue;
-                                }
-
-                                //Debug.WriteLine(hoge.TimeStamp.ToString()+" : "+ dtLastUpdate.ToString());
-
-                                if (hoge.TimeStamp >= dtLastUpdate)
+                                foreach (var hoge in latestOneHour)
                                 {
 
-                                    if (hoge.TimeStamp == dtLastUpdate)
+                                    // 全てのポイントが同じ場合、スキップする。変なデータ？ 本家もスキップしている。
+                                    if ((hoge.Open == hoge.High) && (hoge.Open == hoge.Low) && (hoge.Open == hoge.Close) && (hoge.Volume == 0))
                                     {
-                                        // 更新前の最後のポイントを更新する。最終データは中途半端なので。
-
-                                        Debug.WriteLine("１時間チャートデータ更新: " + hoge.TimeStamp.ToString());
-
-                                        ListOhlcvsOneHour[0].Open = hoge.Open;
-                                        ListOhlcvsOneHour[0].High = hoge.High;
-                                        ListOhlcvsOneHour[0].Low = hoge.Low;
-                                        ListOhlcvsOneHour[0].Close = hoge.Close;
-                                        ListOhlcvsOneHour[0].TimeStamp = hoge.TimeStamp;
-
-                                        UpdateLastCandle(pair, CandleTypes.OneHour, hoge);
-
-                                        //Debug.WriteLine(hoge.TimeStamp.ToString() + " : " + dtLastUpdate.ToString());
+                                        Debug.WriteLine("■ UpdateCandlestick 全てのポイントが同じのためスキップ " + pair.ToString());
+                                        continue;
                                     }
-                                    else
+
+                                    //Debug.WriteLine(hoge.TimeStamp.ToString()+" : "+ dtLastUpdate.ToString());
+
+                                    if (hoge.TimeStamp >= dtLastUpdate)
                                     {
-                                        // 新規ポイントを追加する。
 
-                                        Debug.WriteLine("１時間チャートデータ追加: " + hoge.TimeStamp.ToString());
+                                        if (hoge.TimeStamp == dtLastUpdate)
+                                        {
+                                            // 更新前の最後のポイントを更新する。最終データは中途半端なので。
 
-                                        ListOhlcvsOneHour.Insert(0, hoge);
+                                            Debug.WriteLine("１時間チャートデータ更新: " + hoge.TimeStamp.ToString() + " " + pair.ToString());
 
-                                        AddCandle(pair, CandleTypes.OneHour, hoge);
+                                            ListOhlcvsOneHour[0].Open = hoge.Open;
+                                            ListOhlcvsOneHour[0].High = hoge.High;
+                                            ListOhlcvsOneHour[0].Low = hoge.Low;
+                                            ListOhlcvsOneHour[0].Close = hoge.Close;
+                                            ListOhlcvsOneHour[0].TimeStamp = hoge.TimeStamp;
 
-                                        dtLastUpdate = hoge.TimeStamp;
+                                            UpdateLastCandle(pair, CandleTypes.OneHour, hoge);
+
+                                            //Debug.WriteLine(hoge.TimeStamp.ToString() + " : " + dtLastUpdate.ToString());
+                                        }
+                                        else
+                                        {
+                                            // 新規ポイントを追加する。
+
+                                            Debug.WriteLine("１時間チャートデータ追加: " + hoge.TimeStamp.ToString());
+
+                                            ListOhlcvsOneHour.Insert(0, hoge);
+
+                                            AddCandle(pair, CandleTypes.OneHour, hoge);
+
+                                            dtLastUpdate = hoge.TimeStamp;
+                                        }
+
                                     }
 
                                 }
@@ -2873,9 +2971,13 @@ namespace BitWallpaper.ViewModels
                             }
 
                         }
+                        else
+                        {
+                            System.Diagnostics.Debug.WriteLine("■■■■■ UpdateCandlestick GetCandlestick One hour returned null " + pair.ToString());
+                        }
+
 
                     }
-
 
                 }
 
@@ -2883,70 +2985,74 @@ namespace BitWallpaper.ViewModels
 
             #endregion
 
-            /*
+
             #region == １日毎のデータ ==
 
-            if (ListOhlcvsOneDay.Count > 0)
+            if (ct == CandleTypes.OneDay)
             {
-                dtLastUpdate = ListOhlcvsOneDay[0].TimeStamp;
-
-                TimeSpan ts = dtLastUpdate - dtToday;
-
-                if (ts.TotalDays >= 1)
+                if (ListOhlcvsOneDay.Count > 0)
                 {
-                    //Debug.WriteLine(dtLastUpdate.ToString());
+                    dtLastUpdate = ListOhlcvsOneDay[0].TimeStamp;
 
-                    List<Ohlcv> latestOneDay = new List<Ohlcv>();
+                    TimeSpan ts = dtLastUpdate - dtToday;
 
-                    latestOneDay = await GetCandlestick(pair, CandleTypes.OneDay, dtToday);
-
-                    if (latestOneDay != null)
+                    if (ts.TotalDays >= 1)
                     {
-                        //latestOneMin.Reverse();
+                        //Debug.WriteLine(dtLastUpdate.ToString());
 
-                        if (latestOneDay.Count > 0)
+                        List<Ohlcv> latestOneDay = new List<Ohlcv>();
+
+                        latestOneDay = await GetCandlestick(pair, CandleTypes.OneDay, dtToday);
+
+                        if (latestOneDay != null)
                         {
-                            foreach (var hoge in latestOneDay)
+                            //latestOneMin.Reverse();
+
+                            if (latestOneDay.Count > 0)
                             {
-
-                                // 全てのポイントが同じ場合、スキップする。変なデータ？ 本家もスキップしている。
-                                if ((hoge.Open == hoge.High) && (hoge.Open == hoge.Low) && (hoge.Open == hoge.Close) && (hoge.Volume == 0))
-                                {
-                                    continue;
-                                }
-
-                                //Debug.WriteLine(hoge.TimeStamp.ToString()+" : "+ dtLastUpdate.ToString());
-
-                                if (hoge.TimeStamp >= dtLastUpdate)
+                                foreach (var hoge in latestOneDay)
                                 {
 
-                                    if (hoge.TimeStamp == dtLastUpdate)
+                                    // 全てのポイントが同じ場合、スキップする。変なデータ？ 本家もスキップしている。
+                                    if ((hoge.Open == hoge.High) && (hoge.Open == hoge.Low) && (hoge.Open == hoge.Close) && (hoge.Volume == 0))
                                     {
-                                        // 更新前の最後のポイントを更新する。最終データは中途半端なので。
-
-                                        Debug.WriteLine("１日チャートデータ更新: " + hoge.TimeStamp.ToString());
-
-                                        ListOhlcvsOneDay[0].Open = hoge.Open;
-                                        ListOhlcvsOneDay[0].High = hoge.High;
-                                        ListOhlcvsOneDay[0].Low = hoge.Low;
-                                        ListOhlcvsOneDay[0].Close = hoge.Close;
-                                        ListOhlcvsOneDay[0].TimeStamp = hoge.TimeStamp;
-
-                                        UpdateLastCandle(pair, CandleTypes.OneDay, hoge);
-
-                                        //Debug.WriteLine(hoge.TimeStamp.ToString() + " : " + dtLastUpdate.ToString());
+                                        continue;
                                     }
-                                    else
+
+                                    //Debug.WriteLine(hoge.TimeStamp.ToString()+" : "+ dtLastUpdate.ToString());
+
+                                    if (hoge.TimeStamp >= dtLastUpdate)
                                     {
-                                        // 新規ポイントを追加する。
 
-                                        Debug.WriteLine("１日チャートデータ追加: " + hoge.TimeStamp.ToString());
+                                        if (hoge.TimeStamp == dtLastUpdate)
+                                        {
+                                            // 更新前の最後のポイントを更新する。最終データは中途半端なので。
 
-                                        ListOhlcvsOneDay.Insert(0, hoge);
+                                            Debug.WriteLine("１日チャートデータ更新: " + hoge.TimeStamp.ToString());
 
-                                        AddCandle(pair, CandleTypes.OneDay, hoge);
+                                            ListOhlcvsOneDay[0].Open = hoge.Open;
+                                            ListOhlcvsOneDay[0].High = hoge.High;
+                                            ListOhlcvsOneDay[0].Low = hoge.Low;
+                                            ListOhlcvsOneDay[0].Close = hoge.Close;
+                                            ListOhlcvsOneDay[0].TimeStamp = hoge.TimeStamp;
 
-                                        dtLastUpdate = hoge.TimeStamp;
+                                            UpdateLastCandle(pair, CandleTypes.OneDay, hoge);
+
+                                            //Debug.WriteLine(hoge.TimeStamp.ToString() + " : " + dtLastUpdate.ToString());
+                                        }
+                                        else
+                                        {
+                                            // 新規ポイントを追加する。
+
+                                            Debug.WriteLine("１日チャートデータ追加: " + hoge.TimeStamp.ToString());
+
+                                            ListOhlcvsOneDay.Insert(0, hoge);
+
+                                            AddCandle(pair, CandleTypes.OneDay, hoge);
+
+                                            dtLastUpdate = hoge.TimeStamp;
+                                        }
+
                                     }
 
                                 }
@@ -2955,15 +3061,14 @@ namespace BitWallpaper.ViewModels
 
                         }
 
+
                     }
 
-
                 }
-
             }
 
             #endregion
-            */
+            
         }
 
         // チャートの最後に最新ポイントを追加して更新表示する。
@@ -3039,8 +3144,8 @@ namespace BitWallpaper.ViewModels
                         chartSeries[0].Values.RemoveAt(0);
 
                         // 出来高
-                        chartSeries[3].Values.Add((double)newData.Volume);
-                        chartSeries[3].Values.RemoveAt(0);
+                        chartSeries[1].Values.Add((double)newData.Volume);
+                        chartSeries[1].Values.RemoveAt(0);
 
                         // ラベル
                         if (ct == CandleTypes.OneMin)

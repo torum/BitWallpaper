@@ -94,6 +94,16 @@
                             -->
                         </Viewbox>
 
+                        <ComboBox Grid.Row="1" Grid.Column="1" x:Name="CandleTypesComboBox" ItemsSource="{Binding CandleTypesDictionary}" SelectedValue="{Binding SelectedCandleType}" SelectedValuePath="Key" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="24 0 0 0" Padding="0 0 0 0" Background="Transparent" Style="{StaticResource ComboBoxFlatStyle}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock x:Name="SelectedCandleTypesComboBoxItem" Text="{Binding Path=Value}"></TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
                         <TextBlock Text="{Binding ChartLoadingInfo}" Foreground="Gray" Margin="24 0 0 0" VerticalAlignment="Center"/>
 
                     </StackPanel>
@@ -138,7 +148,7 @@
                                 </Canvas>
                             </Viewbox>
 
-                            <TextBlock Text="{Binding LtpBtc, Mode=OneWay, StringFormat={}{0:N0}}" Style="{StaticResource LtpTextBlockStyle}" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding LtpBtc, Mode=OneWay, StringFormat={}{0:N0}}" Style="{StaticResource LtpTextBlockStyle}" VerticalAlignment="Center" ToolTip="BTC/JPY"/>
 
                         </StackPanel>
 
@@ -169,7 +179,7 @@
                                 </Canvas>
                             </Viewbox>
 
-                            <TextBlock Text="{Binding LtpXrp, Mode=OneWay, StringFormat={}{0:N3}}" Style="{StaticResource LtpTextBlockStyle}" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding LtpXrp, Mode=OneWay, StringFormat={}{0:N3}}" Style="{StaticResource LtpTextBlockStyle}" VerticalAlignment="Center" ToolTip="XRP/JPY"/>
 
                         </StackPanel>
 
@@ -199,7 +209,7 @@
                                 </Canvas>
                             </Viewbox>
 
-                            <TextBlock Text="{Binding LtpLtcBtc, Mode=OneWay, StringFormat={}{0:N8}}" Style="{StaticResource LtpTextBlockStyle}" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding LtpLtcBtc, Mode=OneWay, StringFormat={}{0:N8}}" Style="{StaticResource LtpTextBlockStyle}" VerticalAlignment="Center" ToolTip="LTC/BTC"/>
 
                         </StackPanel>
                         <lvc:CartesianChart x:Name="LtcChart" Grid.Row="1" Grid.Column="0" Series="{Binding ChartSeriesLtc}" AxisY="{Binding ChartAxisYLtc}" AxisX="{Binding ChartAxisXLtc}" Hoverable="False" BorderThickness="0" Padding="24 0 24 24" Margin="6 0 24 36"/>
@@ -253,7 +263,7 @@
                                 </Canvas>
                             </Viewbox>
 
-                            <TextBlock Text="{Binding LtpEthBtc, Mode=OneWay, StringFormat={}{0:N8}}" Style="{StaticResource LtpTextBlockStyle}" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding LtpEthBtc, Mode=OneWay, StringFormat={}{0:N8}}" Style="{StaticResource LtpTextBlockStyle}" VerticalAlignment="Center" ToolTip="ETH/BTC"/>
 
                         </StackPanel>
 
@@ -279,7 +289,7 @@
                                 </Canvas>
                             </Viewbox>
 
-                            <TextBlock Text="{Binding LtpMonaJpy, Mode=OneWay, StringFormat={}{0:N3}}" Style="{StaticResource LtpTextBlockStyle}" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding LtpMonaJpy, Mode=OneWay, StringFormat={}{0:N3}}" Style="{StaticResource LtpTextBlockStyle}" VerticalAlignment="Center" ToolTip="MONA/JPY"/>
 
                         </StackPanel>
                         
@@ -315,7 +325,7 @@
                                 </Canvas>
                             </Viewbox>
 
-                            <TextBlock Text="{Binding LtpBchJpy, Mode=OneWay, StringFormat={}{0:N0}}" Style="{StaticResource LtpTextBlockStyle}" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding LtpBchJpy, Mode=OneWay, StringFormat={}{0:N0}}" Style="{StaticResource LtpTextBlockStyle}" VerticalAlignment="Center" ToolTip="BCH/JPY"/>
 
                         </StackPanel>
                         
