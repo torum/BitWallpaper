@@ -2117,12 +2117,14 @@ namespace BitWallpaper.ViewModels
                     // 逆順にする
                     ListOhlcvsOneMin.Reverse();
 
-                    await Task.Delay(200);
 
                     // 00:00:00から23:59:59分までしか取れないので、 3時間分取るには、00:00:00から3:00までは 最新のデータとるには日付を１日マイナスする
-                    if (dtToday.Hour <= 3) // < 3
+                    if (dtToday.Hour <= 1) // BitWallpaper は一時間で良いので。// < 3
                     {
                         Debug.WriteLine("昨日の1min取得開始");
+
+                        await Task.Delay(200);
+                        
                         // 昨日
                         DateTime dtTarget = dtToday.AddDays(-1);
 
@@ -2137,6 +2139,10 @@ namespace BitWallpaper.ViewModels
                                 ListOhlcvsOneMin.Add(r);
                             }
                         }
+                    }
+                    else
+                    {
+                        Debug.WriteLine("昨日の1min取得スキップ " + dtToday.Hour.ToString());
                     }
                 }
 
@@ -2165,7 +2171,8 @@ namespace BitWallpaper.ViewModels
                     // 逆順にする
                     ListOhlcvsOneDay.Reverse();
 
-                    if (dtToday.Month < 3)
+                    // 
+                    if (dtToday.Month <= 3)
                     {
                         Debug.WriteLine("去年のOneDay取得開始 " + pair.ToString());
 
@@ -2605,7 +2612,7 @@ namespace BitWallpaper.ViewModels
                             // 全てのポイントが同じ場合、スキップする。変なデータ？ 本家もスキップしている。
                             if ((oh.Open == oh.High) && (oh.Open == oh.Low) && (oh.Open == oh.Close) && (oh.Volume == 0))
                             {
-                                continue;
+                                //continue;
                             }
 
                             // 表示数を限る 直近のspan本
@@ -2962,22 +2969,23 @@ namespace BitWallpaper.ViewModels
                             foreach (var hoge in latestOneMin)
                             {
 
-                                // 全てのポイントが同じ場合、スキップする。変なデータ？ 本家もスキップしている。
-                                if ((hoge.Open == hoge.High) && (hoge.Open == hoge.Low) && (hoge.Open == hoge.Close) && (hoge.Volume == 0))
-                                {
-                                    continue;
-                                }
-
                                 //Debug.WriteLine(hoge.TimeStamp.ToString()+" : "+ dtLastUpdate.ToString());
 
                                 if (hoge.TimeStamp >= dtLastUpdate)
                                 {
 
+                                    // 全てのポイントが同じ場合、スキップする。変なデータ？ 本家もスキップしている。
+                                    if ((hoge.Open == hoge.High) && (hoge.Open == hoge.Low) && (hoge.Open == hoge.Close) && (hoge.Volume == 0))
+                                    {
+                                        Debug.WriteLine("■ UpdateCandlestick 全てのポイントが同じ " + pair.ToString());
+                                        //continue;
+                                    }
+
                                     if (hoge.TimeStamp == dtLastUpdate)
                                     {
                                         // 更新前の最後のポイントを更新する。最終データは中途半端なので。
 
-                                        //Debug.WriteLine("１分毎のチャートデータ更新: " + hoge.TimeStamp.ToString());
+                                        Debug.WriteLine("１分毎のチャートデータ更新: " + hoge.TimeStamp.ToString() + " " + pair.ToString());
 
                                         ListOhlcvsOneMin[0].Open = hoge.Open;
                                         ListOhlcvsOneMin[0].High = hoge.High;
@@ -2993,7 +3001,7 @@ namespace BitWallpaper.ViewModels
                                     {
                                         // 新規ポイントを追加する。
 
-                                        //Debug.WriteLine("１分毎のチャートデータ追加: " + hoge.TimeStamp.ToString());
+                                        Debug.WriteLine("１分毎のチャートデータ追加: " + hoge.TimeStamp.ToString() + " " + pair.ToString());
 
                                         ListOhlcvsOneMin.Insert(0, hoge);
 
@@ -3002,32 +3010,32 @@ namespace BitWallpaper.ViewModels
                                         dtLastUpdate = hoge.TimeStamp;
                                     }
 
+
                                 }
 
                             }
 
+
                         }
 
                     }
-
                 }
             }
 
             #endregion
 
-
             #region == １時間毎のデータ ==
 
-            if (ct == CandleTypes.OneMin)
+            if (ct == CandleTypes.OneHour)
             {
                 if (ListOhlcvsOneHour.Count > 0)
                 {
                     dtLastUpdate = ListOhlcvsOneHour[0].TimeStamp;
 
-                    TimeSpan ts = dtLastUpdate - dtToday;
+                    //TimeSpan ts = dtLastUpdate - dtToday;
 
-                    if (ts.TotalHours >= 1)
-                    {
+                    //if (ts.TotalHours >= 1)
+                    //{
                         //Debug.WriteLine(dtLastUpdate.ToString());
 
                         List<Ohlcv> latestOneHour = new List<Ohlcv>();
@@ -3046,8 +3054,8 @@ namespace BitWallpaper.ViewModels
                                     // 全てのポイントが同じ場合、スキップする。変なデータ？ 本家もスキップしている。
                                     if ((hoge.Open == hoge.High) && (hoge.Open == hoge.Low) && (hoge.Open == hoge.Close) && (hoge.Volume == 0))
                                     {
-                                        Debug.WriteLine("■ UpdateCandlestick 全てのポイントが同じのためスキップ " + pair.ToString());
-                                        continue;
+                                        Debug.WriteLine("■ UpdateCandlestick 全てのポイントが同じ " + pair.ToString());
+                                        //continue;
                                     }
 
                                     //Debug.WriteLine(hoge.TimeStamp.ToString()+" : "+ dtLastUpdate.ToString());
@@ -3097,14 +3105,13 @@ namespace BitWallpaper.ViewModels
                         }
 
 
-                    }
+                    //}
 
                 }
 
             }
 
             #endregion
-
 
             #region == １日毎のデータ ==
 
@@ -3114,10 +3121,10 @@ namespace BitWallpaper.ViewModels
                 {
                     dtLastUpdate = ListOhlcvsOneDay[0].TimeStamp;
 
-                    TimeSpan ts = dtLastUpdate - dtToday;
+                    //TimeSpan ts = dtLastUpdate - dtToday;
 
-                    if (ts.TotalDays >= 1)
-                    {
+                    //if (ts.TotalDays >= 1)
+                    //{
                         //Debug.WriteLine(dtLastUpdate.ToString());
 
                         List<Ohlcv> latestOneDay = new List<Ohlcv>();
@@ -3136,7 +3143,7 @@ namespace BitWallpaper.ViewModels
                                     // 全てのポイントが同じ場合、スキップする。変なデータ？ 本家もスキップしている。
                                     if ((hoge.Open == hoge.High) && (hoge.Open == hoge.Low) && (hoge.Open == hoge.Close) && (hoge.Volume == 0))
                                     {
-                                        continue;
+                                        //continue;
                                     }
 
                                     //Debug.WriteLine(hoge.TimeStamp.ToString()+" : "+ dtLastUpdate.ToString());
@@ -3182,7 +3189,7 @@ namespace BitWallpaper.ViewModels
                         }
 
 
-                    }
+                    //}
 
                 }
             }
@@ -3290,12 +3297,12 @@ namespace BitWallpaper.ViewModels
                         // チャート最低値、最高値のセット
                         if (chartAxisY[0].MaxValue < (double)newData.High)
                         {
-                            chartAxisY[0].MaxValue = (double)newData.High + 1000;
+                            chartAxisY[0].MaxValue = (double)newData.High;
                         }
 
                         if (chartAxisY[0].MinValue > (double)newData.Low)
                         {
-                            chartAxisY[0].MinValue = (double)newData.Low - 1000;
+                            chartAxisY[0].MinValue = (double)newData.Low;
                         }
 
 
