@@ -17,6 +17,9 @@ using System.Windows.Input;
 using System.IO;
 using System.ComponentModel;
 using BitWallpaper.Common;
+using Notifications.Wpf.Controls;
+using Notifications.Wpf;
+
 
 namespace BitWallpaper.ViewModels
 {
@@ -25,7 +28,12 @@ namespace BitWallpaper.ViewModels
     {
 
         // Application version
-        private string _appVer = "0.0.0.1";
+        private string _appVer = "0.0.0.2";
+
+        /// <summary>
+        /// 0.0.0.2
+        /// ロウソク足とチャート表示期間のアイコンを付けて、チャート表示期間を選択で切り替えられるようにしました。
+        /// </summary>
 
         // Application name
         private string _appName = "BitWallpaper";
@@ -42,7 +50,7 @@ namespace BitWallpaper.ViewModels
             }
         }
 
-
+        // 設定画面表示フラグ
         private bool _showSettings = false;
         public bool ShowSettings
         {
@@ -57,9 +65,29 @@ namespace BitWallpaper.ViewModels
                 _showSettings = value;
                 this.NotifyPropertyChanged("ShowSettings");
 
+                if (_showSettings)
+                    ShowMainContents = false;
+                else
+                    ShowMainContents = true;
             }
         }
 
+        // 設定画面表示中にメインの内容を隠すフラグ
+        private bool _showMainContents = true;
+        public bool ShowMainContents
+        {
+            get
+            {
+                return _showMainContents;
+            }
+            set
+            {
+                if (_showMainContents == value) return;
+
+                _showMainContents = value;
+                this.NotifyPropertyChanged("ShowMainContents");
+            }
+        }
 
         #region == 通貨ペア切り替え用のプロパティ ==
 
@@ -67,18 +95,6 @@ namespace BitWallpaper.ViewModels
         public enum Pairs
         {
             btc_jpy, xrp_jpy, ltc_btc, eth_btc, mona_jpy, mona_btc, bcc_jpy, bcc_btc
-        }
-
-        // チャート表示期間
-        public enum ChartSpans
-        {
-            OneHour, ThreeHour, OneDay, ThreeDay, OneWeek, OneMonth, TwoMonth, OneYear, FiveYear
-        }
-
-        // 注文　指値・成行
-        public enum OrderTypes
-        {
-            limit, market
         }
 
         // 現在の通貨ペア
@@ -374,6 +390,7 @@ namespace BitWallpaper.ViewModels
             }
         }
 
+        // 読み込み中状態を知らせる文字列
         private string _chartLoadingInfo;
         public string ChartLoadingInfo
         {
@@ -392,6 +409,21 @@ namespace BitWallpaper.ViewModels
 
             }
         }
+
+        // チャート表示期間
+        public enum ChartSpans
+        {
+            OneHour, ThreeHour, OneDay, ThreeDay, OneWeek, OneMonth, TwoMonth, OneYear, FiveYear
+        }
+
+        // チャート表示期間　コンボボックス表示用
+        public Dictionary<ChartSpans, string> ChartSpansDictionary { get; } = new Dictionary<ChartSpans, string>()
+        {
+            {ChartSpans.OneHour, "1h"},
+            {ChartSpans.ThreeDay, "3d" },
+            {ChartSpans.TwoMonth, "2M" },
+
+        };
 
         // 選択されたチャート表示期間 
         private ChartSpans _chartSpan = ChartSpans.ThreeDay; 
@@ -414,6 +446,9 @@ namespace BitWallpaper.ViewModels
 
                 // チャート表示アップデート
                 //ChangeChartSpan();
+
+                ChangeChartSpans();
+                //DisplayCharts();
 
             }
         }
@@ -1236,8 +1271,27 @@ namespace BitWallpaper.ViewModels
             dispatcherChartTimer.Tick += new EventHandler(ChartTimer);
             dispatcherChartTimer.Interval = new TimeSpan(0, 1, 0);
             //dispatcherChartTimer.Start();
-            
+
+
+            //var notificationManager = new NotificationManager();
+
+            //NotificationContent test = new NotificationContent();
+            //test.Title = "Sample notification";
+            //test.Message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+            //test.Type = NotificationType.Information;
+
+            //notificationManager.Show(test, onClose: () => onNotificationsOverlayWindowClose(test));
+            //notificationManager.Show(test);
+
+            //someWindow.Owner = Application.Current.MainWindow;
         }
+        /*
+        private void onNotificationsOverlayWindowClose(NotificationContent test)
+        {
+            System.Diagnostics.Debug.WriteLine("□□□□□□□□□ asdf");
+
+        }
+        */
 
         #region == イベント・タイマー系 ==
 
@@ -1669,7 +1723,7 @@ namespace BitWallpaper.ViewModels
             #endregion
 
             //SelectedCandleType = で表示できるので、これは不要だが、デフォと同じ場合のみ、手動で表示させる。
-            if (SelectedCandleType == CandleTypes.OneHour)
+            if (SelectedCandleType == CandleTypes.OneHour) // デフォと揃えること。
             {
                 Task.Run(async () =>
                 {
@@ -1963,7 +2017,9 @@ namespace BitWallpaper.ViewModels
                                 {
                                     ListOhlcvsOneHour.Add(l);
                                 }
-                                /*
+
+
+                                Debug.WriteLine("４日前の1hour取得開始 " + pair.ToString());
                                 await Task.Delay(300);
                                 // 4日前
                                 dtTarget = dtTarget.AddDays(-1);
@@ -1977,7 +2033,7 @@ namespace BitWallpaper.ViewModels
                                     {
                                         ListOhlcvsOneHour.Add(l);
                                     }
-
+                                    /*
                                     await Task.Delay(300);
                                     // 5日前
                                     dtTarget = dtTarget.AddDays(-1);
@@ -2025,9 +2081,9 @@ namespace BitWallpaper.ViewModels
                                         }
 
                                     }
+                                    */
 
                                 }
-                                */
                             }
 
                         }
@@ -2285,7 +2341,7 @@ namespace BitWallpaper.ViewModels
                 // 一時間の期間か１日の期間
                 if (_chartSpan == ChartSpans.OneHour)
                 {
-                    span = 60;
+                    span = 60+1;
                 }
                 else if (_chartSpan == ChartSpans.ThreeHour)
                 {
@@ -2350,7 +2406,7 @@ namespace BitWallpaper.ViewModels
                 }
                 else if (_chartSpan == ChartSpans.ThreeDay)
                 {
-                    span = 24 * 3;
+                    span = 24 * 3+1;
                 }
                 else if (_chartSpan == ChartSpans.OneWeek)
                 {
@@ -2687,7 +2743,7 @@ namespace BitWallpaper.ViewModels
 
         }
 
-        // チャート表示期間を変えた時にチャートを読み込み直す。
+        // チャート表示期間を変えた時に
         private void ChangeChartSpan(Pairs pair)
         {
             // enum の期間選択からチャートを更新させる。コンボボックスとダブルアップデートにならないようにするため。
@@ -2700,7 +2756,8 @@ namespace BitWallpaper.ViewModels
                 }
                 else
                 {
-                    LoadChart(pair, SelectedCandleType);
+                    //LoadChart(pair, SelectedCandleType);
+                    //DisplayChart(pair);
                 }
             }
             else if (_chartSpan == ChartSpans.ThreeHour)
@@ -2711,7 +2768,8 @@ namespace BitWallpaper.ViewModels
                 }
                 else
                 {
-                    LoadChart(pair, SelectedCandleType);
+                    //LoadChart(pair, SelectedCandleType);
+                    //DisplayChart(pair);
                 }
             }
             else if (_chartSpan == ChartSpans.OneDay)
@@ -2722,7 +2780,8 @@ namespace BitWallpaper.ViewModels
                 }
                 else
                 {
-                    LoadChart(pair, SelectedCandleType);
+                    //LoadChart(pair, SelectedCandleType);
+                    //DisplayChart(pair);
                 }
             }
             else if (_chartSpan == ChartSpans.ThreeDay)
@@ -2733,7 +2792,8 @@ namespace BitWallpaper.ViewModels
                 }
                 else
                 {
-                    LoadChart(pair, SelectedCandleType);
+                    //LoadChart(pair, SelectedCandleType);
+                    //DisplayChart(pair);
                 }
             }
             else if (_chartSpan == ChartSpans.OneWeek)
@@ -2744,7 +2804,8 @@ namespace BitWallpaper.ViewModels
                 }
                 else
                 {
-                    LoadChart(pair, SelectedCandleType);
+                    //LoadChart(pair, SelectedCandleType);
+                    //DisplayChart(pair);
                 }
             }
             else if (_chartSpan == ChartSpans.OneMonth)
@@ -2755,7 +2816,8 @@ namespace BitWallpaper.ViewModels
                 }
                 else
                 {
-                    LoadChart(pair, SelectedCandleType);
+                    //LoadChart(pair, SelectedCandleType);
+                    //DisplayChart(pair);
                 }
             }
             else if (_chartSpan == ChartSpans.TwoMonth)
@@ -2766,18 +2828,20 @@ namespace BitWallpaper.ViewModels
                 }
                 else
                 {
-                    LoadChart(pair, SelectedCandleType);
+                    //LoadChart(pair, SelectedCandleType);
+                    //DisplayChart(pair);
                 }
             }
             else if (_chartSpan == ChartSpans.OneYear)
             {
                 if (SelectedCandleType != CandleTypes.OneDay)
                 {
-                    SelectedCandleType = CandleTypes.OneDay;
+                    //SelectedCandleType = CandleTypes.OneDay;
                 }
                 else
                 {
-                    LoadChart(pair, SelectedCandleType);
+                    //LoadChart(pair, SelectedCandleType);
+                    //DisplayChart(pair);
                 }
             }
             else if (_chartSpan == ChartSpans.FiveYear)
@@ -2788,7 +2852,27 @@ namespace BitWallpaper.ViewModels
                 }
                 else
                 {
-                    LoadChart(pair, SelectedCandleType);
+                    //LoadChart(pair, SelectedCandleType);
+                    //DisplayChart(pair);
+                }
+            }
+
+        }
+
+        private void ChangeChartSpans()
+        {
+            foreach (Pairs p in Enum.GetValues(typeof(Pairs)))
+            {
+                //Debug.WriteLine(p.ToString());
+
+                if ((p == Pairs.mona_btc) || p == Pairs.bcc_btc)
+                {
+                    //Debug.WriteLine(p.ToString() + " skipping.");
+                    continue;
+                }
+                else
+                {
+                    ChangeChartSpan(p);
                 }
             }
 
@@ -3314,7 +3398,14 @@ namespace BitWallpaper.ViewModels
         }
         public void ShowSettingsCommand_Execute()
         {
-            ShowSettings = true;
+            if (ShowSettings)
+            {
+                ShowSettings = false;
+            }
+            else
+            {
+                ShowSettings = true;
+            }
         }
 
         // 設定画面キャンセルボタン

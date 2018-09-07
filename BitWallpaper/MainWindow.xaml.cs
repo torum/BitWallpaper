@@ -15,8 +15,15 @@ using System.Windows.Shapes;
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
 using BitWallpaper.Helpers;
+using BitWallpaper.Common;
 using BitWallpaper.ViewModels;
 using System.Diagnostics;
+using System.Windows.Forms;
+using System.Drawing;
+using System.Xml;
+using Windows.UI.Notifications;
+using Windows.Data.Xml;
+using Notifications.Wpf;
 
 namespace BitWallpaper
 {
@@ -25,19 +32,28 @@ namespace BitWallpaper
     /// </summary>
     public partial class MainWindow
     {
+        private System.Windows.Threading.DispatcherTimer _dispatcherMouseTimer = new System.Windows.Threading.DispatcherTimer();
 
-        System.Windows.Threading.DispatcherTimer dispatcherMouseTimer = new System.Windows.Threading.DispatcherTimer();
+        private System.Windows.Forms.NotifyIcon _notifyIcon;
+
+        private string _appTitle;
+
+        //private bool _isExit;
 
         public MainWindow()
         {
             InitializeComponent();
 
+            Loaded += (this.DataContext as MainViewModel).OnWindowLoaded;
+
             Closing += (this.DataContext as MainViewModel).OnWindowClosing;
 
-            Loaded += (this.DataContext as MainViewModel).OnWindowLoaded;
+            Closed += OnWindowClosed;
 
             RestoreButton.Visibility = Visibility.Collapsed;
             MaxButton.Visibility = Visibility.Visible;
+
+            _appTitle = (this.DataContext as MainViewModel).AppTitle;
 
             /*
             this.Top = 0;
@@ -61,18 +77,89 @@ namespace BitWallpaper
 
 
             // マウス非表示のタイマー起動
-            dispatcherMouseTimer.Tick += new EventHandler(MouseTimer);
-            dispatcherMouseTimer.Interval = new TimeSpan(0, 0, 6);
+            _dispatcherMouseTimer.Tick += new EventHandler(MouseTimer);
+            _dispatcherMouseTimer.Interval = new TimeSpan(0, 0, 6);
             //dispatcherMouseTimer.Start();
 
+            // システムトレイアイコン
+            // https://www.thomasclaudiushuber.com/2015/08/22/creating-a-background-application-with-wpf/
+            _notifyIcon = new System.Windows.Forms.NotifyIcon();
+            _notifyIcon.DoubleClick += (s, args) => BringToForeground();
+            _notifyIcon.Icon = BitWallpaper.Properties.Resources.AppIcon;//System.Drawing.SystemIcons.Information; //
+            _notifyIcon.Text = _appTitle;
+            _notifyIcon.Visible = true;
+            _notifyIcon.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
+            _notifyIcon.ContextMenuStrip.Items.Add(_appTitle + " 表示").Click += (s, e) => BringToForeground();
+            _notifyIcon.ContextMenuStrip.Items.Add("終了").Click += (s, e) => ExitApplication();
+
+
+
+
+            /*
+            //var message = "Sample message";
+            //var xml = $"<?xml version=\"1.0\"?><toast><visual><binding template=\"ToastText01\"><text id=\"1\">{message}</text></binding></visual></toast>";
+
+            var xml = @"<toast>
+    <visual>
+        <binding template=""ToastImageAndText04"">
+            <image id=""1"" src=""file:///C:\meziantou.jpeg"" alt=""meziantou""/>
+            <text id=""1"">Meziantou</text>
+            <text id=""2"">Gérald Barré</text>
+            <text id=""3"">asdf</text>
+        </binding>
+    </visual>
+</toast>";
+
+            var toastXml = new Windows.Data.Xml.Dom.XmlDocument();
+            toastXml.LoadXml(xml);
+            var toast = new ToastNotification(toastXml);
+            ToastNotificationManager.CreateToastNotifier("Sample toast").Show(toast);
+            */
+
+            //var notificationManager = new NotificationManagerEx();
+            //NotificationContentEx test = new NotificationContentEx();
+            /*
+            notificationManager.Show(new NotificationContent
+            {
+                Title = "Sample notification",
+                Message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+                Type = NotificationType.Information
+            });
+            */
+            //notificationManager.Show(test, onClose: () => onNotificationsOverlayWindowClose(test));
+           
+        }
+
+        private void ExitApplication()
+        {
+            this.Close();
+        }
+
+        private void OnWindowClosed(object sender, EventArgs e)
+        {
+            _notifyIcon.Dispose();
+            _notifyIcon = null;
+            /*
+            // clean up NotificationsOverlayWindows
+            // https://github.com/Federerer/Notifications.Wpf/issues/10
+            App app = App.Current as App;
+            foreach (var w in app.Windows)
+            {
+                if (w is NotificationsOverlayWindow)
+                {
+                    // Close it.
+                    (w as NotificationsOverlayWindow).Close();
+                }
+            }
+            */
         }
 
         private void MouseTimer(object source, EventArgs e)
         {
             if (this.WindowState == WindowState.Maximized)
             {
-                Mouse.OverrideCursor = Cursors.None;
-                this.Cursor = Cursors.None;
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.None;
+                this.Cursor = System.Windows.Input.Cursors.None;
             }
         }
 
@@ -88,6 +175,8 @@ namespace BitWallpaper
             //this.Topmost = true;
             //this.Topmost = false;
             this.Focus();
+
+
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -406,14 +495,14 @@ namespace BitWallpaper
                 RestoreButton.Visibility = Visibility.Collapsed;
                 MaxButton.Visibility = Visibility.Visible;
 
-                dispatcherMouseTimer.Stop();
+                _dispatcherMouseTimer.Stop();
             }
             else if (this.WindowState == WindowState.Maximized)
             {
                 RestoreButton.Visibility = Visibility.Visible;
                 MaxButton.Visibility = Visibility.Collapsed;
 
-                dispatcherMouseTimer.Start();
+                _dispatcherMouseTimer.Start();
 
             }
 
@@ -439,7 +528,7 @@ namespace BitWallpaper
             this.WindowState = WindowState.Minimized;
         }
 
-        private void Window_MouseMove(object sender, MouseEventArgs e)
+        private void Window_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
             this.Cursor = null;
             Mouse.OverrideCursor = null;

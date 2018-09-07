@@ -40,6 +40,12 @@
           
     -->
 
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding Path=ShowSettingsCommand}" Key="S" Modifiers="Control"/>
+        <KeyBinding Command="{Binding Path=SettingsCancelCommand}" Key="ESC"/>
+    </Window.InputBindings>
+
+
     <Grid x:Name="BackgroundGrid" Background="Transparent">
         <Rectangle x:Name="AcrylicBackground" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="#111111" Opacity="0.3" helpers:EnableDragHelper.EnableDrag="True"></Rectangle>
 
@@ -58,7 +64,8 @@
 
             <Border Grid.Row="0" Grid.Column="0">
             </Border>
-            
+
+            <!-- アプリタイトルバー -->
             <Border Grid.Row="0" Grid.Column="1">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -69,6 +76,7 @@
                         <ColumnDefinition Width="50*"/>
                     </Grid.ColumnDefinitions>
 
+                    <!-- アプリアイコン -->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
 
                         <Viewbox Margin="9 6 3 3" Panel.ZIndex="1" HorizontalAlignment="Left" VerticalAlignment="Center" Stretch="Uniform" Width="12" Height="12" ToolTip="{Binding AppTitle, Mode=OneWay}" ToolTipService.ToolTip="{Binding AppTitle, Mode=OneWay}">
@@ -94,25 +102,49 @@
                             -->
                         </Viewbox>
 
-
-
+                        <!-- ステータス -->
                         <TextBlock Text="{Binding ChartLoadingInfo}" Foreground="Gray" Margin="24 0 0 0" VerticalAlignment="Center"/>
 
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right" Margin="3 0 3 3">
-                        
-                        <ComboBox Grid.Row="1" Grid.Column="1" x:Name="CandleTypesComboBox" ItemsSource="{Binding CandleTypesDictionary}" SelectedValue="{Binding SelectedCandleType}" SelectedValuePath="Key" VerticalAlignment="Center" Margin="12 0 12 0" Padding="0 0 0 0" Background="Transparent" Style="{StaticResource ComboBoxFlatStyle}">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock x:Name="SelectedCandleTypesComboBoxItem" Text="{Binding Path=Value}"></TextBlock>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                        
-                        <Button x:Name="SettingsButton" Style="{StaticResource PathButton}" Width="16" Height="16" Margin="3 0 3 0" Opacity="0.5" Command="{Binding ShowSettingsCommand}"
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0" Visibility="{Binding ShowMainContents, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
+                            
+                            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="CandleTypesComboBox" ItemsSource="{Binding CandleTypesDictionary}" SelectedValue="{Binding SelectedCandleType}" SelectedValuePath="Key" VerticalAlignment="Center" Margin="3 0 3 0" Padding="0 0 0 0" Background="Transparent" Style="{StaticResource ComboBoxFlatStyle}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Viewbox Margin="3 0 3 0" HorizontalAlignment="Left" VerticalAlignment="Center" Stretch="Uniform" Width="12" Height="12" ToolTip="ロウソク足単位">
+                                                <Canvas Opacity="0.5" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <Path x:Name="CandleIcon" Stretch="Uniform" Width="12" Height="12" StrokeThickness="1" Fill="Transparent" Stroke="{Binding RelativeSource={RelativeSource AncestorType=ComboBox}, Path=Foreground}" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Data="m 23.847456 4.830509 v 7.999998 m 0.243249 22.599407 v 7.999999 M 20 13 h 8 v 22 h -8 z"/>
+                                                </Canvas>
+                                            </Viewbox>
+                                            <TextBlock x:Name="SelectedCandleTypesComboBoxItem" Text="{Binding Path=Value}"></TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+
+                            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="ChartSpansComboBox" ItemsSource="{Binding ChartSpansDictionary}" SelectedValue="{Binding SelectedChartSpan}" SelectedValuePath="Key" VerticalAlignment="Center" Margin="3 0 12 0" Padding="0 0 0 0" Background="Transparent" Style="{StaticResource ComboBoxFlatStyle}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Viewbox Margin="3 0 4 0" HorizontalAlignment="Left" VerticalAlignment="Center" Stretch="Uniform" Width="10" Height="10" ToolTip="チャート表示期間">
+                                                <Canvas Opacity="0.5" Width="10" Height="10" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <Path x:Name="ChartSpanIcon" Stretch="Uniform" Width="10" Height="10" StrokeThickness="1" Fill="Transparent" Stroke="{Binding RelativeSource={RelativeSource AncestorType=ComboBox}, Path=Foreground}" StrokeMiterLimit="4" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Data="m 11.037903 40.507879 v 3.397486 H 36.997419 V 40.633712 M 5.1774598 4.2792283 5.4650965 44.116905 H 42.13877"/>
+                                                </Canvas>
+                                            </Viewbox>
+                                            <TextBlock x:Name="SelectedChartSpanComboBoxItem" Text="{Binding Path=Value}"></TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                            
+                        </StackPanel>
+
+
+                        <Button x:Name="SettingsButton" Style="{StaticResource PathButton}" Width="15" Height="15" Margin="3 0 3 0" Opacity="0.5" Command="{Binding ShowSettingsCommand}" ToolTip="設定(Ctrl+S)"
                                 Content="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,
 8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,
 11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,
@@ -124,16 +156,16 @@
 21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,
 18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z">
                         </Button>
-                        <Button x:Name="MinButton" Style="{StaticResource PathButton}" Width="12" Height="12" Margin="3" Opacity="0.5" Click="MinButton_Click">
+                        <Button x:Name="MinButton" Style="{StaticResource PathButton}" Width="12" Height="12" Margin="3" Opacity="0.5" Click="MinButton_Click" ToolTip="最小化(Alt+Space, S)">
                             M20,14H4V10H20
                         </Button>
-                        <Button x:Name="RestoreButton" Style="{StaticResource PathButton}" Width="12" Height="12" Margin="3" Opacity="0.5" Click="RestoreButton_Click">
+                        <Button x:Name="RestoreButton" Style="{StaticResource PathButton}" Width="12" Height="12" Margin="3" Opacity="0.5" Click="RestoreButton_Click" ToolTip="元のサイズに戻す(Alt+Space, R)">
                             M4,8H8V4H20V16H16V20H4V8M16,8V14H18V6H10V8H16M6,12V18H14V12H6Z
                         </Button>
-                        <Button x:Name="MaxButton" Style="{StaticResource PathButton}" Width="12" Height="12" Margin="3" Opacity="0.5" Click="MaxButton_Click">
+                        <Button x:Name="MaxButton" Style="{StaticResource PathButton}" Width="12" Height="12" Margin="3" Opacity="0.5" Click="MaxButton_Click" ToolTip="最大化(Alt+Space, X)">
                             M4,4H20V20H4V4M6,8V18H18V8H6Z
                         </Button>
-                        <Button x:Name="CloseButton" Style="{StaticResource PathButton}" Width="12" Height="12" Margin="3" Opacity="0.5" Click="CloseButton_Click">
+                        <Button x:Name="CloseButton" Style="{StaticResource PathButton}" Width="12" Height="12" Margin="3" Opacity="0.5" Click="CloseButton_Click" ToolTip="閉じる(Alt+Space, C)/(Alt+F4)">
                             M13.46,12L19,17.54V19H17.54L12,13.46L6.46,19H5V17.54L10.54,12L5,6.46V5H6.46L12,10.54L17.54,5H19V6.46L13.46,12Z
                         </Button>
                         
@@ -142,7 +174,8 @@
                 </Grid>
             </Border>
 
-            <WrapPanel x:Name="coins_wrap" Grid.Row="1" Grid.Column="1" Visibility="Visible">
+            <!-- チャート -->
+            <WrapPanel x:Name="coins_wrap" Grid.Row="1" Grid.Column="1" Visibility="Visible" HorizontalAlignment="Stretch" Width="{Binding ElementName=BackgroundGrid,Path=ActualWidth}">
 
                 <Border x:Name="btc_box" Width="420" Height="360" Background="Transparent" BorderBrush="Gainsboro" BorderThickness="0" Visibility="Visible">
                     <Grid>
@@ -154,17 +187,31 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">
+                        <Grid Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="60"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
 
-                            <Viewbox Margin="30 0 0 0" HorizontalAlignment="Left" VerticalAlignment="Center" Stretch="Uniform" Width="18" Height="18" ToolTip="ビットコイン">
-                                <Canvas Name="BTC_1" Opacity="1" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <Path Name="BTC1" Fill="DimGray" Stretch="Uniform" Width="12" Height="12" Data="M182.981 112.854c-7.3-5.498-17.699-7.697-17.699-7.697s8.8-5.102 12.396-10.199  c3.6-5.099 5.399-12.999 5.7-17.098c0.299-4.101 1-21.296-12.399-31.193c-10.364-7.658-22.241-10.698-38.19-11.687V0.278h-21.396  V34.57c-4.774 0-10.353 0-16.297 0V0.278H73.702V34.57c-21.841 0-42.092 0-42.092 0v22.219c0 0 8.998 0 12.372 0  c3.373 0 9.372 0.375 11.921 3.228c2.55 2.848 3 4.349 3 9.895c0 5.548 0.001 86.435 0.001 88.535c0 2.099-0.4 4.697-2.201 6.398  c-1.798 1.701-3.597 2.098-7.898 2.098c-4.3 0-12.796 0-12.796 0l-4.399 25.698c0 0 20.918 0 42.092 0v34.195h21.395v-34.195  c6.574 0 12.298 0 16.297 0v34.195h21.396v-34.759c5.531-0.323 10.688-0.742 13.696-1.136c6.1-0.798 19.896-2.398 32.796-11.397  c12.896-9 15.793-23.098 16.094-37.294C195.68 128.053 190.274 118.353 182.981 112.854z M95.096 58.766  c0 0 6.798-0.599 13.497-0.501c6.701 0.099 12.597 0.3 21.398 3c8.797 2.701 13.992 9.3 14.196 17.099  c0.199 7.799-3.204 12.996-9.2 16.296c-5.998 3.299-14.292 5.099-22.094 5.396c-7.797 0.301-17.797 0-17.797 0V58.766z   M142.986 161.045c-4.899 2.701-14.698 5.1-24.194 5.798c-9.499 0.701-23.696 0.401-23.696 0.401v-45.893c0 0 13.598-0.698 24.197 0  c10.597 0.703 19.495 3.4 23.492 5.403c3.999 1.998 11 6.396 11 16.896C153.785 154.146 147.882 158.346 142.986 161.045z"/>
-                                </Canvas>
-                            </Viewbox>
+                            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                <Viewbox Margin="30 0 0 0" HorizontalAlignment="Left" VerticalAlignment="Center" Stretch="Uniform" Width="18" Height="18" ToolTip="ビットコイン">
+                                    <Canvas Name="BTC_1" Opacity="1" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Path Name="BTC1" Fill="DimGray" Stretch="Uniform" Width="12" Height="12" Data="M182.981 112.854c-7.3-5.498-17.699-7.697-17.699-7.697s8.8-5.102 12.396-10.199  c3.6-5.099 5.399-12.999 5.7-17.098c0.299-4.101 1-21.296-12.399-31.193c-10.364-7.658-22.241-10.698-38.19-11.687V0.278h-21.396  V34.57c-4.774 0-10.353 0-16.297 0V0.278H73.702V34.57c-21.841 0-42.092 0-42.092 0v22.219c0 0 8.998 0 12.372 0  c3.373 0 9.372 0.375 11.921 3.228c2.55 2.848 3 4.349 3 9.895c0 5.548 0.001 86.435 0.001 88.535c0 2.099-0.4 4.697-2.201 6.398  c-1.798 1.701-3.597 2.098-7.898 2.098c-4.3 0-12.796 0-12.796 0l-4.399 25.698c0 0 20.918 0 42.092 0v34.195h21.395v-34.195  c6.574 0 12.298 0 16.297 0v34.195h21.396v-34.759c5.531-0.323 10.688-0.742 13.696-1.136c6.1-0.798 19.896-2.398 32.796-11.397  c12.896-9 15.793-23.098 16.094-37.294C195.68 128.053 190.274 118.353 182.981 112.854z M95.096 58.766  c0 0 6.798-0.599 13.497-0.501c6.701 0.099 12.597 0.3 21.398 3c8.797 2.701 13.992 9.3 14.196 17.099  c0.199 7.799-3.204 12.996-9.2 16.296c-5.998 3.299-14.292 5.099-22.094 5.396c-7.797 0.301-17.797 0-17.797 0V58.766z   M142.986 161.045c-4.899 2.701-14.698 5.1-24.194 5.798c-9.499 0.701-23.696 0.401-23.696 0.401v-45.893c0 0 13.598-0.698 24.197 0  c10.597 0.703 19.495 3.4 23.492 5.403c3.999 1.998 11 6.396 11 16.896C153.785 154.146 147.882 158.346 142.986 161.045z"/>
+                                    </Canvas>
+                                </Viewbox>
+                                <TextBlock Text="{Binding LtpBtc, Mode=OneWay, StringFormat={}{0:N0}}" Style="{StaticResource LtpTextBlockStyle}" VerticalAlignment="Center" ToolTip="BTC/JPY"/>
+                            </StackPanel>
 
-                            <TextBlock Text="{Binding LtpBtc, Mode=OneWay, StringFormat={}{0:N0}}" Style="{StaticResource LtpTextBlockStyle}" VerticalAlignment="Center" ToolTip="BTC/JPY"/>
-
-                        </StackPanel>
+                            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Visibility="Hidden">
+                                <Button Style="{StaticResource PathButton}" Width="12" Height="12" Margin="3 3 6 3" Opacity="0.5" ToolTip="">
+                                    M7,22H9V24H7V22M11,22H13V24H11V22M15,22H17V24H15V22Z
+                                </Button>
+                            </StackPanel>
+                            
+                        </Grid>
 
                         <lvc:CartesianChart x:Name="BtcChart" Grid.Row="1" Grid.Column="0" Series="{Binding ChartSeriesBtc}" AxisY="{Binding ChartAxisYBtc}" AxisX="{Binding ChartAxisXBtc}" Hoverable="False" BorderThickness="0" Padding="24 0 24 24" Margin="6 0 24 36"/>
                     
@@ -380,95 +427,8 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <TabControl Grid.Row="0" TabStripPlacement="Left" BorderThickness="0" Margin="0" Background="#121212">
-
+                <TabControl Grid.Row="0" TabStripPlacement="Left" BorderThickness="0" Margin="0" Background="#121212" Style="{StaticResource SettingsTabControlStyle}">
                     <TabControl.Resources>
-
-                        <Style x:Key="SettingsTabFocusVisualStyle">
-                            <Setter Property="Control.Template">
-                                <Setter.Value>
-                                    <ControlTemplate>
-                                        <Rectangle Margin="1" StrokeThickness="1" StrokeDashArray="1 2" Stroke="DarkGray"/>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-
-                        <Style x:Key="SettingsTabItemStyle" TargetType="{x:Type TabItem}">
-                            <Setter Property="Foreground" Value="Gray" />
-                            <Setter Property="FocusVisualStyle" Value="{StaticResource SettingsTabFocusVisualStyle}"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type TabItem}">
-                                        <Border Name="Border" BorderThickness="0 0 0 1" BorderBrush="Transparent" Background="Gray">
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto"/>
-                                                </Grid.RowDefinitions>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                </Grid.ColumnDefinitions>
-
-                                                <!-- ぼかし背景を合わせる -->
-                                                <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="#111111" Opacity="0.8"></Rectangle>
-
-                                                <Border Name="HeaderBorder" Grid.Row="0" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Margin="0 0 0 0" BorderThickness="0 0 0 0" HorizontalAlignment="Center" CornerRadius="0">
-                                                    <ContentPresenter x:Name="ContentSite" HorizontalAlignment="Center" VerticalAlignment="Center" ContentSource="Header" RecognizesAccessKey="True" />
-                                                </Border>
-                                            </Grid>
-                                        </Border>
-                                        <ControlTemplate.Triggers>
-                                            <MultiTrigger>
-                                                <MultiTrigger.Conditions>
-                                                    <Condition Property="IsSelected" Value="False" />
-                                                    <Condition Property="IsMouseOver" Value="True" />
-                                                </MultiTrigger.Conditions>
-                                                <Setter TargetName="HeaderBorder" Property="Background" Value="DarkGray" />
-                                                <Setter TargetName="HeaderBorder" Property="BorderBrush" Value="DarkGray" />
-                                                <Setter TargetName="HeaderBorder" Property="BorderThickness" Value="0 0 0 1" />
-
-                                                <Setter Property="Foreground" Value="Black" />
-                                            </MultiTrigger>
-
-                                            <MultiTrigger>
-                                                <MultiTrigger.Conditions>
-                                                    <Condition Property="IsSelected" Value="True" />
-                                                    <Condition Property="IsMouseOver" Value="True" />
-                                                </MultiTrigger.Conditions>
-                                                <!--
-                                                <Setter TargetName="HeaderBorder" Property="Background" Value="{StaticResource BoardBackground}" />
-                                                -->
-                                                <Setter TargetName="HeaderBorder" Property="BorderBrush" Value="Gray" />
-                                                <Setter TargetName="HeaderBorder" Property="BorderThickness" Value="0 0 0 1" />
-
-                                                <Setter Property="Foreground" Value="Gray" />
-                                            </MultiTrigger>
-
-                                            <Trigger Property="IsSelected" Value="True">
-
-                                                <Setter Property="Margin" Value="0 0 0 0" />
-
-                                                <Setter Property="Panel.ZIndex" Value="0" />
-                                                <!--
-                                                <Setter TargetName="HeaderBorder" Property="Background" Value="{StaticResource BoardBackground}" />
-                                                <Setter TargetName="HeaderBorder" Property="BorderBrush" Value="{StaticResource AccentWarmLightColor}" />
-                                                -->
-                                                <Setter TargetName="HeaderBorder" Property="BorderThickness" Value="0 0 0 1" />
-
-                                                <Setter Property="Foreground" Value="LightGray" />
-
-                                            </Trigger>
-
-                                            <Trigger Property="IsEnabled" Value="False">
-                                                <Setter TargetName="Border" Property="Background" Value="gray" />
-                                                <Setter TargetName="Border" Property="BorderBrush" Value="#FFC9C7BA" />
-                                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
 
                     </TabControl.Resources>
 
@@ -483,7 +443,7 @@
 
 
                                 <TextBlock Padding="6" TextWrapping="Wrap">
-                                このアプリケーションは、ビットバンク（Bitbank.cc） が公開しているAPIとデータを利用しています。
+                                このアプリケーションは、ビットバンク（https://bitbank.cc/） が公開しているAPIとデータを利用しています。開発者はビットバンク株式会社とは無関係の一ビットバンク利用者です。
                                 </TextBlock>
 
                                 <TextBlock Padding="6">
@@ -502,7 +462,7 @@
                                     <Label Padding="0" Content="免責" Style="{StaticResource SectionTitle}"/>
                                 </Border>
                                 <TextBlock Padding="6" TextWrapping="Wrap">
-                                開発する上で、間違いのないように作っていますが、万が一不具合等で損害が発生しても、開発者はいかなる責任もとれませんので、ご承知おきください。
+                                開発する上で、間違いのないように作っていますが、万が一不具合等で損害が発生しても、開発者はいかなる責任もとれませんので、ご承知おきください。もし不具合や改善点などありましたら、ご連絡いただければと思います。
                                 </TextBlock>
 
                                 <Border BorderBrush="DimGray" BorderThickness="0 0 0 0.5" Margin="3" Padding="3">
@@ -541,24 +501,20 @@
     <LineBreak/>
     <LineBreak/>                            
 第１条 （本契約の成立）<LineBreak/>
-ご利用者（甲）が、本ソフトウェアの使用もしくはインストールを行った時点で、本契約書記載の内容に同意いただいたものとみな
-し、本ソフトウェアの開発者（以下開発者、乙）もしくは開発者が再使用許諾権を付与した者（以下あわせて「開発者」といいます）との間で、本契約が有効に成立す
-るものといたします。
+ご利用者（甲）が、本ソフトウェアの使用もしくはインストールを行った時点で、本契約書記載の内容に同意いただいたものとみなし、本ソフトウェアの開発者（以下開発者、乙）もしくは開発者が再使用許諾権を付与した者（以下あわせて「開発者」といいます）
+との間で、本契約が有効に成立するものといたします。
                                 <LineBreak/><LineBreak/>
 第２条 （使用許諾）<LineBreak/>
 1. ご利用者は、無償で本ソフトウェアを、日本国内において、個人としての使用に限定して、無料で使用することができま
-す。（法人の商用利用は別途お問い合わせください）
+す。
                                 <LineBreak/>
 2. ご利用者は、本ソフトウェアを改変したり、再発布することはできません。
                                 <LineBreak/>
-3. ご利用者は、本条項に基づき本ソフトウェアの使用権のみを取得し、本ソフトウェアの著作権、所有権その他のいかなる権利
-も取得しません。
+3. ご利用者は、本条項に基づき本ソフトウェアの使用権のみを取得し、本ソフトウェアの著作権、所有権その他のいかなる権利も取得しません。
                                 <LineBreak/>
-4. 本契約はご利用者に対し、本ソフトウェアの改訂版(アドオンパック)、変更、機能強化、サービスパック、またはその他のサ
-ポートサービスを受ける権利を付与するものではありません。
+4. 本契約はご利用者に対し、本ソフトウェアの改訂版(アドオンパック)、変更、機能強化、サービスパック、またはその他のサポートサービスを受ける権利を付与するものではありません。
                                 <LineBreak/>
-5. ご利用者は、本ソフトウェアを、直接的、間接的を問わず、日本国、米国およびその他の国の全ての法律・規則に違反して輸
-出してはいけません。
+5. ご利用者は、本ソフトウェアを、直接的、間接的を問わず、日本国、米国およびその他の国の全ての法律・規則に違反して輸出してはいけません。
                                 <LineBreak/><LineBreak/>
 第３条 （保証責任）<LineBreak/>
 1. 開発者は、別途記載するライブラリを除き、本ソフトウェアの著作権を有し、または著作権者から再使用許諾する権利を受けていることを保証します。
@@ -568,8 +524,7 @@
 第４条 （責任の範囲）<LineBreak/>
 1. 前条に関わらず、ご利用者が本ソフトウェアを使用したことによりご利用者に直接的結果として発生した損害に対し開発者は責任を負いません。
                                 <LineBreak/>
-3. 開発者は、開発者の判断により第三者に本契約記載の業務を委託することができるものとします。ただし、委託にあた
-っての責任は、全て開発者の責任においてなされるものとします。
+3. 開発者は、開発者の判断により第三者に本契約記載の業務を委託することができるものとします。ただし、委託にあたっての責任は、全て開発者の責任においてなされるものとします。
                                 <LineBreak/><LineBreak/>
 第５条 （権利の譲渡）<LineBreak/>
 ご利用者は、当社の書面による事前の承諾なく下記の行為を行ってはいけません。<LineBreak/>
@@ -577,19 +532,14 @@
 ②． 本契約上の地位または本契約に基づく権利義務を第三者に移転、譲渡、担保の用に供すること
                                 <LineBreak/><LineBreak/>
 第６条 （本契約の終了）<LineBreak/>
-ご利用者が本契約の条項に違反し、開発者が違反の是正を催告した後、２週間以内に是正されなかった場合、当社は本契約を解
-約し、ご利用者の本ソフトウェアの使用を終了させることができます。
+ご利用者が本契約の条項に違反し、開発者が違反の是正を催告した後、２週間以内に是正されなかった場合、当社は本契約を解約し、ご利用者の本ソフトウェアの使用を終了させることができます。
                                 <LineBreak/><LineBreak/>
 第７条 （契約の変更）<LineBreak/>
 本契約の変更は、開発者の判断で、変更できるものとします。
                                 <LineBreak/><LineBreak/>
 第８条 （協議）<LineBreak/>
-本契約に規定されていない事項または本契約の解釈に疑義が生じた場合は、甲および乙は、誠意をもって協議するものとし
-ます。
+本契約に規定されていない事項または本契約の解釈に疑義が生じた場合は、甲および乙は、誠意をもって協議するものとします。
                                 <LineBreak/><LineBreak/>
-第９条 （合意管轄裁判所）<LineBreak/>
-本契約に関して紛争を生じ、裁判による解決を必要とする場合には、東京地方裁判所を第一審の専属合意管轄裁判所としま
-す。<LineBreak/><LineBreak/>
 以上
                                 
                                 <LineBreak/>
@@ -686,9 +636,9 @@ SOFTWARE.
 
                 </TabControl>
 
-                <Border Grid.Row="1" Height="48" Margin="101.5 0 0 0">
+                <Border Grid.Row="1" Height="62" Margin="0" Background="{StaticResource BoardBackground}">
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 12 0 0">
                         <Button Width="80" Content="キャンセル(_C)" Margin="0 0 24 0" Padding="3" IsCancel="True" Command="{Binding SettingsCancelCommand}" Visibility="Hidden"></Button>
                         <Button Width="80" Content="_OK" Margin="0 0 32 0" Padding="3" IsDefault="True" Command="{Binding SettingsOKCommand}"></Button>
                     </StackPanel>

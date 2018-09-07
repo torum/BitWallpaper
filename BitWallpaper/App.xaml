@@ -4,8 +4,11 @@
              xmlns:local="clr-namespace:BitWallpaper"
              xmlns:vms="clr-namespace:BitWallpaper.ViewModels"
              xmlns:common="clr-namespace:BitWallpaper.Common"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
              StartupUri="MainWindow.xaml"
              Startup="AppOnStartup">
+    <!-- 
+             ShutdownMode="OnMainWindowClose"  -->
     <Application.Resources>
         <ResourceDictionary>
 
@@ -14,31 +17,78 @@
 
             <!-- BooleanToVisibilityConverterの、 Collapsed 版　-->
             <common:BoolToVisibilityCollapsedConverter x:Key="BoolToVisibilityCollapsedConverter" TrueValue="Visible" FalseValue="Collapsed" />
-            
 
-            <SolidColorBrush x:Key="NormalTextColor" Color="#FFE8EDF9"/>
-
-            <Style x:Key="DefaultTextBlockStyle" TargetType="{x:Type TextBlock}">
-                <Setter Property="Foreground" Value="{StaticResource NormalTextColor}" />
-                <Setter Property="FontSize" Value="12" />
-                <Setter Property="FontWeight" Value="Normal" />
-            </Style>
-
-            <Style x:Key="LtpTextBlockStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource DefaultTextBlockStyle}">
-                <Setter Property="FontSize" Value="18" />
-                <Setter Property="FontWeight" Value="Bold" />
-                <Setter Property="Margin" Value="12 0 0 3" />
-                <Setter Property="Foreground" Value="LightGray" />
-            </Style>
-
-            <Style x:Key="SectionTitle" TargetType="{x:Type Label}">
-                <Setter Property="Foreground" Value="LightGray" />
-                <Setter Property="FontSize" Value="12" />
-                <Setter Property="FontWeight" Value="Bold" />
-                <Setter Property="Margin" Value="3 0 0 0" />
-            </Style>
 
             <ResourceDictionary.MergedDictionaries>
+
+                <ResourceDictionary>
+
+                    <SolidColorBrush x:Key="NormalTextColor" Color="#FFE8EDF9"/>
+                    <SolidColorBrush x:Key="BoardBackground" Color="#111111"/>
+
+                    <!-- Green Blue系 元Aqua -->
+                    <SolidColorBrush x:Key="PriceUpColor" Color="#a0d8ef"/>
+                    <!-- Red Orange系 元Pink -->
+                    <SolidColorBrush x:Key="PriceDownColor" Color="#e597b2"/>
+                    <!-- White系 -->
+                    <SolidColorBrush x:Key="PriceNeutralColor" Color="Gainsboro"/>
+
+                    <!-- 警告　Yellow系 -->
+                    <SolidColorBrush x:Key="WarningColor" Color="#FFDFD991"/>
+
+                    <!-- クール系のアクセントカラー 明るい -->
+                    <SolidColorBrush x:Key="AccentCoolLightColor" Color="Green"/>
+                    <!-- クール系のアクセントカラー　暗め （リストビューのコラム選択背景） -->
+                    <SolidColorBrush x:Key="AccentCoolDarkColor" Color="#2c4f54"/>
+
+                    <!-- 暖系のアクセントカラー  明るい -->
+                    <SolidColorBrush x:Key="AccentWarmLightColor" Color="Orange"/>
+                    <!-- 暖系のアクセントカラー 暗め -->
+                    <SolidColorBrush x:Key="AccentWarmDarkColor" Color="#e0815e"/>
+
+
+                    <Style x:Key="DefaultTextBlockStyle" TargetType="{x:Type TextBlock}">
+                        <Setter Property="Foreground" Value="{StaticResource NormalTextColor}" />
+                        <Setter Property="FontSize" Value="12" />
+                        <Setter Property="FontWeight" Value="Normal" />
+                    </Style>
+
+                    <Style x:Key="LtpTextBlockStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource DefaultTextBlockStyle}">
+                        <Setter Property="FontSize" Value="18" />
+                        <Setter Property="FontWeight" Value="Bold" />
+                        <Setter Property="Margin" Value="12 0 0 3" />
+                        <Setter Property="Foreground" Value="LightGray" />
+                    </Style>
+
+                    <Style x:Key="SectionTitle" TargetType="{x:Type Label}">
+                        <Setter Property="Foreground" Value="LightGray" />
+                        <Setter Property="FontSize" Value="12" />
+                        <Setter Property="FontWeight" Value="Bold" />
+                        <Setter Property="Margin" Value="3 0 0 0" />
+                    </Style>
+
+                    <DropShadowEffect
+                        x:Key="DropShadowDepth"
+                        BlurRadius="4"
+                        Direction="270"
+                        Opacity="1"
+                        ShadowDepth="1.2"
+                        Color="#111111" />
+                    <DropShadowEffect
+                        x:Key="DropShadowDepthTabHeader"
+                        BlurRadius="2"
+                        Direction="300"
+                        Opacity="1"
+                        ShadowDepth="1.2"
+                        Color="#111111" />
+
+                    <!-- ボード・タイルのスタイル -->
+                    <Style x:Key="BoardStyle" TargetType="Border">
+                        <Setter Property="Background" Value="{StaticResource BoardBackground}"/>
+                        <Setter Property="Effect" Value="{StaticResource DropShadowDepth}"/>
+                    </Style>
+                    
+                </ResourceDictionary>
 
                 <!-- PathButton -->
                 <ResourceDictionary>
@@ -376,6 +426,7 @@
                         <Setter Property="FocusVisualStyle" Value="{StaticResource ComboBoxFlatFocusVisualStyle}"/>
 
                         <Setter Property="TextElement.Foreground" Value="Gray"/>
+                        <Setter Property="Foreground" Value="Gray"/>
                         
                         <Setter Property="Control.Template">
                             <Setter.Value>
@@ -460,6 +511,7 @@
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter Property="TextElement.Foreground" TargetName="SelectMessage" Value="WhiteSmoke"/>
                                             <Setter Property="TextElement.Foreground" Value="WhiteSmoke"/>
+                                            <Setter Property="Foreground" Value="WhiteSmoke"/>
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
@@ -470,6 +522,126 @@
 
 
 
+                </ResourceDictionary>
+                
+                <!-- Settings TabControl -->
+                <ResourceDictionary>
+
+                    <Style x:Key="SettingsTabFocusVisualStyle">
+                        <Setter Property="Control.Template">
+                            <Setter.Value>
+                                <ControlTemplate>
+                                    <Rectangle Margin="1" StrokeThickness="1" StrokeDashArray="1 2" Stroke="DarkGray"/>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <Style x:Key="SettingsTabItemStyle" TargetType="{x:Type TabItem}">
+                        <Setter Property="Foreground" Value="Gray" />
+                        <Setter Property="BorderThickness" Value="0" />
+                        <Setter Property="Margin" Value="0" />
+                        <Setter Property="FocusVisualStyle" Value="{StaticResource SettingsTabFocusVisualStyle}"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type TabItem}">
+                                    <Border Name="Border" BorderThickness="0 0 0 1" BorderBrush="Transparent" Background="#212121">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- ぼかし背景を合わせる -->
+                                            <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="#111111" Opacity="0.8"></Rectangle>
+
+                                            <Border Name="HeaderBorder" Grid.Row="0" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Margin="0 0 0 0" BorderThickness="0 0 0 0" HorizontalAlignment="Center" CornerRadius="0">
+                                                <ContentPresenter x:Name="ContentSite" HorizontalAlignment="Center" VerticalAlignment="Center" ContentSource="Header" RecognizesAccessKey="True" />
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <MultiTrigger>
+                                            <MultiTrigger.Conditions>
+                                                <Condition Property="IsSelected" Value="False" />
+                                                <Condition Property="IsMouseOver" Value="True" />
+                                            </MultiTrigger.Conditions>
+                                            <Setter TargetName="HeaderBorder" Property="Background" Value="DarkGray" />
+                                            <Setter TargetName="HeaderBorder" Property="BorderBrush" Value="DarkGray" />
+                                            <Setter TargetName="HeaderBorder" Property="BorderThickness" Value="0 0 0 1" />
+
+                                            <Setter Property="Foreground" Value="Black" />
+                                        </MultiTrigger>
+
+                                        <MultiTrigger>
+                                            <MultiTrigger.Conditions>
+                                                <Condition Property="IsSelected" Value="True" />
+                                                <Condition Property="IsMouseOver" Value="True" />
+                                            </MultiTrigger.Conditions>
+
+                                            <Setter TargetName="HeaderBorder" Property="Background" Value="{StaticResource BoardBackground}" />
+
+                                            <Setter TargetName="HeaderBorder" Property="BorderBrush" Value="Gray" />
+                                            <Setter TargetName="HeaderBorder" Property="BorderThickness" Value="0 0 0 1" />
+
+                                            <Setter Property="Foreground" Value="Gray" />
+                                        </MultiTrigger>
+
+                                        <Trigger Property="IsSelected" Value="True">
+
+                                            <Setter Property="Margin" Value="0 0 0 0" />
+
+                                            <Setter Property="Panel.ZIndex" Value="0" />
+
+                                            <Setter TargetName="HeaderBorder" Property="Background" Value="{StaticResource BoardBackground}" />
+                                            <Setter TargetName="HeaderBorder" Property="BorderBrush" Value="{StaticResource AccentWarmLightColor}" />
+
+                                            <Setter TargetName="HeaderBorder" Property="BorderThickness" Value="0 0 0 1" />
+
+                                            <Setter Property="Foreground" Value="LightGray" />
+
+                                        </Trigger>
+
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter TargetName="Border" Property="Background" Value="gray" />
+                                            <Setter TargetName="Border" Property="BorderBrush" Value="#FFC9C7BA" />
+                                            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <Style x:Key="SettingsTabControlStyle" TargetType="{x:Type TabControl}">
+                        <Setter Property="OverridesDefaultStyle" Value="True" />
+                        <Setter Property="Padding" Value="0" />
+                        <Setter Property="Focusable" Value="True"/>
+                        <Setter Property="SnapsToDevicePixels" Value="True" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type TabControl}">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                    
+                                        <TabPanel Grid.Row="0" Grid.Column="0" x:Name="HeaderPanel" HorizontalAlignment="Left" IsItemsHost="True" Margin="0 0 0 0"/>
+                                        <Border Grid.Row="0" Grid.Column="1" x:Name="Border" BorderThickness="0 0 0 0" BorderBrush="DimGray" Margin="0" Background="{TemplateBinding Background}">
+                                            <ContentPresenter x:Name="PART_SelectedContentHost" Margin="0" ContentSource="SelectedContent" RecognizesAccessKey="True"/>
+                                        </Border>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                    
                 </ResourceDictionary>
 
             </ResourceDictionary.MergedDictionaries>
