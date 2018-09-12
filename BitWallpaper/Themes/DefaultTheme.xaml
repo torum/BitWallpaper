@@ -33,6 +33,8 @@
     <Color x:Key="ListviewAlt1Color">#1a1a1a</Color>
 
     <Color x:Key="TabUnselectedBackgroundColor">#212121</Color>
+    
+    <Color x:Key="ChartVolumeColor">Yellow</Color>
 
     <!-- クール系のアクセントカラー 明るい -->
     <Color x:Key="AccentCoolLightColor">Green</Color>
@@ -96,5 +98,7 @@
     <SolidColorBrush x:Key="ListviewAlt1ColorBrush" Color="{DynamicResource ListviewAlt1Color}"/>
 
     <SolidColorBrush x:Key="TabUnselectedBackgroundColorBrush" Color="{DynamicResource TabUnselectedBackgroundColor}"/>
+    
+    <SolidColorBrush x:Key="ChartVolumeColorBrush" Color="{DynamicResource ChartVolumeColor}" Opacity="0.1"/>
 
 </ResourceDictionary>

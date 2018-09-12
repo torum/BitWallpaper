@@ -25,7 +25,7 @@
     <Color x:Key="NormalTextColor">#333631</Color>
     <Color x:Key="TitleTextColor">#000000</Color>
 
-    <Color x:Key="NormalTextBoxBackgroundColor">whitesmoke</Color>
+    <Color x:Key="NormalTextBoxBackgroundColor">WhiteSmoke</Color>
 
     <Color x:Key="BoardBackgroundColor">#f3f3f3</Color>
 
@@ -33,6 +33,8 @@
     <Color x:Key="ListviewAlt1Color">#efefef</Color>
 
     <Color x:Key="TabUnselectedBackgroundColor">#e6e6e6</Color>
+
+    <Color x:Key="ChartVolumeColor">DimGray</Color>
 
     <!-- クール系のアクセントカラー 明るい -->
     <Color x:Key="AccentCoolLightColor">Green</Color>
@@ -96,5 +98,7 @@
     <SolidColorBrush x:Key="ListviewAlt1ColorBrush" Color="{DynamicResource ListviewAlt1Color}"/>
 
     <SolidColorBrush x:Key="TabUnselectedBackgroundColorBrush" Color="{DynamicResource TabUnselectedBackgroundColor}"/>
+
+    <SolidColorBrush x:Key="ChartVolumeColorBrush" Color="{DynamicResource ChartVolumeColor}" Opacity="0.1"/>
 
 </ResourceDictionary>

@@ -1189,8 +1189,8 @@ namespace BitWallpaper.ViewModels
                         Title = "出来高",
                         Values = new ChartValues<double> {},
                         ScalesYAt = 1,
-                        Fill = yellowBrush,
-
+                        //Fill = yellowBrush,
+                        Style = (Application.Current.FindResource("ChartVolumeStyle") as Style),
                     }
 
                 };

@@ -109,7 +109,7 @@
                         <Slider x:Name="SliderSeek" Grid.Column="1" Width="60" Opacity="0.7" Minimum="0.1" Maximum="1" Value="{Binding Mode=TwoWay, Path=WindowOpacity}" ToolTip="画面の透過率" VerticalAlignment="Center"  Margin="3 3 3 3" Foreground="Gray" Background="Transparent" IsMoveToPointEnabled="True" Style="{DynamicResource CustomSliderStyle}"></Slider>
 
                         <!-- テーマ切替 -->
-                        <ComboBox x:Name="ThemeComboBox" ItemsSource="{Binding Themes}" SelectedItem="{Binding CurrentTheme}" DisplayMemberPath="Label" VerticalAlignment="Center" Margin="3 3 6 3" Padding="0 0 0 0" Background="Transparent" Style="{DynamicResource ComboBoxFlatStyle}">
+                        <ComboBox x:Name="ThemeComboBox" ItemsSource="{Binding Themes}" SelectedItem="{Binding CurrentTheme}" DisplayMemberPath="Label" VerticalAlignment="Center" Margin="3 0 6 0" Padding="0 0 0 0" Background="Transparent" Style="{DynamicResource ComboBoxFlatStyle}">
                         </ComboBox>
 
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0" Visibility="{Binding ShowMainContents, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
@@ -472,6 +472,15 @@
 
                         <TabControl Margin="12">
                             <TabControl.Resources>
+                                <Style x:Key="LicenseTabFocusVisualStyle">
+                                    <Setter Property="Control.Template">
+                                        <Setter.Value>
+                                            <ControlTemplate>
+                                                <Rectangle Margin="1" StrokeThickness="1" StrokeDashArray="1 2" Stroke="{DynamicResource ControlMediumColorBrush}"/>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
                                 <Style TargetType="{x:Type TabControl}">
                                     <Setter Property="OverridesDefaultStyle" Value="False" />
                                     <Setter Property="Foreground" Value="{DynamicResource NormalTextColorBrush}" />
@@ -480,6 +489,7 @@
                                 </Style>
                                 <Style x:Key="LicenseTabItemStyle" TargetType="{x:Type TabItem}">
                                     <Setter Property="OverridesDefaultStyle" Value="False" />
+                                    <Setter Property="FocusVisualStyle" Value="{StaticResource LicenseTabFocusVisualStyle}"/>
                                     <Setter Property="Foreground" Value="{DynamicResource ControlDarkColorBrush}" />
                                     <Setter Property="Background" Value="{DynamicResource BoardBackgroundColorBrush}"/>
                                     <Setter Property="BorderThickness" Value="0 0 0 2"/>
