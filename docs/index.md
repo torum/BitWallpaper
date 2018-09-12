@@ -19,10 +19,12 @@
 * 本アプリケーションは、アプリケーション状態を保存しチャート関係のデータを取得する以外、個人情報を含む一切の情報を収集・保存及び送信することはありません。
 
 ### ダウンロード：  
-- マイクロソフト ストアでダウンロード可能予定
+
+__[マイクロソフトストア無料で公開中 (https://www.microsoft.com/ja-jp/p/bitwallpaper/9ncc3ntg9dp3)](https://www.microsoft.com/ja-jp/p/bitwallpaper/9ncc3ntg9dp3)__
+
 
 ### 更新情報（Twitter）
-https://twitter.com/torum_apps
+[https://twitter.com/torum_apps](https://twitter.com/torum_apps)
  
 
  
