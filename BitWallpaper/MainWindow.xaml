@@ -12,7 +12,7 @@
                   
         mc:Ignorable="d"
         
-        Title="" 
+        Title="{Binding AppTitle, Mode=OneWay}" 
         
         Height="800" Width="1280"
         
@@ -23,9 +23,9 @@
         fw:AcrylicWindow.ShowTitleBar="False"
         fw:AcrylicWindow.ExtendViewIntoTitleBar="True"
                   
-        fw:AcrylicWindow.TintOpacity="0.5"
-        fw:AcrylicWindow.TintColor="#282828"
-        fw:AcrylicWindow.FallbackColor="#212121"
+        fw:AcrylicWindow.TintOpacity="0"
+        fw:AcrylicWindow.TintColor="{DynamicResource WindowTintColor}"
+        fw:AcrylicWindow.FallbackColor="{DynamicResource WindowFallbackColor}"
     
         
         SizeChanged="Window_SizeChanged"
@@ -37,7 +37,6 @@
         WindowStyle="None" 
         ResizeMode="NoResize" 
         AllowsTransparency="True"
-          
     -->
 
     <Window.InputBindings>
@@ -47,9 +46,9 @@
 
 
     <Grid x:Name="BackgroundGrid" Background="Transparent">
-        <Rectangle x:Name="AcrylicBackground" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="#111111" Opacity="0.3" helpers:EnableDragHelper.EnableDrag="True"></Rectangle>
+        <Rectangle x:Name="AcrylicBackground" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="{DynamicResource WindowBackgroundBaseColorBrush}" Opacity="{Binding WindowOpacity, Mode=OneWay}" helpers:EnableDragHelper.EnableDrag="True"></Rectangle>
 
-        <Image x:Name="BackgroundImage" Stretch="Fill" Opacity="0.8" Visibility="Visible"/>
+        <Image x:Name="BackgroundImage" Stretch="Fill" Opacity="0.8" Visibility="Hidden"/>
 
         <Grid>
             <Grid.RowDefinitions>
@@ -62,11 +61,8 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Border Grid.Row="0" Grid.Column="0">
-            </Border>
-
             <!-- アプリタイトルバー -->
-            <Border Grid.Row="0" Grid.Column="1">
+            <Border  Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>
@@ -81,7 +77,7 @@
 
                         <Viewbox Margin="9 6 3 3" Panel.ZIndex="1" HorizontalAlignment="Left" VerticalAlignment="Center" Stretch="Uniform" Width="12" Height="12" ToolTip="{Binding AppTitle, Mode=OneWay}" ToolTipService.ToolTip="{Binding AppTitle, Mode=OneWay}">
                             <Canvas Opacity="1" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <Path Opacity="0.3" Width="12" Height="12" Stretch="Uniform" StrokeThickness="0.8" Stroke="#cccccc" StrokeMiterLimit="4" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Data="M 20.70152 23.246189 V 37.189346 M 29.504474 24.795429 V 37.189346 M 38.307426 19.37309 v 17.816256 m -26.40886 -8.520817 v 8.520817 M 9.2576803 22.47157 20.70152 15.499991 l 8.802954 2.32386 11.443839 -7.746198 M 5 8 v 34 h 38">
+                                <Path Opacity="0.3" Width="12" Height="12" Stretch="Uniform" StrokeThickness="0.8" Stroke="{DynamicResource ControlLightColorBrush}" StrokeMiterLimit="4" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Data="M 20.70152 23.246189 V 37.189346 M 29.504474 24.795429 V 37.189346 M 38.307426 19.37309 v 17.816256 m -26.40886 -8.520817 v 8.520817 M 9.2576803 22.47157 20.70152 15.499991 l 8.802954 2.32386 11.443839 -7.746198 M 5 8 v 34 h 38">
                                     <Path.RenderTransform>
                                         <MatrixTransform Matrix="1.0300857 0 0 1.0873046 -0.04467867 -3.1222575"/>
                                     </Path.RenderTransform>
@@ -109,9 +105,16 @@
 
                     <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right" Margin="3 0 3 3">
 
+                        <!-- 透明度変更 -->
+                        <Slider x:Name="SliderSeek" Grid.Column="1" Width="60" Opacity="0.7" Minimum="0.1" Maximum="1" Value="{Binding Mode=TwoWay, Path=WindowOpacity}" ToolTip="画面の透過率" VerticalAlignment="Center"  Margin="3 3 3 3" Foreground="Gray" Background="Transparent" IsMoveToPointEnabled="True" Style="{DynamicResource CustomSliderStyle}"></Slider>
+
+                        <!-- テーマ切替 -->
+                        <ComboBox x:Name="ThemeComboBox" ItemsSource="{Binding Themes}" SelectedItem="{Binding CurrentTheme}" DisplayMemberPath="Label" VerticalAlignment="Center" Margin="3 3 6 3" Padding="0 0 0 0" Background="Transparent" Style="{DynamicResource ComboBoxFlatStyle}">
+                        </ComboBox>
+
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0" Visibility="{Binding ShowMainContents, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
-                            
-                            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="CandleTypesComboBox" ItemsSource="{Binding CandleTypesDictionary}" SelectedValue="{Binding SelectedCandleType}" SelectedValuePath="Key" VerticalAlignment="Center" Margin="3 0 3 0" Padding="0 0 0 0" Background="Transparent" Style="{StaticResource ComboBoxFlatStyle}">
+
+                            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="CandleTypesComboBox" ItemsSource="{Binding CandleTypesDictionary}" SelectedValue="{Binding SelectedCandleType}" SelectedValuePath="Key" VerticalAlignment="Center" Margin="3 0 3 0" Background="Transparent" Style="{DynamicResource ComboBoxFlatStyle}">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
@@ -120,13 +123,13 @@
                                                     <Path x:Name="CandleIcon" Stretch="Uniform" Width="12" Height="12" StrokeThickness="1" Fill="Transparent" Stroke="{Binding RelativeSource={RelativeSource AncestorType=ComboBox}, Path=Foreground}" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Data="m 23.847456 4.830509 v 7.999998 m 0.243249 22.599407 v 7.999999 M 20 13 h 8 v 22 h -8 z"/>
                                                 </Canvas>
                                             </Viewbox>
-                                            <TextBlock x:Name="SelectedCandleTypesComboBoxItem" Text="{Binding Path=Value}"></TextBlock>
+                                            <TextBlock x:Name="SelectedCandleTypesComboBoxItem" Text="{Binding Path=Value}" Foreground="{Binding RelativeSource={RelativeSource AncestorType=ComboBox}, Path=Foreground}"></TextBlock>
                                         </StackPanel>
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
 
-                            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="ChartSpansComboBox" ItemsSource="{Binding ChartSpansDictionary}" SelectedValue="{Binding SelectedChartSpan}" SelectedValuePath="Key" VerticalAlignment="Center" Margin="3 0 12 0" Padding="0 0 0 0" Background="Transparent" Style="{StaticResource ComboBoxFlatStyle}">
+                            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="ChartSpansComboBox" ItemsSource="{Binding ChartSpansDictionary}" SelectedValue="{Binding SelectedChartSpan}" SelectedValuePath="Key" VerticalAlignment="Center" Margin="3 0 12 0" Background="Transparent" Style="{DynamicResource ComboBoxFlatStyle}">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
@@ -135,16 +138,17 @@
                                                     <Path x:Name="ChartSpanIcon" Stretch="Uniform" Width="10" Height="10" StrokeThickness="1" Fill="Transparent" Stroke="{Binding RelativeSource={RelativeSource AncestorType=ComboBox}, Path=Foreground}" StrokeMiterLimit="4" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Data="m 11.037903 40.507879 v 3.397486 H 36.997419 V 40.633712 M 5.1774598 4.2792283 5.4650965 44.116905 H 42.13877"/>
                                                 </Canvas>
                                             </Viewbox>
-                                            <TextBlock x:Name="SelectedChartSpanComboBoxItem" Text="{Binding Path=Value}"></TextBlock>
+                                            <TextBlock x:Name="SelectedChartSpanComboBoxItem" Text="{Binding Path=Value}" Foreground="{Binding RelativeSource={RelativeSource AncestorType=ComboBox}, Path=Foreground}"></TextBlock>
                                         </StackPanel>
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
+
                             
                         </StackPanel>
 
 
-                        <Button x:Name="SettingsButton" Style="{StaticResource PathButton}" Width="15" Height="15" Margin="3 0 3 0" Opacity="0.5" Command="{Binding ShowSettingsCommand}" ToolTip="設定(Ctrl+S)"
+                        <Button x:Name="SettingsButton" Style="{StaticResource PathButton}" Width="18" Height="18" Margin="3 0 3 0" Opacity="0.7" Command="{Binding ShowSettingsCommand}" ToolTip="設定(Ctrl+S)"
                                 Content="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,
 8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,
 11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,
@@ -156,16 +160,16 @@
 21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,
 18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z">
                         </Button>
-                        <Button x:Name="MinButton" Style="{StaticResource PathButton}" Width="12" Height="12" Margin="3" Opacity="0.5" Click="MinButton_Click" ToolTip="最小化(Alt+Space, S)">
+                        <Button x:Name="MinButton" Style="{StaticResource PathButton}" Width="18" Height="18" Margin="3" Opacity="0.7" Click="MinButton_Click" ToolTip="最小化(Alt+Space, S)">
                             M20,14H4V10H20
                         </Button>
-                        <Button x:Name="RestoreButton" Style="{StaticResource PathButton}" Width="12" Height="12" Margin="3" Opacity="0.5" Click="RestoreButton_Click" ToolTip="元のサイズに戻す(Alt+Space, R)">
+                        <Button x:Name="RestoreButton" Style="{StaticResource PathButton}" Width="18" Height="18" Margin="3" Opacity="0.7" Click="RestoreButton_Click" ToolTip="元のサイズに戻す(Alt+Space, R)">
                             M4,8H8V4H20V16H16V20H4V8M16,8V14H18V6H10V8H16M6,12V18H14V12H6Z
                         </Button>
-                        <Button x:Name="MaxButton" Style="{StaticResource PathButton}" Width="12" Height="12" Margin="3" Opacity="0.5" Click="MaxButton_Click" ToolTip="最大化(Alt+Space, X)">
+                        <Button x:Name="MaxButton" Style="{StaticResource PathButton}" Width="18" Height="18" Margin="3" Opacity="0.7" Click="MaxButton_Click" ToolTip="最大化(Alt+Space, X)">
                             M4,4H20V20H4V4M6,8V18H18V8H6Z
                         </Button>
-                        <Button x:Name="CloseButton" Style="{StaticResource PathButton}" Width="12" Height="12" Margin="3" Opacity="0.5" Click="CloseButton_Click" ToolTip="閉じる(Alt+Space, C)/(Alt+F4)">
+                        <Button x:Name="CloseButton" Style="{StaticResource PathButton}" Width="18" Height="18" Margin="3" Opacity="0.7" Click="CloseButton_Click" ToolTip="閉じる(Alt+Space, C)/(Alt+F4)">
                             M13.46,12L19,17.54V19H17.54L12,13.46L6.46,19H5V17.54L10.54,12L5,6.46V5H6.46L12,10.54L17.54,5H19V6.46L13.46,12Z
                         </Button>
                         
@@ -397,28 +401,8 @@
 
             </WrapPanel>
 
-            <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Visibility="Hidden">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                <Border x:Name="coin_box" Grid.Row="1" Grid.Column="0" Width="420" Height="360" Background="Transparent" BorderBrush="Gainsboro" BorderThickness="0" Visibility="Visible">
-<!--
-                    <lvc:CartesianChart x:Name="CoinChart" Series="{Binding ChartSeries}" AxisY="{Binding ChartAxisY}" AxisX="{Binding ChartAxisX}" Hoverable="False" BorderBrush="Gainsboro" BorderThickness="0 0.1 0 0.1" Padding="3 0 0 0" Margin="6 0 12 0"/>
--->
-                </Border>
-
-
-            </Grid>
-
             <!-- 設定画面 -->
-            <Grid x:Name="settings" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Background="#212121" Visibility="{Binding ShowSettings, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
+            <Grid x:Name="settings" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Background="{DynamicResource WindowBackgroundColorBrush}" Visibility="{Binding ShowSettings, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
@@ -427,14 +411,11 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <TabControl Grid.Row="0" TabStripPlacement="Left" BorderThickness="0" Margin="0" Background="#121212" Style="{StaticResource SettingsTabControlStyle}">
-                    <TabControl.Resources>
-
-                    </TabControl.Resources>
+                <TabControl Grid.Row="0" TabStripPlacement="Left" BorderThickness="0" Margin="0" Background="{DynamicResource BoardBackgroundColorBrush}" Style="{StaticResource SettingsTabControlStyle}">
 
                     <TabItem Header="全般" Width="100" Height="48" Style="{StaticResource SettingsTabItemStyle}">
 
-                        <Border Padding="12">
+                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Padding="12" VerticalAlignment="Top" Style="{DynamicResource CustomScrollViewerStyle}">
 
                             <StackPanel>
                                 <Border BorderBrush="DimGray" BorderThickness="0 0 0 0.5" Margin="3" Padding="3">
@@ -442,11 +423,11 @@
                                 </Border>
 
 
-                                <TextBlock Padding="6" TextWrapping="Wrap">
-                                このアプリケーションは、ビットバンク（https://bitbank.cc/） が公開しているAPIとデータを利用しています。開発者はビットバンク株式会社とは無関係の一ビットバンク利用者です。
+                                <TextBlock Padding="6" TextWrapping="Wrap" Style="{DynamicResource DefaultTextBlockStyle}">
+                                このアプリケーションは、ビットバンク（https://bitbank.cc/） が公開しているAPIとデータを利用しています。開発者はビットバンク株式会社とは無関係のいちビットバンク利用者です。
                                 </TextBlock>
 
-                                <TextBlock Padding="6">
+                                <TextBlock Padding="6" Style="{DynamicResource DefaultTextBlockStyle}">
                                 <Run Text="Bitbank :"></Run>
                                 <Hyperlink NavigateUri="https://bitbank.cc/" RequestNavigate="Hyperlink_RequestNavigate">https://bitbank.cc/</Hyperlink>
                                 </TextBlock>
@@ -454,46 +435,91 @@
                                 <Border BorderBrush="DimGray" BorderThickness="0 0 0 0.5" Margin="3" Padding="3">
                                     <Label Padding="0" Content="プライバシーについて" Style="{StaticResource SectionTitle}"/>
                                 </Border>
-                                <TextBlock Padding="6" TextWrapping="Wrap">
+                                <TextBlock Padding="6" TextWrapping="Wrap" Style="{DynamicResource DefaultTextBlockStyle}">
                                 本アプリケーションは、アプリケーション状態を保存しチャート関係のデータを取得する以外、個人情報を含む一切の情報を収集・保存及び送信することはありません。
                                 </TextBlock>
 
                                 <Border BorderBrush="DimGray" BorderThickness="0 0 0 0.5" Margin="3" Padding="3">
                                     <Label Padding="0" Content="免責" Style="{StaticResource SectionTitle}"/>
                                 </Border>
-                                <TextBlock Padding="6" TextWrapping="Wrap">
+                                <TextBlock Padding="6" TextWrapping="Wrap" Style="{DynamicResource DefaultTextBlockStyle}">
                                 開発する上で、間違いのないように作っていますが、万が一不具合等で損害が発生しても、開発者はいかなる責任もとれませんので、ご承知おきください。もし不具合や改善点などありましたら、ご連絡いただければと思います。
                                 </TextBlock>
 
                                 <Border BorderBrush="DimGray" BorderThickness="0 0 0 0.5" Margin="3" Padding="3">
                                     <Label Padding="0" Content="ウェブサイト" Style="{StaticResource SectionTitle}"/>
                                 </Border>
-                                <TextBlock Padding="6">
+                                <TextBlock Padding="6" Style="{DynamicResource DefaultTextBlockStyle}">
                                 <Run Text=""></Run>
                                 <Hyperlink NavigateUri="https://torum.github.io/BitWallpaper/" RequestNavigate="Hyperlink_RequestNavigate">https://torum.github.io/BitWallpaper/</Hyperlink>
                                 </TextBlock>
 
                                 <Border BorderBrush="DimGray" BorderThickness="0 0 0 0.5" Margin="3" Padding="3">
-                                    <Label Padding="0" Content="Twitter" Style="{StaticResource SectionTitle}"/>
+                                    <Label Padding="0" Content="更新情報（Twitter）" Style="{StaticResource SectionTitle}"/>
                                 </Border>
-                                <TextBlock Padding="6">
+                                <TextBlock Padding="6" Style="{DynamicResource DefaultTextBlockStyle}">
                                 <Run Text=""></Run>
                                 <Hyperlink NavigateUri="https://twitter.com/torum_apps" RequestNavigate="Hyperlink_RequestNavigate">https://twitter.com/torum_apps</Hyperlink>
                                 </TextBlock>
 
-
                             </StackPanel>
 
-                        </Border>
+                        </ScrollViewer>
+                        
                     </TabItem>
 
                     <TabItem Header="ライセンス" Width="100" Height="48" Style="{StaticResource SettingsTabItemStyle}">
 
                         <TabControl Margin="12">
+                            <TabControl.Resources>
+                                <Style TargetType="{x:Type TabControl}">
+                                    <Setter Property="OverridesDefaultStyle" Value="False" />
+                                    <Setter Property="Foreground" Value="{DynamicResource NormalTextColorBrush}" />
+                                    <Setter Property="Background" Value="{DynamicResource BoardBackgroundColorBrush}"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                </Style>
+                                <Style x:Key="LicenseTabItemStyle" TargetType="{x:Type TabItem}">
+                                    <Setter Property="OverridesDefaultStyle" Value="False" />
+                                    <Setter Property="Foreground" Value="{DynamicResource ControlDarkColorBrush}" />
+                                    <Setter Property="Background" Value="{DynamicResource BoardBackgroundColorBrush}"/>
+                                    <Setter Property="BorderThickness" Value="0 0 0 2"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type TabItem}">
 
-                            <TabItem Header="使用許諾契約書 (EULA)" Padding="6">
+                                                <Border Name="HeaderBorder" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Padding="{TemplateBinding Padding}" HorizontalAlignment="Center" CornerRadius="0">
+                                                    <ContentPresenter x:Name="ContentSite" HorizontalAlignment="Center" VerticalAlignment="Center" ContentSource="Header" RecognizesAccessKey="True" />
+                                                </Border>
 
-                                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top">
+                                                <ControlTemplate.Triggers>
+
+                                                    <Trigger Property="IsSelected" Value="True">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TitleTextColorBrush}" />
+                                                        <Setter TargetName="HeaderBorder" Property="BorderBrush" Value="{DynamicResource ControlLightColorBrush}" />
+                                                        <Setter TargetName="HeaderBorder" Property="BorderThickness" Value="0 0 0 2"/>
+                                                    </Trigger>
+
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TitleTextColorBrush}" />
+                                                        <Setter TargetName="HeaderBorder" Property="BorderBrush" Value="{DynamicResource ControlDarkColorBrush}" />
+                                                        <Setter TargetName="HeaderBorder" Property="BorderThickness" Value="0 0 0 2"/>
+                                                    </Trigger>
+
+                                                    <Trigger Property="IsEnabled" Value="False">
+                                                        <Setter Property="Background" Value="gray" />
+                                                        <Setter Property="BorderBrush" Value="#FFC9C7BA" />
+                                                        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </TabControl.Resources>
+
+                            <TabItem Header="使用許諾契約書 (EULA)" Padding="6" Style="{DynamicResource LicenseTabItemStyle}">
+
+                                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" Style="{DynamicResource CustomScrollViewerStyle}">
 
 
                                     <TextBlock TextWrapping="Wrap" Padding="6">
@@ -551,23 +577,23 @@
 
                             </TabItem>
 
-                            <TabItem Header="使用ライブラリ等" Padding="6">
+                            <TabItem Header="使用ライブラリ等" Padding="6" Style="{DynamicResource LicenseTabItemStyle}">
 
-                                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top">
+                                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" Style="{DynamicResource CustomScrollViewerStyle}">
 
                                     <StackPanel Margin="6 6 50 6">
 
                                         <StackPanel Margin="0 0 0 0">
-                                            <TextBlock TextWrapping="Wrap">
+                                            <TextBlock TextWrapping="Wrap" Style="{DynamicResource DefaultTextBlockStyle}">
                                         本ソフトウェアは下記のライブラリを使用しています。
                                         <LineBreak/>
                                             </TextBlock>
 
-                                            <TextBlock TextWrapping="Wrap" FontWeight="Bold">
+                                            <TextBlock TextWrapping="Wrap" FontWeight="Bold" Style="{DynamicResource DefaultTextBlockStyle}">
                                     Live Chart for WPF<LineBreak/>
                                             </TextBlock>
 
-                                            <TextBlock TextWrapping="Wrap" Padding="6">
+                                            <TextBlock TextWrapping="Wrap" Padding="6" Style="{DynamicResource DefaultTextBlockStyle}">
 The MIT License (MIT)<LineBreak/>
 <LineBreak/>
 Copyright (c) 2016 Alberto Rodriguez and LiveCharts contributors<LineBreak/>
@@ -593,11 +619,11 @@ SOFTWARE.
                                         </StackPanel>
 
                                         <StackPanel Margin="0 24 0 0">
-                                            <TextBlock TextWrapping="Wrap" FontWeight="Bold">
+                                            <TextBlock TextWrapping="Wrap" FontWeight="Bold" Style="{DynamicResource DefaultTextBlockStyle}">
                                     FluentWPF<LineBreak/>
                                             </TextBlock>
 
-                                            <TextBlock TextWrapping="Wrap" Padding="6">
+                                            <TextBlock TextWrapping="Wrap" Padding="6" Style="{DynamicResource DefaultTextBlockStyle}">
                                         MIT License
 <LineBreak/><LineBreak/>
 Copyright (c) 2016 minami_SC
@@ -623,7 +649,38 @@ SOFTWARE.
                                             </TextBlock>
 
                                         </StackPanel>
-                                        
+
+                                        <StackPanel Margin="0 24 0 0">
+                                            <TextBlock TextWrapping="Wrap" FontWeight="Bold" Style="{DynamicResource DefaultTextBlockStyle}">
+                                    Json.NET<LineBreak/>
+                                            </TextBlock>
+                                        </StackPanel>
+
+                                        <TextBlock TextWrapping="Wrap" Padding="6" Style="{DynamicResource DefaultTextBlockStyle}">
+                                        MIT License
+<LineBreak/><LineBreak/>
+Copyright (c) 2007 James Newton-King
+<LineBreak/><LineBreak/>
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+<LineBreak/><LineBreak/>
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+<LineBreak/><LineBreak/>
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+                                        </TextBlock>
+
                                     </StackPanel>
 
                                 </ScrollViewer>
@@ -636,7 +693,7 @@ SOFTWARE.
 
                 </TabControl>
 
-                <Border Grid.Row="1" Height="62" Margin="0" Background="{StaticResource BoardBackground}">
+                <Border Grid.Row="1" Height="62" Margin="0" Background="{DynamicResource BoardBackgroundColorBrush}">
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 12 0 0">
                         <Button Width="80" Content="キャンセル(_C)" Margin="0 0 24 0" Padding="3" IsCancel="True" Command="{Binding SettingsCancelCommand}" Visibility="Hidden"></Button>

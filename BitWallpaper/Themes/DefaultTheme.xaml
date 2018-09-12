@@ -1,0 +1,100 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf" >
+
+
+    <Color x:Key="WindowTintColor">#282828</Color>
+    <Color x:Key="WindowFallbackColor">#212121</Color>
+    <Color x:Key="WindowBackgroundBaseColor">#111111</Color>
+    <Color x:Key="WindowBackgroundColor">#111111</Color>
+
+    <Color x:Key="ControlForegroundColor">Gray</Color>
+    <Color x:Key="ControlLightColor">LightGray</Color>
+    <Color x:Key="ControlMediumColor">DarkGray</Color>
+    <Color x:Key="ControlDarkColor">DimGray</Color>
+    <Color x:Key="ControlMouseOverColor">White</Color>
+    <Color x:Key="ControlPressedColor">Gainsboro</Color>
+    
+    <Color x:Key="DisabledControlDarkColor">Gray</Color>
+    <Color x:Key="DisabledForegroundColor">Black</Color>
+
+    <Color x:Key="BorderLightColor">#FFCCCCCC</Color>
+    <Color x:Key="BorderMediumColor">#FF888888</Color>
+    <Color x:Key="BorderDarkColor">#FF444444</Color>
+
+    <Color x:Key="NormalTextColor">#e8edf9</Color>
+    <Color x:Key="TitleTextColor">LightGray</Color>
+
+    <Color x:Key="NormalTextBoxBackgroundColor">DarkGray</Color>
+
+    <Color x:Key="BoardBackgroundColor">#1c1c1c</Color><!-- 121212 or 111111 -->
+
+    <Color x:Key="ListviewAlt0Color">#212121</Color>
+    <Color x:Key="ListviewAlt1Color">#1a1a1a</Color>
+
+    <Color x:Key="TabUnselectedBackgroundColor">#212121</Color>
+
+    <!-- クール系のアクセントカラー 明るい -->
+    <Color x:Key="AccentCoolLightColor">Green</Color>
+    <!-- クール系のアクセントカラー　暗め （リストビューのコラム選択背景） -->
+    <Color x:Key="AccentCoolDarkColor">#2c4f54</Color>
+
+    <!-- 暖系のアクセントカラー  明るい -->
+    <Color x:Key="AccentWarmLightColor">Orange</Color>
+    <!-- 暖系のアクセントカラー 暗め -->
+    <Color x:Key="AccentWarmDarkColor">#e0815e</Color>
+
+    <!-- Green Blue系 元Aqua -->
+    <SolidColorBrush x:Key="PriceUpColorBrush" Color="#a0d8ef"/>
+    <!-- Red Orange系 元Pink -->
+    <SolidColorBrush x:Key="PriceDownColorBrush" Color="#e597b2"/>
+    <!-- White系 -->
+    <SolidColorBrush x:Key="PriceNeutralColorBrush" Color="Gainsboro"/>
+
+    <!-- 警告　Yellow系 -->
+    <SolidColorBrush x:Key="WarningColorBrush" Color="#FFDFD991"/>
+
+    <!-- スクロールバーの色 #66ffffff -->
+    <SolidColorBrush x:Key="ScrollBarColorBrush" Color="#212121" />
+    <!-- ボーダーの色 #66ffffff -->
+    <SolidColorBrush x:Key="ScrollBarBorderBrush" Color="Transparent" />
+    <!-- トラック（レーン）の色 #33ffffff -->
+    <SolidColorBrush x:Key="ScrollBarTrackBrush" Color="Transparent" />
+    <!-- 三角の色 -->
+    <SolidColorBrush x:Key="ScrollBarHilightBrush" Color="#ccffffff" />
+    <!-- ボタンを押した時の色 #99ffffff -->
+    <SolidColorBrush x:Key="ScrollBarPressedBrush" Color="#1a1a1a" />
+    <!-- 使用不可の色 -->
+    <SolidColorBrush x:Key="ScrollBarDisabledBrush" Color="#44ffffff" />
+    
+
+    <SolidColorBrush x:Key="WindowBackgroundBaseColorBrush" Color="{DynamicResource WindowBackgroundBaseColor}"/>
+    <SolidColorBrush x:Key="WindowBackgroundColorBrush" Color="{DynamicResource WindowBackgroundColor}"/>
+
+    <SolidColorBrush x:Key="ControlForegroundColorBrush" Color="{DynamicResource ControlForegroundColor}"/>
+    <SolidColorBrush x:Key="ControlLightColorBrush" Color="{DynamicResource ControlLightColor}"/>
+    <SolidColorBrush x:Key="ControlMediumColorBrush" Color="{DynamicResource ControlMediumColor}"/>
+    <SolidColorBrush x:Key="ControlDarkColorBrush" Color="{DynamicResource ControlDarkColor}"/>
+    <SolidColorBrush x:Key="ControlMouseOverColorBrush" Color="{DynamicResource ControlMouseOverColor}"/>
+
+    <SolidColorBrush x:Key="NormalTextColorBrush" Color="{DynamicResource NormalTextColor}"/>
+    <SolidColorBrush x:Key="TitleTextColorBrush" Color="{DynamicResource TitleTextColor}"/>
+    
+    <SolidColorBrush x:Key="NormalTextBoxBackgroundColorBrush" Color="{DynamicResource NormalTextBoxBackgroundColor}"/>
+
+    <SolidColorBrush x:Key="BoardBackgroundColorBrush" Color="{DynamicResource BoardBackgroundColor}"/>
+
+    <SolidColorBrush x:Key="AccentCoolLightColorBrush" Color="{DynamicResource AccentCoolLightColor}"/>
+    <SolidColorBrush x:Key="AccentCoolDarkColorBrush" Color="{DynamicResource AccentCoolDarkColor}"/>
+
+    <SolidColorBrush x:Key="AccentWarmDarkColorBrush" Color="{DynamicResource AccentWarmDarkColor}"/>
+    <SolidColorBrush x:Key="AccentWarmLightColorBrush" Color="{DynamicResource AccentWarmLightColor}"/>
+
+    <SolidColorBrush x:Key="BorderDarkColorBrush" Color="{DynamicResource BorderDarkColor}"/>
+
+    <SolidColorBrush x:Key="ListviewAlt0ColorBrush" Color="{DynamicResource ListviewAlt0Color}"/>
+    <SolidColorBrush x:Key="ListviewAlt1ColorBrush" Color="{DynamicResource ListviewAlt1Color}"/>
+
+    <SolidColorBrush x:Key="TabUnselectedBackgroundColorBrush" Color="{DynamicResource TabUnselectedBackgroundColor}"/>
+
+</ResourceDictionary>

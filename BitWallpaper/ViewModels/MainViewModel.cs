@@ -19,21 +19,38 @@ using System.ComponentModel;
 using BitWallpaper.Common;
 using Notifications.Wpf.Controls;
 using Notifications.Wpf;
-
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace BitWallpaper.ViewModels
 {
 
+    #region == テーマ用のクラス ==
+
+    /// <summary>
+    /// テーマ用のクラス
+    /// </summary>
+    public class Theme
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Label { get; set; }
+    }
+
+    #endregion
+
+
     public class MainViewModel : ViewModelBase
     {
-
-        // Application version
-        private string _appVer = "0.0.0.2";
-
         /// <summary>
+        /// 0.0.0.3
+        /// テーマ切替と背景透過率の変更機能を追加。
         /// 0.0.0.2
         /// ロウソク足とチャート表示期間のアイコンを付けて、チャート表示期間を選択で切り替えられるようにしました。
         /// </summary>
+
+        // Application version
+        private string _appVer = "0.0.0.3";
 
         // Application name
         private string _appName = "BitWallpaper";
@@ -88,6 +105,55 @@ namespace BitWallpaper.ViewModels
                 this.NotifyPropertyChanged("ShowMainContents");
             }
         }
+
+        #region == テーマ関係 ==
+
+        // テーマ一覧
+        private ObservableCollection<Theme> _themes;
+        public ObservableCollection<Theme> Themes
+        {
+            get { return _themes; }
+            set { _themes = value; }
+        }
+
+        // テーマ切替
+        private Theme _currentTheme;
+        public Theme CurrentTheme
+        {
+            get
+            {
+                return _currentTheme;
+            }
+            set
+            {
+                if (_currentTheme == value) return;
+
+                _currentTheme = value;
+                this.NotifyPropertyChanged("CurrentTheme");
+
+                (Application.Current as App).ChangeTheme(_currentTheme.Name);
+
+            }
+        }
+
+        // 画面透過率
+        private double _windowOpacity = 0.3;
+        public double WindowOpacity
+        {
+            get
+            {
+                return _windowOpacity;
+            }
+            set
+            {
+                if (_windowOpacity == value) return;
+
+                _windowOpacity = value;
+                this.NotifyPropertyChanged("WindowOpacity");
+            }
+        }
+
+        #endregion
 
         #region == 通貨ペア切り替え用のプロパティ ==
 
@@ -464,98 +530,7 @@ namespace BitWallpaper.ViewModels
             }
         }
 
-
         #region == チャートデータ用のプロパティ ==
-
-        /*
-        // チャートデータ保持
-        // 一日単位 今年、去年、２年前、３年前、４年前、５年前の1hourデータを取得する必要あり。
-        private List<Ohlcv> _ohlcvsOneDay = new List<Ohlcv>();
-        public List<Ohlcv> OhlcvsOneDay
-        {
-            get { return _ohlcvsOneDay; }
-            set
-            {
-                _ohlcvsOneDay = value;
-                this.NotifyPropertyChanged("Ohlcvs");
-            }
-        }
-
-        // 一時間単位 今日、昨日、一昨日、その前の1hourデータを取得する必要あり。
-        private List<Ohlcv> _ohlcvsOneHour = new List<Ohlcv>();
-        public List<Ohlcv> OhlcvsOneHour
-        {
-            get { return _ohlcvsOneHour; }
-            set
-            {
-                _ohlcvsOneHour = value;
-                this.NotifyPropertyChanged("OhlcvsOneHour");
-            }
-        }
-
-        // 一分単位 今日と昨日の1minデータを取得する必要あり。
-        private List<Ohlcv> _ohlcvsOneMin = new List<Ohlcv>();
-        public List<Ohlcv> OhlcvsOneMin
-        {
-            get { return _ohlcvsOneMin; }
-            set
-            {
-                _ohlcvsOneMin = value;
-                this.NotifyPropertyChanged("OhlcvsOneMin");
-            }
-        }
-
-        private SeriesCollection _chartSeries;
-        public SeriesCollection ChartSeries
-        {
-            get
-            {
-                return _chartSeries;
-            }
-            set
-            {
-                if (_chartSeries == value)
-                    return;
-
-                _chartSeries = value;
-                this.NotifyPropertyChanged("ChartSeries");
-            }
-        }
-
-        private AxesCollection _chartAxisX = new AxesCollection();
-        public AxesCollection ChartAxisX
-        {
-            get
-            {
-                return _chartAxisX;
-            }
-            set
-            {
-                if (_chartAxisX == value)
-                    return;
-
-                _chartAxisX = value;
-                this.NotifyPropertyChanged("ChartAxisX");
-            }
-        }
-
-        private AxesCollection _chartAxisY = new AxesCollection();
-        public AxesCollection ChartAxisY
-        {
-            get
-            {
-                return _chartAxisY;
-            }
-            set
-            {
-                if (_chartAxisY == value)
-                    return;
-
-                _chartAxisY = value;
-                this.NotifyPropertyChanged("ChartAxisY");
-            }
-        }
-        */
 
         // === BTC === 
         private SeriesCollection _chartSeriesBtc;
@@ -1126,6 +1101,8 @@ namespace BitWallpaper.ViewModels
                 caX.Separator.IsEnabled = false;
                 caX.IsMerged = false;
                 caX.DisableAnimations = true;
+                Style styleX = Application.Current.FindResource("ChartAxisStyle") as Style;
+                caX.Style = styleX;
 
                 //ChartAxisX.Add(caX);
                 chartAxisX.Add(caX);
@@ -1140,7 +1117,11 @@ namespace BitWallpaper.ViewModels
                 caY.Separator.StrokeThickness = 0.1;
                 caY.Separator.StrokeDashArray = new DoubleCollection { 4 };
                 caY.IsMerged = false;
-                caY.Separator.Stroke = System.Windows.Media.Brushes.WhiteSmoke;
+                //caY.Separator.Stroke = System.Windows.Media.Brushes.WhiteSmoke;
+                Style styleYSec = Application.Current.FindResource("ChartSeparatorStyle") as Style;
+                caY.Separator.Style = styleYSec;
+                Style styleY = Application.Current.FindResource("ChartAxisStyle") as Style;
+                caY.Style = styleY;
                 caY.DisableAnimations = true;
 
                 //ChartAxisY.Add(caY);
@@ -1172,7 +1153,9 @@ namespace BitWallpaper.ViewModels
                 //axs.SectionWidth = 0;
                 axs.StrokeThickness = 0.4;
                 axs.StrokeDashArray = new DoubleCollection { 4 };
-                axs.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(150, 172, 206));
+                //axs.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(150, 172, 206));
+                Style styleSection = Application.Current.FindResource("ChartSectionStyle") as Style;
+                axs.Style = styleSection;
                 axs.DataLabel = false;
                 //axs.DataLabelForeground = new SolidColorBrush(Colors.Black);
                 axs.DisableAnimations = true;
@@ -1262,6 +1245,19 @@ namespace BitWallpaper.ViewModels
 
             #endregion
 
+            #region == テーマのイニシャライズ ==
+
+            // テーマの選択コンボボックスのイニシャライズ
+            _themes = new ObservableCollection<Theme>()
+            {
+                new Theme() { Id = 1, Name = "DefaultTheme", Label = "Dark"},
+                new Theme() { Id = 2, Name = "LightTheme", Label = "Light"}
+            };
+            // デフォルトにセット
+            _currentTheme = _themes[0];
+
+            #endregion
+
             // Ticker（他の通貨用）のタイマー起動
             dispatcherTimerTickOtherPairs.Tick += new EventHandler(TickerTimerOtherPairs);
             dispatcherTimerTickOtherPairs.Interval = new TimeSpan(0, 0, 1);
@@ -1285,10 +1281,11 @@ namespace BitWallpaper.ViewModels
 
             //someWindow.Owner = Application.Current.MainWindow;
         }
+
         /*
         private void onNotificationsOverlayWindowClose(NotificationContent test)
         {
-            System.Diagnostics.Debug.WriteLine("□□□□□□□□□ asdf");
+            System.Diagnostics.Debug.WriteLine("□□□□□□□□□ ");
 
         }
         */
@@ -1346,37 +1343,44 @@ namespace BitWallpaper.ViewModels
                             {
                                 ChartAxisYBtc[0].Sections[0].Value = (double)tick.LTP;
                             }
+                            
+                            // CPU負荷が掛かり過ぎなのでやめ。
                             /*
-                            if (ChartSeriesBtc[0].Values != null)
+                            if ((tick.TimeStamp.Second % 10) == 0)
                             {
-                                int c = ChartSeriesBtc[0].Values.Count;
-
-                                if (c > 0)
+                                if (ChartSeriesBtc[0].Values != null)
                                 {
-                                    double l = ((OhlcPoint)ChartSeriesBtc[0].Values[c - 1]).Low;
-                                    double h = ((OhlcPoint)ChartSeriesBtc[0].Values[c - 1]).High;
+                                    int c = ChartSeriesBtc[0].Values.Count;
 
-                                    if (Application.Current == null) return;
-                                    Application.Current.Dispatcher.Invoke(() =>
+                                    if (c > 0)
                                     {
+                                        double l = ((OhlcPoint)ChartSeriesBtc[0].Values[c - 1]).Low;
+                                        double h = ((OhlcPoint)ChartSeriesBtc[0].Values[c - 1]).High;
 
-                                        ((OhlcPoint)ChartSeriesBtc[0].Values[c - 1]).Close = (double)tick.LTP;
-
-                                        if (l > (double)tick.LTP)
+                                        if (Application.Current == null) return;
+                                        Application.Current.Dispatcher.Invoke(() =>
                                         {
-                                            ((OhlcPoint)ChartSeriesBtc[0].Values[c - 1]).Low = (double)tick.LTP;
-                                        }
 
-                                        if (h < (double)tick.LTP)
-                                        {
-                                            ((OhlcPoint)ChartSeriesBtc[0].Values[c - 1]).High = (double)tick.LTP;
-                                        }
+                                            ((OhlcPoint)ChartSeriesBtc[0].Values[c - 1]).Close = (double)tick.LTP;
 
-                                    });
+                                            if (l > (double)tick.LTP)
+                                            {
+                                                ((OhlcPoint)ChartSeriesBtc[0].Values[c - 1]).Low = (double)tick.LTP;
+                                            }
 
+                                            if (h < (double)tick.LTP)
+                                            {
+                                                ((OhlcPoint)ChartSeriesBtc[0].Values[c - 1]).High = (double)tick.LTP;
+                                            }
+
+                                        });
+
+                                    }
                                 }
                             }
                             */
+
+
                         }
                         else if (pair == "xrp_jpy")
                         {
@@ -1665,6 +1669,19 @@ namespace BitWallpaper.ViewModels
                             }
                         }
 
+                        hoge = mainWindow.Attribute("opacity");
+                        if (hoge != null)
+                        {
+                            WindowOpacity = double.Parse(hoge.Value);
+                        }
+
+                        hoge = mainWindow.Attribute("theme");
+                        if (hoge != null)
+                        {
+                            // テーマをセット
+                            SetCurrentTheme(hoge.Value);
+                        }
+
                     }
 
                 }
@@ -1834,6 +1851,14 @@ namespace BitWallpaper.ViewModels
                 }
                 mainWindow.SetAttributeNode(attrs);
 
+                attrs = doc.CreateAttribute("opacity");
+                attrs.Value = WindowOpacity.ToString();
+                mainWindow.SetAttributeNode(attrs);
+
+                attrs = doc.CreateAttribute("theme");
+                attrs.Value = CurrentTheme.Name.ToString();
+                mainWindow.SetAttributeNode(attrs);
+
                 // set Main Window element to root.
                 root.AppendChild(mainWindow);
 
@@ -1883,6 +1908,16 @@ namespace BitWallpaper.ViewModels
         #endregion
 
         #region == メソッド ==
+
+        // テーマをセットするメソッド
+        private void SetCurrentTheme(string themeName)
+        {
+            Theme test = _themes.FirstOrDefault(x => x.Name == themeName);
+            if (test != null)
+            {
+                CurrentTheme = test;
+            }
+        }
 
         #region == チャート関係のメソッド ==
 
@@ -2098,7 +2133,7 @@ namespace BitWallpaper.ViewModels
 
             #endregion
 
-            await Task.Delay(200);
+            //await Task.Delay(200);
 
             #region == OhlcvsOneMin 1min毎のデータ ==
 
@@ -2151,7 +2186,7 @@ namespace BitWallpaper.ViewModels
 
             #endregion
 
-            await Task.Delay(200);
+            //await Task.Delay(200);
 
             #region == OhlcvsOneDay 1day毎のデータ ==
 
@@ -2413,7 +2448,7 @@ namespace BitWallpaper.ViewModels
                 }
                 else if (_chartSpan == ChartSpans.ThreeDay)
                 {
-                    span = 24 * 3+1;
+                    span = (24 * 3);
                 }
                 else if (_chartSpan == ChartSpans.OneWeek)
                 {
@@ -2513,6 +2548,8 @@ namespace BitWallpaper.ViewModels
                 return;
             }
 
+            Debug.WriteLine("ロード中  " + pair.ToString() + " " + lst.Count.ToString() + " " + span.ToString());
+
             try
             {
 
@@ -2570,132 +2607,157 @@ namespace BitWallpaper.ViewModels
                 if (Application.Current == null) return;
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-
-                    // チャート OHLCVのロード
-                    if (lst.Count > 0)
+                    try
                     {
-                        // Candlestickクリア
-                        chartSeries[0].Values.Clear();
-
-                        // 出来高クリア
-                        //ChartSeries[1].Values.Clear();
-                        // https://github.com/Live-Charts/Live-Charts/issues/76
-                        for (int v = 0; v < chartSeries[1].Values.Count - 1; v++)
+                        // チャート OHLCVのロード
+                        if (lst.Count > 0)
                         {
-                            chartSeries[1].Values[v] = (double)0;
-                        }
+                            // Candlestickクリア
+                            chartSeries[0].Values.Clear();
 
-                        // ラベル表示クリア
-                        chartAxisX[0].Labels.Clear();
-
-                        // 期間設定
-                        chartAxisX[0].MaxValue = span - 1;
-                        chartAxisX[0].MinValue = 0;
-
-                        // Temp を作って、後でまとめて追加する。
-                        // https://lvcharts.net/App/examples/v1/wpf/Performance%20Tips
-
-                        //var temporalCv = new OhlcPoint[test.Count];
-                        var temporalCv = new OhlcPoint[span - 1];
-                        //var temporalOV = new ObservableValue[span - 1];
-
-                        var tempVol = new double[span - 1];
-
-                        // チャート最低値、最高値の設定
-                        double HighMax = 0;
-                        double LowMax = 999999999;
-
-                        int i = 0;
-                        int c = span;
-                        foreach (var oh in lst)
-                        {
-                            // 全てのポイントが同じ場合、スキップする。変なデータ？ 本家もスキップしている。
-                            if ((oh.Open == oh.High) && (oh.Open == oh.Low) && (oh.Open == oh.Close) && (oh.Volume == 0))
+                            // 出来高クリア
+                            //ChartSeries[1].Values.Clear();
+                            // https://github.com/Live-Charts/Live-Charts/issues/76
+                            for (int v = 0; v < chartSeries[1].Values.Count - 1; v++)
                             {
-                                //continue;
+                                chartSeries[1].Values[v] = (double)0;
                             }
 
-                            // 表示数を限る 直近のspan本
-                            //if (i < (span - 1))
-                            if (i < (span - 1))
+                            // ラベル表示クリア
+                            chartAxisX[0].Labels.Clear();
+
+                            
+                            // 期間設定
+                            chartAxisX[0].MaxValue = span - 1;
+                            chartAxisX[0].MinValue = 0;
+                            
+
+                            // Temp を作って、後でまとめて追加する。
+                            // https://lvcharts.net/App/examples/v1/wpf/Performance%20Tips
+
+                            //var temporalCv = new OhlcPoint[test.Count];
+                            var temporalCv = new OhlcPoint[span - 1];
+                            //var temporalOV = new ObservableValue[span - 1];
+
+                            var tempVol = new double[span - 1];
+
+                            /*
+                            // チャート最低値、最高値の設定
+                            double HighMax = 0;
+                            double LowMax = 999999999;
+                            */
+
+                            int i = 0;
+                            int c = span;
+                            foreach (var oh in lst)
                             {
-                                // 最高値と最低値を探る
-                                if ((double)oh.High > HighMax)
+                                // 全てのポイントが同じ場合、スキップする。変なデータ？ 本家もスキップしている。
+                                if ((oh.Open == oh.High) && (oh.Open == oh.Low) && (oh.Open == oh.Close) && (oh.Volume == 0))
                                 {
-                                    HighMax = (double)oh.High;
+                                    //continue;
                                 }
 
-                                if ((double)oh.Low < LowMax)
+                                // 表示数を限る 直近のspan本
+                                //if (i < (span - 1))
+                                if (i < (span - 1))
                                 {
-                                    LowMax = (double)oh.Low;
+                                    /*
+                                    // 最高値と最低値を探る
+                                    if ((double)oh.High > HighMax)
+                                    {
+                                        HighMax = (double)oh.High;
+                                    }
+
+                                    if ((double)oh.Low < LowMax)
+                                    {
+                                        LowMax = (double)oh.Low;
+                                    }
+                                    */
+                                    //Debug.WriteLine(oh.TimeStamp.ToString("dd日 hh時mm分"));
+
+                                    // ラベル
+                                    if (ct == CandleTypes.OneMin)
+                                    {
+                                        chartAxisX[0].Labels.Insert(0, oh.TimeStamp.ToString("H:mm"));
+                                    }
+                                    else if (ct == CandleTypes.OneHour)
+                                    {
+                                        chartAxisX[0].Labels.Insert(0, oh.TimeStamp.ToString("d日 H:mm"));
+
+                                    }
+                                    else if (ct == CandleTypes.OneDay)
+                                    {
+                                        chartAxisX[0].Labels.Insert(0, oh.TimeStamp.ToString("M月d日"));
+                                    }
+                                    else
+                                    {
+                                        throw new System.InvalidOperationException("LoadChart: 不正な CandleType");
+                                    }
+                                    //ChartAxisX[0].Labels.Add(oh.TimeStamp.ToShortTimeString());
+
+
+                                    // ポイント作成
+                                    OhlcPoint p = new OhlcPoint((double)oh.Open, (double)oh.High, (double)oh.Low, (double)oh.Close);
+
+
+                                    // 直接追加しないで、
+                                    //ChartSeries[0].Values.Add(p);
+                                    // 一旦、Tempに追加して、あとでまとめてAddRange
+                                    temporalCv[c - 2] = p;
+
+
+                                    tempVol[c - 2] = (double)oh.Volume;
+                                    //ChartSeries[3].Values.Add((double)oh.Volume);
+
+                                    c = c - 1;
+
                                 }
 
-                                //Debug.WriteLine(oh.TimeStamp.ToString("dd日 hh時mm分"));
-
-                                // ラベル
-                                if (ct == CandleTypes.OneMin)
-                                {
-                                    chartAxisX[0].Labels.Insert(0, oh.TimeStamp.ToString("H:mm"));
-                                }
-                                else if (ct == CandleTypes.OneHour)
-                                {
-                                    chartAxisX[0].Labels.Insert(0, oh.TimeStamp.ToString("d日 H:mm"));
-
-                                }
-                                else if (ct == CandleTypes.OneDay)
-                                {
-                                    chartAxisX[0].Labels.Insert(0, oh.TimeStamp.ToString("M月d日"));
-                                }
-                                else
-                                {
-                                    throw new System.InvalidOperationException("LoadChart: 不正な CandleType");
-                                }
-                                //ChartAxisX[0].Labels.Add(oh.TimeStamp.ToShortTimeString());
-
-
-                                // ポイント作成
-                                OhlcPoint p = new OhlcPoint((double)oh.Open, (double)oh.High, (double)oh.Low, (double)oh.Close);
-
-
-                                // 直接追加しないで、
-                                //ChartSeries[0].Values.Add(p);
-                                // 一旦、Tempに追加して、あとでまとめてAddRange
-                                temporalCv[c - 2] = p;
-
-
-                                tempVol[c - 2] = (double)oh.Volume;
-                                //ChartSeries[3].Values.Add((double)oh.Volume);
-
-                                c = c - 1;
-
+                                i = i + 1;
                             }
 
-                            i = i + 1;
+                            try
+                            {
+                                /*
+                                // チャート最低値、最高値のセット
+                                chartAxisY[0].MaxValue = HighMax;
+                                chartAxisY[0].MinValue = LowMax;
+                                */
+
+                                // まとめて追加
+
+                                // OHLCV
+                                chartSeries[0].Values.AddRange(temporalCv);
+
+                                // volume
+                                var cv = new ChartValues<double>();
+                                cv.AddRange(tempVol);
+                                chartSeries[1].Values = cv;
+
+
+                                // TODO what is this? not working.
+                                if (chartAxisY[0].Sections.Count > 0)
+                                {
+                                    //ChartAxisY[0].Sections[0].Width = span;
+                                    //ChartAxisY[0].Sections[0].SectionWidth = span;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+
+                                ChartLoadingInfo = pair.ToString() + " チャートのロード中にエラーが発生しました 1 ";
+
+                                Debug.WriteLine("■■■■■ " + pair.ToString() + " Chart loading error: " + ex.ToString());
+                            }
+
                         }
 
-                        // チャート最低値、最高値のセット
-                        chartAxisY[0].MaxValue = HighMax;
-                        chartAxisY[0].MinValue = LowMax;
+                    }
+                    catch (Exception ex)
+                    {
+                        ChartLoadingInfo = "チャートのロード中にエラーが発生しました 2 ";
 
-                        // まとめて追加
-
-                        // OHLCV
-                        chartSeries[0].Values.AddRange(temporalCv);
-
-                        // volume
-                        var cv = new ChartValues<double>();
-                        cv.AddRange(tempVol);
-                        chartSeries[1].Values = cv;
-
-
-                        // TODO what is this? not working.
-                        if (chartAxisY[0].Sections.Count > 0)
-                        {
-                            //ChartAxisY[0].Sections[0].Width = span;
-                            //ChartAxisY[0].Sections[0].SectionWidth = span;
-                        }
-
-
+                        Debug.WriteLine("■■■■■ Chart loading error: " + ex.ToString());
                     }
 
                 });
@@ -2703,7 +2765,7 @@ namespace BitWallpaper.ViewModels
             }
             catch (Exception ex)
             {
-                ChartLoadingInfo = "チャートのロード中にエラーが発生しました";
+                ChartLoadingInfo = "チャートのロード中にエラーが発生しました 3";
 
                 Debug.WriteLine("■■■■■ Chart loading error: " + ex.ToString());
             }
@@ -3255,6 +3317,9 @@ namespace BitWallpaper.ViewModels
                 chartAxisY = ChartAxisYBch;
             }
 
+            if (chartSeries == null)
+                return;
+
             if (chartSeries[0].Values != null)
             {
                 if (chartSeries[0].Values.Count > 0)
@@ -3262,49 +3327,61 @@ namespace BitWallpaper.ViewModels
                     if (Application.Current == null) return;
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-
-                        // ポイント作成
-                        OhlcPoint p = new OhlcPoint((double)newData.Open, (double)newData.High, (double)newData.Low, (double)newData.Close);
-                        // 追加
-                        chartSeries[0].Values.Add(p);
-                        // 一番古いの削除
-                        chartSeries[0].Values.RemoveAt(0);
-
-                        // 出来高
-                        chartSeries[1].Values.Add((double)newData.Volume);
-                        chartSeries[1].Values.RemoveAt(0);
-
-                        // ラベル
-                        if (ct == CandleTypes.OneMin)
+                        try
                         {
-                            chartAxisX[0].Labels.Add(newData.TimeStamp.ToString("HH:mm"));
-                        }
-                        else if (ct == CandleTypes.OneHour)
-                        {
-                            chartAxisX[0].Labels.Add(newData.TimeStamp.ToString("dd日 HH:mm"));
+
+                            // ポイント作成
+                            OhlcPoint p = new OhlcPoint((double)newData.Open, (double)newData.High, (double)newData.Low, (double)newData.Close);
+                            // 一番古いの削除
+                            chartSeries[0].Values.RemoveAt(0);
+                            // 追加
+                            chartSeries[0].Values.Add(p);
+
+                            // 出来高
+                            chartSeries[1].Values.RemoveAt(0);
+                            chartSeries[1].Values.Add((double)newData.Volume);
+
+                            // ラベル
+                            chartAxisX[0].Labels.RemoveAt(0);
+                            if (ct == CandleTypes.OneMin)
+                            {
+                                chartAxisX[0].Labels.Add(newData.TimeStamp.ToString("HH:mm"));
+                            }
+                            else if (ct == CandleTypes.OneHour)
+                            {
+                                chartAxisX[0].Labels.Add(newData.TimeStamp.ToString("dd日 HH:mm"));
+
+                            }
+                            else if (ct == CandleTypes.OneDay)
+                            {
+                                chartAxisX[0].Labels.Add(newData.TimeStamp.ToString("MM月dd日"));
+                            }
+                            else
+                            {
+                                throw new System.InvalidOperationException("UpdateChart: 不正な CandleTypes");
+                            }
+
+                            /*
+                            // チャート最低値、最高値のセット
+                            if (chartAxisY[0].MaxValue < (double)newData.High)
+                            {
+                                chartAxisY[0].MaxValue = (double)newData.High;
+                            }
+
+                            if (chartAxisY[0].MinValue > (double)newData.Low)
+                            {
+                                chartAxisY[0].MinValue = (double)newData.Low;
+                            }
+                            */
 
                         }
-                        else if (ct == CandleTypes.OneDay)
+                        catch (Exception ex)
                         {
-                            chartAxisX[0].Labels.Add(newData.TimeStamp.ToString("MM月dd日"));
-                        }
-                        else
-                        {
-                            throw new System.InvalidOperationException("UpdateChart: 不正な CandleTypes");
-                        }
-                        chartAxisX[0].Labels.RemoveAt(0);
 
-                        // チャート最低値、最高値のセット
-                        if (chartAxisY[0].MaxValue < (double)newData.High)
-                        {
-                            chartAxisY[0].MaxValue = (double)newData.High;
-                        }
+                            ChartLoadingInfo = pair.ToString() + " チャートの追加中にエラーが発生しました 1 ";
 
-                        if (chartAxisY[0].MinValue > (double)newData.Low)
-                        {
-                            chartAxisY[0].MinValue = (double)newData.Low;
+                            Debug.WriteLine("■■■■■ " + pair.ToString() + " Chart adding error: " + ex.ToString());
                         }
-
 
                     });
 
@@ -3369,6 +3446,9 @@ namespace BitWallpaper.ViewModels
                 chartAxisX = ChartAxisXBch;
                 chartAxisY = ChartAxisYBch;
             }
+
+            if (chartSeries == null)
+                return;
 
             if (chartSeries[0].Values != null)
             {
