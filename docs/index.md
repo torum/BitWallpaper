@@ -12,7 +12,11 @@
 
 ![alt text](https://github.com/torum/BitWallpaper/blob/master/docs/Images/BitWallpaper-screenshot.png?raw=true)
 
+Lightテーマ
 ![alt text](https://github.com/torum/BitWallpaper/blob/master/docs/Images/BitWallpaper-screenshot-light.png?raw=true)
+
+背景透過率変更
+![alt text](https://github.com/torum/BitWallpaper/blob/master/docs/Images/BitWallpaper-screenshot-opacity.png?raw=true)
 
 
 ### 必要構成：
