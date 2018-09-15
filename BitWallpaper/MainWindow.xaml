@@ -109,7 +109,16 @@
                         <Slider x:Name="SliderSeek" Grid.Column="1" Width="60" Opacity="0.7" Minimum="0.1" Maximum="1" Value="{Binding Mode=TwoWay, Path=WindowOpacity}" ToolTip="画面の透過率" VerticalAlignment="Center"  Margin="3 3 3 3" Foreground="Gray" Background="Transparent" IsMoveToPointEnabled="True" Style="{DynamicResource CustomSliderStyle}"></Slider>
 
                         <!-- テーマ切替 -->
-                        <ComboBox x:Name="ThemeComboBox" ItemsSource="{Binding Themes}" SelectedItem="{Binding CurrentTheme}" DisplayMemberPath="Label" VerticalAlignment="Center" Margin="3 0 6 0" Padding="0 0 0 0" Background="Transparent" Style="{DynamicResource ComboBoxFlatStyle}">
+                        <ComboBox x:Name="ThemeComboBox" ItemsSource="{Binding Themes}" SelectedItem="{Binding CurrentTheme}" ToolTip="テーマの切替" VerticalAlignment="Center" Margin="3 0 6 0" Padding="0 0 0 0" Background="Transparent" Style="{DynamicResource ComboBoxFlatStyle}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Canvas Background="Transparent" Width="12" Height="12" ToolTip="{Binding Path=Label, Mode=OneWay}">
+                                            <Path Fill="{Binding RelativeSource={RelativeSource AncestorType=ComboBox}, Path=Foreground}" Width="12" Height="12" Stretch="Uniform" Data="{Binding Path=IconData, Mode=OneWay}" />
+                                        </Canvas>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
                         </ComboBox>
 
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0" Visibility="{Binding ShowMainContents, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">

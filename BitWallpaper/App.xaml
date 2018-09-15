@@ -8,8 +8,6 @@
              xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf" 
              StartupUri="MainWindow.xaml"
              Startup="AppOnStartup">
-    <!-- 
-             ShutdownMode="OnMainWindowClose"  -->
     <Application.Resources>
         <ResourceDictionary>
 
@@ -776,7 +774,7 @@
                                             <Setter TargetName="HeaderBorder" Property="BorderBrush" Value="DarkGray" />
                                             <Setter TargetName="HeaderBorder" Property="BorderThickness" Value="0 0 0 1" />
 
-                                            <Setter Property="Foreground" Value="{DynamicResource NormalTextColorBrush}" />
+                                            <Setter Property="Foreground" Value="{DynamicResource BoardBackgroundColorBrush}" />
                                         </MultiTrigger>
 
                                         <MultiTrigger>
