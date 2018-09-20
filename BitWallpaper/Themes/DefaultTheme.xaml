@@ -36,6 +36,11 @@
     
     <Color x:Key="ChartVolumeColor">Yellow</Color>
 
+    <SolidColorBrush x:Key="Price24HColorBrush" Color="DarkTurquoise"/>
+    <SolidColorBrush x:Key="PriceInitHColorBrush" Color="#a0d8ef"/>
+    <SolidColorBrush x:Key="PriceInitLColorBrush" Color="Thistle"/>
+    <SolidColorBrush x:Key="Price24LColorBrush" Color="#e597b2"/>
+
     <!-- クール系のアクセントカラー 明るい -->
     <Color x:Key="AccentCoolLightColor">Green</Color>
     <!-- クール系のアクセントカラー　暗め （リストビューのコラム選択背景） -->

@@ -17,13 +17,50 @@ using System.Windows.Input;
 using System.IO;
 using System.ComponentModel;
 using BitWallpaper.Common;
-using Notifications.Wpf.Controls;
-using Notifications.Wpf;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Media;
 
 namespace BitWallpaper.ViewModels
 {
+    // 通貨ペア
+    public enum Pairs
+    {
+        btc_jpy, xrp_jpy, ltc_btc, eth_btc, mona_jpy, mona_btc, bcc_jpy, bcc_btc
+    }
+
+
+    #region == チック履歴 TickHistory クラス ==
+
+    // TickHistoryクラス 
+    public class TickHistory
+    {
+        // 価格
+        public decimal Price { get; set; }
+        public String PriceString
+        {
+            get { return String.Format("{0:#,0}", Price); }
+        }
+
+        // 日時
+        public DateTime TimeAt { get; set; }
+        // タイムスタンプ文字列
+        public string TimeStamp
+        {
+            get { return TimeAt.ToLocalTime().ToString("HH:mm:ss"); }
+        }
+
+        //public Color TickHistoryPriceColor { get; set; }
+
+        public bool TickHistoryPriceUp { get; set; }
+
+        public TickHistory()
+        {
+
+        }
+    }
+
+    #endregion
 
     #region == テーマ用のクラス ==
 
@@ -42,15 +79,20 @@ namespace BitWallpaper.ViewModels
 
     public class MainViewModel : ViewModelBase
     {
-        /// <summary>
+
+        #region == 基本 ==
+
+        ///         
+        /// 0.0.0.4
+        /// 一覧機能を削除し、BitDeskを元にしつつ取引機能を省いた、BitDesk機能限定バージョンに。
         /// 0.0.0.3
         /// テーマ切替と背景透過率の変更機能を追加。
         /// 0.0.0.2
         /// ロウソク足とチャート表示期間のアイコンを付けて、チャート表示期間を選択で切り替えられるようにしました。
-        /// </summary>
+        /// 
 
         // Application version
-        private string _appVer = "0.0.0.3";
+        private string _appVer = "0.0.0.4";
 
         // Application name
         private string _appName = "BitWallpaper";
@@ -66,6 +108,10 @@ namespace BitWallpaper.ViewModels
                 return _appName + " " + _appVer;
             }
         }
+
+        #endregion
+
+        #region == 表示切替 ==
 
         // 設定画面表示フラグ
         private bool _showSettings = false;
@@ -103,6 +149,60 @@ namespace BitWallpaper.ViewModels
 
                 _showMainContents = value;
                 this.NotifyPropertyChanged("ShowMainContents");
+            }
+        }
+
+        #region == 省エネ用のプロパティ ==
+
+        // 省エネモード
+        private bool _minMode = false;
+        public bool MinMode
+        {
+            get
+            {
+                return _minMode;
+            }
+            set
+            {
+                if (_minMode == value) return;
+
+                _minMode = value;
+
+                this.NotifyPropertyChanged("MinMode");
+                this.NotifyPropertyChanged("NotMinMode");
+            }
+        }
+
+        // 省エネモードにおける、コントロールの表示・非表示フラグ
+        public bool NotMinMode
+        {
+            get
+            {
+                return !_minMode;
+            }
+        }
+
+        #endregion
+
+        #endregion
+
+        // 設定
+
+        // グローバルアラーム音設定
+        private bool _playSound = true;
+        public bool PlaySound
+        {
+            get
+            {
+                return _playSound;
+            }
+            set
+            {
+                if (_playSound == value)
+                    return;
+
+                _playSound = value;
+                this.NotifyPropertyChanged("PlaySound");
             }
         }
 
@@ -155,16 +255,1005 @@ namespace BitWallpaper.ViewModels
 
         #endregion
 
+        #region == 各通貨ペア用のクラス ==
+
+        /// <summary>
+        /// 各通貨ペア毎の情報を保持するクラス
+        /// </summary>
+        public class Pair : ViewModelBase
+        {
+
+            // 通貨フォーマット用
+            private string _ltpFormstString = "{0:#,0}";
+            // 通貨ペア
+            private Pairs _p;
+            public Pairs ThisPair
+            {
+                get
+                {
+                    return _p;
+                }
+            }
+
+            // 表示用 通貨ペア名 "BTC/JPY";
+            public string PairString
+            {
+                get
+                {
+                    return PairStrings[_p];
+                }
+            }
+
+            public Dictionary<Pairs, string> PairStrings { get; set; } = new Dictionary<Pairs, string>()
+        {
+            {Pairs.btc_jpy, "BTC/JPY"},
+            {Pairs.xrp_jpy, "XRP/JPY"},
+            {Pairs.eth_btc, "ETH/BTC"},
+            {Pairs.ltc_btc, "LTC/BTC"},
+            {Pairs.mona_jpy, "MONA/JPY"},
+            {Pairs.mona_btc, "MONA/BTC"},
+            {Pairs.bcc_jpy, "BCH/JPY"},
+            {Pairs.bcc_btc, "BCH/BTC"},
+        };
+
+            // 最終取引価格
+            private decimal _ltp;
+            public decimal Ltp
+            {
+                get
+                {
+                    return _ltp;
+                }
+                set
+                {
+                    if (_ltp == value)
+                        return;
+
+                    _ltp = value;
+                    this.NotifyPropertyChanged("Ltp");
+                    this.NotifyPropertyChanged("LtpString");
+
+                    if (_ltp > BasePrice)
+                    {
+                        BasePriceUpFlag = true;
+                    }
+                    else if (_ltp < BasePrice)
+                    {
+                        BasePriceUpFlag = false;
+                    }
+                    this.NotifyPropertyChanged("BasePriceIcon");
+
+                    if (_ltp > MiddleInitPrice)
+                    {
+                        MiddleInitPriceUpFlag = true;
+                    }
+                    else if (_ltp < MiddleInitPrice)
+                    {
+                        MiddleInitPriceUpFlag = false;
+                    }
+                    this.NotifyPropertyChanged("MiddleInitPriceIcon");
+
+                    if (_ltp > MiddleLast24Price)
+                    {
+                        MiddleLast24PriceUpFlag = true;
+                    }
+                    else if (_ltp < MiddleLast24Price)
+                    {
+                        MiddleLast24PriceUpFlag = false;
+                    }
+                    this.NotifyPropertyChanged("MiddleLast24PriceIcon");
+
+                    if (_ltp > AveragePrice)
+                    {
+                        AveragePriceUpFlag = true;
+                    }
+                    else if (_ltp < AveragePrice)
+                    {
+                        AveragePriceUpFlag = false;
+                    }
+                    this.NotifyPropertyChanged("AveragePriceIcon");
+
+                }
+            }
+
+            public string LtpString
+            {
+                get
+                {
+                    if (_ltp == 0)
+                    {
+                        return "";
+                    }
+                    else
+                    {
+                        return String.Format(_ltpFormstString, _ltp);
+
+                    }
+                }
+            }
+
+            private bool _ltpUpFlag;
+            public bool LtpUpFlag
+            {
+                get
+                {
+                    return _ltpUpFlag;
+                }
+                set
+                {
+                    if (_ltpUpFlag == value)
+                        return;
+
+                    _ltpUpFlag = value;
+                    this.NotifyPropertyChanged("LtpUpFlag");
+                }
+            }
+
+            private double _ltpFontSize = 28;
+            public double LtpFontSize
+            {
+                get { return _ltpFontSize; }
+            }
+
+            private decimal _bid;
+            public decimal Bid
+            {
+                get
+                {
+                    return _bid;
+                }
+                set
+                {
+                    if (_bid == value)
+                        return;
+
+                    _bid = value;
+                    this.NotifyPropertyChanged("Bid");
+                    this.NotifyPropertyChanged("BidString");
+
+                }
+            }
+            public string BidString
+            {
+                get { return String.Format("{0:#,0}", _bid); }
+            }
+
+            private decimal _ask;
+            public decimal Ask
+            {
+                get
+                {
+                    return _ask;
+                }
+                set
+                {
+                    if (_ask == value)
+                        return;
+
+                    _ask = value;
+                    this.NotifyPropertyChanged("Ask");
+                    this.NotifyPropertyChanged("AskString");
+
+                }
+            }
+            public string AskString
+            {
+                get { return String.Format("{0:#,0}", _ask); }
+            }
+
+            private DateTime _tickTimeStamp;
+            public DateTime TickTimeStamp
+            {
+                get
+                {
+                    return _tickTimeStamp;
+                }
+                set
+                {
+                    if (_tickTimeStamp == value)
+                        return;
+
+                    _tickTimeStamp = value;
+                    this.NotifyPropertyChanged("TickTimeStamp");
+                    this.NotifyPropertyChanged("TickTimeStampString");
+
+                }
+            }
+            public string TickTimeStampString
+            {
+                get { return PairString + " - " + _tickTimeStamp.ToLocalTime().ToString("yyyy/MM/dd/HH:mm:ss"); }
+            }
+
+            #region == アラーム用のプロパティ ==
+
+            // アラーム 警告音再生
+            private decimal _alarmPlus;
+            public decimal AlarmPlus
+            {
+                get
+                {
+                    return _alarmPlus;
+                }
+                set
+                {
+                    if (_alarmPlus == value)
+                        return;
+
+                    _alarmPlus = value;
+                    this.NotifyPropertyChanged("AlarmPlus");
+                    //this.NotifyPropertyChanged(nameof(ChartBlueline));
+                }
+            }
+            private decimal _alarmMinus;
+            public decimal AlarmMinus
+            {
+                get
+                {
+                    return _alarmMinus;
+                }
+                set
+                {
+                    if (_alarmMinus == value)
+                        return;
+
+                    _alarmMinus = value;
+                    this.NotifyPropertyChanged("AlarmMinus");
+                    //this.NotifyPropertyChanged(nameof(ChartRedline));
+                }
+            }
+
+            // 起動後　最安値　最高値　アラーム情報表示
+            private string _highLowInfoText;
+            public string HighLowInfoText
+            {
+                get
+                {
+                    return _highLowInfoText;
+                }
+                set
+                {
+                    if (_highLowInfoText == value)
+                        return;
+
+                    _highLowInfoText = value;
+                    this.NotifyPropertyChanged("HighLowInfoText");
+                }
+            }
+
+            private bool _highLowInfoTextColorFlag;
+            public bool HighLowInfoTextColorFlag
+            {
+                get
+                {
+                    return _highLowInfoTextColorFlag;
+                }
+                set
+                {
+                    if (_highLowInfoTextColorFlag == value)
+                        return;
+
+                    _highLowInfoTextColorFlag = value;
+                    this.NotifyPropertyChanged("HighLowInfoTextColorFlag");
+                }
+            }
+
+            // アラーム音
+            // 起動後
+            private bool _playSoundLowest = false;
+            public bool PlaySoundLowest
+            {
+                get
+                {
+                    return _playSoundLowest;
+                }
+                set
+                {
+                    if (_playSoundLowest == value)
+                        return;
+
+                    _playSoundLowest = value;
+                    this.NotifyPropertyChanged("PlaySoundLowest");
+                }
+            }
+            private bool _playSoundHighest = false;
+            public bool PlaySoundHighest
+            {
+                get
+                {
+                    return _playSoundHighest;
+                }
+                set
+                {
+                    if (_playSoundHighest == value)
+                        return;
+
+                    _playSoundHighest = value;
+                    this.NotifyPropertyChanged("PlaySoundHighest");
+                }
+            }
+            // last 24h
+            private bool _playSoundLowest24h = true;
+            public bool PlaySoundLowest24h
+            {
+                get
+                {
+                    return _playSoundLowest24h;
+                }
+                set
+                {
+                    if (_playSoundLowest24h == value)
+                        return;
+
+                    _playSoundLowest24h = value;
+                    this.NotifyPropertyChanged("PlaySoundLowest24h");
+                }
+            }
+            private bool _playSoundHighest24h = true;
+            public bool PlaySoundHighest24h
+            {
+                get
+                {
+                    return _playSoundHighest24h;
+                }
+                set
+                {
+                    if (_playSoundHighest24h == value)
+                        return;
+
+                    _playSoundHighest24h = value;
+                    this.NotifyPropertyChanged("PlaySoundHighest24h");
+                }
+            }
+
+            #endregion
+
+            #region == 統計情報のプロパティ ==
+
+            // 起動時初期価格
+            private decimal _basePrice = 0;
+            public decimal BasePrice
+            {
+                get
+                {
+                    return _basePrice;
+                }
+                set
+                {
+                    if (_basePrice == value)
+                        return;
+
+                    _basePrice = value;
+
+                    this.NotifyPropertyChanged("BasePrice");
+                    this.NotifyPropertyChanged("BasePriceIcon");
+                    this.NotifyPropertyChanged("BasePriceString");
+
+                }
+            }
+            public string BasePriceString
+            {
+                get
+                {
+                    return String.Format(_ltpFormstString, BasePrice);
+                }
+            }
+
+            public string BasePriceIcon
+            {
+                get
+                {
+                    if (_ltp > BasePrice)
+                    {
+                        return "▲";
+                    }
+                    else if (_ltp < BasePrice)
+                    {
+                        return "▼";
+                    }
+                    else
+                    {
+                        return "＝";
+                    }
+                }
+            }
+
+            private bool _basePriceUpFlag;
+            public bool BasePriceUpFlag
+            {
+                get
+                {
+                    return _basePriceUpFlag;
+                }
+                set
+                {
+                    if (_basePriceUpFlag == value)
+                        return;
+
+                    _basePriceUpFlag = value;
+                    this.NotifyPropertyChanged("BasePriceUpFlag");
+                }
+            }
+
+            // 過去1分間の平均値
+            private decimal _averagePrice;
+            public decimal AveragePrice
+            {
+                get { return _averagePrice; }
+                set
+                {
+                    if (_averagePrice == value)
+                        return;
+
+                    _averagePrice = value;
+                    this.NotifyPropertyChanged("AveragePrice");
+                    this.NotifyPropertyChanged("AveragePriceIcon");
+                    //this.NotifyPropertyChanged("AveragePriceIconColor");
+                    this.NotifyPropertyChanged("AveragePriceString");
+                }
+            }
+            public string AveragePriceString
+            {
+                get
+                {
+                    return String.Format(_ltpFormstString, _averagePrice); ;
+                }
+            }
+
+            public string AveragePriceIcon
+            {
+                get
+                {
+                    if (_ltp > _averagePrice)
+                    {
+                        return "▲";
+                    }
+                    else if (_ltp < _averagePrice)
+                    {
+                        return "▼";
+                    }
+                    else
+                    {
+                        return "＝";
+                    }
+                }
+            }
+
+            private bool _averagePriceUpFlag;
+            public bool AveragePriceUpFlag
+            {
+                get
+                {
+                    return _averagePriceUpFlag;
+                }
+                set
+                {
+                    if (_averagePriceUpFlag == value)
+                        return;
+
+                    _averagePriceUpFlag = value;
+                    this.NotifyPropertyChanged("AveragePriceUpFlag");
+                }
+            }
+
+            // 過去２４時間の中央値
+            public decimal MiddleLast24Price
+            {
+                get
+                {
+                    return ((_lowestIn24Price + _highestIn24Price) / 2);
+                }
+            }
+            public string MiddleLast24PriceString
+            {
+                get
+                {
+                    return String.Format(_ltpFormstString, MiddleLast24Price); ;
+                }
+            }
+
+            public string MiddleLast24PriceIcon
+            {
+                get
+                {
+                    if (_ltp > MiddleLast24Price)
+                    {
+                        return "▲";
+                    }
+                    else if (_ltp < MiddleLast24Price)
+                    {
+                        return "▼";
+                    }
+                    else
+                    {
+                        return "＝";
+                    }
+                }
+            }
+
+            private bool _middleLast24PriceUpFlag;
+            public bool MiddleLast24PriceUpFlag
+            {
+                get
+                {
+                    return _middleLast24PriceUpFlag;
+                }
+                set
+                {
+                    if (_middleLast24PriceUpFlag == value)
+                        return;
+
+                    _middleLast24PriceUpFlag = value;
+                    this.NotifyPropertyChanged("MiddleLast24PriceUpFlag");
+                }
+            }
+
+            // 起動後の中央値
+            public decimal MiddleInitPrice
+            {
+                get
+                {
+                    return ((_lowestPrice + _highestPrice) / 2);
+                }
+            }
+            public string MiddleInitPriceString
+            {
+                get
+                {
+                    return String.Format(_ltpFormstString, MiddleInitPrice); ;
+                }
+            }
+
+            public string MiddleInitPriceIcon
+            {
+                get
+                {
+                    if (_ltp > MiddleInitPrice)
+                    {
+                        return "▲";
+                    }
+                    else if (_ltp < MiddleInitPrice)
+                    {
+                        return "▼";
+                    }
+                    else
+                    {
+                        return "＝";
+                    }
+                }
+            }
+
+            private bool _middleInitPriceUpFlag;
+            public bool MiddleInitPriceUpFlag
+            {
+                get
+                {
+                    return _middleInitPriceUpFlag;
+                }
+                set
+                {
+                    if (_middleInitPriceUpFlag == value)
+                        return;
+
+                    _middleInitPriceUpFlag = value;
+                    this.NotifyPropertyChanged("MiddleInitPriceUpFlag");
+                }
+            }
+
+            //high 過去24時間の最高値取引価格
+            private decimal _highestIn24Price;
+            public decimal HighestIn24Price
+            {
+                get { return _highestIn24Price; }
+                set
+                {
+                    if (_highestIn24Price == value)
+                        return;
+
+                    _highestIn24Price = value;
+                    this.NotifyPropertyChanged("HighestIn24Price");
+                    this.NotifyPropertyChanged("High24String");
+
+                    this.NotifyPropertyChanged("MiddleLast24Price");
+                    this.NotifyPropertyChanged("MiddleLast24PriceString");
+
+                    //if (MinMode) return;
+                    // チャートの最高値をセット
+                    //ChartAxisY[0].MaxValue = (double)_highestIn24Price + 3000;
+                    // チャートの２４最高値ポイントを更新
+                    //(ChartSeries[1].Values[0] as ObservableValue).Value = (double)_highestIn24Price;
+
+                }
+            }
+            public string High24String
+            {
+                get { return String.Format(_ltpFormstString, _highestIn24Price); }
+            }
+
+            //low 過去24時間の最安値取引価格
+            private decimal _lowestIn24Price;
+            public decimal LowestIn24Price
+            {
+                get { return _lowestIn24Price; }
+                set
+                {
+                    if (_lowestIn24Price == value)
+                        return;
+
+                    _lowestIn24Price = value;
+                    this.NotifyPropertyChanged("LowestIn24Price");
+                    this.NotifyPropertyChanged("Low24String");
+
+                    this.NotifyPropertyChanged("MiddleLast24Price");
+                    this.NotifyPropertyChanged("MiddleLast24PriceString");
+
+                    //if (MinMode) return;
+                    // チャートの最低値をセット
+                    //ChartAxisY[0].MinValue = (double)_lowestIn24Price - 3000;
+                    // チャートの２４最低値ポイントを更新
+                    //(ChartSeries[2].Values[0] as ObservableValue).Value = (double)_lowestIn24Price;
+                }
+            }
+            public string Low24String
+            {
+                get { return String.Format(_ltpFormstString, _lowestIn24Price); }
+            }
+
+            // 起動後 最高値
+            private decimal _highestPrice;
+            public decimal HighestPrice
+            {
+                get { return _highestPrice; }
+                set
+                {
+                    if (_highestPrice == value)
+                        return;
+
+                    _highestPrice = value;
+                    this.NotifyPropertyChanged("HighestPrice");
+                    this.NotifyPropertyChanged("HighestPriceString");
+
+                    this.NotifyPropertyChanged("MiddleInitPrice");
+                    this.NotifyPropertyChanged("MiddleInitPriceString");
+                    this.NotifyPropertyChanged("MiddleInitPriceIcon");
+
+                    //if (MinMode) return;
+                    //(ChartSeries[1].Values[0] as ObservableValue).Value = (double)_highestPrice;
+                }
+            }
+            public string HighestPriceString
+            {
+                get
+                {
+                    return String.Format(_ltpFormstString, _highestPrice); ;
+                }
+            }
+
+            // 起動後 最低 値
+            private decimal _lowestPrice;
+            public decimal LowestPrice
+            {
+                get { return _lowestPrice; }
+                set
+                {
+                    if (_lowestPrice == value)
+                        return;
+
+                    _lowestPrice = value;
+                    this.NotifyPropertyChanged("LowestPrice");
+                    this.NotifyPropertyChanged("LowestPriceString");
+
+                    this.NotifyPropertyChanged("MiddleInitPrice");
+                    this.NotifyPropertyChanged("MiddleInitPriceString");
+                    this.NotifyPropertyChanged("MiddleInitPriceIcon");
+
+                    //if (MinMode) return;
+                    // (ChartSeries[2].Values[0] as ObservableValue).Value = (double)_lowestPrice;
+                }
+            }
+            public string LowestPriceString
+            {
+                get
+                {
+                    return String.Format(_ltpFormstString, _lowestPrice); ;
+                }
+            }
+
+            #endregion
+
+            #region == 板情報のプロパティ ==
+
+            private decimal _depthGrouping = 0;
+            public decimal DepthGrouping
+            {
+                get
+                {
+                    return _depthGrouping;
+                }
+                set
+                {
+                    if (_depthGrouping == value)
+                        return;
+
+                    _depthGrouping = value;
+
+                    if (DepthGrouping100 == _depthGrouping)
+                    {
+                        IsDepthGrouping100 = true;
+                        IsDepthGrouping1000 = false;
+                        IsDepthGroupingOff = false;
+                    }
+                    if (DepthGrouping1000 == _depthGrouping)
+                    {
+                        IsDepthGrouping100 = false;
+                        IsDepthGrouping1000 = true;
+                        IsDepthGroupingOff = false;
+                    }
+
+                    if (0 == _depthGrouping)
+                    {
+                        IsDepthGrouping100 = false;
+                        IsDepthGrouping1000 = false;
+                        IsDepthGroupingOff = true;
+                    }
+
+                    this.NotifyPropertyChanged("DepthGrouping");
+
+                }
+            }
+
+            private bool _isDepthGroupingOff = true;
+            public bool IsDepthGroupingOff
+            {
+                get
+                {
+                    return _isDepthGroupingOff;
+                }
+                set
+                {
+                    if (_isDepthGroupingOff == value)
+                        return;
+
+                    _isDepthGroupingOff = value;
+                    this.NotifyPropertyChanged("IsDepthGroupingOff");
+                }
+            }
+
+            private decimal _depthGrouping100 = 100;
+            public decimal DepthGrouping100
+            {
+                get
+                {
+                    return _depthGrouping100;
+                }
+                set
+                {
+                    if (_depthGrouping100 == value)
+                        return;
+
+                    _depthGrouping100 = value;
+                    this.NotifyPropertyChanged("DepthGrouping100");
+
+                }
+            }
+
+            private bool _isDepthGrouping100;
+            public bool IsDepthGrouping100
+            {
+                get
+                {
+                    return _isDepthGrouping100;
+                }
+                set
+                {
+                    if (_isDepthGrouping100 == value)
+                        return;
+
+                    _isDepthGrouping100 = value;
+                    this.NotifyPropertyChanged("IsDepthGrouping100");
+                }
+            }
+
+            private decimal _depthGrouping1000 = 1000;
+            public decimal DepthGrouping1000
+            {
+                get
+                {
+                    return _depthGrouping1000;
+                }
+                set
+                {
+                    if (_depthGrouping1000 == value)
+                        return;
+
+                    _depthGrouping1000 = value;
+                    this.NotifyPropertyChanged("DepthGrouping1000");
+
+                }
+            }
+
+            private bool _isDepthGrouping1000;
+            public bool IsDepthGrouping1000
+            {
+                get
+                {
+                    return _isDepthGrouping1000;
+                }
+                set
+                {
+                    if (_isDepthGrouping1000 == value)
+                        return;
+
+                    _isDepthGrouping1000 = value;
+                    this.NotifyPropertyChanged("IsDepthGrouping1000");
+                }
+            }
+
+            #endregion
+
+            #region == コレクション ==
+
+            // TickHistoryクラス リスト
+            private ObservableCollection<TickHistory> _tickHistory = new ObservableCollection<TickHistory>();
+            public ObservableCollection<TickHistory> TickHistories
+            {
+                get { return this._tickHistory; }
+            }
+
+            #endregion
+
+            // コンストラクタ
+            public Pair(Pairs p, double fontSize, string ltpFormstString, decimal grouping100, decimal grouping1000)
+            {
+                this._p = p;
+                _ltpFontSize = fontSize;
+                _ltpFormstString = ltpFormstString;
+
+                _depthGrouping100 = grouping100;
+                _depthGrouping1000 = grouping1000;
+
+                BindingOperations.EnableCollectionSynchronization(this._tickHistory, new object());
+            }
+
+        }
+
+        #endregion
+
         #region == 通貨ペア切り替え用のプロパティ ==
 
-        // 通貨ペア
-        public enum Pairs
+        // 左メニュータブの選択インデックス
+        private int _activePairIndex = 0;
+        public int ActivePairIndex
         {
-            btc_jpy, xrp_jpy, ltc_btc, eth_btc, mona_jpy, mona_btc, bcc_jpy, bcc_btc
+            get
+            {
+                return _activePairIndex;
+            }
+            set
+            {
+                if (_activePairIndex == value)
+                    return;
+
+                _activePairIndex = value;
+                this.NotifyPropertyChanged("ActivePairIndex");
+
+                if (_activePairIndex == 0)
+                {
+                    CurrentPair = Pairs.btc_jpy;
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        ActivePair = PairBtcJpy;
+                    });
+
+                    DepthGroupingChanged = true;
+
+                    // 主にチャートの切替
+                    IsBtcJpyVisible = true;
+                    IsXrpJpyVisible = false;
+                    IsEthBtcVisible = false;
+                    IsLtcBtcVisible = false;
+                    IsMonaJpyVisible = false;
+                    IsBchJpyVisible = false;
+
+                }
+                else if (_activePairIndex == 1)
+                {
+                    CurrentPair = Pairs.xrp_jpy;
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        ActivePair = PairXrpJpy;
+                    });
+
+                    DepthGroupingChanged = true;
+
+                    IsBtcJpyVisible = false;
+                    IsXrpJpyVisible = true;
+                    IsEthBtcVisible = false;
+                    IsLtcBtcVisible = false;
+                    IsMonaJpyVisible = false;
+                    IsBchJpyVisible = false;
+
+                }
+                else if (_activePairIndex == 2)
+                {
+                    CurrentPair = Pairs.ltc_btc;
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        ActivePair = PairLtcBtc;
+                    });
+
+                    DepthGroupingChanged = true;
+
+                    IsBtcJpyVisible = false;
+                    IsXrpJpyVisible = false;
+                    IsEthBtcVisible = false;
+                    IsLtcBtcVisible = true;
+                    IsMonaJpyVisible = false;
+                    IsBchJpyVisible = false;
+
+                }
+                else if (_activePairIndex == 3)
+                {
+                    CurrentPair = Pairs.eth_btc;
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        ActivePair = PairEthBtc;
+                    });
+
+                    DepthGroupingChanged = true;
+
+                    IsBtcJpyVisible = false;
+                    IsXrpJpyVisible = false;
+                    IsEthBtcVisible = true;
+                    IsLtcBtcVisible = false;
+                    IsMonaJpyVisible = false;
+                    IsBchJpyVisible = false;
+
+                }
+                else if (_activePairIndex == 4)
+                {
+                    CurrentPair = Pairs.mona_jpy;
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        ActivePair = PairMonaJpy;
+                    });
+
+                    DepthGroupingChanged = true;
+
+                    IsBtcJpyVisible = false;
+                    IsXrpJpyVisible = false;
+                    IsEthBtcVisible = false;
+                    IsLtcBtcVisible = false;
+                    IsMonaJpyVisible = true;
+                    IsBchJpyVisible = false;
+
+                }
+                else if (_activePairIndex == 5)
+                {
+                    CurrentPair = Pairs.bcc_jpy;
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        ActivePair = PairBchJpy;
+                    });
+
+                    DepthGroupingChanged = true;
+
+                    IsBtcJpyVisible = false;
+                    IsXrpJpyVisible = false;
+                    IsEthBtcVisible = false;
+                    IsLtcBtcVisible = false;
+                    IsMonaJpyVisible = false;
+                    IsBchJpyVisible = true;
+
+                }
+
+                // チャートの表示
+                //DisplayChart(CurrentPair);
+
+            }
         }
 
         // 現在の通貨ペア
-        private Pairs _currentPair = Pairs.btc_jpy;//"btc_jpy";
+        private Pairs _currentPair = Pairs.btc_jpy;
         public Pairs CurrentPair
         {
             get
@@ -177,36 +1266,43 @@ namespace BitWallpaper.ViewModels
                     return;
 
                 _currentPair = value;
-
                 this.NotifyPropertyChanged("CurrentPair");
-                this.NotifyPropertyChanged("CurrentPairString");
-
-                this.NotifyPropertyChanged("CoinString");
-
+                this.NotifyPropertyChanged("CurrentCoinString");
+                this.NotifyPropertyChanged("CurrentPairUnitString");
+                this.NotifyPropertyChanged("TickTimeStampString");
 
             }
         }
 
-        // 表示用 通貨ペア名 "BTC/JPY";
-        public string CurrentPairString
+        // 表示用 通貨 
+        public string CurrentCoinString
         {
             get
             {
-                return PairStrings[CurrentPair];
+                return CurrentPairCoin[CurrentPair];//.ToUpper();
             }
         }
 
-        public Dictionary<Pairs, decimal> Ltps { get; set; } = new Dictionary<Pairs, decimal>()
+        // 表示用 円/BTC 単位
+        public string CurrentPairUnitString
         {
-            {Pairs.btc_jpy, 0},
-            {Pairs.xrp_jpy, 0},
-            {Pairs.ltc_btc, 0},
-            {Pairs.eth_btc, 0},
-            {Pairs.mona_jpy, 0},
-            {Pairs.mona_btc, 0},
-            {Pairs.bcc_jpy, 0},
-            {Pairs.bcc_btc, 0},
-        };
+            get
+            {
+                if ((CurrentPair == Pairs.btc_jpy) || (CurrentPair == Pairs.xrp_jpy) || (CurrentPair == Pairs.mona_jpy) || (CurrentPair == Pairs.bcc_jpy))
+                {
+                    return "円";
+                }
+                else if ((CurrentPair == Pairs.eth_btc) || (CurrentPair == Pairs.ltc_btc))
+                {
+                    return "BTC";
+                }
+                else
+                {
+                    return "?";
+                }
+
+            }
+        }
 
         public Dictionary<Pairs, string> PairStrings { get; set; } = new Dictionary<Pairs, string>()
         {
@@ -232,91 +1328,229 @@ namespace BitWallpaper.ViewModels
             {"bcc_btc", Pairs.bcc_btc},
         };
 
-        // 表示用 通貨 単位
-        public string CoinString
+        public Dictionary<Pairs, string> CurrentPairCoin { get; set; } = new Dictionary<Pairs, string>()
         {
-            get
-            {
-                return CurrentPairUnits[CurrentPair].ToUpper();//_coin.ToUpper();
-            }
-        }
-
-        public Dictionary<Pairs, string> CurrentPairUnits { get; set; } = new Dictionary<Pairs, string>()
-        {
-            {Pairs.btc_jpy, "btc"},
-            {Pairs.xrp_jpy, "xrp"},
-            {Pairs.eth_btc, "eth"},
-            {Pairs.ltc_btc, "ltc"},
-            {Pairs.mona_jpy, "mona"},
-            {Pairs.mona_btc, "mona"},
-            {Pairs.bcc_jpy, "bch"},
-            {Pairs.bcc_btc, "bch"},
+            {Pairs.btc_jpy, "BTC"},
+            {Pairs.xrp_jpy, "XRP"},
+            {Pairs.eth_btc, "ETH"},
+            {Pairs.ltc_btc, "LTC"},
+            {Pairs.mona_jpy, "Mona"},
+            {Pairs.mona_btc, "Mona"},
+            {Pairs.bcc_jpy, "BCH"},
+            {Pairs.bcc_btc, "BCH"},
         };
 
-        // アルトコインの最新取引価格
-
-        public decimal LtpBtc
+        // デフォの通貨ペアクラス
+        private Pair _activePair = new Pair(Pairs.btc_jpy, 28, "{0:#,0}", 100M, 1000M);
+        public Pair ActivePair
         {
             get
             {
-                return Ltps[Pairs.btc_jpy];
+                return _activePair;
+            }
+            set
+            {
+                if (_activePair == value)
+                    return;
+
+                _activePair = value;
+                this.NotifyPropertyChanged("ActivePair");
             }
         }
 
-        public decimal LtpXrp
+        private Pair _pairBtcJpy = new Pair(Pairs.btc_jpy, 24, "{0:#,0}", 100M, 1000M);
+        public Pair PairBtcJpy
         {
             get
             {
-                return Ltps[Pairs.xrp_jpy];
+                return _pairBtcJpy;
             }
         }
 
-        public decimal LtpEthBtc
+        private bool _isBtcJpyVisible;
+        public bool IsBtcJpyVisible
         {
             get
             {
-                return Ltps[Pairs.eth_btc];
+                return _isBtcJpyVisible;
+            }
+            set
+            {
+                if (_isBtcJpyVisible == value)
+                    return;
+
+                _isBtcJpyVisible = value;
+                this.NotifyPropertyChanged("IsBtcJpyVisible");
             }
         }
 
-        public decimal LtpLtcBtc
+        private Pair _pairXrpJpy = new Pair(Pairs.xrp_jpy, 24, "{0:#,0.000}", 0.1M, 0.01M);
+        public Pair PairXrpJpy
         {
             get
             {
-                return Ltps[Pairs.ltc_btc];
+                return _pairXrpJpy;
             }
         }
 
-        public decimal LtpMonaJpy
+        private bool _isXrpJpyVisible;
+        public bool IsXrpJpyVisible
         {
             get
             {
-                return Ltps[Pairs.mona_jpy];
+                return _isXrpJpyVisible;
+            }
+            set
+            {
+                if (_isXrpJpyVisible == value)
+                    return;
+
+                _isXrpJpyVisible = value;
+                this.NotifyPropertyChanged("IsXrpJpyVisible");
             }
         }
 
-        public decimal LtpMonaBtc
+        private Pair _pairEthBtc = new Pair(Pairs.eth_btc, 24, "{0:#,0.00000000}", 0.0001M, 0.00001M);
+        public Pair PairEthBtc
         {
             get
             {
-                return Ltps[Pairs.mona_btc];
+                return _pairEthBtc;
             }
         }
 
-        public decimal LtpBchJpy
+        private bool _isEthBtcVisible;
+        public bool IsEthBtcVisible
         {
             get
             {
-                return Ltps[Pairs.bcc_jpy];
+                return _isEthBtcVisible;
+            }
+            set
+            {
+                if (_isEthBtcVisible == value)
+                    return;
+
+                _isEthBtcVisible = value;
+                this.NotifyPropertyChanged("IsEthBtcVisible");
             }
         }
 
-        public decimal LtpBchBtc
+        private Pair _pairLtcBtc = new Pair(Pairs.ltc_btc, 24, "{0:#,0.00000000}", 0.0001M, 0.00001M);
+        public Pair PairLtcBtc
         {
             get
             {
-                return Ltps[Pairs.bcc_btc];
+                return _pairLtcBtc;
             }
+        }
+
+        private bool _isLtcBtcVisible;
+        public bool IsLtcBtcVisible
+        {
+            get
+            {
+                return _isLtcBtcVisible;
+            }
+            set
+            {
+                if (_isLtcBtcVisible == value)
+                    return;
+
+                _isLtcBtcVisible = value;
+                this.NotifyPropertyChanged("IsLtcBtcVisible");
+            }
+        }
+
+        private Pair _pairMonaJpy = new Pair(Pairs.mona_jpy, 24, "{0:#,0.000}", 0.1M, 1M);
+        public Pair PairMonaJpy
+        {
+            get
+            {
+                return _pairMonaJpy;
+            }
+        }
+
+        private bool _isMonaJpyVisible;
+        public bool IsMonaJpyVisible
+        {
+            get
+            {
+                return _isMonaJpyVisible;
+            }
+            set
+            {
+                if (_isMonaJpyVisible == value)
+                    return;
+
+                _isMonaJpyVisible = value;
+                this.NotifyPropertyChanged("IsMonaJpyVisible");
+            }
+        }
+
+        private Pair _pairBchJpy = new Pair(Pairs.bcc_jpy, 24, "{0:#,0}", 10M, 100M);
+        public Pair PairBchJpy
+        {
+            get
+            {
+                return _pairBchJpy;
+            }
+        }
+
+        private bool _isBchJpyVisible;
+        public bool IsBchJpyVisible
+        {
+            get
+            {
+                return _isBchJpyVisible;
+            }
+            set
+            {
+                if (_isBchJpyVisible == value)
+                    return;
+
+                _isBchJpyVisible = value;
+                this.NotifyPropertyChanged("IsBchJpyVisible");
+            }
+        }
+
+        #endregion
+
+        #region == 板情報のプロパティ ==
+
+        // 板情報
+        private ObservableCollection<Depth> _depth = new ObservableCollection<Depth>();
+        public ObservableCollection<Depth> Depths
+        {
+            get { return this._depth; }
+        }
+
+        private bool _depthGroupingChanged;
+        public bool DepthGroupingChanged
+        {
+            get
+            {
+                return _depthGroupingChanged;
+            }
+            set
+            {
+                if (_depthGroupingChanged == value)
+                    return;
+
+                _depthGroupingChanged = value;
+
+                this.NotifyPropertyChanged("DepthGroupingChanged");
+            }
+        }
+
+        #endregion
+        
+        #region == トランザクション（歩み値）のプロパティ ==
+
+        private ObservableCollection<Transactions> _transactions = new ObservableCollection<Transactions>();
+        public ObservableCollection<Transactions> Transactions
+        {
+            get { return this._transactions; }
         }
 
         #endregion
@@ -328,6 +1562,12 @@ namespace BitWallpaper.ViewModels
 
         // 公開API Ticker クライアント
         PublicAPIClient _pubTickerApi = new PublicAPIClient();
+
+        // 公開API Depth クライアント
+        PublicAPIClient _pubDepthApi = new PublicAPIClient();
+
+        // 公開API Transactions クライアント
+        PublicAPIClient _pubTransactionsApi = new PublicAPIClient();
 
         #endregion
 
@@ -342,21 +1582,21 @@ namespace BitWallpaper.ViewModels
         // ロウソク足タイプ　コンボボックス表示用
         public Dictionary<CandleTypes, string> CandleTypesDictionary { get; } = new Dictionary<CandleTypes, string>()
         {
-            {CandleTypes.OneMin, "1m"},
+            {CandleTypes.OneMin, "1分足"},
             //{CandleTypes.FiveMin, "５分" },
             //{CandleTypes.FifteenMin, "１５分"},
             //{CandleTypes.ThirteenMin, "３０分" },
-            {CandleTypes.OneHour, "1h" },
+            {CandleTypes.OneHour, "1時間" },
             //{CandleTypes.FourHour, "４時間"},
             //{CandleTypes.EightHour, "８時間" },
             //{CandleTypes.TwelveHour, "１２時間"},
-            {CandleTypes.OneDay, "1d" },
-            //{CandleTypes.OneWeek, "１週間"},
+            {CandleTypes.OneDay, "日足" },
+            //{CandleTypes.OneWeek, "週足"},
 
         };
 
         // 選択されたロウソク足タイプ
-        public CandleTypes _selectedCandleType = CandleTypes.OneHour; // デフォ。変更注意。起動時のロードと合わせる。
+        public CandleTypes _selectedCandleType = CandleTypes.OneMin; // デフォ。変更注意。起動時のロードと合わせる。
         public CandleTypes SelectedCandleType
         {
             get
@@ -485,14 +1725,15 @@ namespace BitWallpaper.ViewModels
         // チャート表示期間　コンボボックス表示用
         public Dictionary<ChartSpans, string> ChartSpansDictionary { get; } = new Dictionary<ChartSpans, string>()
         {
-            {ChartSpans.OneHour, "1h"},
-            {ChartSpans.ThreeDay, "3d" },
-            {ChartSpans.TwoMonth, "2M" },
+            {ChartSpans.OneHour, "1時間"},
+            {ChartSpans.ThreeHour, "3時間"},
+            {ChartSpans.ThreeDay, "3日間" },
+            {ChartSpans.TwoMonth, "2ヵ月間" },
 
         };
 
         // 選択されたチャート表示期間 
-        private ChartSpans _chartSpan = ChartSpans.ThreeDay; 
+        private ChartSpans _chartSpan = ChartSpans.ThreeHour; 
         public ChartSpans SelectedChartSpan
         {
             get
@@ -530,6 +1771,563 @@ namespace BitWallpaper.ViewModels
             }
         }
 
+        #region == チャートデータ用のプロパティ ==
+
+        #region == BTCチャートデータ用のプロパティ ==
+
+        // === BTC === 
+        private SeriesCollection _chartSeriesBtcJpy = new SeriesCollection();
+        public SeriesCollection ChartSeriesBtcJpy
+        {
+            get
+            {
+                return _chartSeriesBtcJpy;
+            }
+            set
+            {
+                if (_chartSeriesBtcJpy == value)
+                    return;
+
+                _chartSeriesBtcJpy = value;
+                this.NotifyPropertyChanged("ChartSeriesBtcJpy");
+            }
+        }
+
+        private AxesCollection _chartAxisXBtcJpy = new AxesCollection();
+        public AxesCollection ChartAxisXBtcJpy
+        {
+            get
+            {
+                return _chartAxisXBtcJpy;
+            }
+            set
+            {
+                if (_chartAxisXBtcJpy == value)
+                    return;
+
+                _chartAxisXBtcJpy = value;
+                this.NotifyPropertyChanged("ChartAxisXBtcJpy");
+            }
+        }
+
+        private AxesCollection _chartAxisYBtcJpy = new AxesCollection();
+        public AxesCollection ChartAxisYBtcJpy
+        {
+            get
+            {
+                return _chartAxisYBtcJpy;
+            }
+            set
+            {
+                if (_chartAxisYBtcJpy == value)
+                    return;
+
+                _chartAxisYBtcJpy = value;
+                this.NotifyPropertyChanged("ChartAxisYBtcJpy");
+            }
+        }
+
+        // 一時間単位 
+        private List<Ohlcv> _ohlcvsOneHourBtc = new List<Ohlcv>();
+        public List<Ohlcv> OhlcvsOneHourBtc
+        {
+            get { return _ohlcvsOneHourBtc; }
+            set
+            {
+                _ohlcvsOneHourBtc = value;
+                this.NotifyPropertyChanged("OhlcvsOneHourBtc");
+            }
+        }
+
+        // 一分単位 
+        private List<Ohlcv> _ohlcvsOneMinBtc = new List<Ohlcv>();
+        public List<Ohlcv> OhlcvsOneMinBtc
+        {
+            get { return _ohlcvsOneMinBtc; }
+            set
+            {
+                _ohlcvsOneMinBtc = value;
+                this.NotifyPropertyChanged("OhlcvsOneMinBtc");
+            }
+        }
+
+        // 一日単位 
+        private List<Ohlcv> _ohlcvsOneDayBtc = new List<Ohlcv>();
+        public List<Ohlcv> OhlcvsOneDayBtc
+        {
+            get { return _ohlcvsOneDayBtc; }
+            set
+            {
+                _ohlcvsOneDayBtc = value;
+                this.NotifyPropertyChanged("OhlcvsOneDayBtc");
+            }
+        }
+
+        #endregion
+
+        #region == LTCャートデータ用のプロパティ ==
+
+        // === LTC === 
+        private SeriesCollection _chartSeriesLtcBtc = new SeriesCollection();
+        public SeriesCollection ChartSeriesLtcBtc
+        {
+            get
+            {
+                return _chartSeriesLtcBtc;
+            }
+            set
+            {
+                if (_chartSeriesLtcBtc == value)
+                    return;
+
+                _chartSeriesLtcBtc = value;
+                this.NotifyPropertyChanged("ChartSeriesLtcBtc");
+            }
+        }
+
+        private AxesCollection _chartAxisXLtcBtc = new AxesCollection();
+        public AxesCollection ChartAxisXLtcBtc
+        {
+            get
+            {
+                return _chartAxisXLtcBtc;
+            }
+            set
+            {
+                if (_chartAxisXLtcBtc == value)
+                    return;
+
+                _chartAxisXLtcBtc = value;
+                this.NotifyPropertyChanged("ChartAxisXLtcBtc");
+            }
+        }
+
+        private AxesCollection _chartAxisYLtcBtc = new AxesCollection();
+        public AxesCollection ChartAxisYLtcBtc
+        {
+            get
+            {
+                return _chartAxisYLtcBtc;
+            }
+            set
+            {
+                if (_chartAxisYLtcBtc == value)
+                    return;
+
+                _chartAxisYLtcBtc = value;
+                this.NotifyPropertyChanged("ChartAxisYLtcBtc");
+            }
+        }
+
+        // 一時間単位 
+        private List<Ohlcv> _ohlcvsOneHourLtc = new List<Ohlcv>();
+        public List<Ohlcv> OhlcvsOneHourLtc
+        {
+            get { return _ohlcvsOneHourLtc; }
+            set
+            {
+                _ohlcvsOneHourLtc = value;
+                this.NotifyPropertyChanged("OhlcvsOneHourLtc");
+            }
+        }
+
+        // 一分単位 
+        private List<Ohlcv> _ohlcvsOneMinLtc = new List<Ohlcv>();
+        public List<Ohlcv> OhlcvsOneMinLtc
+        {
+            get { return _ohlcvsOneMinLtc; }
+            set
+            {
+                _ohlcvsOneMinLtc = value;
+                this.NotifyPropertyChanged("OhlcvsOneMinLtc");
+            }
+        }
+
+        // 一日単位 
+        private List<Ohlcv> _ohlcvsOneDayLtc = new List<Ohlcv>();
+        public List<Ohlcv> OhlcvsOneDayLtc
+        {
+            get { return _ohlcvsOneDayLtc; }
+            set
+            {
+                _ohlcvsOneDayLtc = value;
+                this.NotifyPropertyChanged("OhlcvsOneDayLtc");
+            }
+        }
+
+        #endregion
+
+        #region == XRPャートデータ用のプロパティ ==
+
+        // === XRP === 
+        private SeriesCollection _chartSeriesXrpJpy;
+        public SeriesCollection ChartSeriesXrpJpy
+        {
+            get
+            {
+                return _chartSeriesXrpJpy;
+            }
+            set
+            {
+                if (_chartSeriesXrpJpy == value)
+                    return;
+
+                _chartSeriesXrpJpy = value;
+                this.NotifyPropertyChanged("ChartSeriesXrp");
+            }
+        }
+
+        private AxesCollection _chartAxisXXrpJpy;
+        public AxesCollection ChartAxisXXrpJpy
+        {
+            get
+            {
+                return _chartAxisXXrpJpy;
+            }
+            set
+            {
+                if (_chartAxisXXrpJpy == value)
+                    return;
+
+                _chartAxisXXrpJpy = value;
+                this.NotifyPropertyChanged("ChartAxisXXrpJpy");
+            }
+        }
+
+        private AxesCollection _chartAxisYXrpJpy;
+        public AxesCollection ChartAxisYXrpJpy
+        {
+            get
+            {
+                return _chartAxisYXrpJpy;
+            }
+            set
+            {
+                if (_chartAxisYXrpJpy == value)
+                    return;
+
+                _chartAxisYXrpJpy = value;
+                this.NotifyPropertyChanged("ChartAxisYXrpJpy");
+            }
+        }
+
+        // 一時間単位 
+        private List<Ohlcv> _ohlcvsOneHourXrp = new List<Ohlcv>();
+        public List<Ohlcv> OhlcvsOneHourXrp
+        {
+            get { return _ohlcvsOneHourXrp; }
+            set
+            {
+                _ohlcvsOneHourXrp = value;
+                this.NotifyPropertyChanged("OhlcvsOneHourXrp");
+            }
+        }
+
+        // 一分単位 
+        private List<Ohlcv> _ohlcvsOneMinXrp = new List<Ohlcv>();
+        public List<Ohlcv> OhlcvsOneMinXrp
+        {
+            get { return _ohlcvsOneMinXrp; }
+            set
+            {
+                _ohlcvsOneMinXrp = value;
+                this.NotifyPropertyChanged("OhlcvsOneMinXrp");
+            }
+        }
+
+        // 一日単位 
+        private List<Ohlcv> _ohlcvsOneDayXrp = new List<Ohlcv>();
+        public List<Ohlcv> OhlcvsOneDayXrp
+        {
+            get { return _ohlcvsOneDayXrp; }
+            set
+            {
+                _ohlcvsOneDayXrp = value;
+                this.NotifyPropertyChanged("OhlcvsOneDayXrp");
+            }
+        }
+
+        #endregion
+
+        #region == Ethャートデータ用のプロパティ ==
+
+        // === Eth === 
+        private SeriesCollection _chartSeriesEthBtc;
+        public SeriesCollection ChartSeriesEthBtc
+        {
+            get
+            {
+                return _chartSeriesEthBtc;
+            }
+            set
+            {
+                if (_chartSeriesEthBtc == value)
+                    return;
+
+                _chartSeriesEthBtc = value;
+                this.NotifyPropertyChanged("ChartSeriesEthBtc");
+            }
+        }
+
+        private AxesCollection _chartAxisXEthBtc;
+        public AxesCollection ChartAxisXEthBtc
+        {
+            get
+            {
+                return _chartAxisXEthBtc;
+            }
+            set
+            {
+                if (_chartAxisXEthBtc == value)
+                    return;
+
+                _chartAxisXEthBtc = value;
+                this.NotifyPropertyChanged("ChartAxisXEthBtc");
+            }
+        }
+
+        private AxesCollection _chartAxisYEthBtc;
+        public AxesCollection ChartAxisYEthBtc
+        {
+            get
+            {
+                return _chartAxisYEthBtc;
+            }
+            set
+            {
+                if (_chartAxisYEthBtc == value)
+                    return;
+
+                _chartAxisYEthBtc = value;
+                this.NotifyPropertyChanged("ChartAxisYEthBtc");
+            }
+        }
+
+        // 一時間単位 
+        private List<Ohlcv> _ohlcvsOneHourEth = new List<Ohlcv>();
+        public List<Ohlcv> OhlcvsOneHourEth
+        {
+            get { return _ohlcvsOneHourEth; }
+            set
+            {
+                _ohlcvsOneHourEth = value;
+                this.NotifyPropertyChanged("OhlcvsOneHourEth");
+            }
+        }
+
+        // 一分単位 
+        private List<Ohlcv> _ohlcvsOneMinEth = new List<Ohlcv>();
+        public List<Ohlcv> OhlcvsOneMinEth
+        {
+            get { return _ohlcvsOneMinEth; }
+            set
+            {
+                _ohlcvsOneMinEth = value;
+                this.NotifyPropertyChanged("OhlcvsOneMinEth");
+            }
+        }
+
+        // 一日単位 
+        private List<Ohlcv> _ohlcvsOneDayEth = new List<Ohlcv>();
+        public List<Ohlcv> OhlcvsOneDayEth
+        {
+            get { return _ohlcvsOneDayEth; }
+            set
+            {
+                _ohlcvsOneDayEth = value;
+                this.NotifyPropertyChanged("OhlcvsOneDayEth");
+            }
+        }
+
+        #endregion
+
+        #region == Monaャートデータ用のプロパティ ==
+
+        // === Mona === 
+        private SeriesCollection _chartSeriesMonaJpy;
+        public SeriesCollection ChartSeriesMonaJpy
+        {
+            get
+            {
+                return _chartSeriesMonaJpy;
+            }
+            set
+            {
+                if (_chartSeriesMonaJpy == value)
+                    return;
+
+                _chartSeriesMonaJpy = value;
+                this.NotifyPropertyChanged("ChartSeriesMonaJpy");
+            }
+        }
+
+        private AxesCollection _chartAxisXMonaJpy;
+        public AxesCollection ChartAxisXMonaJpy
+        {
+            get
+            {
+                return _chartAxisXMonaJpy;
+            }
+            set
+            {
+                if (_chartAxisXMonaJpy == value)
+                    return;
+
+                _chartAxisXMonaJpy = value;
+                this.NotifyPropertyChanged("ChartAxisXMonaJpy");
+            }
+        }
+
+        private AxesCollection _chartAxisYMonaJpy;
+        public AxesCollection ChartAxisYMonaJpy
+        {
+            get
+            {
+                return _chartAxisYMonaJpy;
+            }
+            set
+            {
+                if (_chartAxisYMonaJpy == value)
+                    return;
+
+                _chartAxisYMonaJpy = value;
+                this.NotifyPropertyChanged("ChartAxisYMonaJpy");
+            }
+        }
+
+        // 一時間単位 
+        private List<Ohlcv> _ohlcvsOneHourMona = new List<Ohlcv>();
+        public List<Ohlcv> OhlcvsOneHourMona
+        {
+            get { return _ohlcvsOneHourMona; }
+            set
+            {
+                _ohlcvsOneHourMona = value;
+                this.NotifyPropertyChanged("OhlcvsOneHourMona");
+            }
+        }
+
+        // 一分単位 
+        private List<Ohlcv> _ohlcvsOneMinMona = new List<Ohlcv>();
+        public List<Ohlcv> OhlcvsOneMinMona
+        {
+            get { return _ohlcvsOneMinMona; }
+            set
+            {
+                _ohlcvsOneMinMona = value;
+                this.NotifyPropertyChanged("OhlcvsOneMinMona");
+            }
+        }
+
+        // 一日単位 
+        private List<Ohlcv> _ohlcvsOneDayMona = new List<Ohlcv>();
+        public List<Ohlcv> OhlcvsOneDayMona
+        {
+            get { return _ohlcvsOneDayMona; }
+            set
+            {
+                _ohlcvsOneDayMona = value;
+                this.NotifyPropertyChanged("OhlcvsOneDayMona");
+            }
+        }
+
+        #endregion
+
+        #region == Bchャートデータ用のプロパティ ==
+
+        // === Bch === 
+        private SeriesCollection _chartSeriesBchJpy;
+        public SeriesCollection ChartSeriesBchJpy
+        {
+            get
+            {
+                return _chartSeriesBchJpy;
+            }
+            set
+            {
+                if (_chartSeriesBchJpy == value)
+                    return;
+
+                _chartSeriesBchJpy = value;
+                this.NotifyPropertyChanged("ChartSeriesBchJpy");
+            }
+        }
+
+        private AxesCollection _chartAxisXBchJpy;
+        public AxesCollection ChartAxisXBchJpy
+        {
+            get
+            {
+                return _chartAxisXBchJpy;
+            }
+            set
+            {
+                if (_chartAxisXBchJpy == value)
+                    return;
+
+                _chartAxisXBchJpy = value;
+                this.NotifyPropertyChanged("ChartAxisXBchJpy");
+            }
+        }
+
+        private AxesCollection _chartAxisYBchJpy;
+        public AxesCollection ChartAxisYBchJpy
+        {
+            get
+            {
+                return _chartAxisYBchJpy;
+            }
+            set
+            {
+                if (_chartAxisYBchJpy == value)
+                    return;
+
+                _chartAxisYBchJpy = value;
+                this.NotifyPropertyChanged("ChartAxisYBchJpy");
+            }
+        }
+
+        // 一時間単位 
+        private List<Ohlcv> _ohlcvsOneHourBch = new List<Ohlcv>();
+        public List<Ohlcv> OhlcvsOneHourBch
+        {
+            get { return _ohlcvsOneHourBch; }
+            set
+            {
+                _ohlcvsOneHourBch = value;
+                this.NotifyPropertyChanged("OhlcvsOneHourBch");
+            }
+        }
+
+        // 一分単位 
+        private List<Ohlcv> _ohlcvsOneMinBch = new List<Ohlcv>();
+        public List<Ohlcv> OhlcvsOneMinBch
+        {
+            get { return _ohlcvsOneMinBch; }
+            set
+            {
+                _ohlcvsOneMinBch = value;
+                this.NotifyPropertyChanged("OhlcvsOneMinBch");
+            }
+        }
+
+        // 一日単位 
+        private List<Ohlcv> _ohlcvsOneDayBch = new List<Ohlcv>();
+        public List<Ohlcv> OhlcvsOneDayBch
+        {
+            get { return _ohlcvsOneDayBch; }
+            set
+            {
+                _ohlcvsOneDayBch = value;
+                this.NotifyPropertyChanged("OhlcvsOneDayBch");
+            }
+        }
+
+        #endregion
+
+        #endregion
+
+        /*
         #region == チャートデータ用のプロパティ ==
 
         // === BTC === 
@@ -1061,6 +2859,7 @@ namespace BitWallpaper.ViewModels
         }
 
         #endregion
+        */
 
         #endregion
 
@@ -1071,6 +2870,23 @@ namespace BitWallpaper.ViewModels
 
         #endregion
 
+        // APIエラー結果文字列 
+        private string _aPIResultTicker;
+        public string APIResultTicker
+        {
+            get
+            {
+                return _aPIResultTicker;
+            }
+            set
+            {
+                if (_aPIResultTicker == value) return;
+
+                _aPIResultTicker = value;
+                this.NotifyPropertyChanged("APIResultTicker");
+            }
+        }
+
         /// <summary>
         /// メインのビューモデル
         /// </summary>
@@ -1080,6 +2896,14 @@ namespace BitWallpaper.ViewModels
             ShowSettingsCommand = new RelayCommand(ShowSettingsCommand_Execute, ShowSettingsCommand_CanExecute);
             SettingsCancelCommand = new RelayCommand(SettingsCancelCommand_Execute, SettingsCancelCommand_CanExecute);
             SettingsOKCommand = new RelayCommand(SettingsOKCommand_Execute, SettingsOKCommand_CanExecute);
+
+            DepthGroupingCommand = new GenericRelayCommand<object>(
+                param => DepthGroupingCommand_Execute(param),
+                param => DepthGroupingCommand_CanExecute());
+
+            // ObservableCollection collections 
+            BindingOperations.EnableCollectionSynchronization(this._depth, new object());
+            BindingOperations.EnableCollectionSynchronization(this._transactions, new object());
 
             #region == チャートのイニシャライズ ==
 
@@ -1193,27 +3017,27 @@ namespace BitWallpaper.ViewModels
 
                 if (pair == Pairs.btc_jpy)
                 {
-                    ChartSeriesBtc = chartSeries;
-                    ChartAxisXBtc = chartAxisX;
-                    ChartAxisYBtc = chartAxisY;
+                    ChartSeriesBtcJpy = chartSeries;
+                    ChartAxisXBtcJpy = chartAxisX;
+                    ChartAxisYBtcJpy = chartAxisY;
                 }
                 else if (pair == Pairs.xrp_jpy)
                 {
-                    ChartSeriesXrp = chartSeries;
-                    ChartAxisXXrp = chartAxisX;
-                    ChartAxisYXrp = chartAxisY;
+                    ChartSeriesXrpJpy = chartSeries;
+                    ChartAxisXXrpJpy = chartAxisX;
+                    ChartAxisYXrpJpy = chartAxisY;
                 }
                 else if (pair == Pairs.eth_btc)
                 {
-                    ChartSeriesEth = chartSeries;
-                    ChartAxisXEth = chartAxisX;
-                    ChartAxisYEth = chartAxisY;
+                    ChartSeriesEthBtc = chartSeries;
+                    ChartAxisXEthBtc = chartAxisX;
+                    ChartAxisYEthBtc = chartAxisY;
                 }
                 else if (pair == Pairs.mona_jpy)
                 {
-                    ChartSeriesMona = chartSeries;
-                    ChartAxisXMona = chartAxisX;
-                    ChartAxisYMona = chartAxisY;
+                    ChartSeriesMonaJpy = chartSeries;
+                    ChartAxisXMonaJpy = chartAxisX;
+                    ChartAxisYMonaJpy = chartAxisY;
                 }
                 else if (pair == Pairs.mona_btc)
                 {
@@ -1221,9 +3045,9 @@ namespace BitWallpaper.ViewModels
                 }
                 else if (pair == Pairs.ltc_btc)
                 {
-                    ChartSeriesLtc = chartSeries;
-                    ChartAxisXLtc = chartAxisX;
-                    ChartAxisYLtc = chartAxisY;
+                    ChartSeriesLtcBtc = chartSeries;
+                    ChartAxisXLtcBtc = chartAxisX;
+                    ChartAxisYLtcBtc = chartAxisY;
                 }
                 else if (pair == Pairs.bcc_btc)
                 {
@@ -1231,9 +3055,9 @@ namespace BitWallpaper.ViewModels
                 }
                 else if (pair == Pairs.bcc_jpy)
                 {
-                    ChartSeriesBch = chartSeries;
-                    ChartAxisXBch = chartAxisX;
-                    ChartAxisYBch = chartAxisY;
+                    ChartSeriesBchJpy = chartSeries;
+                    ChartAxisXBchJpy = chartAxisX;
+                    ChartAxisYBchJpy = chartAxisY;
                 }
 
             }
@@ -1278,15 +3102,24 @@ namespace BitWallpaper.ViewModels
             //notificationManager.Show(test);
 
             //someWindow.Owner = Application.Current.MainWindow;
-        }
 
-        /*
-        private void onNotificationsOverlayWindowClose(NotificationContent test)
-        {
-            System.Diagnostics.Debug.WriteLine("□□□□□□□□□ ");
+            // 初期値
+            ActivePairIndex = 0;
+            CurrentPair = Pairs.btc_jpy;
+            ActivePair = PairBtcJpy;
+            ActivePair.Ltp = PairBtcJpy.Ltp;
+
+            IsBtcJpyVisible = true;
+            IsXrpJpyVisible = false;
+            IsEthBtcVisible = false;
+            IsLtcBtcVisible = false;
+            IsMonaJpyVisible = false;
+            IsBchJpyVisible = false;
+
+            UpdateDepth();
+            UpdateTransactions();
 
         }
-        */
 
         #region == イベント・タイマー系 ==
 
@@ -1318,285 +3151,1716 @@ namespace BitWallpaper.ViewModels
         private async void TickerTimerOtherPairs(object source, EventArgs e)
         {
             // 各通貨ペアをループ
-            foreach (string pair in Enum.GetNames(typeof(Pairs)))
+
+            foreach (Pairs pair in Enum.GetValues(typeof(Pairs)))
             {
-                if ((pair == "mona_btc") || pair == "bcc_btc")
+                if ((pair == Pairs.mona_btc) || pair == Pairs.bcc_btc)
                 {
                     continue;
                 }
 
-                Ticker tick = await _pubTickerApi.GetTicker(pair);
+                Ticker tick = await _pubTickerApi.GetTicker(pair.ToString());
 
                 if (tick != null)
                 {
+                    // Ticker 取得エラー表示をクリア
+                    APIResultTicker = "";
+
                     try
                     {
-                        Ltps[GetPairs[pair]] = tick.LTP;
 
-                        // チャートの現在値をセット
-                        if (pair == "btc_jpy")
+                        if (pair == CurrentPair)
                         {
-                            this.NotifyPropertyChanged("LtpBtc");
-                            if (ChartAxisYBtc[0].Sections.Count > 0)
+                            if (tick.LTP > ActivePair.Ltp)
                             {
-                                ChartAxisYBtc[0].Sections[0].Value = (double)tick.LTP;
+                                ActivePair.LtpUpFlag = true;
                             }
-                            
-                            // CPU負荷が掛かり過ぎなのでやめ。
-                            /*
-                            if ((tick.TimeStamp.Second % 10) == 0)
+                            else if (tick.LTP < ActivePair.Ltp)
                             {
-                                if (ChartSeriesBtc[0].Values != null)
+                                ActivePair.LtpUpFlag = false;
+                            }
+                            else if (tick.LTP == ActivePair.Ltp)
+                            {
+                                //ActivePair.LtpColor = Colors.Gainsboro;
+                            }
+
+                        }
+
+                        if (pair == Pairs.btc_jpy)
+                        {
+                            // 最新の価格をセット
+                            PairBtcJpy.Ltp = tick.LTP;
+                            PairBtcJpy.Bid = tick.Bid;
+                            PairBtcJpy.Ask = tick.Ask;
+                            PairBtcJpy.TickTimeStamp = tick.TimeStamp;
+
+                            PairBtcJpy.LowestIn24Price = tick.Low;
+                            PairBtcJpy.HighestIn24Price = tick.High;
+
+                            // 起動時価格セット
+                            if (PairBtcJpy.BasePrice == 0) PairBtcJpy.BasePrice = tick.LTP;
+
+                            // 最安値登録
+                            if (PairBtcJpy.LowestPrice == 0)
+                            {
+                                PairBtcJpy.LowestPrice = tick.LTP;
+                            }
+                            if (tick.LTP < PairBtcJpy.LowestPrice)
+                            {
+                                PairBtcJpy.LowestPrice = tick.LTP;
+                            }
+
+                            // 最高値登録
+                            if (PairBtcJpy.HighestPrice == 0)
+                            {
+                                PairBtcJpy.HighestPrice = tick.LTP;
+                            }
+                            if (tick.LTP > PairBtcJpy.HighestPrice)
+                            {
+                                PairBtcJpy.HighestPrice = tick.LTP;
+                            }
+
+                            #region == チック履歴 ==
+
+                            TickHistory aym = new TickHistory();
+                            aym.Price = tick.LTP;
+                            aym.TimeAt = tick.TimeStamp;
+                            if (PairBtcJpy.TickHistories.Count > 0)
+                            {
+                                if (PairBtcJpy.TickHistories[0].Price > aym.Price)
                                 {
-                                    int c = ChartSeriesBtc[0].Values.Count;
+                                    aym.TickHistoryPriceUp = true;
+                                    PairBtcJpy.TickHistories.Insert(0, aym);
+
+                                }
+                                else if (PairBtcJpy.TickHistories[0].Price < aym.Price)
+                                {
+                                    aym.TickHistoryPriceUp = false;
+                                    PairBtcJpy.TickHistories.Insert(0, aym);
+                                }
+                                else
+                                {
+                                    //aym.TickHistoryPriceColor = Colors.Gainsboro;
+                                    PairBtcJpy.TickHistories.Insert(0, aym);
+                                }
+                            }
+                            else
+                            {
+                                //aym.TickHistoryPriceColor = Colors.Gainsboro;
+                                PairBtcJpy.TickHistories.Insert(0, aym);
+                            }
+
+                            // limit the number of the list.
+                            if (PairBtcJpy.TickHistories.Count > 60)
+                            {
+                                PairBtcJpy.TickHistories.RemoveAt(60);
+                            }
+
+                            // 60(1分)の平均値を求める
+                            decimal aSum = 0;
+                            int c = 0;
+                            if (PairBtcJpy.TickHistories.Count > 0)
+                            {
+
+                                if (PairBtcJpy.TickHistories.Count > 60)
+                                {
+                                    c = 59;
+                                }
+                                else
+                                {
+                                    c = PairBtcJpy.TickHistories.Count - 1;
+                                }
+
+                                if (c == 0)
+                                {
+                                    PairBtcJpy.AveragePrice = PairBtcJpy.TickHistories[0].Price;
+                                }
+                                else
+                                {
+                                    for (int i = 0; i < c; i++)
+                                    {
+                                        aSum = aSum + PairBtcJpy.TickHistories[i].Price;
+                                    }
+                                    PairBtcJpy.AveragePrice = aSum / c;
+                                }
+
+                            }
+                            else if (PairBtcJpy.TickHistories.Count == 1)
+                            {
+                                PairBtcJpy.AveragePrice = PairBtcJpy.TickHistories[0].Price;
+                            }
+
+                            #endregion
+
+                            #region == アラーム ==
+
+                            PairBtcJpy.HighLowInfoText = "";
+
+                            bool isPlayed = false;
+
+                            // アラーム
+                            if (PairBtcJpy.AlarmPlus > 0)
+                            {
+                                if (tick.LTP >= PairBtcJpy.AlarmPlus)
+                                {
+                                    PairBtcJpy.HighLowInfoTextColorFlag = true;
+                                    PairBtcJpy.HighLowInfoText = PairBtcJpy.PairString + " ⇑⇑⇑　高値アラーム ";
+
+                                    if (PlaySound)
+                                    {
+                                        SystemSounds.Hand.Play();
+                                        isPlayed = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                // 起動後初期値セット
+                                PairBtcJpy.AlarmPlus = ((long)(tick.LTP / 1000) * 1000) + 20000;
+                            }
+
+                            if (PairBtcJpy.AlarmMinus > 0)
+                            {
+                                if (tick.LTP <= PairBtcJpy.AlarmMinus)
+                                {
+                                    PairBtcJpy.HighLowInfoTextColorFlag = false;
+                                    PairBtcJpy.HighLowInfoText = PairBtcJpy.PairString + " ⇓⇓⇓　安値アラーム ";
+                                    if (PlaySound)
+                                    {
+                                        SystemSounds.Beep.Play();
+                                        isPlayed = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                // 起動後初期値セット
+                                PairBtcJpy.AlarmMinus = ((long)(tick.LTP / 1000) * 1000) - 10000;
+                            }
+
+                            // 起動後最高値
+                            if (tick.LTP >= PairBtcJpy.HighestPrice)
+                            {
+                                if ((PairBtcJpy.TickHistories.Count > 25) && ((PairBtcJpy.BasePrice + 1000M) < tick.LTP))
+                                {
+                                    PairBtcJpy.HighLowInfoTextColorFlag = true;
+                                    PairBtcJpy.HighLowInfoText = PairBtcJpy.PairString + " ⇑⇑⇑　起動後最高値更新 ";
+
+                                    if ((isPlayed == false) && (PairBtcJpy.PlaySoundHighest == true))
+                                    {
+                                        if (PlaySound)
+                                        {
+                                            SystemSounds.Hand.Play();
+                                            isPlayed = true;
+                                        }
+                                    }
+                                }
+                            }
+                            // 起動後最安値
+                            if (tick.LTP <= PairBtcJpy.LowestPrice)
+                            {
+                                if ((PairBtcJpy.TickHistories.Count > 25) && ((PairBtcJpy.BasePrice - 1000M) > tick.LTP))
+                                {
+                                    PairBtcJpy.HighLowInfoTextColorFlag = false;
+                                    PairBtcJpy.HighLowInfoText = PairBtcJpy.PairString + " ⇓⇓⇓　起動後最安値更新 ";
+
+                                    if ((isPlayed == false) && (PairBtcJpy.PlaySoundLowest == true))
+                                    {
+                                        if (PlaySound)
+                                        {
+                                            SystemSounds.Beep.Play();
+                                            isPlayed = true;
+                                        }
+                                    }
+                                }
+                            }
+
+                            // 過去24時間最高値
+                            if (tick.LTP >= PairBtcJpy.HighestIn24Price)
+                            {
+                                PairBtcJpy.HighLowInfoTextColorFlag = true;
+                                PairBtcJpy.HighLowInfoText = PairBtcJpy.PairString + " ⇑⇑⇑⇑⇑⇑　過去24時間最高値更新 ";
+
+                                if ((isPlayed == false) && (PairBtcJpy.PlaySoundHighest24h == true))
+                                {
+                                    if (PlaySound)
+                                    {
+                                        SystemSounds.Hand.Play();
+                                        isPlayed = true;
+                                    }
+                                }
+                            }
+                            // 過去24時間最安値
+                            if (tick.LTP <= PairBtcJpy.LowestIn24Price)
+                            {
+                                PairBtcJpy.HighLowInfoTextColorFlag = false;
+                                PairBtcJpy.HighLowInfoText = PairBtcJpy.PairString + " ⇓⇓⇓⇓⇓⇓　過去24時間最安値更新 ";
+
+                                if ((isPlayed == false) && (PairBtcJpy.PlaySoundLowest24h == true))
+                                {
+                                    if (PlaySound)
+                                    {
+                                        SystemSounds.Hand.Play();
+                                        isPlayed = true;
+                                    }
+                                }
+                            }
+
+                            #endregion
+
+                            // 省エネモードでなかったら
+                            if ((MinMode == false) && (pair == CurrentPair))
+                            {
+                                // 最新取引価格のラインを更新
+                                if (ChartAxisYBtcJpy != null)
+                                {
+                                    if (ChartAxisYBtcJpy.Count > 0)
+                                    {
+                                        if (ChartAxisYBtcJpy[0].Sections.Count > 0)
+                                        {
+                                            ChartAxisYBtcJpy[0].Sections[0].Value = (double)tick.LTP;
+                                        }
+                                    }
+
+                                    // 最新のロウソク足を更新する。
+                                    //＞＞＞重すぎ。負荷掛かり過ぎなので止め。
+                                    /*
+                                    if (ChartSeriesBtcJpy != null)
+                                    {
+                                        if (ChartSeriesBtcJpy[0].Values != null)
+                                        {
+                                            int cb = ChartSeriesBtcJpy[0].Values.Count;
+
+                                            if (cb > 0)
+                                            {
+                                                double l = ((OhlcPoint)ChartSeriesBtcJpy[0].Values[cb - 1]).Low;
+                                                double h = ((OhlcPoint)ChartSeriesBtcJpy[0].Values[cb - 1]).High;
+
+                                                if (Application.Current == null) return;
+                                                Application.Current.Dispatcher.Invoke(() =>
+                                                {
+
+                                                    ((OhlcPoint)ChartSeriesBtcJpy[0].Values[cb - 1]).Close = (double)tick.LTP;
+
+                                                    if (l > (double)tick.LTP)
+                                                    {
+                                                        ((OhlcPoint)ChartSeriesBtcJpy[0].Values[cb - 1]).Low = (double)tick.LTP;
+                                                    }
+
+                                                    if (h < (double)tick.LTP)
+                                                    {
+                                                        ((OhlcPoint)ChartSeriesBtcJpy[0].Values[cb - 1]).High = (double)tick.LTP;
+                                                    }
+
+                                                });
+
+                                            }
+                                        }
+
+                                    }
+                                    */
+
+                                }
+
+                            }
+
+                        }
+                        else if (pair == Pairs.xrp_jpy)
+                        {
+
+                            // 最新の価格をセット
+                            PairXrpJpy.Ltp = tick.LTP;
+                            PairXrpJpy.Bid = tick.Bid;
+                            PairXrpJpy.Ask = tick.Ask;
+                            PairXrpJpy.TickTimeStamp = tick.TimeStamp;
+
+                            PairXrpJpy.LowestIn24Price = tick.Low;
+                            PairXrpJpy.HighestIn24Price = tick.High;
+
+                            // 起動時価格セット
+                            if (PairXrpJpy.BasePrice == 0) PairXrpJpy.BasePrice = tick.LTP;
+
+                            // 最安値登録
+                            if (PairXrpJpy.LowestPrice == 0)
+                            {
+                                PairXrpJpy.LowestPrice = tick.LTP;
+                            }
+                            if (tick.LTP < PairXrpJpy.LowestPrice)
+                            {
+                                //SystemSounds.Beep.Play();
+                                PairXrpJpy.LowestPrice = tick.LTP;
+                            }
+
+                            // 最高値登録
+                            if (PairXrpJpy.HighestPrice == 0)
+                            {
+                                PairXrpJpy.HighestPrice = tick.LTP;
+                            }
+                            if (tick.LTP > PairXrpJpy.HighestPrice)
+                            {
+                                //SystemSounds.Asterisk.Play();
+                                PairXrpJpy.HighestPrice = tick.LTP;
+                            }
+
+                            #region == チック履歴 ==
+
+                            TickHistory aym = new TickHistory();
+                            aym.Price = tick.LTP;
+                            aym.TimeAt = tick.TimeStamp;
+                            if (PairXrpJpy.TickHistories.Count > 0)
+                            {
+                                if (PairXrpJpy.TickHistories[0].Price > aym.Price)
+                                {
+                                    //aym.TickHistoryPriceColor = _priceUpColor;
+                                    aym.TickHistoryPriceUp = true;
+                                    PairXrpJpy.TickHistories.Insert(0, aym);
+
+                                }
+                                else if (PairXrpJpy.TickHistories[0].Price < aym.Price)
+                                {
+                                    //aym.TickHistoryPriceColor = _priceDownColor;
+                                    aym.TickHistoryPriceUp = false;
+                                    PairXrpJpy.TickHistories.Insert(0, aym);
+                                }
+                                else
+                                {
+                                    //aym.TickHistoryPriceColor = Colors.Gainsboro;
+                                    PairXrpJpy.TickHistories.Insert(0, aym);
+                                }
+                            }
+                            else
+                            {
+                                //aym.TickHistoryPriceColor = Colors.Gainsboro;
+                                PairXrpJpy.TickHistories.Insert(0, aym);
+                            }
+
+                            // limit the number of the list.
+                            if (PairXrpJpy.TickHistories.Count > 60)
+                            {
+                                PairXrpJpy.TickHistories.RemoveAt(60);
+                            }
+
+                            // 60(1分)の平均値を求める
+                            decimal aSum = 0;
+                            int c = 0;
+                            if (PairXrpJpy.TickHistories.Count > 0)
+                            {
+
+                                if (PairXrpJpy.TickHistories.Count > 60)
+                                {
+                                    c = 59;
+                                }
+                                else
+                                {
+                                    c = PairXrpJpy.TickHistories.Count - 1;
+                                }
+
+                                if (c == 0)
+                                {
+                                    PairXrpJpy.AveragePrice = PairXrpJpy.TickHistories[0].Price;
+                                }
+                                else
+                                {
+                                    for (int i = 0; i < c; i++)
+                                    {
+                                        aSum = aSum + PairXrpJpy.TickHistories[i].Price;
+                                    }
+                                    PairXrpJpy.AveragePrice = aSum / c;
+                                }
+
+                            }
+                            else if (PairXrpJpy.TickHistories.Count == 1)
+                            {
+                                PairXrpJpy.AveragePrice = PairXrpJpy.TickHistories[0].Price;
+                            }
+
+                            #endregion
+
+                            #region == アラーム ==
+
+                            PairXrpJpy.HighLowInfoText = "";
+
+                            bool isPlayed = false;
+
+                            // アラーム
+                            if (PairXrpJpy.AlarmPlus > 0)
+                            {
+                                if (tick.LTP >= PairXrpJpy.AlarmPlus)
+                                {
+                                    PairXrpJpy.HighLowInfoTextColorFlag = true;
+                                    PairXrpJpy.HighLowInfoText = PairXrpJpy.PairString + " ⇑⇑⇑　高値アラーム ";
+
+                                    if (PlaySound)
+                                    {
+                                        SystemSounds.Hand.Play();
+                                        isPlayed = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                // 起動後初期値セット
+                                PairXrpJpy.AlarmPlus = (tick.LTP) + 2M;
+                            }
+
+                            if (PairXrpJpy.AlarmMinus > 0)
+                            {
+                                if (tick.LTP <= PairXrpJpy.AlarmMinus)
+                                {
+                                    PairXrpJpy.HighLowInfoTextColorFlag = false;
+                                    PairXrpJpy.HighLowInfoText = PairXrpJpy.PairString + " ⇓⇓⇓　安値アラーム ";
+                                    if (PlaySound)
+                                    {
+                                        SystemSounds.Beep.Play();
+                                        isPlayed = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                // 起動後初期値セット
+                                PairXrpJpy.AlarmMinus = (tick.LTP) - 2M;
+                            }
+
+                            // 起動後最高値
+                            if (tick.LTP >= PairXrpJpy.HighestPrice)
+                            {
+                                if ((PairXrpJpy.TickHistories.Count > 25) && ((PairXrpJpy.BasePrice + 0.3M) < tick.LTP))
+                                {
+                                    PairXrpJpy.HighLowInfoTextColorFlag = true;
+                                    PairXrpJpy.HighLowInfoText = PairXrpJpy.PairString + " ⇑⇑⇑　起動後最高値更新 ";
+
+                                    if ((isPlayed == false) && (PairXrpJpy.PlaySoundHighest == true))
+                                    {
+                                        if (PlaySound)
+                                        {
+                                            SystemSounds.Hand.Play();
+                                            isPlayed = true;
+                                        }
+                                    }
+                                }
+                            }
+                            // 起動後最安値
+                            if (tick.LTP <= PairXrpJpy.LowestPrice)
+                            {
+                                if ((PairXrpJpy.TickHistories.Count > 25) && ((PairXrpJpy.BasePrice - 0.3M) > tick.LTP))
+                                {
+                                    PairXrpJpy.HighLowInfoTextColorFlag = false;
+                                    PairXrpJpy.HighLowInfoText = PairXrpJpy.PairString + " ⇓⇓⇓　起動後最安値更新 ";
+
+                                    if ((isPlayed == false) && (PairXrpJpy.PlaySoundLowest == true))
+                                    {
+                                        if (PlaySound)
+                                        {
+                                            SystemSounds.Beep.Play();
+                                            isPlayed = true;
+                                        }
+                                    }
+                                }
+                            }
+
+                            // 過去24時間最高値
+                            if (tick.LTP >= PairXrpJpy.HighestIn24Price)
+                            {
+                                PairXrpJpy.HighLowInfoTextColorFlag = true;
+                                PairXrpJpy.HighLowInfoText = PairXrpJpy.PairString + " ⇑⇑⇑⇑⇑⇑　過去24時間最高値更新 ";
+
+                                if ((isPlayed == false) && (PairXrpJpy.PlaySoundHighest24h == true))
+                                {
+                                    if (PlaySound)
+                                    {
+                                        SystemSounds.Hand.Play();
+                                        isPlayed = true;
+                                    }
+                                }
+                            }
+                            // 過去24時間最安値
+                            if (tick.LTP <= PairXrpJpy.LowestIn24Price)
+                            {
+                                PairXrpJpy.HighLowInfoTextColorFlag = false;
+                                PairXrpJpy.HighLowInfoText = PairXrpJpy.PairString + " ⇓⇓⇓⇓⇓⇓　過去24時間最安値更新 ";
+
+                                if ((isPlayed == false) && (PairXrpJpy.PlaySoundLowest24h == true))
+                                {
+                                    if (PlaySound)
+                                    {
+                                        SystemSounds.Hand.Play();
+                                        isPlayed = true;
+                                    }
+                                }
+                            }
+
+
+
+                            #endregion
+
+                            // 省エネモードでなかったら
+                            if ((MinMode == false) && (pair == CurrentPair))
+                            {
+                                // 最新取引価格のラインを更新
+                                if (ChartAxisYXrpJpy != null)
+                                {
+                                    if (ChartAxisYXrpJpy[0].Sections.Count > 0)
+                                    {
+                                        ChartAxisYXrpJpy[0].Sections[0].Value = (double)tick.LTP;
+                                    }
+                                }
+
+                                // 最新のロウソク足を更新する。＞＞＞重すぎ。負荷掛かり過ぎなので止め。
+                                /*
+                                if (ChartSeriesBtcJpy[0].Values != null)
+                                {
+                                    int c = ChartSeriesBtcJpy[0].Values.Count;
 
                                     if (c > 0)
                                     {
-                                        double l = ((OhlcPoint)ChartSeriesBtc[0].Values[c - 1]).Low;
-                                        double h = ((OhlcPoint)ChartSeriesBtc[0].Values[c - 1]).High;
+                                        double l = ((OhlcPoint)ChartSeriesBtcJpy[0].Values[c - 1]).Low;
+                                        double h = ((OhlcPoint)ChartSeriesBtcJpy[0].Values[c - 1]).High;
 
                                         if (Application.Current == null) return;
                                         Application.Current.Dispatcher.Invoke(() =>
                                         {
 
-                                            ((OhlcPoint)ChartSeriesBtc[0].Values[c - 1]).Close = (double)tick.LTP;
+                                            ((OhlcPoint)ChartSeriesBtcJpy[0].Values[c - 1]).Close = (double)tick.LTP;
 
                                             if (l > (double)tick.LTP)
                                             {
-                                                ((OhlcPoint)ChartSeriesBtc[0].Values[c - 1]).Low = (double)tick.LTP;
+                                                ((OhlcPoint)ChartSeriesBtcJpy[0].Values[c - 1]).Low = (double)tick.LTP;
                                             }
 
                                             if (h < (double)tick.LTP)
                                             {
-                                                ((OhlcPoint)ChartSeriesBtc[0].Values[c - 1]).High = (double)tick.LTP;
+                                                ((OhlcPoint)ChartSeriesBtcJpy[0].Values[c - 1]).High = (double)tick.LTP;
                                             }
 
                                         });
 
                                     }
                                 }
+                                */
                             }
-                            */
-
 
                         }
-                        else if (pair == "xrp_jpy")
+                        else if (pair == Pairs.eth_btc)
                         {
-                            this.NotifyPropertyChanged("LtpXrp");
-                            if (ChartAxisYXrp[0].Sections.Count > 0)
+
+                            // 最新の価格をセット
+                            PairEthBtc.Ltp = tick.LTP;
+                            PairEthBtc.Bid = tick.Bid;
+                            PairEthBtc.Ask = tick.Ask;
+                            PairEthBtc.TickTimeStamp = tick.TimeStamp;
+
+                            PairEthBtc.LowestIn24Price = tick.Low;
+                            PairEthBtc.HighestIn24Price = tick.High;
+
+                            // 起動時価格セット
+                            if (PairEthBtc.BasePrice == 0) PairEthBtc.BasePrice = tick.LTP;
+
+                            // 最安値登録
+                            if (PairEthBtc.LowestPrice == 0)
                             {
-                                ChartAxisYXrp[0].Sections[0].Value = (double)tick.LTP;
+                                PairEthBtc.LowestPrice = tick.LTP;
                             }
-                            /*
-                            if (ChartSeriesXrp[0].Values != null)
+                            if (tick.LTP < PairEthBtc.LowestPrice)
                             {
-                                int c = ChartSeriesXrp[0].Values.Count;
+                                //SystemSounds.Beep.Play();
+                                PairEthBtc.LowestPrice = tick.LTP;
+                            }
 
-                                if (c > 0)
+                            // 最高値登録
+                            if (PairEthBtc.HighestPrice == 0)
+                            {
+                                PairEthBtc.HighestPrice = tick.LTP;
+                            }
+                            if (tick.LTP > PairEthBtc.HighestPrice)
+                            {
+                                //SystemSounds.Asterisk.Play();
+                                PairEthBtc.HighestPrice = tick.LTP;
+                            }
+
+                            #region == チック履歴 ==
+
+                            TickHistory aym = new TickHistory();
+                            aym.Price = tick.LTP;
+                            aym.TimeAt = tick.TimeStamp;
+                            if (PairEthBtc.TickHistories.Count > 0)
+                            {
+                                if (PairEthBtc.TickHistories[0].Price > aym.Price)
                                 {
-                                    double l = ((OhlcPoint)ChartSeriesXrp[0].Values[c - 1]).Low;
-                                    double h = ((OhlcPoint)ChartSeriesXrp[0].Values[c - 1]).High;
-
-                                    if (Application.Current == null) return;
-                                    Application.Current.Dispatcher.Invoke(() =>
-                                    {
-
-                                        ((OhlcPoint)ChartSeriesXrp[0].Values[c - 1]).Close = (double)tick.LTP;
-
-                                        if (l > (double)tick.LTP)
-                                        {
-                                            ((OhlcPoint)ChartSeriesXrp[0].Values[c - 1]).Low = (double)tick.LTP;
-                                        }
-
-                                        if (h < (double)tick.LTP)
-                                        {
-                                            ((OhlcPoint)ChartSeriesXrp[0].Values[c - 1]).High = (double)tick.LTP;
-                                        }
-
-                                    });
+                                    //aym.TickHistoryPriceColor = _priceUpColor;
+                                    aym.TickHistoryPriceUp = true;
+                                    PairEthBtc.TickHistories.Insert(0, aym);
 
                                 }
-                            }
-                            */
-                        }
-                        else if (pair == "eth_btc")
-                        {
-                            this.NotifyPropertyChanged("LtpEthBtc");
-                            if (ChartAxisYEth[0].Sections.Count > 0)
-                            {
-                                ChartAxisYEth[0].Sections[0].Value = (double)tick.LTP;
-                            }
-                            /*
-                            if (ChartSeriesEth[0].Values != null)
-                            {
-                                int c = ChartSeriesEth[0].Values.Count;
-
-                                if (c > 0)
+                                else if (PairEthBtc.TickHistories[0].Price < aym.Price)
                                 {
-                                    double l = ((OhlcPoint)ChartSeriesEth[0].Values[c - 1]).Low;
-                                    double h = ((OhlcPoint)ChartSeriesEth[0].Values[c - 1]).High;
-
-                                    if (Application.Current == null) return;
-                                    Application.Current.Dispatcher.Invoke(() =>
-                                    {
-
-                                        ((OhlcPoint)ChartSeriesEth[0].Values[c - 1]).Close = (double)tick.LTP;
-
-                                        if (l > (double)tick.LTP)
-                                        {
-                                            ((OhlcPoint)ChartSeriesEth[0].Values[c - 1]).Low = (double)tick.LTP;
-                                        }
-
-                                        if (h < (double)tick.LTP)
-                                        {
-                                            ((OhlcPoint)ChartSeriesEth[0].Values[c - 1]).High = (double)tick.LTP;
-                                        }
-
-                                    });
-
+                                    //aym.TickHistoryPriceColor = _priceDownColor;
+                                    aym.TickHistoryPriceUp = false;
+                                    PairEthBtc.TickHistories.Insert(0, aym);
+                                }
+                                else
+                                {
+                                    //aym.TickHistoryPriceColor = Colors.Gainsboro;
+                                    PairEthBtc.TickHistories.Insert(0, aym);
                                 }
                             }
-                            */
-                        }
-                        else if (pair == "mona_jpy")
-                        {
-                            this.NotifyPropertyChanged("LtpMonaJpy");
-                            if (ChartAxisYMona[0].Sections.Count > 0)
+                            else
                             {
-                                ChartAxisYMona[0].Sections[0].Value = (double)tick.LTP;
+                                //aym.TickHistoryPriceColor = Colors.Gainsboro;
+                                PairEthBtc.TickHistories.Insert(0, aym);
                             }
-                            /*
-                            if (ChartSeriesMona[0].Values != null)
+
+                            // limit the number of the list.
+                            if (PairEthBtc.TickHistories.Count > 60)
                             {
-                                int c = ChartSeriesMona[0].Values.Count;
+                                PairEthBtc.TickHistories.RemoveAt(60);
+                            }
 
-                                if (c > 0)
+                            // 60(1分)の平均値を求める
+                            decimal aSum = 0;
+                            int c = 0;
+                            if (PairEthBtc.TickHistories.Count > 0)
+                            {
+
+                                if (PairEthBtc.TickHistories.Count > 60)
                                 {
-                                    double l = ((OhlcPoint)ChartSeriesMona[0].Values[c - 1]).Low;
-                                    double h = ((OhlcPoint)ChartSeriesMona[0].Values[c - 1]).High;
+                                    c = 59;
+                                }
+                                else
+                                {
+                                    c = PairEthBtc.TickHistories.Count - 1;
+                                }
 
-                                    if (Application.Current == null) return;
-                                    Application.Current.Dispatcher.Invoke(() =>
+                                if (c == 0)
+                                {
+                                    PairEthBtc.AveragePrice = PairEthBtc.TickHistories[0].Price;
+                                }
+                                else
+                                {
+                                    for (int i = 0; i < c; i++)
                                     {
+                                        aSum = aSum + PairEthBtc.TickHistories[i].Price;
+                                    }
+                                    PairEthBtc.AveragePrice = aSum / c;
+                                }
 
-                                        ((OhlcPoint)ChartSeriesMona[0].Values[c - 1]).Close = (double)tick.LTP;
+                            }
+                            else if (PairEthBtc.TickHistories.Count == 1)
+                            {
+                                PairEthBtc.AveragePrice = PairEthBtc.TickHistories[0].Price;
+                            }
 
-                                        if (l > (double)tick.LTP)
-                                        {
-                                            ((OhlcPoint)ChartSeriesMona[0].Values[c - 1]).Low = (double)tick.LTP;
-                                        }
+                            #endregion
 
-                                        if (h < (double)tick.LTP)
-                                        {
-                                            ((OhlcPoint)ChartSeriesMona[0].Values[c - 1]).High = (double)tick.LTP;
-                                        }
+                            #region == アラーム ==
 
-                                    });
+                            PairEthBtc.HighLowInfoText = "";
 
+                            bool isPlayed = false;
+
+                            // アラーム
+                            if (PairEthBtc.AlarmPlus > 0)
+                            {
+                                if (tick.LTP >= PairEthBtc.AlarmPlus)
+                                {
+                                    PairEthBtc.HighLowInfoTextColorFlag = true;
+                                    PairEthBtc.HighLowInfoText = PairEthBtc.PairString + " ⇑⇑⇑　高値アラーム ";
+
+                                    if (PlaySound)
+                                    {
+                                        SystemSounds.Hand.Play();
+                                        isPlayed = true;
+                                    }
                                 }
                             }
-                            */
+                            else
+                            {
+                                // 起動後初期値セット
+                                PairEthBtc.AlarmPlus = tick.LTP + 0.002M;
+                            }
+
+                            if (PairEthBtc.AlarmMinus > 0)
+                            {
+                                if (tick.LTP <= PairEthBtc.AlarmMinus)
+                                {
+                                    PairEthBtc.HighLowInfoTextColorFlag = false;
+                                    PairEthBtc.HighLowInfoText = PairEthBtc.PairString + " ⇓⇓⇓　安値アラーム ";
+                                    if (PlaySound)
+                                    {
+                                        SystemSounds.Beep.Play();
+                                        isPlayed = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                // 起動後初期値セット
+                                PairEthBtc.AlarmMinus = tick.LTP - 0.002M;
+                            }
+
+                            // 起動後最高値
+                            if (tick.LTP >= PairEthBtc.HighestPrice)
+                            {
+                                if ((PairEthBtc.TickHistories.Count > 25) && ((PairEthBtc.BasePrice + 2000M) < tick.LTP))
+                                {
+                                    PairEthBtc.HighLowInfoTextColorFlag = true;
+                                    PairEthBtc.HighLowInfoText = PairEthBtc.PairString + " ⇑⇑⇑　起動後最高値更新 ";
+
+                                    if ((isPlayed == false) && (PairEthBtc.PlaySoundHighest == true))
+                                    {
+                                        if (PlaySound)
+                                        {
+                                            SystemSounds.Hand.Play();
+                                            isPlayed = true;
+                                        }
+                                    }
+                                }
+                            }
+                            // 起動後最安値
+                            if (tick.LTP <= PairEthBtc.LowestPrice)
+                            {
+                                if ((PairEthBtc.TickHistories.Count > 25) && ((PairEthBtc.BasePrice - 2000M) > tick.LTP))
+                                {
+                                    PairEthBtc.HighLowInfoTextColorFlag = false;
+                                    PairEthBtc.HighLowInfoText = PairEthBtc.PairString +  "⇓⇓⇓　起動後最安値更新 ";
+
+                                    if ((isPlayed == false) && (PairEthBtc.PlaySoundLowest == true))
+                                    {
+                                        if (PlaySound)
+                                        {
+                                            SystemSounds.Beep.Play();
+                                            isPlayed = true;
+                                        }
+                                    }
+                                }
+                            }
+
+                            // 過去24時間最高値
+                            if (tick.LTP >= PairEthBtc.HighestIn24Price)
+                            {
+                                PairEthBtc.HighLowInfoTextColorFlag = true;
+                                PairEthBtc.HighLowInfoText = PairEthBtc.PairString + " ⇑⇑⇑⇑⇑⇑　過去24時間最高値更新 ";
+                                 
+                                if ((isPlayed == false) && (PairEthBtc.PlaySoundHighest24h == true))
+                                {
+                                    if (PlaySound)
+                                    {
+                                        SystemSounds.Hand.Play();
+                                        isPlayed = true;
+                                    }
+                                }
+                            }
+                            // 過去24時間最安値
+                            if (tick.LTP <= PairEthBtc.LowestIn24Price)
+                            {
+                                PairEthBtc.HighLowInfoTextColorFlag = false;
+                                PairEthBtc.HighLowInfoText = PairEthBtc.PairString + " ⇓⇓⇓⇓⇓⇓　過去24時間最安値更新 ";
+
+                                if ((isPlayed == false) && (PairEthBtc.PlaySoundLowest24h == true))
+                                {
+                                    if (PlaySound)
+                                    {
+                                        SystemSounds.Hand.Play();
+                                        isPlayed = true;
+                                    }
+                                }
+                            }
+
+                            #endregion
+
+                            // 省エネモードでなかったら
+                            if ((MinMode == false) && (pair == CurrentPair))
+                            {
+                                // 最新取引価格のラインを更新
+                                if (ChartAxisYEthBtc != null)
+                                {
+                                    if (ChartAxisYEthBtc[0].Sections.Count > 0)
+                                    {
+                                        ChartAxisYEthBtc[0].Sections[0].Value = (double)tick.LTP;
+                                    }
+                                }
+
+                                // 最新のロウソク足を更新する。＞＞＞重すぎ。負荷掛かり過ぎなので止め。
+                                /*
+                                if (ChartSeriesEthBtc[0].Values != null)
+                                {
+                                    int c = ChartSeriesEthBtc[0].Values.Count;
+
+                                    if (c > 0)
+                                    {
+                                        double l = ((OhlcPoint)ChartSeriesEthBtc[0].Values[c - 1]).Low;
+                                        double h = ((OhlcPoint)ChartSeriesEthBtc[0].Values[c - 1]).High;
+
+                                        if (Application.Current == null) return;
+                                        Application.Current.Dispatcher.Invoke(() =>
+                                        {
+
+                                            ((OhlcPoint)ChartSeriesEthBtc[0].Values[c - 1]).Close = (double)tick.LTP;
+
+                                            if (l > (double)tick.LTP)
+                                            {
+                                                ((OhlcPoint)ChartSeriesEthBtc[0].Values[c - 1]).Low = (double)tick.LTP;
+                                            }
+
+                                            if (h < (double)tick.LTP)
+                                            {
+                                                ((OhlcPoint)ChartSeriesEthBtc[0].Values[c - 1]).High = (double)tick.LTP;
+                                            }
+
+                                        });
+
+                                    }
+                                }
+                                */
+                            }
+
                         }
-                        else if (pair == "mona_btc")
+                        else if (pair == Pairs.mona_jpy)
+                        {
+
+                            // 最新の価格をセット
+                            PairMonaJpy.Ltp = tick.LTP;
+                            PairMonaJpy.Bid = tick.Bid;
+                            PairMonaJpy.Ask = tick.Ask;
+                            PairMonaJpy.TickTimeStamp = tick.TimeStamp;
+
+                            PairMonaJpy.LowestIn24Price = tick.Low;
+                            PairMonaJpy.HighestIn24Price = tick.High;
+
+                            // 起動時価格セット
+                            if (PairMonaJpy.BasePrice == 0) PairMonaJpy.BasePrice = tick.LTP;
+
+                            // 最安値登録
+                            if (PairMonaJpy.LowestPrice == 0)
+                            {
+                                PairMonaJpy.LowestPrice = tick.LTP;
+                            }
+                            if (tick.LTP < PairMonaJpy.LowestPrice)
+                            {
+                                //SystemSounds.Beep.Play();
+                                PairMonaJpy.LowestPrice = tick.LTP;
+                            }
+
+                            // 最高値登録
+                            if (PairMonaJpy.HighestPrice == 0)
+                            {
+                                PairMonaJpy.HighestPrice = tick.LTP;
+                            }
+                            if (tick.LTP > PairMonaJpy.HighestPrice)
+                            {
+                                //SystemSounds.Asterisk.Play();
+                                PairMonaJpy.HighestPrice = tick.LTP;
+                            }
+
+                            #region == チック履歴 ==
+
+                            TickHistory aym = new TickHistory();
+                            aym.Price = tick.LTP;
+                            aym.TimeAt = tick.TimeStamp;
+                            if (PairMonaJpy.TickHistories.Count > 0)
+                            {
+                                if (PairMonaJpy.TickHistories[0].Price > aym.Price)
+                                {
+                                    //aym.TickHistoryPriceColor = _priceUpColor;
+                                    aym.TickHistoryPriceUp = true;
+                                    PairMonaJpy.TickHistories.Insert(0, aym);
+
+                                }
+                                else if (PairMonaJpy.TickHistories[0].Price < aym.Price)
+                                {
+                                    //aym.TickHistoryPriceColor = _priceDownColor;
+                                    aym.TickHistoryPriceUp = false;
+                                    PairMonaJpy.TickHistories.Insert(0, aym);
+                                }
+                                else
+                                {
+                                    //aym.TickHistoryPriceColor = Colors.Gainsboro;
+                                    PairMonaJpy.TickHistories.Insert(0, aym);
+                                }
+                            }
+                            else
+                            {
+                                //aym.TickHistoryPriceColor = Colors.Gainsboro;
+                                PairMonaJpy.TickHistories.Insert(0, aym);
+                            }
+
+                            // limit the number of the list.
+                            if (PairMonaJpy.TickHistories.Count > 60)
+                            {
+                                PairMonaJpy.TickHistories.RemoveAt(60);
+                            }
+
+                            // 60(1分)の平均値を求める
+                            decimal aSum = 0;
+                            int c = 0;
+                            if (PairMonaJpy.TickHistories.Count > 0)
+                            {
+
+                                if (PairMonaJpy.TickHistories.Count > 60)
+                                {
+                                    c = 59;
+                                }
+                                else
+                                {
+                                    c = PairMonaJpy.TickHistories.Count - 1;
+                                }
+
+                                if (c == 0)
+                                {
+                                    PairMonaJpy.AveragePrice = PairMonaJpy.TickHistories[0].Price;
+                                }
+                                else
+                                {
+                                    for (int i = 0; i < c; i++)
+                                    {
+                                        aSum = aSum + PairMonaJpy.TickHistories[i].Price;
+                                    }
+                                    PairMonaJpy.AveragePrice = aSum / c;
+                                }
+
+                            }
+                            else if (PairMonaJpy.TickHistories.Count == 1)
+                            {
+                                PairMonaJpy.AveragePrice = PairMonaJpy.TickHistories[0].Price;
+                            }
+
+                            #endregion
+
+                            #region == アラーム ==
+
+                            PairMonaJpy.HighLowInfoText = "";
+
+                            bool isPlayed = false;
+
+                            // アラーム
+                            if (PairMonaJpy.AlarmPlus > 0)
+                            {
+                                if (tick.LTP >= PairMonaJpy.AlarmPlus)
+                                {
+                                    PairMonaJpy.HighLowInfoTextColorFlag = true;
+                                    PairMonaJpy.HighLowInfoText = PairMonaJpy.PairString + " ⇑⇑⇑　高値アラーム ";
+
+                                    if (PlaySound)
+                                    {
+                                        SystemSounds.Hand.Play();
+                                        isPlayed = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                // 起動後初期値セット
+                                PairMonaJpy.AlarmPlus = tick.LTP + 10M;
+                            }
+
+                            if (PairMonaJpy.AlarmMinus > 0)
+                            {
+                                if (tick.LTP <= PairMonaJpy.AlarmMinus)
+                                {
+                                    PairMonaJpy.HighLowInfoTextColorFlag = false;
+                                    PairMonaJpy.HighLowInfoText = PairMonaJpy.PairString + " ⇓⇓⇓　安値アラーム ";
+                                    if (PlaySound)
+                                    {
+                                        SystemSounds.Beep.Play();
+                                        isPlayed = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                // 起動後初期値セット
+                                PairMonaJpy.AlarmMinus = tick.LTP - 10M;
+                            }
+
+                            // 起動後最高値
+                            if (tick.LTP >= PairMonaJpy.HighestPrice)
+                            {
+                                if ((PairMonaJpy.TickHistories.Count > 25) && ((PairMonaJpy.BasePrice + 2M) < tick.LTP))
+                                {
+                                    PairMonaJpy.HighLowInfoTextColorFlag = true;
+                                    PairMonaJpy.HighLowInfoText = PairMonaJpy.PairString + " ⇑⇑⇑　起動後最高値更新 ";
+
+                                    if ((isPlayed == false) && (PairMonaJpy.PlaySoundHighest == true))
+                                    {
+                                        if (PlaySound)
+                                        {
+                                            SystemSounds.Hand.Play();
+                                            isPlayed = true;
+                                        }
+                                    }
+                                }
+                            }
+                            // 起動後最安値
+                            if (tick.LTP <= PairMonaJpy.LowestPrice)
+                            {
+                                if ((PairMonaJpy.TickHistories.Count > 25) && ((PairMonaJpy.BasePrice - 2M) > tick.LTP))
+                                {
+                                    PairMonaJpy.HighLowInfoTextColorFlag = false;
+                                    PairMonaJpy.HighLowInfoText = PairMonaJpy.PairString + " ⇓⇓⇓　起動後最安値更新 ";
+
+                                    if ((isPlayed == false) && (PairMonaJpy.PlaySoundLowest == true))
+                                    {
+                                        if (PlaySound)
+                                        {
+                                            SystemSounds.Beep.Play();
+                                            isPlayed = true;
+                                        }
+                                    }
+                                }
+                            }
+
+                            // 過去24時間最高値
+                            if (tick.LTP >= PairMonaJpy.HighestIn24Price)
+                            {
+                                PairMonaJpy.HighLowInfoTextColorFlag = true;
+                                PairMonaJpy.HighLowInfoText = PairMonaJpy.PairString + " ⇑⇑⇑⇑⇑⇑　過去24時間最高値更新 ";
+
+                                if ((isPlayed == false) && (PairMonaJpy.PlaySoundHighest24h == true))
+                                {
+                                    if (PlaySound)
+                                    {
+                                        SystemSounds.Hand.Play();
+                                        isPlayed = true;
+                                    }
+                                }
+                            }
+                            // 過去24時間最安値
+                            if (tick.LTP <= PairMonaJpy.LowestIn24Price)
+                            {
+                                PairMonaJpy.HighLowInfoTextColorFlag = false;
+                                PairMonaJpy.HighLowInfoText = PairMonaJpy.PairString + " ⇓⇓⇓⇓⇓⇓　過去24時間最安値更新 ";
+
+                                if ((isPlayed == false) && (PairMonaJpy.PlaySoundLowest24h == true))
+                                {
+                                    if (PlaySound)
+                                    {
+                                        SystemSounds.Hand.Play();
+                                        isPlayed = true;
+                                    }
+                                }
+                            }
+
+                            #endregion
+
+                            // 省エネモードでなかったら
+                            if ((MinMode == false) && (pair == CurrentPair))
+                            {
+                                // 最新取引価格のラインを更新
+                                if (ChartAxisYMonaJpy != null)
+                                {
+                                    if (ChartAxisYMonaJpy[0].Sections.Count > 0)
+                                    {
+                                        ChartAxisYMonaJpy[0].Sections[0].Value = (double)tick.LTP;
+                                    }
+                                }
+
+                                // 最新のロウソク足を更新する。＞＞＞重すぎ。負荷掛かり過ぎなので止め。
+                                /*
+                                if (ChartSeriesMonaJpy[0].Values != null)
+                                {
+                                    int c = ChartSeriesMonaJpy[0].Values.Count;
+
+                                    if (c > 0)
+                                    {
+                                        double l = ((OhlcPoint)ChartSeriesMonaJpy[0].Values[c - 1]).Low;
+                                        double h = ((OhlcPoint)ChartSeriesMonaJpy[0].Values[c - 1]).High;
+
+                                        if (Application.Current == null) return;
+                                        Application.Current.Dispatcher.Invoke(() =>
+                                        {
+
+                                            ((OhlcPoint)ChartSeriesMonaJpy[0].Values[c - 1]).Close = (double)tick.LTP;
+
+                                            if (l > (double)tick.LTP)
+                                            {
+                                                ((OhlcPoint)ChartSeriesMonaJpy[0].Values[c - 1]).Low = (double)tick.LTP;
+                                            }
+
+                                            if (h < (double)tick.LTP)
+                                            {
+                                                ((OhlcPoint)ChartSeriesMonaJpy[0].Values[c - 1]).High = (double)tick.LTP;
+                                            }
+
+                                        });
+
+                                    }
+                                }
+                                */
+                            }
+
+                        }
+                        else if (pair == Pairs.mona_btc)
                         {
                             //
                         }
-                        else if (pair == "ltc_btc")
+                        else if (pair == Pairs.ltc_btc)
                         {
-                            this.NotifyPropertyChanged("LtpLtcBtc");
-                            if (ChartAxisYLtc[0].Sections.Count > 0)
+
+                            // 最新の価格をセット
+                            PairLtcBtc.Ltp = tick.LTP;
+                            PairLtcBtc.Bid = tick.Bid;
+                            PairLtcBtc.Ask = tick.Ask;
+                            PairLtcBtc.TickTimeStamp = tick.TimeStamp;
+
+                            PairLtcBtc.LowestIn24Price = tick.Low;
+                            PairLtcBtc.HighestIn24Price = tick.High;
+
+                            // 起動時価格セット
+                            if (PairLtcBtc.BasePrice == 0) PairLtcBtc.BasePrice = tick.LTP;
+
+                            // 最安値登録
+                            if (PairLtcBtc.LowestPrice == 0)
                             {
-                                ChartAxisYLtc[0].Sections[0].Value = (double)tick.LTP;
+                                PairLtcBtc.LowestPrice = tick.LTP;
                             }
-                            /*
-                            if (ChartSeriesLtc[0].Values != null)
+                            if (tick.LTP < PairLtcBtc.LowestPrice)
                             {
-                                int c = ChartSeriesLtc[0].Values.Count;
+                                //SystemSounds.Beep.Play();
+                                PairLtcBtc.LowestPrice = tick.LTP;
+                            }
 
-                                if (c > 0)
+                            // 最高値登録
+                            if (PairLtcBtc.HighestPrice == 0)
+                            {
+                                PairLtcBtc.HighestPrice = tick.LTP;
+                            }
+                            if (tick.LTP > PairLtcBtc.HighestPrice)
+                            {
+                                //SystemSounds.Asterisk.Play();
+                                PairLtcBtc.HighestPrice = tick.LTP;
+                            }
+
+                            #region == チック履歴 ==
+
+                            TickHistory aym = new TickHistory();
+                            aym.Price = tick.LTP;
+                            aym.TimeAt = tick.TimeStamp;
+                            if (PairLtcBtc.TickHistories.Count > 0)
+                            {
+                                if (PairLtcBtc.TickHistories[0].Price > aym.Price)
                                 {
-                                    double l = ((OhlcPoint)ChartSeriesLtc[0].Values[c - 1]).Low;
-                                    double h = ((OhlcPoint)ChartSeriesLtc[0].Values[c - 1]).High;
-
-                                    if (Application.Current == null) return;
-                                    Application.Current.Dispatcher.Invoke(() =>
-                                    {
-
-                                        ((OhlcPoint)ChartSeriesLtc[0].Values[c - 1]).Close = (double)tick.LTP;
-
-                                        if (l > (double)tick.LTP)
-                                        {
-                                            ((OhlcPoint)ChartSeriesLtc[0].Values[c - 1]).Low = (double)tick.LTP;
-                                        }
-
-                                        if (h < (double)tick.LTP)
-                                        {
-                                            ((OhlcPoint)ChartSeriesLtc[0].Values[c - 1]).High = (double)tick.LTP;
-                                        }
-
-                                    });
+                                    //aym.TickHistoryPriceColor = _priceUpColor;
+                                    aym.TickHistoryPriceUp = true;
+                                    PairLtcBtc.TickHistories.Insert(0, aym);
 
                                 }
+                                else if (PairLtcBtc.TickHistories[0].Price < aym.Price)
+                                {
+                                    //aym.TickHistoryPriceColor = _priceDownColor;
+                                    aym.TickHistoryPriceUp = false;
+                                    PairLtcBtc.TickHistories.Insert(0, aym);
+                                }
+                                else
+                                {
+                                    //aym.TickHistoryPriceColor = Colors.Gainsboro;
+                                    PairLtcBtc.TickHistories.Insert(0, aym);
+                                }
                             }
-                            */
+                            else
+                            {
+                                //aym.TickHistoryPriceColor = Colors.Gainsboro;
+                                PairLtcBtc.TickHistories.Insert(0, aym);
+                            }
+
+                            // limit the number of the list.
+                            if (PairLtcBtc.TickHistories.Count > 60)
+                            {
+                                PairLtcBtc.TickHistories.RemoveAt(60);
+                            }
+
+                            // 60(1分)の平均値を求める
+                            decimal aSum = 0;
+                            int c = 0;
+                            if (PairLtcBtc.TickHistories.Count > 0)
+                            {
+
+                                if (PairLtcBtc.TickHistories.Count > 60)
+                                {
+                                    c = 59;
+                                }
+                                else
+                                {
+                                    c = PairLtcBtc.TickHistories.Count - 1;
+                                }
+
+                                if (c == 0)
+                                {
+                                    PairLtcBtc.AveragePrice = PairLtcBtc.TickHistories[0].Price;
+                                }
+                                else
+                                {
+                                    for (int i = 0; i < c; i++)
+                                    {
+                                        aSum = aSum + PairLtcBtc.TickHistories[i].Price;
+                                    }
+                                    PairLtcBtc.AveragePrice = aSum / c;
+                                }
+
+                            }
+                            else if (PairLtcBtc.TickHistories.Count == 1)
+                            {
+                                PairLtcBtc.AveragePrice = PairLtcBtc.TickHistories[0].Price;
+                            }
+
+                            #endregion
+
+                            #region == アラーム ==
+
+                            PairLtcBtc.HighLowInfoText = "";
+
+                            bool isPlayed = false;
+
+                            // アラーム
+                            if (PairLtcBtc.AlarmPlus > 0)
+                            {
+                                if (tick.LTP >= PairLtcBtc.AlarmPlus)
+                                {
+                                    PairLtcBtc.HighLowInfoTextColorFlag = true;
+                                    PairLtcBtc.HighLowInfoText = PairLtcBtc.PairString + " ⇑⇑⇑　高値アラーム ";
+
+                                    if (PlaySound)
+                                    {
+                                        SystemSounds.Hand.Play();
+                                        isPlayed = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                // 起動後初期値セット
+                                PairLtcBtc.AlarmPlus = tick.LTP + 0.001M;
+                            }
+
+                            if (PairLtcBtc.AlarmMinus > 0)
+                            {
+                                if (tick.LTP <= PairLtcBtc.AlarmMinus)
+                                {
+                                    PairLtcBtc.HighLowInfoTextColorFlag = false;
+                                    PairLtcBtc.HighLowInfoText = PairLtcBtc.PairString + " ⇓⇓⇓　安値アラーム ";
+                                    if (PlaySound)
+                                    {
+                                        SystemSounds.Beep.Play();
+                                        isPlayed = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                // 起動後初期値セット
+                                PairLtcBtc.AlarmMinus = tick.LTP - 0.001M;
+                            }
+
+                            // 起動後最高値
+                            if (tick.LTP >= PairLtcBtc.HighestPrice)
+                            {
+                                if ((PairLtcBtc.TickHistories.Count > 25) && ((PairLtcBtc.BasePrice + 0.0001M) < tick.LTP))
+                                {
+                                    PairLtcBtc.HighLowInfoTextColorFlag = true;
+                                    PairLtcBtc.HighLowInfoText = PairLtcBtc.PairString + " ⇑⇑⇑　起動後最高値更新 ";
+
+                                    if ((isPlayed == false) && (PairLtcBtc.PlaySoundHighest == true))
+                                    {
+                                        if (PlaySound)
+                                        {
+                                            SystemSounds.Hand.Play();
+                                            isPlayed = true;
+                                        }
+                                    }
+                                }
+                            }
+                            // 起動後最安値
+                            if (tick.LTP <= PairLtcBtc.LowestPrice)
+                            {
+                                if ((PairLtcBtc.TickHistories.Count > 25) && ((PairLtcBtc.BasePrice - 0.0001M) > tick.LTP))
+                                {
+                                    PairLtcBtc.HighLowInfoTextColorFlag = false;
+                                    PairLtcBtc.HighLowInfoText = PairLtcBtc.PairString + " ⇓⇓⇓　起動後最安値更新 ";
+
+                                    if ((isPlayed == false) && (PairLtcBtc.PlaySoundLowest == true))
+                                    {
+                                        if (PlaySound)
+                                        {
+                                            SystemSounds.Beep.Play();
+                                            isPlayed = true;
+                                        }
+                                    }
+                                }
+                            }
+
+                            // 過去24時間最高値
+                            if (tick.LTP >= PairLtcBtc.HighestIn24Price)
+                            {
+                                PairLtcBtc.HighLowInfoTextColorFlag = true;
+                                PairLtcBtc.HighLowInfoText = PairLtcBtc.PairString + " ⇑⇑⇑⇑⇑⇑　過去24時間最高値更新 ";
+
+                                if ((isPlayed == false) && (PairLtcBtc.PlaySoundHighest24h == true))
+                                {
+                                    if (PlaySound)
+                                    {
+                                        SystemSounds.Hand.Play();
+                                        isPlayed = true;
+                                    }
+                                }
+                            }
+                            // 過去24時間最安値
+                            if (tick.LTP <= PairLtcBtc.LowestIn24Price)
+                            {
+                                PairLtcBtc.HighLowInfoTextColorFlag = false;
+                                PairLtcBtc.HighLowInfoText = PairLtcBtc.PairString + " ⇓⇓⇓⇓⇓⇓　過去24時間最安値更新 ";
+
+                                if ((isPlayed == false) && (PairLtcBtc.PlaySoundLowest24h == true))
+                                {
+                                    if (PlaySound)
+                                    {
+                                        SystemSounds.Hand.Play();
+                                        isPlayed = true;
+                                    }
+                                }
+                            }
+
+                            #endregion
+
+                            // 省エネモードでなかったら
+                            if ((MinMode == false) && (pair == CurrentPair))
+                            {
+                                // 最新取引価格のラインを更新
+                                if (ChartAxisYLtcBtc != null)
+                                {
+                                    if (ChartAxisYLtcBtc[0].Sections.Count > 0)
+                                    {
+                                        ChartAxisYLtcBtc[0].Sections[0].Value = (double)tick.LTP;
+                                    }
+                                }
+
+                                // 最新のロウソク足を更新する。＞＞＞重すぎ。負荷掛かり過ぎなので止め。
+                                /*
+                                if (ChartSeriesLtcBtc[0].Values != null)
+                                {
+                                    int c = ChartSeriesLtcBtc[0].Values.Count;
+
+                                    if (c > 0)
+                                    {
+                                        double l = ((OhlcPoint)ChartSeriesLtcBtc[0].Values[c - 1]).Low;
+                                        double h = ((OhlcPoint)ChartSeriesLtcBtc[0].Values[c - 1]).High;
+
+                                        if (Application.Current == null) return;
+                                        Application.Current.Dispatcher.Invoke(() =>
+                                        {
+
+                                            ((OhlcPoint)ChartSeriesLtcBtc[0].Values[c - 1]).Close = (double)tick.LTP;
+
+                                            if (l > (double)tick.LTP)
+                                            {
+                                                ((OhlcPoint)ChartSeriesLtcBtc[0].Values[c - 1]).Low = (double)tick.LTP;
+                                            }
+
+                                            if (h < (double)tick.LTP)
+                                            {
+                                                ((OhlcPoint)ChartSeriesLtcBtc[0].Values[c - 1]).High = (double)tick.LTP;
+                                            }
+
+                                        });
+
+                                    }
+                                }
+                                */
+                            }
+
                         }
-                        else if (pair == "bcc_btc")
+                        else if (pair == Pairs.bcc_btc)
                         {
                             //
                         }
-                        else if (pair == "bcc_jpy")
+                        else if (pair == Pairs.bcc_jpy)
                         {
-                            this.NotifyPropertyChanged("LtpBchJpy");
-                            if (ChartAxisYBch[0].Sections.Count > 0)
+
+                            // 最新の価格をセット
+                            PairBchJpy.Ltp = tick.LTP;
+                            PairBchJpy.Bid = tick.Bid;
+                            PairBchJpy.Ask = tick.Ask;
+                            PairBchJpy.TickTimeStamp = tick.TimeStamp;
+
+                            PairBchJpy.LowestIn24Price = tick.Low;
+                            PairBchJpy.HighestIn24Price = tick.High;
+
+                            // 起動時価格セット
+                            if (PairBchJpy.BasePrice == 0) PairBchJpy.BasePrice = tick.LTP;
+
+                            // 最安値登録
+                            if (PairBchJpy.LowestPrice == 0)
                             {
-                                ChartAxisYBch[0].Sections[0].Value = (double)tick.LTP;
+                                PairBchJpy.LowestPrice = tick.LTP;
                             }
-                            /*
-                            if (ChartSeriesBch[0].Values != null)
+                            if (tick.LTP < PairBchJpy.LowestPrice)
                             {
-                                int c = ChartSeriesBch[0].Values.Count;
+                                //SystemSounds.Beep.Play();
+                                PairBchJpy.LowestPrice = tick.LTP;
+                            }
 
-                                if (c > 0)
+                            // 最高値登録
+                            if (PairBchJpy.HighestPrice == 0)
+                            {
+                                PairBchJpy.HighestPrice = tick.LTP;
+                            }
+                            if (tick.LTP > PairBchJpy.HighestPrice)
+                            {
+                                //SystemSounds.Asterisk.Play();
+                                PairBchJpy.HighestPrice = tick.LTP;
+                            }
+
+                            #region == チック履歴 ==
+
+                            TickHistory aym = new TickHistory();
+                            aym.Price = tick.LTP;
+                            aym.TimeAt = tick.TimeStamp;
+                            if (PairBchJpy.TickHistories.Count > 0)
+                            {
+                                if (PairBchJpy.TickHistories[0].Price > aym.Price)
                                 {
-                                    double l = ((OhlcPoint)ChartSeriesBch[0].Values[c - 1]).Low;
-                                    double h = ((OhlcPoint)ChartSeriesBch[0].Values[c - 1]).High;
-
-                                    if (Application.Current == null) return;
-                                    Application.Current.Dispatcher.Invoke(() =>
-                                    {
-
-                                        ((OhlcPoint)ChartSeriesBch[0].Values[c - 1]).Close = (double)tick.LTP;
-
-                                        if (l > (double)tick.LTP)
-                                        {
-                                            ((OhlcPoint)ChartSeriesBch[0].Values[c - 1]).Low = (double)tick.LTP;
-                                        }
-
-                                        if (h < (double)tick.LTP)
-                                        {
-                                            ((OhlcPoint)ChartSeriesBch[0].Values[c - 1]).High = (double)tick.LTP;
-                                        }
-
-                                    });
+                                    //aym.TickHistoryPriceColor = _priceUpColor;
+                                    aym.TickHistoryPriceUp = true;
+                                    PairBchJpy.TickHistories.Insert(0, aym);
 
                                 }
+                                else if (PairBchJpy.TickHistories[0].Price < aym.Price)
+                                {
+                                    //aym.TickHistoryPriceColor = _priceDownColor;
+                                    aym.TickHistoryPriceUp = false;
+                                    PairBchJpy.TickHistories.Insert(0, aym);
+                                }
+                                else
+                                {
+                                    //aym.TickHistoryPriceColor = Colors.Gainsboro;
+                                    PairBchJpy.TickHistories.Insert(0, aym);
+                                }
                             }
-                            */
+                            else
+                            {
+                                //aym.TickHistoryPriceColor = Colors.Gainsboro;
+                                PairBchJpy.TickHistories.Insert(0, aym);
+                            }
+
+                            // limit the number of the list.
+                            if (PairBchJpy.TickHistories.Count > 60)
+                            {
+                                PairBchJpy.TickHistories.RemoveAt(60);
+                            }
+
+                            // 60(1分)の平均値を求める
+                            decimal aSum = 0;
+                            int c = 0;
+                            if (PairBchJpy.TickHistories.Count > 0)
+                            {
+
+                                if (PairBchJpy.TickHistories.Count > 60)
+                                {
+                                    c = 59;
+                                }
+                                else
+                                {
+                                    c = PairBchJpy.TickHistories.Count - 1;
+                                }
+
+                                if (c == 0)
+                                {
+                                    PairBchJpy.AveragePrice = PairBchJpy.TickHistories[0].Price;
+                                }
+                                else
+                                {
+                                    for (int i = 0; i < c; i++)
+                                    {
+                                        aSum = aSum + PairBchJpy.TickHistories[i].Price;
+                                    }
+                                    PairBchJpy.AveragePrice = aSum / c;
+                                }
+
+                            }
+                            else if (PairLtcBtc.TickHistories.Count == 1)
+                            {
+                                PairBchJpy.AveragePrice = PairBchJpy.TickHistories[0].Price;
+                            }
+
+                            #endregion
+
+                            #region == アラーム ==
+
+                            PairBchJpy.HighLowInfoText = "";
+
+                            bool isPlayed = false;
+
+                            // アラーム
+                            if (PairBchJpy.AlarmPlus > 0)
+                            {
+                                if (tick.LTP >= PairBchJpy.AlarmPlus)
+                                {
+                                    PairBchJpy.HighLowInfoTextColorFlag = true;
+                                    PairBchJpy.HighLowInfoText = PairBchJpy.PairString + " ⇑⇑⇑　高値アラーム ";
+
+                                    if (PlaySound)
+                                    {
+                                        SystemSounds.Hand.Play();
+                                        isPlayed = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                // 起動後初期値セット
+                                PairBchJpy.AlarmPlus = ((tick.LTP / 100M) * 100M) + 1000M;
+                            }
+
+                            if (PairBchJpy.AlarmMinus > 0)
+                            {
+                                if (tick.LTP <= PairBchJpy.AlarmMinus)
+                                {
+                                    PairBchJpy.HighLowInfoTextColorFlag = false;
+                                    PairBchJpy.HighLowInfoText = PairBchJpy.PairString + " ⇓⇓⇓　安値アラーム ";
+                                    if (PlaySound)
+                                    {
+                                        SystemSounds.Beep.Play();
+                                        isPlayed = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                // 起動後初期値セット
+                                PairBchJpy.AlarmMinus = ((tick.LTP / 100M) * 100M) - 1000M;
+                            }
+
+                            // 起動後最高値
+                            if (tick.LTP >= PairBchJpy.HighestPrice)
+                            {
+                                if ((PairBchJpy.TickHistories.Count > 25) && ((PairBchJpy.BasePrice + 200M) < tick.LTP))
+                                {
+                                    PairBchJpy.HighLowInfoTextColorFlag = true;
+                                    PairBchJpy.HighLowInfoText = PairBchJpy.PairString + " ⇑⇑⇑　起動後最高値更新 ";
+
+                                    if ((isPlayed == false) && (PairBchJpy.PlaySoundHighest == true))
+                                    {
+                                        if (PlaySound)
+                                        {
+                                            SystemSounds.Hand.Play();
+                                            isPlayed = true;
+                                        }
+                                    }
+                                }
+                            }
+                            // 起動後最安値
+                            if (tick.LTP <= PairBchJpy.LowestPrice)
+                            {
+                                if ((PairBchJpy.TickHistories.Count > 25) && ((PairBchJpy.BasePrice - 200M) > tick.LTP))
+                                {
+                                    PairBchJpy.HighLowInfoTextColorFlag = false;
+                                    PairBchJpy.HighLowInfoText = PairBchJpy.PairString + " ⇓⇓⇓　起動後最安値更新 ";
+
+                                    if ((isPlayed == false) && (PairBchJpy.PlaySoundLowest == true))
+                                    {
+                                        if (PlaySound)
+                                        {
+                                            SystemSounds.Beep.Play();
+                                            isPlayed = true;
+                                        }
+                                    }
+                                }
+                            }
+
+                            // 過去24時間最高値
+                            if (tick.LTP >= PairBchJpy.HighestIn24Price)
+                            {
+                                PairBchJpy.HighLowInfoTextColorFlag = true;
+                                PairBchJpy.HighLowInfoText = PairBchJpy.PairString + " ⇑⇑⇑⇑⇑⇑　過去24時間最高値更新 ";
+
+                                if ((isPlayed == false) && (PairBchJpy.PlaySoundHighest24h == true))
+                                {
+                                    if (PlaySound)
+                                    {
+                                        SystemSounds.Hand.Play();
+                                        isPlayed = true;
+                                    }
+                                }
+                            }
+                            // 過去24時間最安値
+                            if (tick.LTP <= PairBchJpy.LowestIn24Price)
+                            {
+                                PairBchJpy.HighLowInfoTextColorFlag = false;
+                                PairBchJpy.HighLowInfoText = PairBchJpy.PairString + " ⇓⇓⇓⇓⇓⇓　過去24時間最安値更新 ";
+
+                                if ((isPlayed == false) && (PairBchJpy.PlaySoundLowest24h == true))
+                                {
+                                    if (PlaySound)
+                                    {
+                                        SystemSounds.Hand.Play();
+                                        isPlayed = true;
+                                    }
+                                }
+                            }
+
+                            #endregion
+
+                            // 省エネモードでなかったら
+                            if ((MinMode == false) && (pair == CurrentPair))
+                            {
+                                // 最新取引価格のラインを更新
+                                if (ChartAxisYBchJpy != null)
+                                {
+                                    if (ChartAxisYBchJpy[0].Sections.Count > 0)
+                                    {
+                                        ChartAxisYBchJpy[0].Sections[0].Value = (double)tick.LTP;
+                                    }
+                                }
+
+                                // 最新のロウソク足を更新する。＞＞＞重すぎ。負荷掛かり過ぎなので止め。
+                                /*
+                                if (ChartSeriesBchJpy[0].Values != null)
+                                {
+                                    int c = ChartSeriesBchJpy[0].Values.Count;
+
+                                    if (c > 0)
+                                    {
+                                        double l = ((OhlcPoint)ChartSeriesBchJpy[0].Values[c - 1]).Low;
+                                        double h = ((OhlcPoint)ChartSeriesBchJpy[0].Values[c - 1]).High;
+
+                                        if (Application.Current == null) return;
+                                        Application.Current.Dispatcher.Invoke(() =>
+                                        {
+
+                                            ((OhlcPoint)ChartSeriesBchJpy[0].Values[c - 1]).Close = (double)tick.LTP;
+
+                                            if (l > (double)tick.LTP)
+                                            {
+                                                ((OhlcPoint)ChartSeriesBchJpy[0].Values[c - 1]).Low = (double)tick.LTP;
+                                            }
+
+                                            if (h < (double)tick.LTP)
+                                            {
+                                                ((OhlcPoint)ChartSeriesBchJpy[0].Values[c - 1]).High = (double)tick.LTP;
+                                            }
+
+                                        });
+
+                                    }
+                                }
+                                */
+                            }
+
                         }
 
                     }
                     catch (Exception ex)
                     {
-                        System.Diagnostics.Debug.WriteLine("■■■■■ TickerTimerOtherPairs: Exception1 - " + ex.Message);
+                        System.Diagnostics.Debug.WriteLine("■■■■■ TickerTimerAllPairs: Exception1 - " + ex.Message);
                         break;
                     }
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine("■■■■■ TickerTimerOtherPairs: GetTicker returned null");
+                    APIResultTicker = "<<取得失敗>>";
+                    System.Diagnostics.Debug.WriteLine("■■■■■ TickerTimerAllPairs: GetTicker returned null");
                     break;
                 }
             }
+
         }
 
         // 起動時の処理
@@ -1728,6 +4992,489 @@ namespace BitWallpaper.ViewModels
                 }
 
                 #endregion
+
+                #region == アラーム音設定 ==
+
+                var alarmSetting = xdoc.Root.Element("Alarm");
+                if (alarmSetting != null)
+                {
+                    var hoge = alarmSetting.Attribute("playSound");
+                    if (hoge != null)
+                    {
+                        if (hoge.Value == "true")
+                        {
+                            PlaySound = true;
+                        }
+                        else
+                        {
+                            PlaySound = false;
+                        }
+                    }
+                }
+
+                #endregion
+
+                #region == 各通貨毎の設定 ==
+
+                var pairs = xdoc.Root.Element("Pairs");
+                if (pairs != null)
+                {
+                    // PairBtcJpy
+                    var pair = pairs.Element("BtcJpy");
+                    if (pair != null)
+                    {
+                        var hoge = pair.Attribute("playSoundLowest");
+                        if (hoge != null)
+                        {
+                            if (hoge.Value == "true")
+                            {
+                                PairBtcJpy.PlaySoundLowest = true;
+                            }
+                            else
+                            {
+                                PairBtcJpy.PlaySoundLowest = false;
+                            }
+                        }
+
+                        hoge = pair.Attribute("playSoundHighest");
+                        if (hoge != null)
+                        {
+                            if (hoge.Value == "true")
+                            {
+                                PairBtcJpy.PlaySoundHighest = true;
+                            }
+                            else
+                            {
+                                PairBtcJpy.PlaySoundHighest = false;
+                            }
+                        }
+
+                        hoge = pair.Attribute("playSoundLowest24h");
+                        if (hoge != null)
+                        {
+                            if (hoge.Value == "true")
+                            {
+                                PairBtcJpy.PlaySoundLowest24h = true;
+                            }
+                            else
+                            {
+                                PairBtcJpy.PlaySoundLowest24h = false;
+                            }
+                        }
+
+                        hoge = pair.Attribute("playSoundHighest24h");
+                        if (hoge != null)
+                        {
+                            if (hoge.Value == "true")
+                            {
+                                PairBtcJpy.PlaySoundHighest24h = true;
+                            }
+                            else
+                            {
+                                PairBtcJpy.PlaySoundHighest24h = false;
+                            }
+                        }
+
+                        // 板グルーピング
+                        hoge = pair.Attribute("depthGrouping");
+                        if (hoge != null)
+                        {
+                            if (!string.IsNullOrEmpty(hoge.Value))
+                            {
+                                try
+                                {
+                                    PairBtcJpy.DepthGrouping = Decimal.Parse(hoge.Value);
+                                }
+                                catch
+                                {
+                                    PairBtcJpy.DepthGrouping = 0;
+                                }
+
+                            }
+                        }
+
+                    }
+
+                    // PairXrpJpy
+                    pair = pairs.Element("XrpJpy");
+                    if (pair != null)
+                    {
+                        var hoge = pair.Attribute("playSoundLowest");
+                        if (hoge != null)
+                        {
+                            if (hoge.Value == "true")
+                            {
+                                PairXrpJpy.PlaySoundLowest = true;
+                            }
+                            else
+                            {
+                                PairXrpJpy.PlaySoundLowest = false;
+                            }
+                        }
+
+                        hoge = pair.Attribute("playSoundHighest");
+                        if (hoge != null)
+                        {
+                            if (hoge.Value == "true")
+                            {
+                                PairXrpJpy.PlaySoundHighest = true;
+                            }
+                            else
+                            {
+                                PairXrpJpy.PlaySoundHighest = false;
+                            }
+                        }
+
+                        hoge = pair.Attribute("playSoundLowest24h");
+                        if (hoge != null)
+                        {
+                            if (hoge.Value == "true")
+                            {
+                                PairXrpJpy.PlaySoundLowest24h = true;
+                            }
+                            else
+                            {
+                                PairXrpJpy.PlaySoundLowest24h = false;
+                            }
+                        }
+
+                        hoge = pair.Attribute("playSoundHighest24h");
+                        if (hoge != null)
+                        {
+                            if (hoge.Value == "true")
+                            {
+                                PairXrpJpy.PlaySoundHighest24h = true;
+                            }
+                            else
+                            {
+                                PairXrpJpy.PlaySoundHighest24h = false;
+                            }
+                        }
+
+                        // 板グルーピング
+                        hoge = pair.Attribute("depthGrouping");
+                        if (hoge != null)
+                        {
+                            if (!string.IsNullOrEmpty(hoge.Value))
+                            {
+                                try
+                                {
+                                    PairXrpJpy.DepthGrouping = Decimal.Parse(hoge.Value);
+                                }
+                                catch
+                                {
+                                    PairXrpJpy.DepthGrouping = 0;
+                                }
+
+                            }
+                        }
+
+                    }
+
+                    // PairEthBtc
+                    pair = pairs.Element("EthBtc");
+                    if (pair != null)
+                    {
+                        var hoge = pair.Attribute("playSoundLowest");
+                        if (hoge != null)
+                        {
+                            if (hoge.Value == "true")
+                            {
+                                PairEthBtc.PlaySoundLowest = true;
+                            }
+                            else
+                            {
+                                PairEthBtc.PlaySoundLowest = false;
+                            }
+                        }
+
+                        hoge = pair.Attribute("playSoundHighest");
+                        if (hoge != null)
+                        {
+                            if (hoge.Value == "true")
+                            {
+                                PairEthBtc.PlaySoundHighest = true;
+                            }
+                            else
+                            {
+                                PairEthBtc.PlaySoundHighest = false;
+                            }
+                        }
+
+                        hoge = pair.Attribute("playSoundLowest24h");
+                        if (hoge != null)
+                        {
+                            if (hoge.Value == "true")
+                            {
+                                PairEthBtc.PlaySoundLowest24h = true;
+                            }
+                            else
+                            {
+                                PairEthBtc.PlaySoundLowest24h = false;
+                            }
+                        }
+
+                        hoge = pair.Attribute("playSoundHighest24h");
+                        if (hoge != null)
+                        {
+                            if (hoge.Value == "true")
+                            {
+                                PairEthBtc.PlaySoundHighest24h = true;
+                            }
+                            else
+                            {
+                                PairEthBtc.PlaySoundHighest24h = false;
+                            }
+                        }
+
+                        // 板グルーピング
+                        hoge = pair.Attribute("depthGrouping");
+                        if (hoge != null)
+                        {
+                            if (!string.IsNullOrEmpty(hoge.Value))
+                            {
+                                try
+                                {
+                                    PairEthBtc.DepthGrouping = Decimal.Parse(hoge.Value);
+                                }
+                                catch
+                                {
+                                    PairEthBtc.DepthGrouping = 0;
+                                }
+
+                            }
+                        }
+
+                    }
+
+                    // PairLtcBtc
+                    pair = pairs.Element("LtcBtc");
+                    if (pair != null)
+                    {
+                        var hoge = pair.Attribute("playSoundLowest");
+                        if (hoge != null)
+                        {
+                            if (hoge.Value == "true")
+                            {
+                                PairLtcBtc.PlaySoundLowest = true;
+                            }
+                            else
+                            {
+                                PairLtcBtc.PlaySoundLowest = false;
+                            }
+                        }
+
+                        hoge = pair.Attribute("playSoundHighest");
+                        if (hoge != null)
+                        {
+                            if (hoge.Value == "true")
+                            {
+                                PairLtcBtc.PlaySoundHighest = true;
+                            }
+                            else
+                            {
+                                PairLtcBtc.PlaySoundHighest = false;
+                            }
+                        }
+
+                        hoge = pair.Attribute("playSoundLowest24h");
+                        if (hoge != null)
+                        {
+                            if (hoge.Value == "true")
+                            {
+                                PairLtcBtc.PlaySoundLowest24h = true;
+                            }
+                            else
+                            {
+                                PairLtcBtc.PlaySoundLowest24h = false;
+                            }
+                        }
+
+                        hoge = pair.Attribute("playSoundHighest24h");
+                        if (hoge != null)
+                        {
+                            if (hoge.Value == "true")
+                            {
+                                PairLtcBtc.PlaySoundHighest24h = true;
+                            }
+                            else
+                            {
+                                PairLtcBtc.PlaySoundHighest24h = false;
+                            }
+                        }
+
+                        // 板グルーピング
+                        hoge = pair.Attribute("depthGrouping");
+                        if (hoge != null)
+                        {
+                            if (!string.IsNullOrEmpty(hoge.Value))
+                            {
+                                try
+                                {
+                                    PairLtcBtc.DepthGrouping = Decimal.Parse(hoge.Value);
+                                }
+                                catch
+                                {
+                                    PairLtcBtc.DepthGrouping = 0;
+                                }
+
+                            }
+                        }
+                    }
+
+                    // PairMonaJpy
+                    pair = pairs.Element("MonaJpy");
+                    if (pair != null)
+                    {
+                        var hoge = pair.Attribute("playSoundLowest");
+                        if (hoge != null)
+                        {
+                            if (hoge.Value == "true")
+                            {
+                                PairMonaJpy.PlaySoundLowest = true;
+                            }
+                            else
+                            {
+                                PairMonaJpy.PlaySoundLowest = false;
+                            }
+                        }
+
+                        hoge = pair.Attribute("playSoundHighest");
+                        if (hoge != null)
+                        {
+                            if (hoge.Value == "true")
+                            {
+                                PairMonaJpy.PlaySoundHighest = true;
+                            }
+                            else
+                            {
+                                PairMonaJpy.PlaySoundHighest = false;
+                            }
+                        }
+
+                        hoge = pair.Attribute("playSoundLowest24h");
+                        if (hoge != null)
+                        {
+                            if (hoge.Value == "true")
+                            {
+                                PairMonaJpy.PlaySoundLowest24h = true;
+                            }
+                            else
+                            {
+                                PairMonaJpy.PlaySoundLowest24h = false;
+                            }
+                        }
+
+                        hoge = pair.Attribute("playSoundHighest24h");
+                        if (hoge != null)
+                        {
+                            if (hoge.Value == "true")
+                            {
+                                PairMonaJpy.PlaySoundHighest24h = true;
+                            }
+                            else
+                            {
+                                PairMonaJpy.PlaySoundHighest24h = false;
+                            }
+                        }
+
+                        // 板グルーピング
+                        hoge = pair.Attribute("depthGrouping");
+                        if (hoge != null)
+                        {
+                            if (!string.IsNullOrEmpty(hoge.Value))
+                            {
+                                try
+                                {
+                                    PairMonaJpy.DepthGrouping = Decimal.Parse(hoge.Value);
+                                }
+                                catch
+                                {
+                                    PairMonaJpy.DepthGrouping = 0;
+                                }
+
+                            }
+                        }
+                    }
+
+                    // PairBchJpy
+                    pair = pairs.Element("BchJpy");
+                    if (pair != null)
+                    {
+                        var hoge = pair.Attribute("playSoundLowest");
+                        if (hoge != null)
+                        {
+                            if (hoge.Value == "true")
+                            {
+                                PairBchJpy.PlaySoundLowest = true;
+                            }
+                            else
+                            {
+                                PairBchJpy.PlaySoundLowest = false;
+                            }
+                        }
+
+                        hoge = pair.Attribute("playSoundHighest");
+                        if (hoge != null)
+                        {
+                            if (hoge.Value == "true")
+                            {
+                                PairBchJpy.PlaySoundHighest = true;
+                            }
+                            else
+                            {
+                                PairBchJpy.PlaySoundHighest = false;
+                            }
+                        }
+
+                        hoge = pair.Attribute("playSoundLowest24h");
+                        if (hoge != null)
+                        {
+                            if (hoge.Value == "true")
+                            {
+                                PairBchJpy.PlaySoundLowest24h = true;
+                            }
+                            else
+                            {
+                                PairBchJpy.PlaySoundLowest24h = false;
+                            }
+                        }
+
+                        hoge = pair.Attribute("playSoundHighest24h");
+                        if (hoge != null)
+                        {
+                            if (hoge.Value == "true")
+                            {
+                                PairBchJpy.PlaySoundHighest24h = true;
+                            }
+                            else
+                            {
+                                PairBchJpy.PlaySoundHighest24h = false;
+                            }
+                        }
+
+                        // 板グルーピング
+                        hoge = pair.Attribute("depthGrouping");
+                        if (hoge != null)
+                        {
+                            if (!string.IsNullOrEmpty(hoge.Value))
+                            {
+                                try
+                                {
+                                    PairBchJpy.DepthGrouping = Decimal.Parse(hoge.Value);
+                                }
+                                catch
+                                {
+                                    PairBchJpy.DepthGrouping = 0;
+                                }
+
+                            }
+                        }
+                    }
+
+                }
+
+                #endregion
             }
             else
             {
@@ -1738,7 +5485,7 @@ namespace BitWallpaper.ViewModels
             #endregion
 
             //SelectedCandleType = で表示できるので、これは不要だが、デフォと同じ場合のみ、手動で表示させる。
-            if (SelectedCandleType == CandleTypes.OneHour) // デフォと揃えること。
+            if (SelectedCandleType == CandleTypes.OneMin) // デフォと揃えること。
             {
                 Task.Run(async () =>
                 {
@@ -1749,7 +5496,6 @@ namespace BitWallpaper.ViewModels
 
             // チャート更新のタイマー起動
             dispatcherChartTimer.Start();
-
 
         }
 
@@ -1894,6 +5640,366 @@ namespace BitWallpaper.ViewModels
 
             #endregion
 
+            #region == 各通貨毎の設定 ==
+
+            XmlElement pairs = doc.CreateElement(string.Empty, "Pairs", string.Empty);
+
+            // BtcJpy の設定
+            XmlElement pairBtcJpy = doc.CreateElement(string.Empty, "BtcJpy", string.Empty);
+
+            attrs = doc.CreateAttribute("playSoundLowest");
+            if (PairBtcJpy.PlaySoundLowest)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairBtcJpy.SetAttributeNode(attrs);
+
+            attrs = doc.CreateAttribute("playSoundHighest");
+            if (PairBtcJpy.PlaySoundHighest)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairBtcJpy.SetAttributeNode(attrs);
+
+            attrs = doc.CreateAttribute("playSoundLowest24h");
+            if (PairBtcJpy.PlaySoundLowest24h)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairBtcJpy.SetAttributeNode(attrs);
+
+            attrs = doc.CreateAttribute("playSoundHighest24h");
+            if (PairBtcJpy.PlaySoundHighest24h)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairBtcJpy.SetAttributeNode(attrs);
+
+            // 板グルーピング
+            attrs = doc.CreateAttribute("depthGrouping");
+            attrs.Value = PairBtcJpy.DepthGrouping.ToString();
+            pairBtcJpy.SetAttributeNode(attrs);
+
+            //
+            pairs.AppendChild(pairBtcJpy);
+
+            // PairXrpJpy の設定
+            XmlElement pairXrpJpy = doc.CreateElement(string.Empty, "XrpJpy", string.Empty);
+
+            attrs = doc.CreateAttribute("playSoundLowest");
+            if (PairXrpJpy.PlaySoundLowest)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairXrpJpy.SetAttributeNode(attrs);
+
+            attrs = doc.CreateAttribute("playSoundHighest");
+            if (PairXrpJpy.PlaySoundHighest)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairXrpJpy.SetAttributeNode(attrs);
+
+            attrs = doc.CreateAttribute("playSoundLowest24h");
+            if (PairXrpJpy.PlaySoundLowest24h)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairXrpJpy.SetAttributeNode(attrs);
+
+            attrs = doc.CreateAttribute("playSoundHighest24h");
+            if (PairXrpJpy.PlaySoundHighest24h)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairXrpJpy.SetAttributeNode(attrs);
+
+            // 板グルーピング
+            attrs = doc.CreateAttribute("depthGrouping");
+            attrs.Value = PairXrpJpy.DepthGrouping.ToString();
+            pairXrpJpy.SetAttributeNode(attrs);
+
+            //
+            pairs.AppendChild(pairXrpJpy);
+
+            // PairEthBtc の設定
+            XmlElement pairEthBtc = doc.CreateElement(string.Empty, "EthBtc", string.Empty);
+
+            attrs = doc.CreateAttribute("playSoundLowest");
+            if (PairEthBtc.PlaySoundLowest)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairEthBtc.SetAttributeNode(attrs);
+
+            attrs = doc.CreateAttribute("playSoundHighest");
+            if (PairEthBtc.PlaySoundHighest)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairEthBtc.SetAttributeNode(attrs);
+
+            attrs = doc.CreateAttribute("playSoundLowest24h");
+            if (PairEthBtc.PlaySoundLowest24h)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairEthBtc.SetAttributeNode(attrs);
+
+            attrs = doc.CreateAttribute("playSoundHighest24h");
+            if (PairEthBtc.PlaySoundHighest24h)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairEthBtc.SetAttributeNode(attrs);
+
+            // 板グルーピング
+            attrs = doc.CreateAttribute("depthGrouping");
+            attrs.Value = PairEthBtc.DepthGrouping.ToString();
+            pairEthBtc.SetAttributeNode(attrs);
+
+            //
+            pairs.AppendChild(pairEthBtc);
+
+            // PairLtcBtc の設定
+            XmlElement pairLtcBtc = doc.CreateElement(string.Empty, "LtcBtc", string.Empty);
+
+            attrs = doc.CreateAttribute("playSoundLowest");
+            if (PairLtcBtc.PlaySoundLowest)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairLtcBtc.SetAttributeNode(attrs);
+
+            attrs = doc.CreateAttribute("playSoundHighest");
+            if (PairLtcBtc.PlaySoundHighest)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairLtcBtc.SetAttributeNode(attrs);
+
+            attrs = doc.CreateAttribute("playSoundLowest24h");
+            if (PairLtcBtc.PlaySoundLowest24h)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairLtcBtc.SetAttributeNode(attrs);
+
+            attrs = doc.CreateAttribute("playSoundHighest24h");
+            if (PairLtcBtc.PlaySoundHighest24h)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairLtcBtc.SetAttributeNode(attrs);
+
+            // 板グルーピング
+            attrs = doc.CreateAttribute("depthGrouping");
+            attrs.Value = PairLtcBtc.DepthGrouping.ToString();
+            pairLtcBtc.SetAttributeNode(attrs);
+
+            //
+            pairs.AppendChild(pairLtcBtc);
+
+            // PairMonaJpy の設定
+            XmlElement pairMonaJpy = doc.CreateElement(string.Empty, "MonaJpy", string.Empty);
+
+            attrs = doc.CreateAttribute("playSoundLowest");
+            if (PairMonaJpy.PlaySoundLowest)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairMonaJpy.SetAttributeNode(attrs);
+
+            attrs = doc.CreateAttribute("playSoundHighest");
+            if (PairMonaJpy.PlaySoundHighest)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairMonaJpy.SetAttributeNode(attrs);
+
+            attrs = doc.CreateAttribute("playSoundLowest24h");
+            if (PairMonaJpy.PlaySoundLowest24h)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairMonaJpy.SetAttributeNode(attrs);
+
+            attrs = doc.CreateAttribute("playSoundHighest24h");
+            if (PairMonaJpy.PlaySoundHighest24h)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairMonaJpy.SetAttributeNode(attrs);
+
+            // 板グルーピング
+            attrs = doc.CreateAttribute("depthGrouping");
+            attrs.Value = PairMonaJpy.DepthGrouping.ToString();
+            pairMonaJpy.SetAttributeNode(attrs);
+
+            //
+            pairs.AppendChild(pairMonaJpy);
+
+            // PairBchJpy の設定
+            XmlElement pairBchJpy = doc.CreateElement(string.Empty, "BchJpy", string.Empty);
+
+            attrs = doc.CreateAttribute("playSoundLowest");
+            if (PairBchJpy.PlaySoundLowest)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairBchJpy.SetAttributeNode(attrs);
+
+            attrs = doc.CreateAttribute("playSoundHighest");
+            if (PairBchJpy.PlaySoundHighest)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairBchJpy.SetAttributeNode(attrs);
+
+            attrs = doc.CreateAttribute("playSoundLowest24h");
+            if (PairBchJpy.PlaySoundLowest24h)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairBchJpy.SetAttributeNode(attrs);
+
+            attrs = doc.CreateAttribute("playSoundHighest24h");
+            if (PairBchJpy.PlaySoundHighest24h)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairBchJpy.SetAttributeNode(attrs);
+
+            // 板グルーピング
+            attrs = doc.CreateAttribute("depthGrouping");
+            attrs.Value = PairBchJpy.DepthGrouping.ToString();
+            pairBchJpy.SetAttributeNode(attrs);
+
+            //
+            pairs.AppendChild(pairBchJpy);
+
+
+
+            // ////
+            root.AppendChild(pairs);
+
+
+            #endregion
+
+            #region == アラーム音設定 ==
+
+            XmlElement alarmSetting = doc.CreateElement(string.Empty, "Alarm", string.Empty);
+
+            attrs = doc.CreateAttribute("playSound");
+            if (PlaySound)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            alarmSetting.SetAttributeNode(attrs);
+
+            root.AppendChild(alarmSetting);
+
+            #endregion
 
             // 設定ファイルの保存
             doc.Save(AppConfigFilePath);
@@ -1901,7 +6007,6 @@ namespace BitWallpaper.ViewModels
             #endregion
 
         }
-
 
         #endregion
 
@@ -1915,6 +6020,326 @@ namespace BitWallpaper.ViewModels
             {
                 CurrentTheme = test;
             }
+        }
+
+        // 板情報 取得
+        private async Task<bool> GetDepth(Pairs pair)
+        {
+
+            // まとめグルーピング単位 
+            decimal unit = ActivePair.DepthGrouping;
+
+            // リスト数 （基本 上売り200、下買い200）
+            int half = 200;
+            int listCount = (half * 2) + 1;
+
+            // 初期化
+            if (_depth.Count == 0)
+            {
+                for (int i = 0; i < listCount; i++)
+                {
+                    Depth dd = new Depth();
+                    dd.DepthPrice = 0;
+                    dd.DepthBid = 0;
+                    dd.DepthAsk = 0;
+                    _depth.Add(dd);
+                }
+            }
+            else
+            {
+                if (DepthGroupingChanged)
+                {
+                    //グルーピング単位が変わったので、一旦クリアする。
+
+                    for (int i = 0; i < listCount; i++)
+                    {
+                        Depth dd = _depth[i];//new Depth();
+                        dd.DepthPrice = 0;
+                        dd.DepthBid = 0;
+                        dd.DepthAsk = 0;
+                        //_depth.Add(dd);
+                    }
+
+                    DepthGroupingChanged = false;
+                }
+            }
+
+            // LTP を追加
+            //Depth ddd = new Depth();
+            _depth[half].DepthPrice = ActivePair.Ltp;
+            //_depth[half].DepthBid = 0;
+            //_depth[half].DepthAsk = 0;
+            _depth[half].IsLTP = true;
+            //_depth[half] = ddd;
+
+            try
+            {
+                DepthResult dpr = await _pubDepthApi.GetDepth(pair.ToString());
+
+                if (dpr != null)
+                {
+                    if (_depth.Count != 0)
+                    {
+
+                        int i = 1;
+
+                        // 100円単位でまとめる
+                        // まとめた時の価格
+                        decimal c2 = 0;
+                        // 100単位ごとにまとめたAsk数量を保持
+                        decimal t = 0;
+                        // 先送りするAsk
+                        decimal d = 0;
+                        // 先送りする価格
+                        decimal e = 0;
+
+                        // ask をループ
+                        foreach (var dp in dpr.DepthAskList)
+                        {
+                            // まとめ表示On
+                            if (unit > 0)
+                            {
+
+                                if (c2 == 0) c2 = System.Math.Ceiling(dp.DepthPrice / unit);
+
+                                // 100円単位でまとめる
+                                if (System.Math.Ceiling(dp.DepthPrice / unit) == c2)
+                                {
+                                    t = t + dp.DepthAsk;
+                                }
+                                else
+                                {
+                                    //Debug.WriteLine(System.Math.Ceiling(dp.DepthPrice / unit).ToString() + " " + System.Math.Ceiling(c / unit).ToString());
+
+                                    // 一時保存
+                                    e = dp.DepthPrice;
+                                    dp.DepthPrice = (c2 * unit);
+
+                                    // 一時保存
+                                    d = dp.DepthAsk;
+                                    dp.DepthAsk = t;
+
+                                    _depth[half - i].DepthAsk = dp.DepthAsk;
+                                    _depth[half - i].DepthBid = dp.DepthBid;
+                                    _depth[half - i].DepthPrice = dp.DepthPrice;
+
+                                    // 今回のAskは先送り
+                                    t = d;
+                                    // 今回のPriceが基準になる
+                                    c2 = System.Math.Ceiling(e / unit);
+
+                                    i++;
+
+                                }
+
+                            }
+                            else
+                            {
+                                _depth[half - i] = dp;
+                                i++;
+                            }
+
+                        }
+
+                        _depth[half - 1].IsAskBest = true;
+
+                        i = half + 1;
+
+                        // 100円単位でまとめる
+                        // まとめた時の価格
+                        decimal c = 0;
+                        // 100単位ごとにまとめた数量を保持
+                        t = 0;
+                        // 先送りするBid
+                        d = 0;
+                        // 先送りする価格
+                        e = 0;
+
+                        // bid をループ
+                        foreach (var dp in dpr.DepthBidList)
+                        {
+
+                            if (unit > 0)
+                            {
+
+                                if (c == 0) c = System.Math.Ceiling(dp.DepthPrice / unit);
+
+                                // 100円単位でまとめる
+                                if (System.Math.Ceiling(dp.DepthPrice / unit) == c)
+                                {
+                                    t = t + dp.DepthBid;
+                                }
+                                else
+                                {
+
+                                    // 一時保存
+                                    e = dp.DepthPrice;
+                                    dp.DepthPrice = (c * unit);
+
+                                    // 一時保存
+                                    d = dp.DepthBid;
+                                    dp.DepthBid = t;
+
+                                    // 追加
+                                    _depth[i].DepthAsk = dp.DepthAsk;
+                                    _depth[i].DepthBid = dp.DepthBid;
+                                    _depth[i].DepthPrice = dp.DepthPrice;
+
+                                    // 今回のBidは先送り
+                                    t = d;
+                                    // 今回のPriceが基準になる
+                                    c = System.Math.Ceiling(e / unit);
+
+                                    i++;
+
+                                }
+                            }
+                            else
+                            {
+                                _depth[i] = dp;
+                                i++;
+                            }
+
+                        }
+
+                        _depth[half + 1].IsBidBest = true;
+
+                    }
+
+                    return true;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("■■■■■ GetDepth returned null");
+                    return false;
+                }
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine("■■■■■ GetDepth Exception: " + e);
+                return false;
+            }
+
+        }
+
+        // 板情報の更新ループ
+        private async void UpdateDepth()
+        {
+            while (true)
+            {
+                // 省エネモードならスルー。
+                if (MinMode)
+                {
+                    await Task.Delay(4000);
+                    continue;
+                }
+
+                // 間隔 1/2
+                await Task.Delay(600);
+
+                try
+                {
+                    await GetDepth(CurrentPair);
+                }
+                catch (Exception e)
+                {
+                    System.Diagnostics.Debug.WriteLine("■■■■■ UpdateDepth Exception: " + e);
+                }
+
+                // 間隔 1/2
+                await Task.Delay(600);
+            }
+
+        }
+
+        // トランザクションの取得
+        private async Task<bool> GetTransactions(Pairs pair)
+        {
+            try
+            {
+                TransactionsResult trs = await _pubTransactionsApi.GetTransactions(pair.ToString());
+
+                if (trs != null)
+                {
+                    //Debug.WriteLine(trs.Trans.Count.ToString());
+
+                    if (_transactions.Count == 0)
+                    {
+                        // 60 で初期化
+                        for (int i = 0; i < 60; i++)
+                        {
+                            Transactions dd = new Transactions();
+                            //
+                            _transactions.Add(dd);
+                        }
+                    }
+
+                    int v = 0;
+                    foreach (var tr in trs.Trans)
+                    {
+                        //_transactions[v] = tr;
+
+                        _transactions[v].Amount = tr.Amount;
+                        _transactions[v].ExecutedAt = tr.ExecutedAt;
+                        _transactions[v].Price = tr.Price;
+                        _transactions[v].Side = tr.Side;
+                        _transactions[v].TransactionId = tr.TransactionId;
+
+                        v++;
+                    }
+
+                    /*
+                    _transactions.Clear();
+
+                    foreach (var tr in trs.Trans)
+                    {
+                        _transactions.Add(tr);
+                    }
+                    */
+
+                    return true;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("■■■■■ GetTransactions returned null");
+                    return false;
+                }
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine("■■■■■ GetTransactions Exception: " + e);
+                return false;
+            }
+        }
+
+        // トランザクションの更新ループ
+        private async void UpdateTransactions()
+        {
+            while (true)
+            {
+                // 省エネモードならスルー。
+                if (MinMode)
+                {
+                    await Task.Delay(5000);
+                    continue;
+                }
+
+                // 間隔 1/2
+                await Task.Delay(1300);
+
+                try
+                {
+                    await GetTransactions(CurrentPair);
+                }
+                catch (Exception e)
+                {
+                    System.Diagnostics.Debug.WriteLine("■■■■■ UpdateTransactions Exception: " + e);
+                }
+
+                // 間隔 1/2
+                await Task.Delay(1300);
+            }
+
         }
 
         #region == チャート関係のメソッド ==
@@ -2557,28 +6982,28 @@ namespace BitWallpaper.ViewModels
 
                 if (pair == Pairs.btc_jpy)
                 {
-                    chartSeries = ChartSeriesBtc;
-                    chartAxisX = ChartAxisXBtc;
-                    chartAxisY = ChartAxisYBtc;
+                    chartSeries = ChartSeriesBtcJpy;
+                    chartAxisX = ChartAxisXBtcJpy;
+                    chartAxisY = ChartAxisYBtcJpy;
                 }
                 else if (pair == Pairs.xrp_jpy)
                 {
-                    chartSeries = ChartSeriesXrp;
-                    chartAxisX = ChartAxisXXrp;
-                    chartAxisY = ChartAxisYXrp;
+                    chartSeries = ChartSeriesXrpJpy;
+                    chartAxisX = ChartAxisXXrpJpy;
+                    chartAxisY = ChartAxisYXrpJpy;
 
                 }
                 else if (pair == Pairs.eth_btc)
                 {
-                    chartSeries = ChartSeriesEth;
-                    chartAxisX = ChartAxisXEth;
-                    chartAxisY = ChartAxisYEth;
+                    chartSeries = ChartSeriesEthBtc;
+                    chartAxisX = ChartAxisXEthBtc;
+                    chartAxisY = ChartAxisYEthBtc;
                 }
                 else if (pair == Pairs.mona_jpy)
                 {
-                    chartSeries = ChartSeriesMona;
-                    chartAxisX = ChartAxisXMona;
-                    chartAxisY = ChartAxisYMona;
+                    chartSeries = ChartSeriesMonaJpy;
+                    chartAxisX = ChartAxisXMonaJpy;
+                    chartAxisY = ChartAxisYMonaJpy;
                 }
                 else if (pair == Pairs.mona_btc)
                 {
@@ -2586,9 +7011,9 @@ namespace BitWallpaper.ViewModels
                 }
                 else if (pair == Pairs.ltc_btc)
                 {
-                    chartSeries = ChartSeriesLtc;
-                    chartAxisX = ChartAxisXLtc;
-                    chartAxisY = ChartAxisYLtc;
+                    chartSeries = ChartSeriesLtcBtc;
+                    chartAxisX = ChartAxisXLtcBtc;
+                    chartAxisY = ChartAxisYLtcBtc;
                 }
                 else if (pair == Pairs.bcc_btc)
                 {
@@ -2596,9 +7021,9 @@ namespace BitWallpaper.ViewModels
                 }
                 else if (pair == Pairs.bcc_jpy)
                 {
-                    chartSeries = ChartSeriesBch;
-                    chartAxisX = ChartAxisXBch;
-                    chartAxisY = ChartAxisYBch;
+                    chartSeries = ChartSeriesBchJpy;
+                    chartAxisX = ChartAxisXBchJpy;
+                    chartAxisY = ChartAxisYBchJpy;
                 }
 
 
@@ -2823,7 +7248,7 @@ namespace BitWallpaper.ViewModels
                 }
                 else
                 {
-                    //LoadChart(pair, SelectedCandleType);
+                    LoadChart(pair, SelectedCandleType);
                     //DisplayChart(pair);
                 }
             }
@@ -2835,7 +7260,7 @@ namespace BitWallpaper.ViewModels
                 }
                 else
                 {
-                    //LoadChart(pair, SelectedCandleType);
+                    LoadChart(pair, SelectedCandleType);
                     //DisplayChart(pair);
                 }
             }
@@ -2847,7 +7272,7 @@ namespace BitWallpaper.ViewModels
                 }
                 else
                 {
-                    //LoadChart(pair, SelectedCandleType);
+                    LoadChart(pair, SelectedCandleType);
                     //DisplayChart(pair);
                 }
             }
@@ -2859,7 +7284,7 @@ namespace BitWallpaper.ViewModels
                 }
                 else
                 {
-                    //LoadChart(pair, SelectedCandleType);
+                    LoadChart(pair, SelectedCandleType);
                     //DisplayChart(pair);
                 }
             }
@@ -2871,7 +7296,7 @@ namespace BitWallpaper.ViewModels
                 }
                 else
                 {
-                    //LoadChart(pair, SelectedCandleType);
+                    LoadChart(pair, SelectedCandleType);
                     //DisplayChart(pair);
                 }
             }
@@ -2883,7 +7308,7 @@ namespace BitWallpaper.ViewModels
                 }
                 else
                 {
-                    //LoadChart(pair, SelectedCandleType);
+                    LoadChart(pair, SelectedCandleType);
                     //DisplayChart(pair);
                 }
             }
@@ -2895,7 +7320,7 @@ namespace BitWallpaper.ViewModels
                 }
                 else
                 {
-                    //LoadChart(pair, SelectedCandleType);
+                    LoadChart(pair, SelectedCandleType);
                     //DisplayChart(pair);
                 }
             }
@@ -3272,27 +7697,27 @@ namespace BitWallpaper.ViewModels
 
             if (pair == Pairs.btc_jpy)
             {
-                chartSeries = ChartSeriesBtc;
-                chartAxisX = ChartAxisXBtc;
-                chartAxisY = ChartAxisYBtc;
+                chartSeries = ChartSeriesBtcJpy;
+                chartAxisX = ChartAxisXBtcJpy;
+                chartAxisY = ChartAxisYBtcJpy;
             }
             else if (pair == Pairs.xrp_jpy)
             {
-                chartSeries = ChartSeriesXrp;
-                chartAxisX = ChartAxisXXrp;
-                chartAxisY = ChartAxisYXrp;
+                chartSeries = ChartSeriesXrpJpy;
+                chartAxisX = ChartAxisXXrpJpy;
+                chartAxisY = ChartAxisYXrpJpy;
             }
             else if (pair == Pairs.eth_btc)
             {
-                chartSeries = ChartSeriesEth;
-                chartAxisX = ChartAxisXEth;
-                chartAxisY = ChartAxisYEth;
+                chartSeries = ChartSeriesEthBtc;
+                chartAxisX = ChartAxisXEthBtc;
+                chartAxisY = ChartAxisYEthBtc;
             }
             else if (pair == Pairs.mona_jpy)
             {
-                chartSeries = ChartSeriesMona;
-                chartAxisX = ChartAxisXMona;
-                chartAxisY = ChartAxisYMona;
+                chartSeries = ChartSeriesMonaJpy;
+                chartAxisX = ChartAxisXMonaJpy;
+                chartAxisY = ChartAxisYMonaJpy;
             }
             else if (pair == Pairs.mona_btc)
             {
@@ -3300,9 +7725,9 @@ namespace BitWallpaper.ViewModels
             }
             else if (pair == Pairs.ltc_btc)
             {
-                chartSeries = ChartSeriesLtc;
-                chartAxisX = ChartAxisXLtc;
-                chartAxisY = ChartAxisYLtc;
+                chartSeries = ChartSeriesLtcBtc;
+                chartAxisX = ChartAxisXLtcBtc;
+                chartAxisY = ChartAxisYLtcBtc;
             }
             else if (pair == Pairs.bcc_btc)
             {
@@ -3310,9 +7735,9 @@ namespace BitWallpaper.ViewModels
             }
             else if (pair == Pairs.bcc_jpy)
             {
-                chartSeries = ChartSeriesBch;
-                chartAxisX = ChartAxisXBch;
-                chartAxisY = ChartAxisYBch;
+                chartSeries = ChartSeriesBchJpy;
+                chartAxisX = ChartAxisXBchJpy;
+                chartAxisY = ChartAxisYBchJpy;
             }
 
             if (chartSeries == null)
@@ -3402,27 +7827,27 @@ namespace BitWallpaper.ViewModels
 
             if (pair == Pairs.btc_jpy)
             {
-                chartSeries = ChartSeriesBtc;
-                chartAxisX = ChartAxisXBtc;
-                chartAxisY = ChartAxisYBtc;
+                chartSeries = ChartSeriesBtcJpy;
+                chartAxisX = ChartAxisXBtcJpy;
+                chartAxisY = ChartAxisYBtcJpy;
             }
             else if (pair == Pairs.xrp_jpy)
             {
-                chartSeries = ChartSeriesXrp;
-                chartAxisX = ChartAxisXXrp;
-                chartAxisY = ChartAxisYXrp;
+                chartSeries = ChartSeriesXrpJpy;
+                chartAxisX = ChartAxisXXrpJpy;
+                chartAxisY = ChartAxisYXrpJpy;
             }
             else if (pair == Pairs.eth_btc)
             {
-                chartSeries = ChartSeriesEth;
-                chartAxisX = ChartAxisXEth;
-                chartAxisY = ChartAxisYEth;
+                chartSeries = ChartSeriesEthBtc;
+                chartAxisX = ChartAxisXEthBtc;
+                chartAxisY = ChartAxisYEthBtc;
             }
             else if (pair == Pairs.mona_jpy)
             {
-                chartSeries = ChartSeriesMona;
-                chartAxisX = ChartAxisXMona;
-                chartAxisY = ChartAxisYMona;
+                chartSeries = ChartSeriesMonaJpy;
+                chartAxisX = ChartAxisXMonaJpy;
+                chartAxisY = ChartAxisYMonaJpy;
             }
             else if (pair == Pairs.mona_btc)
             {
@@ -3430,9 +7855,9 @@ namespace BitWallpaper.ViewModels
             }
             else if (pair == Pairs.ltc_btc)
             {
-                chartSeries = ChartSeriesLtc;
-                chartAxisX = ChartAxisXLtc;
-                chartAxisY = ChartAxisYLtc;
+                chartSeries = ChartSeriesLtcBtc;
+                chartAxisX = ChartAxisXLtcBtc;
+                chartAxisY = ChartAxisYLtcBtc;
             }
             else if (pair == Pairs.bcc_btc)
             {
@@ -3440,9 +7865,9 @@ namespace BitWallpaper.ViewModels
             }
             else if (pair == Pairs.bcc_jpy)
             {
-                chartSeries = ChartSeriesBch;
-                chartAxisX = ChartAxisXBch;
-                chartAxisY = ChartAxisYBch;
+                chartSeries = ChartSeriesBchJpy;
+                chartAxisX = ChartAxisXBchJpy;
+                chartAxisY = ChartAxisYBchJpy;
             }
 
             if (chartSeries == null)
@@ -3513,6 +7938,25 @@ namespace BitWallpaper.ViewModels
         public void SettingsOKCommand_Execute()
         {
             ShowSettings = false;
+        }
+
+        // 板情報のグルーピングコマンド
+        public ICommand DepthGroupingCommand { get; }
+        public bool DepthGroupingCommand_CanExecute()
+        {
+            return true;
+        }
+        public void DepthGroupingCommand_Execute(object obj)
+        {
+            if (obj == null) return;
+
+            Decimal numVal = Decimal.Parse(obj.ToString());
+
+            if (ActivePair.DepthGrouping != numVal)
+            {
+                ActivePair.DepthGrouping = numVal;
+                DepthGroupingChanged = true;
+            }
         }
 
         #endregion

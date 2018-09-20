@@ -21,9 +21,8 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Xml;
-using Windows.UI.Notifications;
-using Windows.Data.Xml;
-using Notifications.Wpf;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider; // UIAutomationProvider
 
 namespace BitWallpaper
 {
@@ -66,7 +65,7 @@ namespace BitWallpaper
 
             /*
             // 背景の指定
-            var path = ("C:\\Users\\torum\\Pictures\\Wallpapers\\Desktop\\3840x2160\\dfe27e0ee314d6e8181a2c5c4166f12f.jpg");
+            var path = ("C:\\Users\\hoge\\Pictures\\Wallpapers\\Desktop\\3840x2160\\dfe27e0ee314d6e8181a2c5c4166f12f.jpg");
             var uri = new Uri(path);
             var bitmap = new BitmapImage(uri);
             this.BackgroundImage.Source = bitmap;
@@ -127,7 +126,7 @@ namespace BitWallpaper
             });
             */
             //notificationManager.Show(test, onClose: () => onNotificationsOverlayWindowClose(test));
-           
+
         }
 
         private void ExitApplication()
@@ -176,7 +175,6 @@ namespace BitWallpaper
             //this.Topmost = false;
             this.Focus();
 
-
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -186,35 +184,6 @@ namespace BitWallpaper
 
         private void LayoutChange()
         {
-
-            // 幅
-            double appWidth = this.ActualWidth;
-            double boxWidth = (appWidth - 40) / 3;
-
-            // WrapPanes's width
-            coins_wrap.Width = appWidth;
-
-            // WrapPanes's Margin
-            coins_wrap.Margin = new Thickness(0, 0, 0, 0); ;
-
-            btc_box.Width = boxWidth;
-            ltc_box.Width = boxWidth;
-            xrp_box.Width = boxWidth;
-            eth_box.Width = boxWidth;
-            mona_box.Width = boxWidth;
-            bch_box.Width = boxWidth;
-
-            // 高さ
-            double appHeight = this.ActualHeight;
-            double boxHeight = ((appHeight - 40) / 2);
-
-            btc_box.Height = boxHeight;
-            ltc_box.Height = boxHeight;
-            xrp_box.Height = boxHeight;
-            eth_box.Height = boxHeight;
-            mona_box.Height = boxHeight;
-            bch_box.Height = boxHeight;
-
 
             /*
              
@@ -369,122 +338,21 @@ namespace BitWallpaper
         private void ResizeToSmall()
         {
 
-
         }
 
         private void ResizeToDefault()
         {
-
 
         }
 
         private void ResizeToLarge()
         {
 
-
         }
 
         private void ResizeToXXXLarge()
         {
 
-
-
-            /*
-            // 左サイドメニュー
-            LeftSideMenu.Visibility = Visibility.Visible;
-            //LeftMenuColum.Width = new GridLength(42, GridUnitType.Pixel);
-
-            TopMenu.Visibility = Visibility.Visible;
-
-            TopMenu.SetValue(Grid.ColumnSpanProperty, 5);
-
-            BottomContents.SetValue(Grid.ColumnSpanProperty, 4);
-            Split.SetValue(Grid.ColumnSpanProperty, 4);
-
-            Split.Visibility = Visibility.Visible;
-            BottomContents.Visibility = Visibility.Visible;
-
-            MainScroller.SetValue(Grid.ColumnSpanProperty, 4);
-            // メインスクロールVのRowスパンを1に指定
-            MainScroller.SetValue(Grid.RowSpanProperty, 1);
-
-            Main1Grid.SetValue(Grid.ColumnSpanProperty, 3);
-            Main2Grid.SetValue(Grid.ColumnSpanProperty, 1);
-
-            Main3Grid.SetValue(Grid.ColumnProperty, 1);
-            Main3Grid.SetValue(Grid.RowProperty, 0);
-            Main3Grid.SetValue(Grid.ColumnSpanProperty, 2);
-
-            // 歩み値を
-            Transaction.Visibility = Visibility.Visible;
-            Transaction.SetValue(Grid.ColumnProperty, 3);
-            Transaction.SetValue(Grid.RowProperty, 0);
-
-            //Asset.SetValue(Grid.ColumnSpanProperty, 2);
-            //Order.SetValue(Grid.ColumnSpanProperty, 2);
-            //Ifdoco.SetValue(Grid.ColumnSpanProperty, 2);
-            //Chart.SetValue(Grid.ColumnSpanProperty, 2);
-            Middle.SetValue(Grid.ColumnSpanProperty, 2);
-
-            //Main1Grid.Height = 518;
-            //MainContentsGrid.Height = 518;
-
-
-
-            // ボトムを表示
-            BottomContents.Visibility = Visibility.Visible;
-            Split.Visibility = Visibility.Visible;
-
-            Transaction.Visibility = Visibility.Visible;
-
-            Depth.Visibility = Visibility.Visible;
-
-
-
-            // メインコンテンツグリッドの高さ指定。＊スクロールが出るかでないかここのサイズ。
-            MainContentsGrid.Height = 420;//1036;
-
-            // メイン１の高さを指定　＊重要
-            Main1Grid.Height = 420;
-
-            Main2Grid.Height = 420;
-
-            Main3Grid.Height = 420;
-
-
-            ////
-            //Asset.Width = 720;
-            //Order.Width = 720;
-            //Ifdoco.Width = 720;
-            //Asset.Width = 720;
-            //Order.Width = 720;
-            //Ifdoco.Width = 720;
-            //Chart.Width = 720;
-            Middle.Width = 720;
-
-            //Main2Colum.Width = new GridLength(360, GridUnitType.Pixel);
-            //Main3Colum.Width = new GridLength(360, GridUnitType.Pixel);
-            Main2Colum.Width = new GridLength(380, GridUnitType.Pixel);
-            Main3Colum.Width = new GridLength(380, GridUnitType.Pixel);
-
-
-            Transaction.Margin = new Thickness(0, 0, 20, 6);
-
-            BottomContents.Margin = new Thickness(3, 0, 20, 0);
-
-            //Chart.Margin = new Thickness(0, 0, 20, 6);
-            Middle.Margin = new Thickness(0, 0, 20, 6);
-
-
-
-            RightSide1Colum.Width = new GridLength(213, GridUnitType.Pixel);
-            RightSide2Colum.Width = new GridLength(213, GridUnitType.Pixel);
-
-
-            ChartSpanOneYearRadioButton.Visibility = Visibility.Visible;
-            ChartSpanOneWeekRadioButton.Visibility = Visibility.Visible;
-            ChartSpanThreeHourRadioButton.Visibility = Visibility.Visible;
-            */
         }
 
         private void Window_StateChanged(object sender, EventArgs e)
@@ -539,6 +407,80 @@ namespace BitWallpaper
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
         }
+
+
+        #region == UI変更のViewコードビハインド ==
+
+        private void DepthListBox_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            Task.Run(() => SetDepthListboxScrollPosition());
+        }
+
+        private void DepthListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            SetDepthListboxScrollPosition();
+        }
+
+        private async void SetDepthListboxScrollPosition()
+        {
+            try
+            {
+
+                await Task.Delay(1000);
+
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                {
+                    if (this.DepthListBox.Items.Count > 0)
+                    {
+                        try
+                        {
+                            // ListBoxからAutomationPeerを取得
+                            var peer = ItemsControlAutomationPeer.CreatePeerForElement(this.DepthListBox);
+                            // GetPatternでIScrollProviderを取得
+                            var scrollProvider = peer.GetPattern(System.Windows.Automation.Peers.PatternInterface.Scroll) as IScrollProvider;
+
+                            if (scrollProvider != null)
+                            {
+                                if (scrollProvider.VerticallyScrollable)
+                                {
+                                    try
+                                    {
+                                        // パーセントで位置を指定してスクロール
+                                        scrollProvider.SetScrollPercent(
+                                            // 水平スクロールは今の位置
+                                            scrollProvider.HorizontalScrollPercent,
+                                            // 垂直方向50%
+                                            50.0);
+                                    }
+                                    catch
+                                    {
+                                        System.Diagnostics.Debug.WriteLine("■■■■■ SetDepthListboxScrollPosition scrollProvider null Error");
+                                    }
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            System.Diagnostics.Debug.WriteLine("■■■■■ SetDepthListboxScrollPosition SetScrollPercent Error");
+                        }
+                    }
+                });
+
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine("■■■■■ SetDepthListboxScrollPosition Exception: " + e);
+            }
+
+
+        }
+
+        private void DepthListBoxCenter_Click(object sender, RoutedEventArgs e)
+        {
+            SetDepthListboxScrollPosition();
+        }
+
+        #endregion
 
     }
 

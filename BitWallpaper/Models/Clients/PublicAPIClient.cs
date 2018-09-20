@@ -10,7 +10,6 @@ using Newtonsoft.Json.Converters;
 using System.Globalization;
 using BitWallpaper.ViewModels;
 
-
 namespace BitWallpaper.Models.Clients
 {
 
@@ -46,8 +45,7 @@ namespace BitWallpaper.Models.Clients
         [JsonProperty("timestamp")]
         public long Timestamp { get; set; }
     }
-
-
+    
     #region == JsonTickerClass Json デシリアライズ用 ==
 
     // Ticker
@@ -147,7 +145,7 @@ namespace BitWallpaper.Models.Clients
 
     #region == ティック ==
 
-    class Ticker
+    public class Ticker
     {
         private decimal _ltp;
         public decimal LTP
@@ -536,22 +534,19 @@ namespace BitWallpaper.Models.Clients
 
     #region == パブリックAPIクラス ==
 
-    class PublicAPIClient : BaseClient
+    public class PublicAPIClient : BaseClient
     {
         private readonly Uri PublicAPIUri = new Uri("https://public.bitbank.cc");
 
         // コンストラクタ
         public PublicAPIClient()
         {
-            //_endpoint = endpoint;
-
             _HTTPConn.Client.BaseAddress = PublicAPIUri;
         }
 
         // Ticker取得メソッド
         public async Task<Ticker> GetTicker(string pair)
         {
-            //Uri _endpoint = new Uri ((_HTTPConn.Client.BaseAddress).ToString() + "btc_jpy/ticker");
             Uri _endpoint = new Uri((_HTTPConn.Client.BaseAddress).ToString() + pair + "/ticker");
 
             //System.Diagnostics.Debug.WriteLine("GettingTicker..." + _endpoint.ToString());
@@ -560,7 +555,6 @@ namespace BitWallpaper.Models.Clients
             {
                 Method = HttpMethod.Get,
                 RequestUri = _endpoint,
-
             };
 
             //System.Diagnostics.Debug.WriteLine("GettingTicker...");
@@ -587,34 +581,6 @@ namespace BitWallpaper.Models.Clients
                         ticker.Ask = decimal.Parse(deserialized.data.sell);
                         ticker.Low = decimal.Parse(deserialized.data.low);
                         ticker.High = decimal.Parse(deserialized.data.high);
-
-                        /*
-                        long l;
-                        if (Int64.TryParse(deserialized.data.last, out l))
-                        {
-                            ticker.LTP = l;
-                        }
-
-                        if (Int64.TryParse(deserialized.data.buy, out l))
-                        {
-                            ticker.Bid = l;
-                        }
-
-                        if (Int64.TryParse(deserialized.data.sell, out l))
-                        {
-                            ticker.Ask = l;
-                        }
-
-                        if (Int64.TryParse(deserialized.data.low, out l))
-                        {
-                            ticker.Low = l;
-                        }
-
-                        if (Int64.TryParse(deserialized.data.high, out l))
-                        {
-                            ticker.High = l;
-                        }
-                        */
 
                         DateTime start = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
                         DateTime date = start.AddMilliseconds(deserialized.data.timestamp).ToLocalTime();
@@ -645,9 +611,9 @@ namespace BitWallpaper.Models.Clients
         }
 
         // 板情報取得メソッド
-        public async Task<DepthResult> GetDepth()
+        public async Task<DepthResult> GetDepth(string pair)
         {
-            Uri _endpoint = new Uri((_HTTPConn.Client.BaseAddress).ToString() + "btc_jpy/depth");
+            Uri _endpoint = new Uri((_HTTPConn.Client.BaseAddress).ToString() + pair + "/depth");
 
             //System.Diagnostics.Debug.WriteLine("GettingDepth..." + _endpoint.ToString());
 
@@ -655,7 +621,6 @@ namespace BitWallpaper.Models.Clients
             {
                 Method = HttpMethod.Get,
                 RequestUri = _endpoint,
-
             };
 
             try
@@ -680,12 +645,11 @@ namespace BitWallpaper.Models.Clients
                             {
 
                                 Depth dd = new Depth();
-                                dd.DepthPrice = Decimal.Parse(dp[0]);//dp[0];
-                                dd.DepthBid = Decimal.Parse(dp[1]);//dp[1];//
+                                dd.DepthPrice = Decimal.Parse(dp[0]);
+                                dd.DepthBid = Decimal.Parse(dp[1]);
                                 dd.DepthAsk = 0;
                                 dpr.DepthBidList.Add(dd);
-
-
+                                
                             }
                         }
 
@@ -695,9 +659,9 @@ namespace BitWallpaper.Models.Clients
                             {
 
                                 Depth dd = new Depth();
-                                dd.DepthPrice = Decimal.Parse(dp[0]); //dp[0];
+                                dd.DepthPrice = Decimal.Parse(dp[0]);
                                 dd.DepthBid = 0;
-                                dd.DepthAsk = Decimal.Parse(dp[1]); //dp[1];//
+                                dd.DepthAsk = Decimal.Parse(dp[1]);
                                 dpr.DepthAskList.Add(dd);
 
                             }
@@ -705,38 +669,6 @@ namespace BitWallpaper.Models.Clients
 
                         dpr.ErrorCode = 0;
                         dpr.IsSuccess = true;
-
-
-                        /*
-                        long l;
-                        if (Int64.TryParse(deserialized.Data.last, out l))
-                        {
-                            ticker.LTP = l;
-                        }
-
-                        if (Int64.TryParse(deserialized.data.buy, out l))
-                        {
-                            ticker.Bid = l;
-                        }
-
-                        if (Int64.TryParse(deserialized.data.sell, out l))
-                        {
-                            ticker.Ask = l;
-                        }
-
-                        if (Int64.TryParse(deserialized.data.low, out l))
-                        {
-                            ticker.Low = l;
-                        }
-
-                        if (Int64.TryParse(deserialized.data.high, out l))
-                        {
-                            ticker.High = l;
-                        }
-
-
-
-                        */
 
                         return dpr;
                     }
@@ -767,9 +699,9 @@ namespace BitWallpaper.Models.Clients
         }
 
         // トランザクション(歩み値)取得メソッド
-        public async Task<TransactionsResult> GetTransactions()
+        public async Task<TransactionsResult> GetTransactions(string pair)
         {
-            Uri _endpoint = new Uri((_HTTPConn.Client.BaseAddress).ToString() + "btc_jpy/transactions");
+            Uri _endpoint = new Uri((_HTTPConn.Client.BaseAddress).ToString() + pair + "/transactions");
 
             //System.Diagnostics.Debug.WriteLine("GettingDepth..." + _endpoint.ToString());
 
@@ -777,7 +709,6 @@ namespace BitWallpaper.Models.Clients
             {
                 Method = HttpMethod.Get,
                 RequestUri = _endpoint,
-
             };
 
             try
@@ -795,7 +726,6 @@ namespace BitWallpaper.Models.Clients
                     {
                         TransactionsResult trs = new TransactionsResult();
 
-
                         foreach (var tr in deserialized.Data.Transactions)
                         {
                             Transactions dd = new Transactions();
@@ -809,13 +739,8 @@ namespace BitWallpaper.Models.Clients
                             trs.Trans.Add(dd);
                         }
 
-
-
                         trs.ErrorCode = 0;
                         trs.IsSuccess = true;
-
-
-
 
                         return trs;
                     }
@@ -941,7 +866,6 @@ namespace BitWallpaper.Models.Clients
                                         oh.Volume = decimal.Parse(jcs[4].String);
                                         oh.TimeStamp = (new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).AddMilliseconds((long)jcs[5].Integer).ToLocalTime();
                                     }
-                                    //dd.ExecutedAt = (new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).AddMilliseconds(tr.ExecutedAt).ToLocalTime();
 
                                     //System.Diagnostics.Debug.WriteLine("GetCandlestick: " + oh.TimeStamp.ToString("dd日 hh:mm:ss"));
                                     //System.Diagnostics.Debug.WriteLine(jcs[4].String);
@@ -952,11 +876,9 @@ namespace BitWallpaper.Models.Clients
                                 csr.Candlesticks.Add(cs);
 
                             }
-
-
+                            
                         }
-
-
+                        
                         csr.ErrorCode = 0;
                         csr.IsSuccess = true;
 
