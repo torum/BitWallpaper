@@ -16,6 +16,9 @@
 
 ![alt text](https://github.com/torum/BitWallpaper/blob/master/docs/Images/BitWallpaper-screenshot.png?raw=true)
 
+Lightテーマ
+![alt text](https://github.com/torum/BitWallpaper/blob/master/docs/Images/BitWallpaper-screenshot-light.png?raw=true)
+
 ### 必要構成：
 - Windows 10
 
