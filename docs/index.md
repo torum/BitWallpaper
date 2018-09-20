@@ -29,6 +29,8 @@ Lightテーマ
 
 __[マイクロソフトストア無料で公開中 (https://www.microsoft.com/ja-jp/p/bitwallpaper/9ncc3ntg9dp3)](https://www.microsoft.com/ja-jp/p/bitwallpaper/9ncc3ntg9dp3)__
 
+### プロジェクトページ（GitHub）
+[https://github.com/torum/BitWallpaper](https://github.com/torum/BitWallpaper)
 
 ### 更新情報（Twitter）
 [https://twitter.com/torum_apps](https://twitter.com/torum_apps)
