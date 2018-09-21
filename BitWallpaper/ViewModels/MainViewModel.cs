@@ -206,6 +206,23 @@ namespace BitWallpaper.ViewModels
             }
         }
 
+        // APIエラー結果文字列 
+        private string _aPIResultTicker;
+        public string APIResultTicker
+        {
+            get
+            {
+                return _aPIResultTicker;
+            }
+            set
+            {
+                if (_aPIResultTicker == value) return;
+
+                _aPIResultTicker = value;
+                this.NotifyPropertyChanged("APIResultTicker");
+            }
+        }
+
         #region == テーマ関係 ==
 
         // テーマ一覧
@@ -2869,23 +2886,6 @@ namespace BitWallpaper.ViewModels
         System.Windows.Threading.DispatcherTimer dispatcherChartTimer = new System.Windows.Threading.DispatcherTimer();
 
         #endregion
-
-        // APIエラー結果文字列 
-        private string _aPIResultTicker;
-        public string APIResultTicker
-        {
-            get
-            {
-                return _aPIResultTicker;
-            }
-            set
-            {
-                if (_aPIResultTicker == value) return;
-
-                _aPIResultTicker = value;
-                this.NotifyPropertyChanged("APIResultTicker");
-            }
-        }
 
         /// <summary>
         /// メインのビューモデル
@@ -6577,7 +6577,7 @@ namespace BitWallpaper.ViewModels
 
 
                     // 00:00:00から23:59:59分までしか取れないので、 3時間分取るには、00:00:00から3:00までは 最新のデータとるには日付を１日マイナスする
-                    if (dtToday.Hour <= 1) // BitWallpaper は一時間で良いので。// < 3
+                    if (dtToday.Hour <= 2) // 3時間欲しい場合 2am までは昨日の分も。
                     {
                         Debug.WriteLine("昨日の1min取得開始");
 

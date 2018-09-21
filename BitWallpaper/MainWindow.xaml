@@ -76,23 +76,11 @@
                                 </Path.RenderTransform>
                             </Path>
                         </Canvas>
-                        <!--
-                            <Viewbox.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Header="ファイル(_F)" />
-                                    <MenuItem Header="編集(_E)" />
-                                    <MenuItem Header="オプション(_O)">
-                                        <MenuItem IsCheckable="True" Header="オプション1" />
-                                        <MenuItem IsCheckable="True" Header="オプション2" />
-                                        <MenuItem IsCheckable="True" Header="オプション3" />
-                                    </MenuItem>
-                                </ContextMenu>
-                            </Viewbox.ContextMenu>
-                            -->
+
                     </Viewbox>
 
 
-                    <TextBlock FontSize="12" Margin="15 0 0 0" Text="{Binding APIResultTicker, Mode=OneWay}" Foreground="{DynamicResource WarningColorBrush}" Style="{DynamicResource DefaultTextBlockStyle}"></TextBlock>
+                    <TextBlock FontSize="12" Margin="15 0 0 0" Text="{Binding APIResultTicker, Mode=OneWay}" Foreground="{DynamicResource WarningColorBrush}" Style="{DynamicResource DefaultTextBlockStyle}" VerticalAlignment="Center"></TextBlock>
                     
                     <TextBlock x:Name="HighLowInfoText" FontSize="12" Text="{Binding Path=ActivePair.HighLowInfoText, Mode=OneWay, NotifyOnTargetUpdated=True}" Margin="15 0 0 0" HorizontalAlignment="Center" VerticalAlignment="Center" TextElement.FontWeight="Bold">
                         <TextBlock.Style>
@@ -118,11 +106,11 @@
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0" Visibility="{Binding ShowMainContents, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
 
-                        <ComboBox Grid.Row="1" Grid.Column="1" x:Name="CandleTypesComboBox" ItemsSource="{Binding CandleTypesDictionary}" SelectedValue="{Binding SelectedCandleType}" SelectedValuePath="Key" VerticalAlignment="Center" Margin="3 0 3 0" Background="Transparent" Style="{DynamicResource ComboBoxFlatStyle}">
+                        <ComboBox Grid.Row="1" Grid.Column="1" x:Name="CandleTypesComboBox" ItemsSource="{Binding CandleTypesDictionary}" SelectedValue="{Binding SelectedCandleType}" SelectedValuePath="Key" ToolTip="ロウソク足単位" VerticalAlignment="Center" Margin="3 0 3 0" Background="Transparent" Style="{DynamicResource ComboBoxFlatStyle}">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <Viewbox Margin="3 0 3 0" HorizontalAlignment="Left" VerticalAlignment="Center" Stretch="Uniform" Width="12" Height="12" ToolTip="ロウソク足単位">
+                                        <Viewbox Margin="3 0 3 0" HorizontalAlignment="Left" VerticalAlignment="Center" Stretch="Uniform" Width="12" Height="12">
                                             <Canvas Opacity="0.5" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center">
                                                 <Path x:Name="CandleIcon" Stretch="Uniform" Width="12" Height="12" StrokeThickness="1" Fill="Transparent" Stroke="{Binding RelativeSource={RelativeSource AncestorType=ComboBox}, Path=Foreground}" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Data="m 23.847456 4.830509 v 7.999998 m 0.243249 22.599407 v 7.999999 M 20 13 h 8 v 22 h -8 z"/>
                                             </Canvas>
@@ -133,11 +121,11 @@
                             </ComboBox.ItemTemplate>
                         </ComboBox>
 
-                        <ComboBox Grid.Row="1" Grid.Column="1" x:Name="ChartSpansComboBox" ItemsSource="{Binding ChartSpansDictionary}" SelectedValue="{Binding SelectedChartSpan}" SelectedValuePath="Key" VerticalAlignment="Center" Margin="3 0 12 0" Background="Transparent" Style="{DynamicResource ComboBoxFlatStyle}">
+                        <ComboBox Grid.Row="1" Grid.Column="1" x:Name="ChartSpansComboBox" ItemsSource="{Binding ChartSpansDictionary}" SelectedValue="{Binding SelectedChartSpan}" SelectedValuePath="Key" ToolTip="チャート表示期間" VerticalAlignment="Center" Margin="3 0 12 0" Background="Transparent" Style="{DynamicResource ComboBoxFlatStyle}">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <Viewbox Margin="3 0 4 0" HorizontalAlignment="Left" VerticalAlignment="Center" Stretch="Uniform" Width="10" Height="10" ToolTip="チャート表示期間">
+                                        <Viewbox Margin="3 0 4 0" HorizontalAlignment="Left" VerticalAlignment="Center" Stretch="Uniform" Width="10" Height="10">
                                             <Canvas Opacity="0.5" Width="10" Height="10" HorizontalAlignment="Center" VerticalAlignment="Center">
                                                 <Path x:Name="ChartSpanIcon" Stretch="Uniform" Width="10" Height="10" StrokeThickness="1" Fill="Transparent" Stroke="{Binding RelativeSource={RelativeSource AncestorType=ComboBox}, Path=Foreground}" StrokeMiterLimit="4" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Data="m 11.037903 40.507879 v 3.397486 H 36.997419 V 40.633712 M 5.1774598 4.2792283 5.4650965 44.116905 H 42.13877"/>
                                             </Canvas>
@@ -208,7 +196,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- チャート -->
-            <Grid x:Name="Chart" Grid.Row="1" Grid.Column="0">
+            <Grid x:Name="Chart" Grid.Row="1" Grid.Column="0" Margin="3 0 0 0">
 
                 <lvc:CartesianChart x:Name="ChartBTC" Series="{Binding ChartSeriesBtcJpy}" AxisY="{Binding ChartAxisYBtcJpy}" AxisX="{Binding ChartAxisXBtcJpy}" Hoverable="False" BorderThickness="0" Padding="24 12 24 24" Margin="6 6 36 36" Visibility="{Binding IsBtcJpyVisible, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
                 <lvc:CartesianChart x:Name="ChartXRP" Series="{Binding ChartSeriesXrpJpy}" AxisY="{Binding ChartAxisYXrpJpy}" AxisX="{Binding ChartAxisXXrpJpy}" Hoverable="False" BorderThickness="0" Padding="24 12 24 24" Margin="6 6 36 36" Visibility="{Binding IsXrpJpyVisible, Converter={StaticResource BoolToVisibilityCollapsedConverter}}"/>
@@ -220,9 +208,9 @@
             </Grid>
 
             <!-- フローティングボックス -->
-            <Border Grid.Row="1" Grid.Column="0" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <Border Grid.Row="1" Grid.Column="0" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Stretch">
 
-                <Grid Width="216" Height="254" Margin="6 6 6 6">
+                <Grid Width="216" Margin="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>

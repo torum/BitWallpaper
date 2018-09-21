@@ -108,7 +108,7 @@
                     
                     <!-- 点滅アニメーション1 -->
                     <Storyboard x:Key="BlinkStory">
-                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" RepeatBehavior="6x" AutoReverse="False">
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" RepeatBehavior="3x" AutoReverse="False">
                             <LinearDoubleKeyFrame KeyTime="0" Value="1" />
                             <LinearDoubleKeyFrame KeyTime="0:0:0.5" Value="0" />
                         </DoubleAnimationUsingKeyFrames>
@@ -901,7 +901,7 @@
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="ListBox">
-                                    <Border Name="Border" Background="Transparent" BorderBrush="Gray" BorderThickness="0" CornerRadius="0" Padding="0">
+                                    <Border Name="Border" Background="Transparent" BorderBrush="Gray" BorderThickness="0" CornerRadius="0" Margin="0 0 0 6">
                                         <ScrollViewer  Focusable="false" Background="Transparent" Template="{DynamicResource DepthListboxScrollViewerControlTemplate}">
 
                                             <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
