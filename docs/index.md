@@ -3,10 +3,16 @@
 
 
 ## 仮想通貨のチャートを壁紙風に表示するデスクトップアプリ  
-ビットバンクのデータを利用しています。アカウント登録等は不要です。 
+ビットバンクのデータを利用しています。アカウント登録等は不要です。 （取引を行う場合はこちら [https://torum.github.io/BitDesk/](https://torum.github.io/BitDesk/)）
   
 ### 機能：
 - ビットコイン/円、リップル/円、ライトコイン/ビットコイン、イーサリアム/ビットコイン、モナーコイン/円、ビットコインキャッシュ/円の通貨ペアのチャートと最新取引価格を表示します。
+- 統計情報の表示
+- 気配値（板）の表示（グルーピング機能付き）
+- 歩み値の表示
+- 背景の透過率変更
+- テーマの切り替え
+- アラームの設定
   
 ### スクリーンショット：
 
@@ -27,7 +33,7 @@ Lightテーマ
 
 ### ダウンロード：  
 
-__[マイクロソフトストア無料で公開中 (https://www.microsoft.com/ja-jp/p/bitwallpaper/9ncc3ntg9dp3)](https://www.microsoft.com/ja-jp/p/bitwallpaper/9ncc3ntg9dp3)__
+__[マイクロソフトストアにて、無料公開中 (https://www.microsoft.com/ja-jp/p/bitwallpaper/9ncc3ntg9dp3)](https://www.microsoft.com/ja-jp/p/bitwallpaper/9ncc3ntg9dp3)__
 
 ### プロジェクトページ（GitHub）
 [https://github.com/torum/BitWallpaper](https://github.com/torum/BitWallpaper)
