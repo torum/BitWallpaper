@@ -51,6 +51,7 @@ namespace BitWallpaper
 
             RestoreButton.Visibility = Visibility.Collapsed;
             MaxButton.Visibility = Visibility.Visible;
+            TopMenuUnPinButton.Visibility = Visibility.Collapsed;
 
             _appTitle = (this.DataContext as MainViewModel).AppTitle;
 
@@ -364,6 +365,8 @@ namespace BitWallpaper
                 MaxButton.Visibility = Visibility.Visible;
 
                 _dispatcherMouseTimer.Stop();
+
+                BackgroundGrid.Margin = new Thickness(0);
             }
             else if (this.WindowState == WindowState.Maximized)
             {
@@ -372,6 +375,7 @@ namespace BitWallpaper
 
                 _dispatcherMouseTimer.Start();
 
+                BackgroundGrid.Margin = new Thickness(12);
             }
 
         }
@@ -391,10 +395,27 @@ namespace BitWallpaper
             this.WindowState = WindowState.Normal;
         }
 
-        private void MinButton_Click(object sender, RoutedEventArgs e)
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
         {
             this.WindowState = WindowState.Minimized;
         }
+
+        private void TopMenuPinButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Topmost = true;
+
+            TopMenuPinButton.Visibility = Visibility.Collapsed;
+            TopMenuUnPinButton.Visibility = Visibility.Visible;
+        }
+
+        private void TopMenuUnPinButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Topmost = false;
+
+            TopMenuPinButton.Visibility = Visibility.Visible;
+            TopMenuUnPinButton.Visibility = Visibility.Collapsed;
+        }
+
 
         private void Window_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
