@@ -1,7 +1,8 @@
 # BitWallpaper
 
 ## 仮想通貨のチャートを壁紙風に表示するデスクトップアプリ  
-ビットバンクのデータを利用しています。アカウント登録等は不要です。 （取引を行う場合はこちら[https://github.com/torum/BitDesk](https://github.com/torum/BitDesk)）
+ビットバンクのデータを利用しています。アカウント登録等は不要です。 
+（取引を行う場合はこちら[https://github.com/torum/BitDesk](https://github.com/torum/BitDesk)）
   
 ### 機能：
 - ビットコイン/円、リップル/円、ライトコイン/ビットコイン、イーサリアム/ビットコイン、モナーコイン/円、ビットコインキャッシュ/円の通貨ペアのチャートと最新取引価格を表示します。
