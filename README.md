@@ -1,7 +1,7 @@
 # BitWallpaper
 
 ## 仮想通貨のチャートを壁紙風に表示するデスクトップアプリ  
-ビットバンクのデータを利用しています。アカウント登録等は不要です。 
+ビットバンクのデータを利用しています。アカウント登録等は不要です。   
 （取引を行う場合はこちら[https://github.com/torum/BitDesk](https://github.com/torum/BitDesk)）
   
 ### 機能：
