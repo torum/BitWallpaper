@@ -37,7 +37,7 @@ namespace BitWallpaper
 
         private string _appTitle;
 
-        //private bool _isExit;
+        private bool _isSystemTray;
 
         public MainWindow()
         {
@@ -54,6 +54,9 @@ namespace BitWallpaper
             TopMenuUnPinButton.Visibility = Visibility.Collapsed;
 
             _appTitle = (this.DataContext as MainViewModel).AppTitle;
+
+
+            (this.DataContext as MainViewModel).ShowBalloon += (sender, arg) => { ShowBalloon(arg); };
 
             /*
             this.Top = 0;
@@ -84,49 +87,13 @@ namespace BitWallpaper
             // システムトレイアイコン
             // https://www.thomasclaudiushuber.com/2015/08/22/creating-a-background-application-with-wpf/
             _notifyIcon = new System.Windows.Forms.NotifyIcon();
-            _notifyIcon.DoubleClick += (s, args) => BringToForeground();
-            _notifyIcon.Icon = BitWallpaper.Properties.Resources.AppIcon;//System.Drawing.SystemIcons.Information; //
+            _notifyIcon.DoubleClick += (s, args) => ToggleSystemTrayMode();
+            _notifyIcon.Icon = BitWallpaper.Properties.Resources.AppIcon;//System.Drawing.SystemIcons.Information;
             _notifyIcon.Text = _appTitle;
             _notifyIcon.Visible = true;
             _notifyIcon.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
-            _notifyIcon.ContextMenuStrip.Items.Add(_appTitle + " 表示").Click += (s, e) => BringToForeground();
-            _notifyIcon.ContextMenuStrip.Items.Add("終了").Click += (s, e) => ExitApplication();
-
-
-
-
-            /*
-            //var message = "Sample message";
-            //var xml = $"<?xml version=\"1.0\"?><toast><visual><binding template=\"ToastText01\"><text id=\"1\">{message}</text></binding></visual></toast>";
-
-            var xml = @"<toast>
-    <visual>
-        <binding template=""ToastImageAndText04"">
-            <image id=""1"" src=""file:///C:\meziantou.jpeg"" alt=""meziantou""/>
-            <text id=""1"">Meziantou</text>
-            <text id=""2"">Gérald Barré</text>
-            <text id=""3"">asdf</text>
-        </binding>
-    </visual>
-</toast>";
-
-            var toastXml = new Windows.Data.Xml.Dom.XmlDocument();
-            toastXml.LoadXml(xml);
-            var toast = new ToastNotification(toastXml);
-            ToastNotificationManager.CreateToastNotifier("Sample toast").Show(toast);
-            */
-
-            //var notificationManager = new NotificationManagerEx();
-            //NotificationContentEx test = new NotificationContentEx();
-            /*
-            notificationManager.Show(new NotificationContent
-            {
-                Title = "Sample notification",
-                Message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-                Type = NotificationType.Information
-            });
-            */
-            //notificationManager.Show(test, onClose: () => onNotificationsOverlayWindowClose(test));
+            _notifyIcon.ContextMenuStrip.Items.Add(" 表示").Click += (s, e) => BringToForeground();
+            _notifyIcon.ContextMenuStrip.Items.Add(" 終了").Click += (s, e) => ExitApplication();
 
         }
 
@@ -139,19 +106,6 @@ namespace BitWallpaper
         {
             _notifyIcon.Dispose();
             _notifyIcon = null;
-            /*
-            // clean up NotificationsOverlayWindows
-            // https://github.com/Federerer/Notifications.Wpf/issues/10
-            App app = App.Current as App;
-            foreach (var w in app.Windows)
-            {
-                if (w is NotificationsOverlayWindow)
-                {
-                    // Close it.
-                    (w as NotificationsOverlayWindow).Close();
-                }
-            }
-            */
         }
 
         private void MouseTimer(object source, EventArgs e)
@@ -172,9 +126,14 @@ namespace BitWallpaper
             }
 
             this.Activate();
-            //this.Topmost = true;
-            //this.Topmost = false;
+            if (this.Topmost == false)
+            {
+                this.Topmost = true;
+                this.Topmost = false;
+            }
             this.Focus();
+
+            _isSystemTray = false;
 
         }
 
@@ -402,20 +361,13 @@ namespace BitWallpaper
 
         private void TopMenuPinButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Topmost = true;
-
-            TopMenuPinButton.Visibility = Visibility.Collapsed;
-            TopMenuUnPinButton.Visibility = Visibility.Visible;
+            ToggleTopMost();
         }
 
         private void TopMenuUnPinButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Topmost = false;
-
-            TopMenuPinButton.Visibility = Visibility.Visible;
-            TopMenuUnPinButton.Visibility = Visibility.Collapsed;
+            ToggleTopMost();
         }
-
 
         private void Window_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
@@ -429,6 +381,56 @@ namespace BitWallpaper
             e.Handled = true;
         }
 
+        private void SystemTrayButton_Click(object sender, RoutedEventArgs e)
+        {
+            ToggleSystemTrayMode();
+        }
+
+        private void ToggleSystemTrayMode()
+        {
+            if (_isSystemTray)
+            {
+                BringToForeground();
+                //_isSystemTray = false;
+
+                (this.DataContext as MainViewModel).MinMode = false;
+            }
+            else
+            {
+                _notifyIcon.Visible = true;
+
+                _notifyIcon.ShowBalloonTip(5000, "トレイに収納されました", "省エネモードで実行しています。", System.Windows.Forms.ToolTipIcon.None);
+
+                this.Visibility = Visibility.Hidden;
+
+                _isSystemTray = true;
+
+                (this.DataContext as MainViewModel).MinMode = true;
+            }
+        }
+
+        private void ToggleTopMost()
+        {
+            if (this.Topmost)
+            {
+                this.Topmost = false;
+
+                TopMenuPinButton.Visibility = Visibility.Visible;
+                TopMenuUnPinButton.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                this.Topmost = true;
+
+                TopMenuPinButton.Visibility = Visibility.Collapsed;
+                TopMenuUnPinButton.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void ShowBalloon(ShowBalloonEventArgs arg)
+        {
+            _notifyIcon.ShowBalloonTip(5000, arg.Title, arg.Text, System.Windows.Forms.ToolTipIcon.None);
+        }
 
         #region == UI変更のViewコードビハインド ==
 
@@ -503,6 +505,14 @@ namespace BitWallpaper
 
         #endregion
 
+        private void TextBox_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+
+            (sender as System.Windows.Controls.TextBox).SelectAll();
+
+            if ((sender as System.Windows.Controls.TextBox).Focusable)
+                (sender as System.Windows.Controls.TextBox).Focus();
+        }
     }
 
 }

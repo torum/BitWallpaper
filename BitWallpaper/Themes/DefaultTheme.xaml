@@ -83,6 +83,7 @@
     <SolidColorBrush x:Key="ControlMediumColorBrush" Color="{DynamicResource ControlMediumColor}"/>
     <SolidColorBrush x:Key="ControlDarkColorBrush" Color="{DynamicResource ControlDarkColor}"/>
     <SolidColorBrush x:Key="ControlMouseOverColorBrush" Color="{DynamicResource ControlMouseOverColor}"/>
+    <SolidColorBrush x:Key="ControlPressedColorBrush" Color="{DynamicResource ControlPressedColor}"/>
 
     <SolidColorBrush x:Key="NormalTextColorBrush" Color="{DynamicResource NormalTextColor}"/>
     <SolidColorBrush x:Key="TitleTextColorBrush" Color="{DynamicResource TitleTextColor}"/>

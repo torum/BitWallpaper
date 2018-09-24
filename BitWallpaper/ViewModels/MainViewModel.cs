@@ -77,11 +77,23 @@ namespace BitWallpaper.ViewModels
 
     #endregion
 
+    #region == イベント定義 ==
+
+    public class ShowBalloonEventArgs : EventArgs
+    {
+        public string Title { get; set; }
+        public string Text { get; set; }
+    }
+
+    #endregion
+
     public class MainViewModel : ViewModelBase
     {
 
         #region == 基本 ==
 
+        /// 0.0.0.7  (1.5.2)
+        /// システムトレイへ最小化、カスタムアラートの追加、バルーン通知
         /// 0.0.0.6  (1.5.1)
         /// アラーム（24時間最高・最低値の場合も、起動後10秒待つように変更し、デフォルトもオフに）
         /// 0.0.0.5
@@ -95,7 +107,7 @@ namespace BitWallpaper.ViewModels
         /// 
 
         // Application version
-        private string _appVer = "0.0.0.6";
+        private string _appVer = "0.0.0.7";
 
         // Application name
         private string _appName = "BitWallpaper";
@@ -486,7 +498,7 @@ namespace BitWallpaper.ViewModels
 
             #region == アラーム用のプロパティ ==
 
-            // アラーム 警告音再生
+            // カスタム値 アラーム
             private decimal _alarmPlus;
             public decimal AlarmPlus
             {
@@ -501,7 +513,14 @@ namespace BitWallpaper.ViewModels
 
                     _alarmPlus = value;
                     this.NotifyPropertyChanged("AlarmPlus");
-                    //this.NotifyPropertyChanged(nameof(ChartBlueline));
+                    this.NotifyPropertyChanged("AlarmPlusString");
+                }
+            }
+            public string AlarmPlusString
+            {
+                get
+                {
+                    return String.Format(_ltpFormstString, AlarmPlus);
                 }
             }
 
@@ -519,7 +538,14 @@ namespace BitWallpaper.ViewModels
 
                     _alarmMinus = value;
                     this.NotifyPropertyChanged("AlarmMinus");
-                    //this.NotifyPropertyChanged(nameof(ChartRedline));
+                    this.NotifyPropertyChanged("AlarmMinusString");
+                }
+            }
+            public string AlarmMinusString
+            {
+                get
+                {
+                    return String.Format(_ltpFormstString, AlarmMinus);
                 }
             }
 
@@ -2994,6 +3020,10 @@ namespace BitWallpaper.ViewModels
 
         #endregion
 
+        // イベント
+        public event EventHandler<ShowBalloonEventArgs> ShowBalloon;
+
+
         /// <summary>
         /// メインのビューモデル
         /// </summary>
@@ -3195,21 +3225,6 @@ namespace BitWallpaper.ViewModels
             dispatcherChartTimer.Interval = new TimeSpan(0, 1, 0);
             //dispatcherChartTimer.Start();
 
-            // 通知 Notifications.Wpf の不具合の為　なし。
-            // https://github.com/Federerer/Notifications.Wpf/issues/10
-
-            //var notificationManager = new NotificationManager();
-
-            //NotificationContent test = new NotificationContent();
-            //test.Title = "Sample notification";
-            //test.Message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
-            //test.Type = NotificationType.Information;
-
-            //notificationManager.Show(test, onClose: () => onNotificationsOverlayWindowClose(test));
-            //notificationManager.Show(test);
-
-            //someWindow.Owner = Application.Current.MainWindow;
-
             // 初期値
             ActivePairIndex = 0;
             CurrentPair = Pairs.btc_jpy;
@@ -3409,53 +3424,46 @@ namespace BitWallpaper.ViewModels
                             
                             bool isPlayed = false;
 
-                            /*
-                            // アラーム
+                            // カスタムアラーム
                             if (PairBtcJpy.AlarmPlus > 0)
                             {
                                 if (tick.LTP >= PairBtcJpy.AlarmPlus)
                                 {
-                                    if (prevLtp != tick.LTP)
-                                    {
-                                        PairBtcJpy.HighLowInfoTextColorFlag = true;
-                                        PairBtcJpy.HighLowInfoText = PairBtcJpy.PairString + " ⇑⇑⇑　高値アラーム ";
+                                    PairBtcJpy.HighLowInfoTextColorFlag = true;
+                                    PairBtcJpy.HighLowInfoText = PairBtcJpy.PairString + " ⇑⇑⇑　高値アラーム ";
 
-                                        if (PlaySound)
-                                        {
-                                            SystemSounds.Hand.Play();
-                                            isPlayed = true;
-                                        }
-                                    }
+                                    ShowBalloonEventArgs ag = new ShowBalloonEventArgs
+                                    {
+                                        Title = PairBtcJpy.PairString + " 高値アラーム",
+                                        Text = PairBtcJpy.AlarmPlus.ToString("#,0") + " に達しました。"
+                                    };
+                                    // バルーン表示
+                                    ShowBalloon?.Invoke(this, ag);
+                                    // クリア
+                                    PairBtcJpy.AlarmPlus = 0;
+
                                 }
-                            }
-                            else
-                            {
-                                // 起動後初期値セット
-                                PairBtcJpy.AlarmPlus = ((long)(tick.LTP / 1000) * 1000) + 20000;
                             }
 
                             if (PairBtcJpy.AlarmMinus > 0)
                             {
                                 if (tick.LTP <= PairBtcJpy.AlarmMinus)
                                 {
-                                    if (prevLtp != tick.LTP)
+                                    PairBtcJpy.HighLowInfoTextColorFlag = false;
+                                    PairBtcJpy.HighLowInfoText = PairBtcJpy.PairString + " ⇓⇓⇓　安値アラーム ";
+
+                                    ShowBalloonEventArgs ag = new ShowBalloonEventArgs
                                     {
-                                        PairBtcJpy.HighLowInfoTextColorFlag = false;
-                                        PairBtcJpy.HighLowInfoText = PairBtcJpy.PairString + " ⇓⇓⇓　安値アラーム ";
-                                        if (PlaySound)
-                                        {
-                                            SystemSounds.Beep.Play();
-                                            isPlayed = true;
-                                        }
-                                    }
+                                        Title = PairBtcJpy.PairString + " 安値アラーム",
+                                        Text = PairBtcJpy.AlarmMinus.ToString("#,0") + " に達しました。"
+                                    };
+                                    // バルーン表示
+                                    ShowBalloon?.Invoke(this, ag);
+                                    // クリア
+                                    PairBtcJpy.AlarmMinus = 0;
+
                                 }
                             }
-                            else
-                            {
-                                // 起動後初期値セット
-                                PairBtcJpy.AlarmMinus = ((long)(tick.LTP / 1000) * 1000) - 10000;
-                            }
-                            */
 
                             // 起動後最高値
                             if ((tick.LTP >= PairBtcJpy.HighestPrice) && (prevLtp != tick.LTP))
@@ -3511,6 +3519,7 @@ namespace BitWallpaper.ViewModels
                                             isPlayed = true;
                                         }
                                     }
+
                                 }
                             }
                             else
@@ -3744,53 +3753,46 @@ namespace BitWallpaper.ViewModels
 
                             bool isPlayed = false;
 
-                            /*
-                            // アラーム
+                            // カスタムアラーム
                             if (PairXrpJpy.AlarmPlus > 0)
                             {
                                 if (tick.LTP >= PairXrpJpy.AlarmPlus)
                                 {
-                                    if (prevLtp != tick.LTP)
-                                    {
-                                        PairXrpJpy.HighLowInfoTextColorFlag = true;
-                                        PairXrpJpy.HighLowInfoText = PairXrpJpy.PairString + " ⇑⇑⇑　高値アラーム ";
+                                    PairXrpJpy.HighLowInfoTextColorFlag = true;
+                                    PairXrpJpy.HighLowInfoText = PairXrpJpy.PairString + " ⇑⇑⇑　高値アラーム ";
 
-                                        if (PlaySound)
-                                        {
-                                            SystemSounds.Hand.Play();
-                                            isPlayed = true;
-                                        }
-                                    }
+                                    ShowBalloonEventArgs ag = new ShowBalloonEventArgs
+                                    {
+                                        Title = PairXrpJpy.PairString + " 高値アラーム",
+                                        Text = PairXrpJpy.AlarmPlus.ToString("#,0") + " に達しました。"
+                                    };
+                                    // バルーン表示
+                                    ShowBalloon?.Invoke(this, ag);
+                                    // クリア
+                                    PairXrpJpy.AlarmPlus = 0;
+
                                 }
-                            }
-                            else
-                            {
-                                // 起動後初期値セット
-                                PairXrpJpy.AlarmPlus = (tick.LTP) + 2M;
                             }
 
                             if (PairXrpJpy.AlarmMinus > 0)
                             {
                                 if (tick.LTP <= PairXrpJpy.AlarmMinus)
                                 {
-                                    if (prevLtp != tick.LTP)
+                                    PairXrpJpy.HighLowInfoTextColorFlag = false;
+                                    PairXrpJpy.HighLowInfoText = PairBtcJpy.PairString + " ⇓⇓⇓　安値アラーム ";
+
+                                    ShowBalloonEventArgs ag = new ShowBalloonEventArgs
                                     {
-                                        PairXrpJpy.HighLowInfoTextColorFlag = false;
-                                        PairXrpJpy.HighLowInfoText = PairXrpJpy.PairString + " ⇓⇓⇓　安値アラーム ";
-                                        if (PlaySound)
-                                        {
-                                            SystemSounds.Beep.Play();
-                                            isPlayed = true;
-                                        }
-                                    }
+                                        Title = PairXrpJpy.PairString + " 安値アラーム",
+                                        Text = PairXrpJpy.AlarmMinus.ToString("#,0") + " に達しました。"
+                                    };
+                                    // バルーン表示
+                                    ShowBalloon?.Invoke(this, ag);
+                                    // クリア
+                                    PairXrpJpy.AlarmMinus = 0;
+
                                 }
                             }
-                            else
-                            {
-                                // 起動後初期値セット
-                                PairXrpJpy.AlarmMinus = (tick.LTP) - 2M;
-                            }
-                            */
 
                             // 起動後最高値
                             if ((tick.LTP >= PairXrpJpy.HighestPrice) && (prevLtp != tick.LTP))
@@ -4061,53 +4063,46 @@ namespace BitWallpaper.ViewModels
 
                             bool isPlayed = false;
 
-                            /*
-                            // アラーム
+                            // カスタムアラーム
                             if (PairEthBtc.AlarmPlus > 0)
                             {
                                 if (tick.LTP >= PairEthBtc.AlarmPlus)
                                 {
-                                    if (prevLtp != tick.LTP)
-                                    {
-                                        PairEthBtc.HighLowInfoTextColorFlag = true;
-                                        PairEthBtc.HighLowInfoText = PairEthBtc.PairString + " ⇑⇑⇑　高値アラーム ";
+                                    PairEthBtc.HighLowInfoTextColorFlag = true;
+                                    PairEthBtc.HighLowInfoText = PairEthBtc.PairString + " ⇑⇑⇑　高値アラーム ";
 
-                                        if (PlaySound)
-                                        {
-                                            SystemSounds.Hand.Play();
-                                            isPlayed = true;
-                                        }
-                                    }
+                                    ShowBalloonEventArgs ag = new ShowBalloonEventArgs
+                                    {
+                                        Title = PairEthBtc.PairString + " 高値アラーム",
+                                        Text = PairEthBtc.AlarmPlus.ToString("#,0") + " に達しました。"
+                                    };
+                                    // バルーン表示
+                                    ShowBalloon?.Invoke(this, ag);
+                                    // クリア
+                                    PairEthBtc.AlarmPlus = 0;
+
                                 }
-                            }
-                            else
-                            {
-                                // 起動後初期値セット
-                                PairEthBtc.AlarmPlus = tick.LTP + 0.002M;
                             }
 
                             if (PairEthBtc.AlarmMinus > 0)
                             {
                                 if (tick.LTP <= PairEthBtc.AlarmMinus)
                                 {
-                                    if (prevLtp != tick.LTP)
+                                    PairEthBtc.HighLowInfoTextColorFlag = false;
+                                    PairEthBtc.HighLowInfoText = PairEthBtc.PairString + " ⇓⇓⇓　安値アラーム ";
+
+                                    ShowBalloonEventArgs ag = new ShowBalloonEventArgs
                                     {
-                                        PairEthBtc.HighLowInfoTextColorFlag = false;
-                                        PairEthBtc.HighLowInfoText = PairEthBtc.PairString + " ⇓⇓⇓　安値アラーム ";
-                                        if (PlaySound)
-                                        {
-                                            SystemSounds.Beep.Play();
-                                            isPlayed = true;
-                                        }
-                                    }
+                                        Title = PairEthBtc.PairString + " 安値アラーム",
+                                        Text = PairEthBtc.AlarmMinus.ToString("#,0") + " に達しました。"
+                                    };
+                                    // バルーン表示
+                                    ShowBalloon?.Invoke(this, ag);
+                                    // クリア
+                                    PairEthBtc.AlarmMinus = 0;
+
                                 }
                             }
-                            else
-                            {
-                                // 起動後初期値セット
-                                PairEthBtc.AlarmMinus = tick.LTP - 0.002M;
-                            }
-                            */
 
                             // 起動後最高値
                             if ((tick.LTP >= PairEthBtc.HighestPrice) && (prevLtp != tick.LTP))
@@ -4382,53 +4377,46 @@ namespace BitWallpaper.ViewModels
 
                             bool isPlayed = false;
 
-                            /*
-                            // アラーム
+                            // カスタムアラーム
                             if (PairMonaJpy.AlarmPlus > 0)
                             {
                                 if (tick.LTP >= PairMonaJpy.AlarmPlus)
                                 {
-                                    if (prevLtp != tick.LTP)
-                                    {
-                                        PairMonaJpy.HighLowInfoTextColorFlag = true;
-                                        PairMonaJpy.HighLowInfoText = PairMonaJpy.PairString + " ⇑⇑⇑　高値アラーム ";
+                                    PairMonaJpy.HighLowInfoTextColorFlag = true;
+                                    PairMonaJpy.HighLowInfoText = PairMonaJpy.PairString + " ⇑⇑⇑　高値アラーム ";
 
-                                        if (PlaySound)
-                                        {
-                                            SystemSounds.Hand.Play();
-                                            isPlayed = true;
-                                        }
-                                    }
+                                    ShowBalloonEventArgs ag = new ShowBalloonEventArgs
+                                    {
+                                        Title = PairMonaJpy.PairString + " 高値アラーム",
+                                        Text = PairMonaJpy.AlarmPlus.ToString("#,0") + " に達しました。"
+                                    };
+                                    // バルーン表示
+                                    ShowBalloon?.Invoke(this, ag);
+                                    // クリア
+                                    PairMonaJpy.AlarmPlus = 0;
+
                                 }
-                            }
-                            else
-                            {
-                                // 起動後初期値セット
-                                PairMonaJpy.AlarmPlus = tick.LTP + 10M;
                             }
 
                             if (PairMonaJpy.AlarmMinus > 0)
                             {
                                 if (tick.LTP <= PairMonaJpy.AlarmMinus)
                                 {
-                                    if (prevLtp != tick.LTP)
+                                    PairMonaJpy.HighLowInfoTextColorFlag = false;
+                                    PairMonaJpy.HighLowInfoText = PairMonaJpy.PairString + " ⇓⇓⇓　安値アラーム ";
+
+                                    ShowBalloonEventArgs ag = new ShowBalloonEventArgs
                                     {
-                                        PairMonaJpy.HighLowInfoTextColorFlag = false;
-                                        PairMonaJpy.HighLowInfoText = PairMonaJpy.PairString + " ⇓⇓⇓　安値アラーム ";
-                                        if (PlaySound)
-                                        {
-                                            SystemSounds.Beep.Play();
-                                            isPlayed = true;
-                                        }
-                                    }
+                                        Title = PairMonaJpy.PairString + " 安値アラーム",
+                                        Text = PairMonaJpy.AlarmMinus.ToString("#,0") + " に達しました。"
+                                    };
+                                    // バルーン表示
+                                    ShowBalloon?.Invoke(this, ag);
+                                    // クリア
+                                    PairMonaJpy.AlarmMinus = 0;
+
                                 }
                             }
-                            else
-                            {
-                                // 起動後初期値セット
-                                PairMonaJpy.AlarmMinus = tick.LTP - 10M;
-                            }
-                            */
 
                             // 起動後最高値
                             if ((tick.LTP >= PairMonaJpy.HighestPrice) && (prevLtp != tick.LTP))
@@ -4705,53 +4693,46 @@ namespace BitWallpaper.ViewModels
 
                             bool isPlayed = false;
 
-                            /*
-                            // アラーム
+                            // カスタムアラーム
                             if (PairLtcBtc.AlarmPlus > 0)
                             {
                                 if (tick.LTP >= PairLtcBtc.AlarmPlus)
                                 {
-                                    if (prevLtp != tick.LTP)
-                                    {
-                                        PairLtcBtc.HighLowInfoTextColorFlag = true;
-                                        PairLtcBtc.HighLowInfoText = PairLtcBtc.PairString + " ⇑⇑⇑　高値アラーム ";
+                                    PairLtcBtc.HighLowInfoTextColorFlag = true;
+                                    PairLtcBtc.HighLowInfoText = PairLtcBtc.PairString + " ⇑⇑⇑　高値アラーム ";
 
-                                        if (PlaySound)
-                                        {
-                                            SystemSounds.Hand.Play();
-                                            isPlayed = true;
-                                        }
-                                    }
+                                    ShowBalloonEventArgs ag = new ShowBalloonEventArgs
+                                    {
+                                        Title = PairLtcBtc.PairString + " 高値アラーム",
+                                        Text = PairLtcBtc.AlarmPlus.ToString("#,0") + " に達しました。"
+                                    };
+                                    // バルーン表示
+                                    ShowBalloon?.Invoke(this, ag);
+                                    // クリア
+                                    PairLtcBtc.AlarmPlus = 0;
+
                                 }
-                            }
-                            else
-                            {
-                                // 起動後初期値セット
-                                PairLtcBtc.AlarmPlus = tick.LTP + 0.001M;
                             }
 
                             if (PairLtcBtc.AlarmMinus > 0)
                             {
                                 if (tick.LTP <= PairLtcBtc.AlarmMinus)
                                 {
-                                    if (prevLtp != tick.LTP)
+                                    PairLtcBtc.HighLowInfoTextColorFlag = false;
+                                    PairLtcBtc.HighLowInfoText = PairLtcBtc.PairString + " ⇓⇓⇓　安値アラーム ";
+
+                                    ShowBalloonEventArgs ag = new ShowBalloonEventArgs
                                     {
-                                        PairLtcBtc.HighLowInfoTextColorFlag = false;
-                                        PairLtcBtc.HighLowInfoText = PairLtcBtc.PairString + " ⇓⇓⇓　安値アラーム ";
-                                        if (PlaySound)
-                                        {
-                                            SystemSounds.Beep.Play();
-                                            isPlayed = true;
-                                        }
-                                    }
+                                        Title = PairLtcBtc.PairString + " 安値アラーム",
+                                        Text = PairLtcBtc.AlarmMinus.ToString("#,0") + " に達しました。"
+                                    };
+                                    // バルーン表示
+                                    ShowBalloon?.Invoke(this, ag);
+                                    // クリア
+                                    PairLtcBtc.AlarmMinus = 0;
+
                                 }
                             }
-                            else
-                            {
-                                // 起動後初期値セット
-                                PairLtcBtc.AlarmMinus = tick.LTP - 0.001M;
-                            }
-                            */
 
                             // 起動後最高値
                             if ((tick.LTP >= PairLtcBtc.HighestPrice) && (prevLtp != tick.LTP))
@@ -5026,53 +5007,46 @@ namespace BitWallpaper.ViewModels
 
                             bool isPlayed = false;
 
-                            /*
-                            // アラーム
+                            // カスタムアラーム
                             if (PairBchJpy.AlarmPlus > 0)
                             {
                                 if (tick.LTP >= PairBchJpy.AlarmPlus)
                                 {
-                                    if (prevLtp != tick.LTP)
-                                    {
-                                        PairBchJpy.HighLowInfoTextColorFlag = true;
-                                        PairBchJpy.HighLowInfoText = PairBchJpy.PairString + " ⇑⇑⇑　高値アラーム ";
+                                    PairBchJpy.HighLowInfoTextColorFlag = true;
+                                    PairBchJpy.HighLowInfoText = PairBchJpy.PairString + " ⇑⇑⇑　高値アラーム ";
 
-                                        if (PlaySound)
-                                        {
-                                            SystemSounds.Hand.Play();
-                                            isPlayed = true;
-                                        }
-                                    }
+                                    ShowBalloonEventArgs ag = new ShowBalloonEventArgs
+                                    {
+                                        Title = PairBchJpy.PairString + " 高値アラーム",
+                                        Text = PairBchJpy.AlarmPlus.ToString("#,0") + " に達しました。"
+                                    };
+                                    // バルーン表示
+                                    ShowBalloon?.Invoke(this, ag);
+                                    // クリア
+                                    PairBchJpy.AlarmPlus = 0;
+
                                 }
-                            }
-                            else
-                            {
-                                // 起動後初期値セット
-                                PairBchJpy.AlarmPlus = ((tick.LTP / 100M) * 100M) + 1000M;
                             }
 
                             if (PairBchJpy.AlarmMinus > 0)
                             {
                                 if (tick.LTP <= PairBchJpy.AlarmMinus)
                                 {
-                                    if (prevLtp != tick.LTP)
+                                    PairBchJpy.HighLowInfoTextColorFlag = false;
+                                    PairBchJpy.HighLowInfoText = PairBchJpy.PairString + " ⇓⇓⇓　安値アラーム ";
+
+                                    ShowBalloonEventArgs ag = new ShowBalloonEventArgs
                                     {
-                                        PairBchJpy.HighLowInfoTextColorFlag = false;
-                                        PairBchJpy.HighLowInfoText = PairBchJpy.PairString + " ⇓⇓⇓　安値アラーム ";
-                                        if (PlaySound)
-                                        {
-                                            SystemSounds.Beep.Play();
-                                            isPlayed = true;
-                                        }
-                                    }
+                                        Title = PairBchJpy.PairString + " 安値アラーム",
+                                        Text = PairBchJpy.AlarmMinus.ToString("#,0") + " に達しました。"
+                                    };
+                                    // バルーン表示
+                                    ShowBalloon?.Invoke(this, ag);
+                                    // クリア
+                                    PairBchJpy.AlarmMinus = 0;
+
                                 }
                             }
-                            else
-                            {
-                                // 起動後初期値セット
-                                PairBchJpy.AlarmMinus = ((tick.LTP / 100M) * 100M) - 1000M;
-                            }
-                            */
 
                             // 起動後最高値
                             if ((tick.LTP >= PairBchJpy.HighestPrice) && (prevLtp != tick.LTP))
@@ -5475,6 +5449,40 @@ namespace BitWallpaper.ViewModels
                                 }
                             }
 
+                            // カスタムアラート
+                            hoge = pair.Attribute("alarmHigh");
+                            if (hoge != null)
+                            {
+                                if (!string.IsNullOrEmpty(hoge.Value))
+                                {
+                                    try
+                                    {
+                                        PairBtcJpy.AlarmPlus = Decimal.Parse(hoge.Value);
+                                    }
+                                    catch
+                                    {
+                                        PairBtcJpy.AlarmPlus = 0;
+                                    }
+
+                                }
+                            }
+                            hoge = pair.Attribute("alarmLow");
+                            if (hoge != null)
+                            {
+                                if (!string.IsNullOrEmpty(hoge.Value))
+                                {
+                                    try
+                                    {
+                                        PairBtcJpy.AlarmMinus = Decimal.Parse(hoge.Value);
+                                    }
+                                    catch
+                                    {
+                                        PairBtcJpy.AlarmMinus = 0;
+                                    }
+
+                                }
+                            }
+                            
                         }
 
                         // PairXrpJpy
@@ -5551,6 +5559,39 @@ namespace BitWallpaper.ViewModels
                                 }
                             }
 
+                            // カスタムアラート
+                            hoge = pair.Attribute("alarmHigh");
+                            if (hoge != null)
+                            {
+                                if (!string.IsNullOrEmpty(hoge.Value))
+                                {
+                                    try
+                                    {
+                                        PairXrpJpy.AlarmPlus = Decimal.Parse(hoge.Value);
+                                    }
+                                    catch
+                                    {
+                                        PairXrpJpy.AlarmPlus = 0;
+                                    }
+
+                                }
+                            }
+                            hoge = pair.Attribute("alarmLow");
+                            if (hoge != null)
+                            {
+                                if (!string.IsNullOrEmpty(hoge.Value))
+                                {
+                                    try
+                                    {
+                                        PairXrpJpy.AlarmMinus = Decimal.Parse(hoge.Value);
+                                    }
+                                    catch
+                                    {
+                                        PairXrpJpy.AlarmMinus = 0;
+                                    }
+
+                                }
+                            }
                         }
 
                         // PairEthBtc
@@ -5627,6 +5668,39 @@ namespace BitWallpaper.ViewModels
                                 }
                             }
 
+                            // カスタムアラート
+                            hoge = pair.Attribute("alarmHigh");
+                            if (hoge != null)
+                            {
+                                if (!string.IsNullOrEmpty(hoge.Value))
+                                {
+                                    try
+                                    {
+                                        PairEthBtc.AlarmPlus = Decimal.Parse(hoge.Value);
+                                    }
+                                    catch
+                                    {
+                                        PairEthBtc.AlarmPlus = 0;
+                                    }
+
+                                }
+                            }
+                            hoge = pair.Attribute("alarmLow");
+                            if (hoge != null)
+                            {
+                                if (!string.IsNullOrEmpty(hoge.Value))
+                                {
+                                    try
+                                    {
+                                        PairEthBtc.AlarmMinus = Decimal.Parse(hoge.Value);
+                                    }
+                                    catch
+                                    {
+                                        PairEthBtc.AlarmMinus = 0;
+                                    }
+
+                                }
+                            }
                         }
 
                         // PairLtcBtc
@@ -5698,6 +5772,40 @@ namespace BitWallpaper.ViewModels
                                     catch
                                     {
                                         PairLtcBtc.DepthGrouping = 0;
+                                    }
+
+                                }
+                            }
+
+                            // カスタムアラート
+                            hoge = pair.Attribute("alarmHigh");
+                            if (hoge != null)
+                            {
+                                if (!string.IsNullOrEmpty(hoge.Value))
+                                {
+                                    try
+                                    {
+                                        PairLtcBtc.AlarmPlus = Decimal.Parse(hoge.Value);
+                                    }
+                                    catch
+                                    {
+                                        PairLtcBtc.AlarmPlus = 0;
+                                    }
+
+                                }
+                            }
+                            hoge = pair.Attribute("alarmLow");
+                            if (hoge != null)
+                            {
+                                if (!string.IsNullOrEmpty(hoge.Value))
+                                {
+                                    try
+                                    {
+                                        PairLtcBtc.AlarmMinus = Decimal.Parse(hoge.Value);
+                                    }
+                                    catch
+                                    {
+                                        PairLtcBtc.AlarmMinus = 0;
                                     }
 
                                 }
@@ -5777,6 +5885,40 @@ namespace BitWallpaper.ViewModels
 
                                 }
                             }
+
+                            // カスタムアラート
+                            hoge = pair.Attribute("alarmHigh");
+                            if (hoge != null)
+                            {
+                                if (!string.IsNullOrEmpty(hoge.Value))
+                                {
+                                    try
+                                    {
+                                        PairMonaJpy.AlarmPlus = Decimal.Parse(hoge.Value);
+                                    }
+                                    catch
+                                    {
+                                        PairMonaJpy.AlarmPlus = 0;
+                                    }
+
+                                }
+                            }
+                            hoge = pair.Attribute("alarmLow");
+                            if (hoge != null)
+                            {
+                                if (!string.IsNullOrEmpty(hoge.Value))
+                                {
+                                    try
+                                    {
+                                        PairMonaJpy.AlarmMinus = Decimal.Parse(hoge.Value);
+                                    }
+                                    catch
+                                    {
+                                        PairMonaJpy.AlarmMinus = 0;
+                                    }
+
+                                }
+                            }
                         }
 
                         // PairBchJpy
@@ -5848,6 +5990,40 @@ namespace BitWallpaper.ViewModels
                                     catch
                                     {
                                         PairBchJpy.DepthGrouping = 0;
+                                    }
+
+                                }
+                            }
+
+                            // カスタムアラート
+                            hoge = pair.Attribute("alarmHigh");
+                            if (hoge != null)
+                            {
+                                if (!string.IsNullOrEmpty(hoge.Value))
+                                {
+                                    try
+                                    {
+                                        PairBchJpy.AlarmPlus = Decimal.Parse(hoge.Value);
+                                    }
+                                    catch
+                                    {
+                                        PairBchJpy.AlarmPlus = 0;
+                                    }
+
+                                }
+                            }
+                            hoge = pair.Attribute("alarmLow");
+                            if (hoge != null)
+                            {
+                                if (!string.IsNullOrEmpty(hoge.Value))
+                                {
+                                    try
+                                    {
+                                        PairBchJpy.AlarmMinus = Decimal.Parse(hoge.Value);
+                                    }
+                                    catch
+                                    {
+                                        PairBchJpy.AlarmMinus = 0;
                                     }
 
                                 }
@@ -6082,6 +6258,14 @@ namespace BitWallpaper.ViewModels
             }
             pairBtcJpy.SetAttributeNode(attrs);
 
+            // カスタムアラート
+            attrs = doc.CreateAttribute("alarmHigh");
+            attrs.Value = PairBtcJpy.AlarmPlus.ToString();
+            pairBtcJpy.SetAttributeNode(attrs);
+            attrs = doc.CreateAttribute("alarmLow");
+            attrs.Value = PairBtcJpy.AlarmMinus.ToString();
+            pairBtcJpy.SetAttributeNode(attrs);
+
             // 板グルーピング
             attrs = doc.CreateAttribute("depthGrouping");
             attrs.Value = PairBtcJpy.DepthGrouping.ToString();
@@ -6136,6 +6320,14 @@ namespace BitWallpaper.ViewModels
                 attrs.Value = "false";
             }
             pairXrpJpy.SetAttributeNode(attrs);
+
+            // カスタムアラート
+            attrs = doc.CreateAttribute("alarmHigh");
+            attrs.Value = PairXrpJpy.AlarmPlus.ToString();
+            pairBtcJpy.SetAttributeNode(attrs);
+            attrs = doc.CreateAttribute("alarmLow");
+            attrs.Value = PairXrpJpy.AlarmMinus.ToString();
+            pairBtcJpy.SetAttributeNode(attrs);
 
             // 板グルーピング
             attrs = doc.CreateAttribute("depthGrouping");
@@ -6192,6 +6384,14 @@ namespace BitWallpaper.ViewModels
             }
             pairEthBtc.SetAttributeNode(attrs);
 
+            // カスタムアラート
+            attrs = doc.CreateAttribute("alarmHigh");
+            attrs.Value = PairEthBtc.AlarmPlus.ToString();
+            pairBtcJpy.SetAttributeNode(attrs);
+            attrs = doc.CreateAttribute("alarmLow");
+            attrs.Value = PairEthBtc.AlarmMinus.ToString();
+            pairBtcJpy.SetAttributeNode(attrs);
+
             // 板グルーピング
             attrs = doc.CreateAttribute("depthGrouping");
             attrs.Value = PairEthBtc.DepthGrouping.ToString();
@@ -6246,6 +6446,14 @@ namespace BitWallpaper.ViewModels
                 attrs.Value = "false";
             }
             pairLtcBtc.SetAttributeNode(attrs);
+
+            // カスタムアラート
+            attrs = doc.CreateAttribute("alarmHigh");
+            attrs.Value = PairLtcBtc.AlarmPlus.ToString();
+            pairBtcJpy.SetAttributeNode(attrs);
+            attrs = doc.CreateAttribute("alarmLow");
+            attrs.Value = PairLtcBtc.AlarmMinus.ToString();
+            pairBtcJpy.SetAttributeNode(attrs);
 
             // 板グルーピング
             attrs = doc.CreateAttribute("depthGrouping");
@@ -6302,6 +6510,14 @@ namespace BitWallpaper.ViewModels
             }
             pairMonaJpy.SetAttributeNode(attrs);
 
+            // カスタムアラート
+            attrs = doc.CreateAttribute("alarmHigh");
+            attrs.Value = PairMonaJpy.AlarmPlus.ToString();
+            pairBtcJpy.SetAttributeNode(attrs);
+            attrs = doc.CreateAttribute("alarmLow");
+            attrs.Value = PairMonaJpy.AlarmMinus.ToString();
+            pairBtcJpy.SetAttributeNode(attrs);
+
             // 板グルーピング
             attrs = doc.CreateAttribute("depthGrouping");
             attrs.Value = PairMonaJpy.DepthGrouping.ToString();
@@ -6356,6 +6572,14 @@ namespace BitWallpaper.ViewModels
                 attrs.Value = "false";
             }
             pairBchJpy.SetAttributeNode(attrs);
+
+            // カスタムアラート
+            attrs = doc.CreateAttribute("alarmHigh");
+            attrs.Value = PairBchJpy.AlarmPlus.ToString();
+            pairBtcJpy.SetAttributeNode(attrs);
+            attrs = doc.CreateAttribute("alarmLow");
+            attrs.Value = PairBchJpy.AlarmMinus.ToString();
+            pairBtcJpy.SetAttributeNode(attrs);
 
             // 板グルーピング
             attrs = doc.CreateAttribute("depthGrouping");
@@ -6630,7 +6854,7 @@ namespace BitWallpaper.ViewModels
                 // 省エネモードならスルー。
                 if (MinMode)
                 {
-                    await Task.Delay(4000);
+                    await Task.Delay(2000);
                     continue;
                 }
 
@@ -6723,7 +6947,7 @@ namespace BitWallpaper.ViewModels
                 // 省エネモードならスルー。
                 if (MinMode)
                 {
-                    await Task.Delay(5000);
+                    await Task.Delay(2000);
                     continue;
                 }
 

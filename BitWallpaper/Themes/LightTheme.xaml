@@ -51,12 +51,12 @@
     <!-- 暖系のアクセントカラー 暗め -->
     <Color x:Key="AccentWarmDarkColor">#e0815e</Color>
 
-    <!-- Green Blue系 元Aqua -->
-    <SolidColorBrush x:Key="PriceUpColorBrush" Color="#a0d8ef"/>
-    <!-- Red Orange系 元Pink -->
-    <SolidColorBrush x:Key="PriceDownColorBrush" Color="#e597b2"/>
+    <!-- PriceUp Green Blue系 元Aqua -->
+    <SolidColorBrush x:Key="PriceUpColorBrush" Color="#00a1e9"/>
+    <!-- PriceDown Red Orange系 元Pink -->
+    <SolidColorBrush x:Key="PriceDownColorBrush" Color="#e4007f"/>
     <!-- White系 -->
-    <SolidColorBrush x:Key="PriceNeutralColorBrush" Color="Gainsboro"/>
+    <SolidColorBrush x:Key="PriceNeutralColorBrush" Color="#6c6c6c"/>
 
     <!-- 警告　Yellow系 -->
     <SolidColorBrush x:Key="WarningColor" Color="#FFDFD991"/>
@@ -83,6 +83,7 @@
     <SolidColorBrush x:Key="ControlMediumColorBrush" Color="{DynamicResource ControlMediumColor}"/>
     <SolidColorBrush x:Key="ControlDarkColorBrush" Color="{DynamicResource ControlDarkColor}"/>
     <SolidColorBrush x:Key="ControlMouseOverColorBrush" Color="{DynamicResource ControlMouseOverColor}"/>
+    <SolidColorBrush x:Key="ControlPressedColorBrush" Color="{DynamicResource ControlPressedColor}"/>
 
     <SolidColorBrush x:Key="NormalTextColorBrush" Color="{DynamicResource NormalTextColor}"/>
     <SolidColorBrush x:Key="TitleTextColorBrush" Color="{DynamicResource TitleTextColor}"/>

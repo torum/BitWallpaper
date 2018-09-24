@@ -14,6 +14,52 @@ using System.Globalization;
 namespace BitWallpaper.Common
 {
 
+    public class ZeroToVisibilityValueConvertor : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            string localValue = System.Convert.ToString(value);
+
+            if (localValue == "0")
+            {
+                return Visibility.Visible;
+            }
+            else
+            {
+                return Visibility.Collapsed;
+            }
+
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class NoneZeroToVisibilityValueConvertor : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            string localValue = System.Convert.ToString(value);
+
+            if (localValue != "0")
+            {
+                return Visibility.Visible;
+            }
+            else
+            {
+                return Visibility.Collapsed;
+            }
+
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class MultipleCommandParameterConverter : IMultiValueConverter 
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
