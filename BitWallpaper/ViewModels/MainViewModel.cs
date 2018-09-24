@@ -82,8 +82,8 @@ namespace BitWallpaper.ViewModels
 
         #region == 基本 ==
 
-        ///  
-        /// アラーム（24時間最高・最低値の場合も、起動後10秒待つように変更）
+        /// 0.0.0.6  (1.5.1)
+        /// アラーム（24時間最高・最低値の場合も、起動後10秒待つように変更し、デフォルトもオフに）
         /// 0.0.0.5
         /// アラーム機能を見直し(デフォルトロウソク足タイプ変更、ピン止め追加、初期画面サイズ変更、投げ銭追加、非フォーカス時透過変更)
         /// 0.0.0.4
@@ -95,7 +95,7 @@ namespace BitWallpaper.ViewModels
         /// 
 
         // Application version
-        private string _appVer = "0.0.0.5";
+        private string _appVer = "0.0.0.6";
 
         // Application name
         private string _appName = "BitWallpaper";
@@ -595,7 +595,7 @@ namespace BitWallpaper.ViewModels
             }
             
             // last 24h
-            private bool _playSoundLowest24h = true;
+            private bool _playSoundLowest24h = false;
             public bool PlaySoundLowest24h
             {
                 get
@@ -612,7 +612,7 @@ namespace BitWallpaper.ViewModels
                 }
             }
 
-            private bool _playSoundHighest24h = true;
+            private bool _playSoundHighest24h = false;
             public bool PlaySoundHighest24h
             {
                 get
