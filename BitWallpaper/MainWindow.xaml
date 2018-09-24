@@ -574,110 +574,13 @@
                                             </Label.Style>
                                         </Label>
 
-                                        <!-- 統計情報 -->
-
-                                        <Border Grid.Row="5" Margin="3" />
-                                        
-                                        <Label Grid.Row="6" Grid.Column="0" Padding="3 0 0 3.5" Content="24時間中央値" Style="{DynamicResource DefaultLabelStyle}"></Label>
-                                        <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal" Margin="6 0 0 3.5">
-                                            <TextBlock Text="{Binding Path=ActivePair.MiddleLast24PriceString, Mode=OneWay, StringFormat={}{0:N0}}" Style="{DynamicResource DefaultTextBlockStyle}"></TextBlock>
-                                            <Label  Margin="3 0 3 0" Content="{Binding CurrentPairUnitString,Mode=OneWay}" Style="{DynamicResource DefaultLabelStyle}" Visibility="Collapsed"/>
-                                            <TextBlock Text="{Binding Path=ActivePair.MiddleLast24PriceIcon, Mode=OneWay}" Margin="3 0 0 0">
-                                                <TextBlock.Style>
-                                                    <Style TargetType="{x:Type TextBlock}">
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding ActivePair.MiddleLast24PriceUpFlag, Mode=OneWay}" Value="True">
-                                                                <Setter Property="Foreground" Value="{DynamicResource PriceUpColorBrush}"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding ActivePair.MiddleLast24PriceUpFlag, Mode=OneWay}" Value="False">
-                                                                <Setter Property="Foreground" Value="{DynamicResource PriceDownColorBrush}"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding ActivePair.MiddleLast24PriceIcon, Mode=OneWay}" Value="＝">
-                                                                <Setter Property="Foreground" Value="{DynamicResource PriceNeutralColorBrush}"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </TextBlock.Style>
-                                            </TextBlock>
-                                        </StackPanel>
-
-                                        <Label Grid.Row="7" Grid.Column="0" Padding="3 0 0 3.5" Content="起動後中央値" Style="{DynamicResource DefaultLabelStyle}"></Label>
-                                        <StackPanel Grid.Row="7" Grid.Column="1" Orientation="Horizontal" Margin="6 0 0 3.5">
-                                            <TextBlock Text="{Binding Path=ActivePair.MiddleInitPriceString, Mode=OneWay, StringFormat={}{0:N0}}" Style="{DynamicResource DefaultTextBlockStyle}"></TextBlock>
-                                            <Label  Margin="3 0 3 0" Content="{Binding CurrentPairUnitString,Mode=OneWay}" Style="{DynamicResource DefaultLabelStyle}" Visibility="Collapsed"/>
-                                            <TextBlock Text="{Binding Path=ActivePair.MiddleInitPriceIcon, Mode=OneWay}" Margin="3 0 0 0">
-                                                <TextBlock.Style>
-                                                    <Style TargetType="{x:Type TextBlock}">
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding ActivePair.MiddleInitPriceUpFlag, Mode=OneWay}" Value="True">
-                                                                <Setter Property="Foreground" Value="{DynamicResource PriceUpColorBrush}"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding ActivePair.MiddleInitPriceUpFlag, Mode=OneWay}" Value="False">
-                                                                <Setter Property="Foreground" Value="{DynamicResource PriceDownColorBrush}"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding ActivePair.MiddleInitPriceIcon, Mode=OneWay}" Value="＝">
-                                                                <Setter Property="Foreground" Value="{DynamicResource PriceNeutralColorBrush}"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </TextBlock.Style>
-                                            </TextBlock>
-                                        </StackPanel>
-
-                                        <Label Grid.Row="8" Grid.Column="0" Padding="3 0 0 3.5" Content="起動時の値" Style="{DynamicResource DefaultLabelStyle}"></Label>
-                                        <StackPanel Grid.Row="8"  Grid.Column="1" Orientation="Horizontal" Margin="6 0 0 3.5">
-                                            <TextBlock Text="{Binding Path=ActivePair.BasePriceString, Mode=OneWay, StringFormat={}{0:N0}}" Style="{DynamicResource DefaultTextBlockStyle}"></TextBlock>
-                                            <Label Margin="3 0 3 0" Content="{Binding CurrentPairUnitString,Mode=OneWay}" Style="{DynamicResource DefaultLabelStyle}" Visibility="Collapsed"/>
-                                            <TextBlock Text="{Binding Path=ActivePair.BasePriceIcon, Mode=OneWay}" Margin="3 0 0 0">
-                                                <TextBlock.Style>
-                                                    <Style TargetType="{x:Type TextBlock}">
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding ActivePair.BasePriceUpFlag, Mode=OneWay}" Value="True">
-                                                                <Setter Property="Foreground" Value="{DynamicResource PriceUpColorBrush}"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding ActivePair.BasePriceUpFlag, Mode=OneWay}" Value="False">
-                                                                <Setter Property="Foreground" Value="{DynamicResource PriceDownColorBrush}"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding ActivePair.BasePriceIcon, Mode=OneWay}" Value="＝">
-                                                                <Setter Property="Foreground" Value="{DynamicResource PriceNeutralColorBrush}"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </TextBlock.Style>
-                                            </TextBlock>
-                                        </StackPanel>
-
-                                        <Label Grid.Row="9" Grid.Column="0" Padding="3 0 0 3.5" Content="1分間の平均値" Style="{DynamicResource DefaultLabelStyle}"></Label>
-                                        <StackPanel Grid.Row="9"  Grid.Column="1" Orientation="Horizontal" Margin="6 0 0 3.5">
-                                            <TextBlock Text="{Binding Path=ActivePair.AveragePriceString, Mode=OneWay, StringFormat={}{0:N0}}" Style="{DynamicResource DefaultTextBlockStyle}"/>
-                                            <Label Margin="3 0 3 0" Content="{Binding CurrentPairUnitString,Mode=OneWay}" Style="{DynamicResource DefaultLabelStyle}" Visibility="Collapsed"/>
-                                            <TextBlock Text="{Binding Path=ActivePair.AveragePriceIcon, Mode=OneWay}" Margin="3 0 0 0">
-                                                <TextBlock.Style>
-                                                    <Style TargetType="{x:Type TextBlock}">
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding ActivePair.AveragePriceUpFlag, Mode=OneWay}" Value="True">
-                                                                <Setter Property="Foreground" Value="{DynamicResource PriceUpColorBrush}"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding ActivePair.AveragePriceUpFlag, Mode=OneWay}" Value="False">
-                                                                <Setter Property="Foreground" Value="{DynamicResource PriceDownColorBrush}"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding ActivePair.AveragePriceIcon, Mode=OneWay}" Value="＝">
-                                                                <Setter Property="Foreground" Value="{DynamicResource PriceNeutralColorBrush}"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </TextBlock.Style>
-                                            </TextBlock>
-                                        </StackPanel>
-
-
                                         <!-- カスタムアラート -->
-                                        <Border Grid.Row="10" Margin="3" />
+                                        <Border Grid.Row="5" Margin="3" />
 
                                         <!-- 高値アラーム -->
-                                        <Label Grid.Row="11" Grid.Column="0" Padding="3 0 0 3.5" Content="高値アラーム" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{DynamicResource DefaultLabelStyle}"></Label>
+                                        <Label Grid.Row="6" Grid.Column="0" Padding="3 0 0 3.5" Content="高値アラーム" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{DynamicResource DefaultLabelStyle}"></Label>
 
-                                        <StackPanel Grid.Row="11" Grid.Column="1" Orientation="Horizontal">
+                                        <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal">
 
                                             <TextBlock Padding="6 0 0 3.5" Text="{Binding ActivePair.AlarmPlusString, Mode=OneWay}">
                                                 <TextBlock.Style>
@@ -711,7 +614,7 @@
                                             </ToggleButton>
 
                                         </StackPanel>
-                                        
+
                                         <Popup IsOpen="{Binding IsChecked, ElementName=AddAlarmPlusButton}" StaysOpen="False" PlacementTarget="{Binding ElementName=AddAlarmPlusButton}" AllowsTransparency="True" PopupAnimation="Slide">
                                             <Border Background="WhiteSmoke" CornerRadius="4" Padding="6" Width="240" Height="100">
                                                 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
@@ -760,9 +663,9 @@
                                         </Popup>
 
                                         <!-- 安値アラーム -->
-                                        <Label Grid.Row="12" Grid.Column="0" Padding="3 0 0 3.5" Content="安値アラーム" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{DynamicResource DefaultLabelStyle}"></Label>
+                                        <Label Grid.Row="7" Grid.Column="0" Padding="3 0 0 3.5" Content="安値アラーム" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{DynamicResource DefaultLabelStyle}"></Label>
 
-                                        <StackPanel Grid.Row="12" Grid.Column="1" Orientation="Horizontal">
+                                        <StackPanel Grid.Row="7" Grid.Column="1" Orientation="Horizontal">
                                             <TextBlock Padding="6 0 0 3.5" Text="{Binding ActivePair.AlarmMinusString}">
                                                 <TextBlock.Style>
                                                     <Style TargetType="TextBlock" BasedOn="{StaticResource DefaultTextBlockStyle}">
@@ -795,7 +698,7 @@
                                             </ToggleButton>
 
                                         </StackPanel>
-                                        
+
                                         <Popup IsOpen="{Binding IsChecked, ElementName=AddAlarmMinusButton}" StaysOpen="False" PlacementTarget="{Binding ElementName=AddAlarmMinusButton}" AllowsTransparency="True" PopupAnimation="Slide">
                                             <Border Background="WhiteSmoke" CornerRadius="4" Padding="6" Width="240" Height="100">
                                                 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
@@ -841,6 +744,102 @@
                                                 </ScrollViewer>
                                             </Border>
                                         </Popup>
+
+                                        <!-- 統計情報 -->
+
+                                        <Border Grid.Row="8" Margin="3" />
+                                        
+                                        <Label Grid.Row="9" Grid.Column="0" Padding="3 0 0 3.5" Content="24時間中央値" Style="{DynamicResource DefaultLabelStyle}"></Label>
+                                        <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal" Margin="6 0 0 3.5">
+                                            <TextBlock Text="{Binding Path=ActivePair.MiddleLast24PriceString, Mode=OneWay, StringFormat={}{0:N0}}" Style="{DynamicResource DefaultTextBlockStyle}"></TextBlock>
+                                            <Label  Margin="3 0 3 0" Content="{Binding CurrentPairUnitString,Mode=OneWay}" Style="{DynamicResource DefaultLabelStyle}" Visibility="Collapsed"/>
+                                            <TextBlock Text="{Binding Path=ActivePair.MiddleLast24PriceIcon, Mode=OneWay}" Margin="3 0 0 0">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="{x:Type TextBlock}">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding ActivePair.MiddleLast24PriceUpFlag, Mode=OneWay}" Value="True">
+                                                                <Setter Property="Foreground" Value="{DynamicResource PriceUpColorBrush}"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding ActivePair.MiddleLast24PriceUpFlag, Mode=OneWay}" Value="False">
+                                                                <Setter Property="Foreground" Value="{DynamicResource PriceDownColorBrush}"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding ActivePair.MiddleLast24PriceIcon, Mode=OneWay}" Value="＝">
+                                                                <Setter Property="Foreground" Value="{DynamicResource PriceNeutralColorBrush}"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </StackPanel>
+
+                                        <Label Grid.Row="10" Grid.Column="0" Padding="3 0 0 3.5" Content="起動後中央値" Style="{DynamicResource DefaultLabelStyle}"></Label>
+                                        <StackPanel Grid.Row="10" Grid.Column="1" Orientation="Horizontal" Margin="6 0 0 3.5">
+                                            <TextBlock Text="{Binding Path=ActivePair.MiddleInitPriceString, Mode=OneWay, StringFormat={}{0:N0}}" Style="{DynamicResource DefaultTextBlockStyle}"></TextBlock>
+                                            <Label  Margin="3 0 3 0" Content="{Binding CurrentPairUnitString,Mode=OneWay}" Style="{DynamicResource DefaultLabelStyle}" Visibility="Collapsed"/>
+                                            <TextBlock Text="{Binding Path=ActivePair.MiddleInitPriceIcon, Mode=OneWay}" Margin="3 0 0 0">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="{x:Type TextBlock}">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding ActivePair.MiddleInitPriceUpFlag, Mode=OneWay}" Value="True">
+                                                                <Setter Property="Foreground" Value="{DynamicResource PriceUpColorBrush}"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding ActivePair.MiddleInitPriceUpFlag, Mode=OneWay}" Value="False">
+                                                                <Setter Property="Foreground" Value="{DynamicResource PriceDownColorBrush}"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding ActivePair.MiddleInitPriceIcon, Mode=OneWay}" Value="＝">
+                                                                <Setter Property="Foreground" Value="{DynamicResource PriceNeutralColorBrush}"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </StackPanel>
+
+                                        <Label Grid.Row="11" Grid.Column="0" Padding="3 0 0 3.5" Content="起動時の値" Style="{DynamicResource DefaultLabelStyle}"></Label>
+                                        <StackPanel Grid.Row="11"  Grid.Column="1" Orientation="Horizontal" Margin="6 0 0 3.5">
+                                            <TextBlock Text="{Binding Path=ActivePair.BasePriceString, Mode=OneWay, StringFormat={}{0:N0}}" Style="{DynamicResource DefaultTextBlockStyle}"></TextBlock>
+                                            <Label Margin="3 0 3 0" Content="{Binding CurrentPairUnitString,Mode=OneWay}" Style="{DynamicResource DefaultLabelStyle}" Visibility="Collapsed"/>
+                                            <TextBlock Text="{Binding Path=ActivePair.BasePriceIcon, Mode=OneWay}" Margin="3 0 0 0">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="{x:Type TextBlock}">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding ActivePair.BasePriceUpFlag, Mode=OneWay}" Value="True">
+                                                                <Setter Property="Foreground" Value="{DynamicResource PriceUpColorBrush}"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding ActivePair.BasePriceUpFlag, Mode=OneWay}" Value="False">
+                                                                <Setter Property="Foreground" Value="{DynamicResource PriceDownColorBrush}"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding ActivePair.BasePriceIcon, Mode=OneWay}" Value="＝">
+                                                                <Setter Property="Foreground" Value="{DynamicResource PriceNeutralColorBrush}"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </StackPanel>
+
+                                        <Label Grid.Row="12" Grid.Column="0" Padding="3 0 0 3.5" Content="1分間の平均値" Style="{DynamicResource DefaultLabelStyle}"></Label>
+                                        <StackPanel Grid.Row="12"  Grid.Column="1" Orientation="Horizontal" Margin="6 0 0 3.5">
+                                            <TextBlock Text="{Binding Path=ActivePair.AveragePriceString, Mode=OneWay, StringFormat={}{0:N0}}" Style="{DynamicResource DefaultTextBlockStyle}"/>
+                                            <Label Margin="3 0 3 0" Content="{Binding CurrentPairUnitString,Mode=OneWay}" Style="{DynamicResource DefaultLabelStyle}" Visibility="Collapsed"/>
+                                            <TextBlock Text="{Binding Path=ActivePair.AveragePriceIcon, Mode=OneWay}" Margin="3 0 0 0">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="{x:Type TextBlock}">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding ActivePair.AveragePriceUpFlag, Mode=OneWay}" Value="True">
+                                                                <Setter Property="Foreground" Value="{DynamicResource PriceUpColorBrush}"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding ActivePair.AveragePriceUpFlag, Mode=OneWay}" Value="False">
+                                                                <Setter Property="Foreground" Value="{DynamicResource PriceDownColorBrush}"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding ActivePair.AveragePriceIcon, Mode=OneWay}" Value="＝">
+                                                                <Setter Property="Foreground" Value="{DynamicResource PriceNeutralColorBrush}"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </StackPanel>
 
                                     </Grid>
 
