@@ -92,6 +92,8 @@ namespace BitWallpaper.ViewModels
 
         #region == 基本 ==
 
+        /// 0.0.0.8
+        /// カスタムアラートが保存されないバグ修正、タイトルメニューのアイコン余白調整
         /// 0.0.0.7  (1.5.2)
         /// システムトレイへ最小化、カスタムアラートの追加、バルーン通知
         /// 0.0.0.6  (1.5.1)
@@ -6324,10 +6326,10 @@ namespace BitWallpaper.ViewModels
             // カスタムアラート
             attrs = doc.CreateAttribute("alarmHigh");
             attrs.Value = PairXrpJpy.AlarmPlus.ToString();
-            pairBtcJpy.SetAttributeNode(attrs);
+            pairXrpJpy.SetAttributeNode(attrs);
             attrs = doc.CreateAttribute("alarmLow");
             attrs.Value = PairXrpJpy.AlarmMinus.ToString();
-            pairBtcJpy.SetAttributeNode(attrs);
+            pairXrpJpy.SetAttributeNode(attrs);
 
             // 板グルーピング
             attrs = doc.CreateAttribute("depthGrouping");
@@ -6387,10 +6389,10 @@ namespace BitWallpaper.ViewModels
             // カスタムアラート
             attrs = doc.CreateAttribute("alarmHigh");
             attrs.Value = PairEthBtc.AlarmPlus.ToString();
-            pairBtcJpy.SetAttributeNode(attrs);
+            pairEthBtc.SetAttributeNode(attrs);
             attrs = doc.CreateAttribute("alarmLow");
             attrs.Value = PairEthBtc.AlarmMinus.ToString();
-            pairBtcJpy.SetAttributeNode(attrs);
+            pairEthBtc.SetAttributeNode(attrs);
 
             // 板グルーピング
             attrs = doc.CreateAttribute("depthGrouping");
@@ -6450,10 +6452,10 @@ namespace BitWallpaper.ViewModels
             // カスタムアラート
             attrs = doc.CreateAttribute("alarmHigh");
             attrs.Value = PairLtcBtc.AlarmPlus.ToString();
-            pairBtcJpy.SetAttributeNode(attrs);
+            pairLtcBtc.SetAttributeNode(attrs);
             attrs = doc.CreateAttribute("alarmLow");
             attrs.Value = PairLtcBtc.AlarmMinus.ToString();
-            pairBtcJpy.SetAttributeNode(attrs);
+            pairLtcBtc.SetAttributeNode(attrs);
 
             // 板グルーピング
             attrs = doc.CreateAttribute("depthGrouping");
@@ -6513,10 +6515,10 @@ namespace BitWallpaper.ViewModels
             // カスタムアラート
             attrs = doc.CreateAttribute("alarmHigh");
             attrs.Value = PairMonaJpy.AlarmPlus.ToString();
-            pairBtcJpy.SetAttributeNode(attrs);
+            pairMonaJpy.SetAttributeNode(attrs);
             attrs = doc.CreateAttribute("alarmLow");
             attrs.Value = PairMonaJpy.AlarmMinus.ToString();
-            pairBtcJpy.SetAttributeNode(attrs);
+            pairMonaJpy.SetAttributeNode(attrs);
 
             // 板グルーピング
             attrs = doc.CreateAttribute("depthGrouping");
@@ -6576,10 +6578,10 @@ namespace BitWallpaper.ViewModels
             // カスタムアラート
             attrs = doc.CreateAttribute("alarmHigh");
             attrs.Value = PairBchJpy.AlarmPlus.ToString();
-            pairBtcJpy.SetAttributeNode(attrs);
+            pairBchJpy.SetAttributeNode(attrs);
             attrs = doc.CreateAttribute("alarmLow");
             attrs.Value = PairBchJpy.AlarmMinus.ToString();
-            pairBtcJpy.SetAttributeNode(attrs);
+            pairBchJpy.SetAttributeNode(attrs);
 
             // 板グルーピング
             attrs = doc.CreateAttribute("depthGrouping");
