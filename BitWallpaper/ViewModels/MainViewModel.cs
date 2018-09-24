@@ -82,9 +82,10 @@ namespace BitWallpaper.ViewModels
 
         #region == 基本 ==
 
-        ///         
+        ///  
+        /// アラーム（24時間最高・最低値の場合も、起動後10秒待つように変更）
         /// 0.0.0.5
-        /// アラーム機能を見直し(デフォルトロウソク足タイプ変更、初期画面サイズ変更、投げ銭追加、非フォーカス時透過変更)
+        /// アラーム機能を見直し(デフォルトロウソク足タイプ変更、ピン止め追加、初期画面サイズ変更、投げ銭追加、非フォーカス時透過変更)
         /// 0.0.0.4
         /// 一覧機能を削除し、BitDeskを元にしつつ取引機能を省いた、BitDesk機能限定バージョンに。
         /// 0.0.0.3
@@ -3518,9 +3519,8 @@ namespace BitWallpaper.ViewModels
                             }
 
                             // 過去24時間最高値
-                            if ((tick.LTP >= PairBtcJpy.HighestIn24Price) && (prevLtp != tick.LTP))
+                            if ((tick.LTP >= PairBtcJpy.HighestIn24Price) && (prevLtp != tick.LTP) && (PairBtcJpy.TickHistories.Count > waitTime))
                             {
-
                                 if (PairBtcJpy.PlaySoundHighest24h)
                                     PairBtcJpy.HighestIn24PriceAlart = true;
 
@@ -3543,7 +3543,7 @@ namespace BitWallpaper.ViewModels
                             }
 
                             // 過去24時間最安値
-                            if ((tick.LTP <= PairBtcJpy.LowestIn24Price) && (prevLtp != tick.LTP))
+                            if ((tick.LTP <= PairBtcJpy.LowestIn24Price) && (prevLtp != tick.LTP) && (PairBtcJpy.TickHistories.Count > waitTime))
                             {
 
                                 if (PairBtcJpy.PlaySoundLowest24h)
@@ -3847,7 +3847,7 @@ namespace BitWallpaper.ViewModels
                             }
 
                             // 過去24時間最高値
-                            if ((tick.LTP >= PairXrpJpy.HighestIn24Price) && (prevLtp != tick.LTP))
+                            if ((tick.LTP >= PairXrpJpy.HighestIn24Price) && (prevLtp != tick.LTP) && (PairXrpJpy.TickHistories.Count > waitTime))
                             {
                                 if (PairXrpJpy.PlaySoundHighest24h)
                                     PairXrpJpy.HighestIn24PriceAlart = true;
@@ -3871,7 +3871,7 @@ namespace BitWallpaper.ViewModels
                             }
 
                             // 過去24時間最安値
-                            if ((tick.LTP <= PairXrpJpy.LowestIn24Price) && (prevLtp != tick.LTP))
+                            if ((tick.LTP <= PairXrpJpy.LowestIn24Price) && (prevLtp != tick.LTP) && (PairXrpJpy.TickHistories.Count > waitTime))
                             {
 
                                 if (PairXrpJpy.PlaySoundLowest24h)
@@ -4166,7 +4166,7 @@ namespace BitWallpaper.ViewModels
                             }
 
                             // 過去24時間最高値
-                            if ((tick.LTP >= PairEthBtc.HighestIn24Price) && (prevLtp != tick.LTP))
+                            if ((tick.LTP >= PairEthBtc.HighestIn24Price) && (prevLtp != tick.LTP) && (PairEthBtc.TickHistories.Count > waitTime))
                             {
 
                                 if (PairEthBtc.PlaySoundHighest24h)
@@ -4191,7 +4191,7 @@ namespace BitWallpaper.ViewModels
                             }
 
                             // 過去24時間最安値
-                            if ((tick.LTP <= PairEthBtc.LowestIn24Price) && (prevLtp != tick.LTP))
+                            if ((tick.LTP <= PairEthBtc.LowestIn24Price) && (prevLtp != tick.LTP) && (PairEthBtc.TickHistories.Count > waitTime))
                             {
 
                                 if (PairEthBtc.PlaySoundLowest24h)
@@ -4486,7 +4486,7 @@ namespace BitWallpaper.ViewModels
                             }
 
                             // 過去24時間最高値
-                            if ((tick.LTP >= PairMonaJpy.HighestIn24Price) && (prevLtp != tick.LTP))
+                            if ((tick.LTP >= PairMonaJpy.HighestIn24Price) && (prevLtp != tick.LTP) && (PairMonaJpy.TickHistories.Count > waitTime))
                             {
                                 if (PairMonaJpy.PlaySoundHighest24h)
                                     PairMonaJpy.HighestIn24PriceAlart = true;
@@ -4510,7 +4510,7 @@ namespace BitWallpaper.ViewModels
                             }
 
                             // 過去24時間最安値
-                            if ((tick.LTP <= PairMonaJpy.LowestIn24Price) && (prevLtp != tick.LTP))
+                            if ((tick.LTP <= PairMonaJpy.LowestIn24Price) && (prevLtp != tick.LTP) && (PairMonaJpy.TickHistories.Count > waitTime))
                             {
 
                                 if (PairMonaJpy.PlaySoundLowest24h)
@@ -4809,7 +4809,7 @@ namespace BitWallpaper.ViewModels
                             }
 
                             // 過去24時間最高値
-                            if ((tick.LTP >= PairLtcBtc.HighestIn24Price) && (prevLtp != tick.LTP))
+                            if ((tick.LTP >= PairLtcBtc.HighestIn24Price) && (prevLtp != tick.LTP) && (PairLtcBtc.TickHistories.Count > waitTime))
                             {
                                 if (PairLtcBtc.PlaySoundHighest24h)
                                     PairLtcBtc.HighestIn24PriceAlart = true;
@@ -4833,7 +4833,7 @@ namespace BitWallpaper.ViewModels
                             }
 
                             // 過去24時間最安値
-                            if ((tick.LTP <= PairLtcBtc.LowestIn24Price) && (prevLtp != tick.LTP))
+                            if ((tick.LTP <= PairLtcBtc.LowestIn24Price) && (prevLtp != tick.LTP) && (PairLtcBtc.TickHistories.Count > waitTime))
                             {
                                 if (PairLtcBtc.PlaySoundLowest24h)
                                     PairLtcBtc.LowestIn24PriceAlart = true;
@@ -5129,7 +5129,7 @@ namespace BitWallpaper.ViewModels
                             }
 
                             // 過去24時間最高値
-                            if ((tick.LTP >= PairBchJpy.HighestIn24Price) && (prevLtp != tick.LTP))
+                            if ((tick.LTP >= PairBchJpy.HighestIn24Price) && (prevLtp != tick.LTP) && (PairBchJpy.TickHistories.Count > waitTime))
                             {
                                 if (PairBchJpy.PlaySoundHighest24h)
                                     PairBchJpy.HighestIn24PriceAlart = true;
@@ -5153,7 +5153,7 @@ namespace BitWallpaper.ViewModels
                             }
 
                             // 過去24時間最安値
-                            if ((tick.LTP <= PairBchJpy.LowestIn24Price) && (prevLtp != tick.LTP))
+                            if ((tick.LTP <= PairBchJpy.LowestIn24Price) && (prevLtp != tick.LTP) && (PairBchJpy.TickHistories.Count > waitTime))
                             {
                                 if (PairBchJpy.PlaySoundLowest24h)
                                     PairBchJpy.LowestIn24PriceAlart = true;
@@ -5257,98 +5257,107 @@ namespace BitWallpaper.ViewModels
             // 設定ファイルのパス
             var AppConfigFilePath = AppDataFolder + System.IO.Path.DirectorySeparatorChar + _appName + ".config";
 
-            // アプリ設定情報の読み込み
-            if (File.Exists(AppConfigFilePath))
+            try
             {
-                XDocument xdoc = XDocument.Load(AppConfigFilePath);
-
-                #region == ウィンドウ関連 ==
-
-                if (sender is Window)
+                // アプリ設定情報の読み込み
+                if (File.Exists(AppConfigFilePath))
                 {
-                    // Main Window element
-                    var mainWindow = xdoc.Root.Element("MainWindow");
-                    if (mainWindow != null)
+                    XDocument xdoc = XDocument.Load(AppConfigFilePath);
+
+                    #region == ウィンドウ関連 ==
+
+                    if (sender is Window)
                     {
-                        var hoge = mainWindow.Attribute("top");
-                        if (hoge != null)
+                        // Main Window element
+                        var mainWindow = xdoc.Root.Element("MainWindow");
+                        if (mainWindow != null)
                         {
-                            (sender as Window).Top = double.Parse(hoge.Value);
-                        }
-
-                        hoge = mainWindow.Attribute("left");
-                        if (hoge != null)
-                        {
-                            (sender as Window).Left = double.Parse(hoge.Value);
-                        }
-
-                        hoge = mainWindow.Attribute("height");
-                        if (hoge != null)
-                        {
-                            (sender as Window).Height = double.Parse(hoge.Value);
-                        }
-
-                        hoge = mainWindow.Attribute("width");
-                        if (hoge != null)
-                        {
-                            (sender as Window).Width = double.Parse(hoge.Value);
-                        }
-
-                        hoge = mainWindow.Attribute("state");
-                        if (hoge != null)
-                        {
-                            if (hoge.Value == "Maximized")
+                            var hoge = mainWindow.Attribute("top");
+                            if (hoge != null)
                             {
-                                (sender as Window).WindowState = WindowState.Maximized;
+                                (sender as Window).Top = double.Parse(hoge.Value);
                             }
-                            else if (hoge.Value == "Normal")
-                            {
-                                (sender as Window).WindowState = WindowState.Normal;
-                            }
-                            else if (hoge.Value == "Minimized")
-                            {
-                                (sender as Window).WindowState = WindowState.Normal;
-                            }
-                        }
 
-                        hoge = mainWindow.Attribute("opacity");
-                        if (hoge != null)
-                        {
-                            WindowOpacity = double.Parse(hoge.Value);
-                        }
+                            hoge = mainWindow.Attribute("left");
+                            if (hoge != null)
+                            {
+                                (sender as Window).Left = double.Parse(hoge.Value);
+                            }
 
-                        hoge = mainWindow.Attribute("theme");
-                        if (hoge != null)
-                        {
-                            // テーマをセット
-                            SetCurrentTheme(hoge.Value);
+                            hoge = mainWindow.Attribute("height");
+                            if (hoge != null)
+                            {
+                                (sender as Window).Height = double.Parse(hoge.Value);
+                            }
+
+                            hoge = mainWindow.Attribute("width");
+                            if (hoge != null)
+                            {
+                                (sender as Window).Width = double.Parse(hoge.Value);
+                            }
+
+                            hoge = mainWindow.Attribute("state");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "Maximized")
+                                {
+                                    (sender as Window).WindowState = WindowState.Maximized;
+                                }
+                                else if (hoge.Value == "Normal")
+                                {
+                                    (sender as Window).WindowState = WindowState.Normal;
+                                }
+                                else if (hoge.Value == "Minimized")
+                                {
+                                    (sender as Window).WindowState = WindowState.Normal;
+                                }
+                            }
+
+                            hoge = mainWindow.Attribute("opacity");
+                            if (hoge != null)
+                            {
+                                WindowOpacity = double.Parse(hoge.Value);
+                            }
+
+                            hoge = mainWindow.Attribute("theme");
+                            if (hoge != null)
+                            {
+                                // テーマをセット
+                                SetCurrentTheme(hoge.Value);
+                            }
+
                         }
 
                     }
 
-                }
+                    #endregion
 
-                #endregion
+                    #region == チャート関連 ==
 
-                #region == チャート関連 ==
-
-                var chartSetting = xdoc.Root.Element("Chart");
-                if (chartSetting != null)
-                {
-                    var hoge = chartSetting.Attribute("candleType");
-                    if (hoge != null)
+                    var chartSetting = xdoc.Root.Element("Chart");
+                    if (chartSetting != null)
                     {
-                        if (hoge.Value == CandleTypes.OneMin.ToString())
+                        var hoge = chartSetting.Attribute("candleType");
+                        if (hoge != null)
                         {
-                            SelectedCandleType = CandleTypes.OneMin;
-                        }
-                        else if (hoge.Value == CandleTypes.OneHour.ToString())
-                        {
-                            SelectedCandleType = CandleTypes.OneHour;
-                        }
-                        else if (hoge.Value == CandleTypes.OneDay.ToString())
-                        {
-                            SelectedCandleType = CandleTypes.OneDay;
+                            if (hoge.Value == CandleTypes.OneMin.ToString())
+                            {
+                                SelectedCandleType = CandleTypes.OneMin;
+                            }
+                            else if (hoge.Value == CandleTypes.OneHour.ToString())
+                            {
+                                SelectedCandleType = CandleTypes.OneHour;
+                            }
+                            else if (hoge.Value == CandleTypes.OneDay.ToString())
+                            {
+                                SelectedCandleType = CandleTypes.OneDay;
+                            }
+                            else
+                            {
+                                // TODO other candle types
+
+                                SelectedCandleType = CandleTypes.OneMin;
+                            }
                         }
                         else
                         {
@@ -5356,510 +5365,512 @@ namespace BitWallpaper.ViewModels
 
                             SelectedCandleType = CandleTypes.OneMin;
                         }
+
                     }
                     else
                     {
-                        // TODO other candle types
-
+                        // デフォのチャート、キャンドルタイプ指定
                         SelectedCandleType = CandleTypes.OneMin;
                     }
 
+                    #endregion
+
+                    #region == アラーム音設定 ==
+
+                    var alarmSetting = xdoc.Root.Element("Alarm");
+                    if (alarmSetting != null)
+                    {
+                        var hoge = alarmSetting.Attribute("playSound");
+                        if (hoge != null)
+                        {
+                            if (hoge.Value == "true")
+                            {
+                                PlaySound = true;
+                            }
+                            else
+                            {
+                                PlaySound = false;
+                            }
+                        }
+                    }
+
+                    #endregion
+
+                    #region == 各通貨毎の設定 ==
+
+                    var pairs = xdoc.Root.Element("Pairs");
+                    if (pairs != null)
+                    {
+                        // PairBtcJpy
+                        var pair = pairs.Element("BtcJpy");
+                        if (pair != null)
+                        {
+                            var hoge = pair.Attribute("playSoundLowest");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairBtcJpy.PlaySoundLowest = true;
+                                }
+                                else
+                                {
+                                    PairBtcJpy.PlaySoundLowest = false;
+                                }
+                            }
+
+                            hoge = pair.Attribute("playSoundHighest");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairBtcJpy.PlaySoundHighest = true;
+                                }
+                                else
+                                {
+                                    PairBtcJpy.PlaySoundHighest = false;
+                                }
+                            }
+
+                            hoge = pair.Attribute("playSoundLowest24h");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairBtcJpy.PlaySoundLowest24h = true;
+                                }
+                                else
+                                {
+                                    PairBtcJpy.PlaySoundLowest24h = false;
+                                }
+                            }
+
+                            hoge = pair.Attribute("playSoundHighest24h");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairBtcJpy.PlaySoundHighest24h = true;
+                                }
+                                else
+                                {
+                                    PairBtcJpy.PlaySoundHighest24h = false;
+                                }
+                            }
+
+                            // 板グルーピング
+                            hoge = pair.Attribute("depthGrouping");
+                            if (hoge != null)
+                            {
+                                if (!string.IsNullOrEmpty(hoge.Value))
+                                {
+                                    try
+                                    {
+                                        PairBtcJpy.DepthGrouping = Decimal.Parse(hoge.Value);
+                                    }
+                                    catch
+                                    {
+                                        PairBtcJpy.DepthGrouping = 0;
+                                    }
+
+                                }
+                            }
+
+                        }
+
+                        // PairXrpJpy
+                        pair = pairs.Element("XrpJpy");
+                        if (pair != null)
+                        {
+                            var hoge = pair.Attribute("playSoundLowest");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairXrpJpy.PlaySoundLowest = true;
+                                }
+                                else
+                                {
+                                    PairXrpJpy.PlaySoundLowest = false;
+                                }
+                            }
+
+                            hoge = pair.Attribute("playSoundHighest");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairXrpJpy.PlaySoundHighest = true;
+                                }
+                                else
+                                {
+                                    PairXrpJpy.PlaySoundHighest = false;
+                                }
+                            }
+
+                            hoge = pair.Attribute("playSoundLowest24h");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairXrpJpy.PlaySoundLowest24h = true;
+                                }
+                                else
+                                {
+                                    PairXrpJpy.PlaySoundLowest24h = false;
+                                }
+                            }
+
+                            hoge = pair.Attribute("playSoundHighest24h");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairXrpJpy.PlaySoundHighest24h = true;
+                                }
+                                else
+                                {
+                                    PairXrpJpy.PlaySoundHighest24h = false;
+                                }
+                            }
+
+                            // 板グルーピング
+                            hoge = pair.Attribute("depthGrouping");
+                            if (hoge != null)
+                            {
+                                if (!string.IsNullOrEmpty(hoge.Value))
+                                {
+                                    try
+                                    {
+                                        PairXrpJpy.DepthGrouping = Decimal.Parse(hoge.Value);
+                                    }
+                                    catch
+                                    {
+                                        PairXrpJpy.DepthGrouping = 0;
+                                    }
+
+                                }
+                            }
+
+                        }
+
+                        // PairEthBtc
+                        pair = pairs.Element("EthBtc");
+                        if (pair != null)
+                        {
+                            var hoge = pair.Attribute("playSoundLowest");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairEthBtc.PlaySoundLowest = true;
+                                }
+                                else
+                                {
+                                    PairEthBtc.PlaySoundLowest = false;
+                                }
+                            }
+
+                            hoge = pair.Attribute("playSoundHighest");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairEthBtc.PlaySoundHighest = true;
+                                }
+                                else
+                                {
+                                    PairEthBtc.PlaySoundHighest = false;
+                                }
+                            }
+
+                            hoge = pair.Attribute("playSoundLowest24h");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairEthBtc.PlaySoundLowest24h = true;
+                                }
+                                else
+                                {
+                                    PairEthBtc.PlaySoundLowest24h = false;
+                                }
+                            }
+
+                            hoge = pair.Attribute("playSoundHighest24h");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairEthBtc.PlaySoundHighest24h = true;
+                                }
+                                else
+                                {
+                                    PairEthBtc.PlaySoundHighest24h = false;
+                                }
+                            }
+
+                            // 板グルーピング
+                            hoge = pair.Attribute("depthGrouping");
+                            if (hoge != null)
+                            {
+                                if (!string.IsNullOrEmpty(hoge.Value))
+                                {
+                                    try
+                                    {
+                                        PairEthBtc.DepthGrouping = Decimal.Parse(hoge.Value);
+                                    }
+                                    catch
+                                    {
+                                        PairEthBtc.DepthGrouping = 0;
+                                    }
+
+                                }
+                            }
+
+                        }
+
+                        // PairLtcBtc
+                        pair = pairs.Element("LtcBtc");
+                        if (pair != null)
+                        {
+                            var hoge = pair.Attribute("playSoundLowest");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairLtcBtc.PlaySoundLowest = true;
+                                }
+                                else
+                                {
+                                    PairLtcBtc.PlaySoundLowest = false;
+                                }
+                            }
+
+                            hoge = pair.Attribute("playSoundHighest");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairLtcBtc.PlaySoundHighest = true;
+                                }
+                                else
+                                {
+                                    PairLtcBtc.PlaySoundHighest = false;
+                                }
+                            }
+
+                            hoge = pair.Attribute("playSoundLowest24h");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairLtcBtc.PlaySoundLowest24h = true;
+                                }
+                                else
+                                {
+                                    PairLtcBtc.PlaySoundLowest24h = false;
+                                }
+                            }
+
+                            hoge = pair.Attribute("playSoundHighest24h");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairLtcBtc.PlaySoundHighest24h = true;
+                                }
+                                else
+                                {
+                                    PairLtcBtc.PlaySoundHighest24h = false;
+                                }
+                            }
+
+                            // 板グルーピング
+                            hoge = pair.Attribute("depthGrouping");
+                            if (hoge != null)
+                            {
+                                if (!string.IsNullOrEmpty(hoge.Value))
+                                {
+                                    try
+                                    {
+                                        PairLtcBtc.DepthGrouping = Decimal.Parse(hoge.Value);
+                                    }
+                                    catch
+                                    {
+                                        PairLtcBtc.DepthGrouping = 0;
+                                    }
+
+                                }
+                            }
+                        }
+
+                        // PairMonaJpy
+                        pair = pairs.Element("MonaJpy");
+                        if (pair != null)
+                        {
+                            var hoge = pair.Attribute("playSoundLowest");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairMonaJpy.PlaySoundLowest = true;
+                                }
+                                else
+                                {
+                                    PairMonaJpy.PlaySoundLowest = false;
+                                }
+                            }
+
+                            hoge = pair.Attribute("playSoundHighest");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairMonaJpy.PlaySoundHighest = true;
+                                }
+                                else
+                                {
+                                    PairMonaJpy.PlaySoundHighest = false;
+                                }
+                            }
+
+                            hoge = pair.Attribute("playSoundLowest24h");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairMonaJpy.PlaySoundLowest24h = true;
+                                }
+                                else
+                                {
+                                    PairMonaJpy.PlaySoundLowest24h = false;
+                                }
+                            }
+
+                            hoge = pair.Attribute("playSoundHighest24h");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairMonaJpy.PlaySoundHighest24h = true;
+                                }
+                                else
+                                {
+                                    PairMonaJpy.PlaySoundHighest24h = false;
+                                }
+                            }
+
+                            // 板グルーピング
+                            hoge = pair.Attribute("depthGrouping");
+                            if (hoge != null)
+                            {
+                                if (!string.IsNullOrEmpty(hoge.Value))
+                                {
+                                    try
+                                    {
+                                        PairMonaJpy.DepthGrouping = Decimal.Parse(hoge.Value);
+                                    }
+                                    catch
+                                    {
+                                        PairMonaJpy.DepthGrouping = 0;
+                                    }
+
+                                }
+                            }
+                        }
+
+                        // PairBchJpy
+                        pair = pairs.Element("BchJpy");
+                        if (pair != null)
+                        {
+                            var hoge = pair.Attribute("playSoundLowest");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairBchJpy.PlaySoundLowest = true;
+                                }
+                                else
+                                {
+                                    PairBchJpy.PlaySoundLowest = false;
+                                }
+                            }
+
+                            hoge = pair.Attribute("playSoundHighest");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairBchJpy.PlaySoundHighest = true;
+                                }
+                                else
+                                {
+                                    PairBchJpy.PlaySoundHighest = false;
+                                }
+                            }
+
+                            hoge = pair.Attribute("playSoundLowest24h");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairBchJpy.PlaySoundLowest24h = true;
+                                }
+                                else
+                                {
+                                    PairBchJpy.PlaySoundLowest24h = false;
+                                }
+                            }
+
+                            hoge = pair.Attribute("playSoundHighest24h");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairBchJpy.PlaySoundHighest24h = true;
+                                }
+                                else
+                                {
+                                    PairBchJpy.PlaySoundHighest24h = false;
+                                }
+                            }
+
+                            // 板グルーピング
+                            hoge = pair.Attribute("depthGrouping");
+                            if (hoge != null)
+                            {
+                                if (!string.IsNullOrEmpty(hoge.Value))
+                                {
+                                    try
+                                    {
+                                        PairBchJpy.DepthGrouping = Decimal.Parse(hoge.Value);
+                                    }
+                                    catch
+                                    {
+                                        PairBchJpy.DepthGrouping = 0;
+                                    }
+
+                                }
+                            }
+                        }
+
+                    }
+
+                    #endregion
                 }
                 else
                 {
                     // デフォのチャート、キャンドルタイプ指定
                     SelectedCandleType = CandleTypes.OneMin;
                 }
-
-                #endregion
-
-                #region == アラーム音設定 ==
-
-                var alarmSetting = xdoc.Root.Element("Alarm");
-                if (alarmSetting != null)
-                {
-                    var hoge = alarmSetting.Attribute("playSound");
-                    if (hoge != null)
-                    {
-                        if (hoge.Value == "true")
-                        {
-                            PlaySound = true;
-                        }
-                        else
-                        {
-                            PlaySound = false;
-                        }
-                    }
-                }
-
-                #endregion
-
-                #region == 各通貨毎の設定 ==
-
-                var pairs = xdoc.Root.Element("Pairs");
-                if (pairs != null)
-                {
-                    // PairBtcJpy
-                    var pair = pairs.Element("BtcJpy");
-                    if (pair != null)
-                    {
-                        var hoge = pair.Attribute("playSoundLowest");
-                        if (hoge != null)
-                        {
-                            if (hoge.Value == "true")
-                            {
-                                PairBtcJpy.PlaySoundLowest = true;
-                            }
-                            else
-                            {
-                                PairBtcJpy.PlaySoundLowest = false;
-                            }
-                        }
-
-                        hoge = pair.Attribute("playSoundHighest");
-                        if (hoge != null)
-                        {
-                            if (hoge.Value == "true")
-                            {
-                                PairBtcJpy.PlaySoundHighest = true;
-                            }
-                            else
-                            {
-                                PairBtcJpy.PlaySoundHighest = false;
-                            }
-                        }
-
-                        hoge = pair.Attribute("playSoundLowest24h");
-                        if (hoge != null)
-                        {
-                            if (hoge.Value == "true")
-                            {
-                                PairBtcJpy.PlaySoundLowest24h = true;
-                            }
-                            else
-                            {
-                                PairBtcJpy.PlaySoundLowest24h = false;
-                            }
-                        }
-
-                        hoge = pair.Attribute("playSoundHighest24h");
-                        if (hoge != null)
-                        {
-                            if (hoge.Value == "true")
-                            {
-                                PairBtcJpy.PlaySoundHighest24h = true;
-                            }
-                            else
-                            {
-                                PairBtcJpy.PlaySoundHighest24h = false;
-                            }
-                        }
-
-                        // 板グルーピング
-                        hoge = pair.Attribute("depthGrouping");
-                        if (hoge != null)
-                        {
-                            if (!string.IsNullOrEmpty(hoge.Value))
-                            {
-                                try
-                                {
-                                    PairBtcJpy.DepthGrouping = Decimal.Parse(hoge.Value);
-                                }
-                                catch
-                                {
-                                    PairBtcJpy.DepthGrouping = 0;
-                                }
-
-                            }
-                        }
-
-                    }
-
-                    // PairXrpJpy
-                    pair = pairs.Element("XrpJpy");
-                    if (pair != null)
-                    {
-                        var hoge = pair.Attribute("playSoundLowest");
-                        if (hoge != null)
-                        {
-                            if (hoge.Value == "true")
-                            {
-                                PairXrpJpy.PlaySoundLowest = true;
-                            }
-                            else
-                            {
-                                PairXrpJpy.PlaySoundLowest = false;
-                            }
-                        }
-
-                        hoge = pair.Attribute("playSoundHighest");
-                        if (hoge != null)
-                        {
-                            if (hoge.Value == "true")
-                            {
-                                PairXrpJpy.PlaySoundHighest = true;
-                            }
-                            else
-                            {
-                                PairXrpJpy.PlaySoundHighest = false;
-                            }
-                        }
-
-                        hoge = pair.Attribute("playSoundLowest24h");
-                        if (hoge != null)
-                        {
-                            if (hoge.Value == "true")
-                            {
-                                PairXrpJpy.PlaySoundLowest24h = true;
-                            }
-                            else
-                            {
-                                PairXrpJpy.PlaySoundLowest24h = false;
-                            }
-                        }
-
-                        hoge = pair.Attribute("playSoundHighest24h");
-                        if (hoge != null)
-                        {
-                            if (hoge.Value == "true")
-                            {
-                                PairXrpJpy.PlaySoundHighest24h = true;
-                            }
-                            else
-                            {
-                                PairXrpJpy.PlaySoundHighest24h = false;
-                            }
-                        }
-
-                        // 板グルーピング
-                        hoge = pair.Attribute("depthGrouping");
-                        if (hoge != null)
-                        {
-                            if (!string.IsNullOrEmpty(hoge.Value))
-                            {
-                                try
-                                {
-                                    PairXrpJpy.DepthGrouping = Decimal.Parse(hoge.Value);
-                                }
-                                catch
-                                {
-                                    PairXrpJpy.DepthGrouping = 0;
-                                }
-
-                            }
-                        }
-
-                    }
-
-                    // PairEthBtc
-                    pair = pairs.Element("EthBtc");
-                    if (pair != null)
-                    {
-                        var hoge = pair.Attribute("playSoundLowest");
-                        if (hoge != null)
-                        {
-                            if (hoge.Value == "true")
-                            {
-                                PairEthBtc.PlaySoundLowest = true;
-                            }
-                            else
-                            {
-                                PairEthBtc.PlaySoundLowest = false;
-                            }
-                        }
-
-                        hoge = pair.Attribute("playSoundHighest");
-                        if (hoge != null)
-                        {
-                            if (hoge.Value == "true")
-                            {
-                                PairEthBtc.PlaySoundHighest = true;
-                            }
-                            else
-                            {
-                                PairEthBtc.PlaySoundHighest = false;
-                            }
-                        }
-
-                        hoge = pair.Attribute("playSoundLowest24h");
-                        if (hoge != null)
-                        {
-                            if (hoge.Value == "true")
-                            {
-                                PairEthBtc.PlaySoundLowest24h = true;
-                            }
-                            else
-                            {
-                                PairEthBtc.PlaySoundLowest24h = false;
-                            }
-                        }
-
-                        hoge = pair.Attribute("playSoundHighest24h");
-                        if (hoge != null)
-                        {
-                            if (hoge.Value == "true")
-                            {
-                                PairEthBtc.PlaySoundHighest24h = true;
-                            }
-                            else
-                            {
-                                PairEthBtc.PlaySoundHighest24h = false;
-                            }
-                        }
-
-                        // 板グルーピング
-                        hoge = pair.Attribute("depthGrouping");
-                        if (hoge != null)
-                        {
-                            if (!string.IsNullOrEmpty(hoge.Value))
-                            {
-                                try
-                                {
-                                    PairEthBtc.DepthGrouping = Decimal.Parse(hoge.Value);
-                                }
-                                catch
-                                {
-                                    PairEthBtc.DepthGrouping = 0;
-                                }
-
-                            }
-                        }
-
-                    }
-
-                    // PairLtcBtc
-                    pair = pairs.Element("LtcBtc");
-                    if (pair != null)
-                    {
-                        var hoge = pair.Attribute("playSoundLowest");
-                        if (hoge != null)
-                        {
-                            if (hoge.Value == "true")
-                            {
-                                PairLtcBtc.PlaySoundLowest = true;
-                            }
-                            else
-                            {
-                                PairLtcBtc.PlaySoundLowest = false;
-                            }
-                        }
-
-                        hoge = pair.Attribute("playSoundHighest");
-                        if (hoge != null)
-                        {
-                            if (hoge.Value == "true")
-                            {
-                                PairLtcBtc.PlaySoundHighest = true;
-                            }
-                            else
-                            {
-                                PairLtcBtc.PlaySoundHighest = false;
-                            }
-                        }
-
-                        hoge = pair.Attribute("playSoundLowest24h");
-                        if (hoge != null)
-                        {
-                            if (hoge.Value == "true")
-                            {
-                                PairLtcBtc.PlaySoundLowest24h = true;
-                            }
-                            else
-                            {
-                                PairLtcBtc.PlaySoundLowest24h = false;
-                            }
-                        }
-
-                        hoge = pair.Attribute("playSoundHighest24h");
-                        if (hoge != null)
-                        {
-                            if (hoge.Value == "true")
-                            {
-                                PairLtcBtc.PlaySoundHighest24h = true;
-                            }
-                            else
-                            {
-                                PairLtcBtc.PlaySoundHighest24h = false;
-                            }
-                        }
-
-                        // 板グルーピング
-                        hoge = pair.Attribute("depthGrouping");
-                        if (hoge != null)
-                        {
-                            if (!string.IsNullOrEmpty(hoge.Value))
-                            {
-                                try
-                                {
-                                    PairLtcBtc.DepthGrouping = Decimal.Parse(hoge.Value);
-                                }
-                                catch
-                                {
-                                    PairLtcBtc.DepthGrouping = 0;
-                                }
-
-                            }
-                        }
-                    }
-
-                    // PairMonaJpy
-                    pair = pairs.Element("MonaJpy");
-                    if (pair != null)
-                    {
-                        var hoge = pair.Attribute("playSoundLowest");
-                        if (hoge != null)
-                        {
-                            if (hoge.Value == "true")
-                            {
-                                PairMonaJpy.PlaySoundLowest = true;
-                            }
-                            else
-                            {
-                                PairMonaJpy.PlaySoundLowest = false;
-                            }
-                        }
-
-                        hoge = pair.Attribute("playSoundHighest");
-                        if (hoge != null)
-                        {
-                            if (hoge.Value == "true")
-                            {
-                                PairMonaJpy.PlaySoundHighest = true;
-                            }
-                            else
-                            {
-                                PairMonaJpy.PlaySoundHighest = false;
-                            }
-                        }
-
-                        hoge = pair.Attribute("playSoundLowest24h");
-                        if (hoge != null)
-                        {
-                            if (hoge.Value == "true")
-                            {
-                                PairMonaJpy.PlaySoundLowest24h = true;
-                            }
-                            else
-                            {
-                                PairMonaJpy.PlaySoundLowest24h = false;
-                            }
-                        }
-
-                        hoge = pair.Attribute("playSoundHighest24h");
-                        if (hoge != null)
-                        {
-                            if (hoge.Value == "true")
-                            {
-                                PairMonaJpy.PlaySoundHighest24h = true;
-                            }
-                            else
-                            {
-                                PairMonaJpy.PlaySoundHighest24h = false;
-                            }
-                        }
-
-                        // 板グルーピング
-                        hoge = pair.Attribute("depthGrouping");
-                        if (hoge != null)
-                        {
-                            if (!string.IsNullOrEmpty(hoge.Value))
-                            {
-                                try
-                                {
-                                    PairMonaJpy.DepthGrouping = Decimal.Parse(hoge.Value);
-                                }
-                                catch
-                                {
-                                    PairMonaJpy.DepthGrouping = 0;
-                                }
-
-                            }
-                        }
-                    }
-
-                    // PairBchJpy
-                    pair = pairs.Element("BchJpy");
-                    if (pair != null)
-                    {
-                        var hoge = pair.Attribute("playSoundLowest");
-                        if (hoge != null)
-                        {
-                            if (hoge.Value == "true")
-                            {
-                                PairBchJpy.PlaySoundLowest = true;
-                            }
-                            else
-                            {
-                                PairBchJpy.PlaySoundLowest = false;
-                            }
-                        }
-
-                        hoge = pair.Attribute("playSoundHighest");
-                        if (hoge != null)
-                        {
-                            if (hoge.Value == "true")
-                            {
-                                PairBchJpy.PlaySoundHighest = true;
-                            }
-                            else
-                            {
-                                PairBchJpy.PlaySoundHighest = false;
-                            }
-                        }
-
-                        hoge = pair.Attribute("playSoundLowest24h");
-                        if (hoge != null)
-                        {
-                            if (hoge.Value == "true")
-                            {
-                                PairBchJpy.PlaySoundLowest24h = true;
-                            }
-                            else
-                            {
-                                PairBchJpy.PlaySoundLowest24h = false;
-                            }
-                        }
-
-                        hoge = pair.Attribute("playSoundHighest24h");
-                        if (hoge != null)
-                        {
-                            if (hoge.Value == "true")
-                            {
-                                PairBchJpy.PlaySoundHighest24h = true;
-                            }
-                            else
-                            {
-                                PairBchJpy.PlaySoundHighest24h = false;
-                            }
-                        }
-
-                        // 板グルーピング
-                        hoge = pair.Attribute("depthGrouping");
-                        if (hoge != null)
-                        {
-                            if (!string.IsNullOrEmpty(hoge.Value))
-                            {
-                                try
-                                {
-                                    PairBchJpy.DepthGrouping = Decimal.Parse(hoge.Value);
-                                }
-                                catch
-                                {
-                                    PairBchJpy.DepthGrouping = 0;
-                                }
-
-                            }
-                        }
-                    }
-
-                }
-
-                #endregion
             }
-            else
+            catch (System.IO.FileNotFoundException)
             {
-                // デフォのチャート、キャンドルタイプ指定
-                SelectedCandleType = CandleTypes.OneMin;
+                System.Diagnostics.Debug.WriteLine("■■■■■ Error  設定ファイルの保存中 - FileNotFoundException : " + AppConfigFilePath);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("■■■■■ Error  設定ファイルの保存中: " + ex + " while opening : " + AppConfigFilePath);
             }
 
             #endregion
@@ -6381,8 +6392,17 @@ namespace BitWallpaper.ViewModels
 
             #endregion
 
-            // 設定ファイルの保存
-            doc.Save(AppConfigFilePath);
+            try
+            {
+                // 設定ファイルの保存
+                doc.Save(AppConfigFilePath);
+
+            }
+            //catch (System.IO.FileNotFoundException) { }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("■■■■■ Error  設定ファイルの保存中: " + ex + " while opening : " + AppConfigFilePath);
+            }
 
             #endregion
 
@@ -8118,19 +8138,6 @@ namespace BitWallpaper.ViewModels
                             {
                                 throw new System.InvalidOperationException("UpdateChart: 不正な CandleTypes");
                             }
-
-                            /*
-                            // チャート最低値、最高値のセット
-                            if (chartAxisY[0].MaxValue < (double)newData.High)
-                            {
-                                chartAxisY[0].MaxValue = (double)newData.High;
-                            }
-
-                            if (chartAxisY[0].MinValue > (double)newData.Low)
-                            {
-                                chartAxisY[0].MinValue = (double)newData.Low;
-                            }
-                            */
 
                         }
                         catch (Exception ex)
