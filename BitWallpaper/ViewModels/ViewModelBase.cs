@@ -36,10 +36,17 @@ namespace BitWallpaper.ViewModels
 
             if (Application.Current != null)
             {
-                Application.Current.Dispatcher.Invoke(() =>
+                if (Application.Current.Dispatcher.CheckAccess())
                 {
                     this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-                });
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                    },DispatcherPriority.Normal);
+                }
             }
         }
 

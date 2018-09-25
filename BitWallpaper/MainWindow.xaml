@@ -49,6 +49,8 @@
     <Grid x:Name="BackgroundGrid" Background="Transparent">
         <Rectangle x:Name="AcrylicBackground" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="{DynamicResource WindowBackgroundBaseColorBrush}" Opacity="{Binding WindowOpacity, Mode=OneWay}" helpers:EnableDragHelper.EnableDrag="True"></Rectangle>
 
+        <Grid x:Name="MarginGrid">
+
         <!-- アプリタイトルバー -->
         <Grid>
             <Grid.RowDefinitions>
@@ -81,7 +83,7 @@
                     </Viewbox>
 
                     <TextBlock FontSize="12" Margin="15 0 0 0" Text="{Binding APIResultTicker, Mode=OneWay}" Foreground="{DynamicResource WarningColorBrush}" Style="{DynamicResource DefaultTextBlockStyle}" VerticalAlignment="Center"></TextBlock>
-                    
+
                     <!-- 通貨最高最低値更新通知 -->
                     <!--
                     <TextBlock x:Name="HighLowInfoText" FontSize="12" Text="{Binding Path=ActivePair.HighLowInfoText, Mode=OneWay, NotifyOnTargetUpdated=True}" Margin="15 0 0 0" HorizontalAlignment="Center" VerticalAlignment="Center" TextElement.FontWeight="Bold">
@@ -154,7 +156,7 @@
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
-                    
+
                     <!-- 透明度変更 -->
                     <Slider x:Name="SliderSeek" Grid.Column="1" Width="60" Opacity="0.7" Minimum="0.1" Maximum="1" Value="{Binding Mode=TwoWay, Path=WindowOpacity}" ToolTip="画面の透過率" VerticalAlignment="Center"  Margin="6 3 9 3" Foreground="Gray" Background="Transparent" IsMoveToPointEnabled="True" Style="{DynamicResource CustomSliderStyle}"></Slider>
 
@@ -179,15 +181,15 @@
                     <Button x:Name="MinimizeButton" Style="{StaticResource PathButton}" Width="18" Height="18" Margin="3" Opacity="0.7" Click="MinimizeButton_Click" ToolTip="最小化(Alt+Space, S)">
                         M20,14H4V10H20
                     </Button>
-                    
+
                     <Button x:Name="RestoreButton" Style="{StaticResource PathButton}" Width="18" Height="18" Margin="3" Opacity="0.7" Click="RestoreButton_Click" ToolTip="元のサイズに戻す(Alt+Space, R)">
                         M4,8H8V4H20V16H16V20H4V8M16,8V14H18V6H10V8H16M6,12V18H14V12H6Z
                     </Button>
-                    
+
                     <Button x:Name="MaxButton" Style="{StaticResource PathButton}" Width="18" Height="18" Margin="3" Opacity="0.7" Click="MaxButton_Click" ToolTip="最大化(Alt+Space, X)">
                         M4,4H20V20H4V4M6,8V18H18V8H6Z
                     </Button>
-                    
+
                     <Button x:Name="CloseButton" Style="{StaticResource PathButton}" Width="18" Height="18" Margin="3" Opacity="0.7" Click="CloseButton_Click" ToolTip="閉じる(Alt+Space, C)/(Alt+F4)">
                         M13.46,12L19,17.54V19H17.54L12,13.46L6.46,19H5V17.54L10.54,12L5,6.46V5H6.46L12,10.54L17.54,5H19V6.46L13.46,12Z
                     </Button>
@@ -409,19 +411,19 @@
                                 <Viewbox Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform" Width="14" Height="14">
                                     <Viewbox.Style>
                                         <Style TargetType="{x:Type Viewbox}">
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding PairBchJpy.PriceAlart}" Value="true">
-                                                <DataTrigger.EnterActions>
-                                                    <BeginStoryboard x:Name="BlinkingStoryboard1" Storyboard="{StaticResource BlinkingStoryboard}" />
-                                                </DataTrigger.EnterActions>
-                                                <!--
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding PairBchJpy.PriceAlart}" Value="true">
+                                                    <DataTrigger.EnterActions>
+                                                        <BeginStoryboard x:Name="BlinkingStoryboard1" Storyboard="{StaticResource BlinkingStoryboard}" />
+                                                    </DataTrigger.EnterActions>
+                                                    <!--
                                                             <DataTrigger.ExitActions>
                                                                 <StopStoryboard BeginStoryboardName="BlinkingStoryboard1" />
                                                             </DataTrigger.ExitActions>
                                                             -->
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
                                     </Viewbox.Style>
                                     <Canvas Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <Canvas.RenderTransform>
@@ -440,7 +442,7 @@
                         </TabItem>
                     </TabControl>
 
-                    <!-- 情報ボックス -->                
+                    <!-- 情報ボックス -->
                     <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Background="Transparent">
                         <Grid>
                             <!-- ぼかし背景を合わせる -->
@@ -454,7 +456,7 @@
 
                                     <!-- LTP -->
                                     <StackPanel Orientation="Horizontal" Margin="6 6 6 0" HorizontalAlignment="Left" VerticalAlignment="Top">
-                                        
+
                                         <TextBlock Text="{Binding Path=ActivePair.LtpString, Mode=OneWay}" FontFamily="Yu Gothic" TextOptions.TextRenderingMode="Auto" FontWeight="SemiBold" Typography.NumeralAlignment="Tabular" Typography.NumeralStyle="Normal" FontSize="{Binding Path=ActivePair.LtpFontSize, Mode=OneWay}" VerticalAlignment="Bottom" Margin="0 0 0 0" Padding="0">
                                             <TextBlock.Style>
                                                 <Style TargetType="{x:Type TextBlock}">
@@ -469,11 +471,11 @@
                                                 </Style>
                                             </TextBlock.Style>
                                         </TextBlock>
-                                        
+
                                         <Label VerticalAlignment="Bottom" Margin="3 0 0 10" Padding="0" Content="{Binding CurrentPairUnitString,Mode=OneWay}" Style="{DynamicResource DefaultLabelStyle}"></Label>
-                                        
+
                                     </StackPanel>
-                                    
+
                                     <Grid Margin="6 15 3 0" HorizontalAlignment="Left" VerticalAlignment="Top">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
@@ -494,7 +496,7 @@
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-                                        
+
                                         <!-- High & Low -->
                                         <CheckBox Grid.Row="1" Grid.Column="0" Padding="3 0 0 3.5" Content="24時間 High" ToolTip="24時間最高値でアラームを鳴らす" Margin="0 0 0 0" IsChecked="{Binding ActivePair.PlaySoundHighest24h}" Style="{DynamicResource DefaultCheckBoxStyle}"/>
                                         <CheckBox Grid.Row="2" Grid.Column="0" Padding="3 0 0 3.5" Content="起動後 High" ToolTip="起動後最高値でアラームを鳴らす" Margin="0 0 0 0" IsChecked="{Binding ActivePair.PlaySoundHighest}" Style="{DynamicResource DefaultCheckBoxStyle}"/>
@@ -748,7 +750,7 @@
                                         <!-- 統計情報 -->
 
                                         <Border Grid.Row="8" Margin="3" />
-                                        
+
                                         <Label Grid.Row="9" Grid.Column="0" Padding="3 0 0 3.5" Content="24時間中央値" Style="{DynamicResource DefaultLabelStyle}"></Label>
                                         <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal" Margin="6 0 0 3.5">
                                             <TextBlock Text="{Binding Path=ActivePair.MiddleLast24PriceString, Mode=OneWay, StringFormat={}{0:N0}}" Style="{DynamicResource DefaultTextBlockStyle}"></TextBlock>
@@ -851,7 +853,7 @@
                     </Border>
 
                 </Grid>
-                
+
             </Border>
 
             <!-- 板情報 | 歩み値 -->
@@ -1036,13 +1038,13 @@
                                 <Border BorderBrush="DimGray" BorderThickness="0 0 0 0.5" Margin="3" Padding="3">
                                     <Label Padding="0" Content="開発者サポート" Style="{StaticResource SectionTitle}"/>
                                 </Border>
-                                
+
                                 <TextBlock Padding="6" Style="{DynamicResource DefaultTextBlockStyle}">
                                     <Run Text="もし「これイイネ」と思っていただけたら、ビットコインで「投げ銭」よろしくお願いします！"></Run>
                                 </TextBlock>
                                 <TextBox Padding="6" Margin="6" Text="1HQv6ib57So9j8AXxCXwWugVPnTcjvg9cn" IsReadOnly="True" Width="360" HorizontalAlignment="Left"/>
                                 <Image Name="imageQRCode" Source="Resources/QR.png" Margin="6" Width="100" Height="100" HorizontalAlignment="Left"></Image>
-                                
+
                             </StackPanel>
 
                         </ScrollViewer>
@@ -1295,6 +1297,8 @@ SOFTWARE.
 
 
             </Grid>
+
+        </Grid>
 
         </Grid>
 

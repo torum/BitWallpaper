@@ -325,7 +325,7 @@ namespace BitWallpaper
 
                 _dispatcherMouseTimer.Stop();
 
-                BackgroundGrid.Margin = new Thickness(0);
+                //BackgroundGrid.Margin = new Thickness(0);
             }
             else if (this.WindowState == WindowState.Maximized)
             {
@@ -334,7 +334,7 @@ namespace BitWallpaper
 
                 _dispatcherMouseTimer.Start();
 
-                BackgroundGrid.Margin = new Thickness(12);
+                //MarginGrid.Margin = new Thickness(3);
             }
 
         }

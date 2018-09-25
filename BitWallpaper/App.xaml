@@ -7,7 +7,8 @@
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf" 
              StartupUri="MainWindow.xaml"
-             Startup="AppOnStartup">
+             Startup="AppOnStartup"
+             ShutdownMode="OnMainWindowClose">
 
     <Application.Resources>
         <ResourceDictionary>

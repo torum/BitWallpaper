@@ -92,8 +92,8 @@ namespace BitWallpaper.ViewModels
 
         #region == 基本 ==
 
-        /// 0.0.0.8
-        /// カスタムアラートが保存されないバグ修正、タイトルメニューのアイコン余白調整
+        /// 0.0.0.8  (1.5.3)
+        /// カスタムアラート値が保存されないバグ修正、タイトルメニューのアイコン余白調整、午前9時問題でバグがあった、ウィンドウ最大時余白修正。
         /// 0.0.0.7  (1.5.2)
         /// システムトレイへ最小化、カスタムアラートの追加、バルーン通知
         /// 0.0.0.6  (1.5.1)
@@ -109,7 +109,7 @@ namespace BitWallpaper.ViewModels
         /// 
 
         // Application version
-        private string _appVer = "0.0.0.7";
+        private string _appVer = "0.0.0.8";
 
         // Application name
         private string _appName = "BitWallpaper";
@@ -1286,12 +1286,6 @@ namespace BitWallpaper.ViewModels
                 {
                     CurrentPair = Pairs.btc_jpy;
                     ActivePair = PairBtcJpy;
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        
-                    });
-
-                    DepthGroupingChanged = true;
 
                     // 主にチャートの切替
                     IsBtcJpyVisible = true;
@@ -1301,17 +1295,12 @@ namespace BitWallpaper.ViewModels
                     IsMonaJpyVisible = false;
                     IsBchJpyVisible = false;
 
+                    DepthGroupingChanged = true;
                 }
                 else if (_activePairIndex == 1)
                 {
                     CurrentPair = Pairs.xrp_jpy;
                     ActivePair = PairXrpJpy;
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        
-                    });
-
-                    DepthGroupingChanged = true;
 
                     IsBtcJpyVisible = false;
                     IsXrpJpyVisible = true;
@@ -1320,17 +1309,12 @@ namespace BitWallpaper.ViewModels
                     IsMonaJpyVisible = false;
                     IsBchJpyVisible = false;
 
+                    DepthGroupingChanged = true;
                 }
                 else if (_activePairIndex == 2)
                 {
                     CurrentPair = Pairs.ltc_btc;
                     ActivePair = PairLtcBtc;
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        
-                    });
-
-                    DepthGroupingChanged = true;
 
                     IsBtcJpyVisible = false;
                     IsXrpJpyVisible = false;
@@ -1339,17 +1323,12 @@ namespace BitWallpaper.ViewModels
                     IsMonaJpyVisible = false;
                     IsBchJpyVisible = false;
 
+                    DepthGroupingChanged = true;
                 }
                 else if (_activePairIndex == 3)
                 {
                     CurrentPair = Pairs.eth_btc;
                     ActivePair = PairEthBtc;
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        
-                    });
-
-                    DepthGroupingChanged = true;
 
                     IsBtcJpyVisible = false;
                     IsXrpJpyVisible = false;
@@ -1358,17 +1337,12 @@ namespace BitWallpaper.ViewModels
                     IsMonaJpyVisible = false;
                     IsBchJpyVisible = false;
 
+                    DepthGroupingChanged = true;
                 }
                 else if (_activePairIndex == 4)
                 {
                     CurrentPair = Pairs.mona_jpy;
                     ActivePair = PairMonaJpy;
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        
-                    });
-
-                    DepthGroupingChanged = true;
 
                     IsBtcJpyVisible = false;
                     IsXrpJpyVisible = false;
@@ -1377,17 +1351,12 @@ namespace BitWallpaper.ViewModels
                     IsMonaJpyVisible = true;
                     IsBchJpyVisible = false;
 
+                    DepthGroupingChanged = true;
                 }
                 else if (_activePairIndex == 5)
                 {
                     CurrentPair = Pairs.bcc_jpy;
                     ActivePair = PairBchJpy;
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        
-                    });
-
-                    DepthGroupingChanged = true;
 
                     IsBtcJpyVisible = false;
                     IsXrpJpyVisible = false;
@@ -1396,6 +1365,7 @@ namespace BitWallpaper.ViewModels
                     IsMonaJpyVisible = false;
                     IsBchJpyVisible = true;
 
+                    DepthGroupingChanged = true;
                 }
 
                 // チャートの表示
@@ -3217,7 +3187,7 @@ namespace BitWallpaper.ViewModels
 
             #endregion
 
-            // Ticker（他の通貨用）のタイマー起動
+            // Tickerのタイマー起動
             dispatcherTimerTickOtherPairs.Tick += new EventHandler(TickerTimerOtherPairs);
             dispatcherTimerTickOtherPairs.Interval = new TimeSpan(0, 0, 1);
             dispatcherTimerTickOtherPairs.Start();
@@ -7058,7 +7028,10 @@ namespace BitWallpaper.ViewModels
                 {
                     // 逆順にする
                     ListOhlcvsOneHour.Reverse();
-
+                }
+                else
+                {
+                    ListOhlcvsOneHour = new List<Ohlcv>();
                 }
 
                 //Debug.WriteLine("昨日の1hour取得開始 " + pair.ToString());
@@ -7198,6 +7171,10 @@ namespace BitWallpaper.ViewModels
                     // 逆順にする
                     ListOhlcvsOneMin.Reverse();
                 }
+                else
+                {
+                    ListOhlcvsOneMin = new List<Ohlcv>();
+                }
 
                 // 00:00:00から23:59:59分までしか取れないので、 3時間分取るには、00:00:00から3:00までは 最新のデータとるには日付を１日マイナスする
                 if (dtToday.Hour <= 2) // 3時間欲しい場合 2am までは昨日の分も。
@@ -7245,7 +7222,10 @@ namespace BitWallpaper.ViewModels
                 {
                     // 逆順にする
                     ListOhlcvsOneDay.Reverse();
-
+                }
+                else
+                {
+                    ListOhlcvsOneDay = new List<Ohlcv>();
                 }
 
                 // BitWallpaperの場合は最大２か月表示なので。
@@ -7659,11 +7639,11 @@ namespace BitWallpaper.ViewModels
                         int c = span;
                         foreach (var oh in lst)
                         {
-                            // 全てのポイントが同じ場合、スキップする。変なデータ？ 本家もスキップしている。
-                            if ((oh.Open == oh.High) && (oh.Open == oh.Low) && (oh.Open == oh.Close) && (oh.Volume == 0))
-                            {
+                            // 全てのポイントが同じ場合、スキップする。変なデータ？ 本家もスキップしている。＞逆に変になるからそのまま
+                            //if ((oh.Open == oh.High) && (oh.Open == oh.Low) && (oh.Open == oh.Close) && (oh.Volume == 0))
+                            //{
                                 //continue;
-                            }
+                            //}
 
                             // 表示数を限る 直近のspan本
                             if (i < (span - 1))
@@ -7710,28 +7690,30 @@ namespace BitWallpaper.ViewModels
                             i = i + 1;
                         }
 
+
+                        // Candlestickクリア
+                        chartSeries[0].Values.Clear();
+
+                        // 出来高クリア
+                        //ChartSeries[1].Values.Clear();
+                        // https://github.com/Live-Charts/Live-Charts/issues/76
+                        for (int v = 0; v < chartSeries[1].Values.Count - 1; v++)
+                        {
+                            chartSeries[1].Values[v] = (double)0;
+                        }
+
                         if (Application.Current == null) return;
                         Application.Current.Dispatcher.Invoke(() =>
                         {
                             try
                             {
-                                // Candlestickクリア
-                                chartSeries[0].Values.Clear();
-
-                                // 出来高クリア
-                                //ChartSeries[1].Values.Clear();
-                                // https://github.com/Live-Charts/Live-Charts/issues/76
-                                for (int v = 0; v < chartSeries[1].Values.Count - 1; v++)
-                                {
-                                    chartSeries[1].Values[v] = (double)0;
-                                }
 
                                 // ラベル表示クリア > エラる
                                 //chartAxisX[0].Labels.Clear();
 
                                 // 期間設定
                                 chartAxisX[0].MaxValue = span - 1;
-                                chartAxisX[0].MinValue = 0;
+                                //chartAxisX[0].MinValue = 0;
 
                                 // まとめて追加
 
@@ -7755,7 +7737,7 @@ namespace BitWallpaper.ViewModels
                                 Debug.WriteLine("■■■■■ " + pair.ToString() + " Chart loading error: " + ex.ToString());
                             }
 
-                        });
+                        }, DispatcherPriority.Normal);
                     }
 
                 }
@@ -7955,7 +7937,7 @@ namespace BitWallpaper.ViewModels
         private async void UpdateCandlestick(Pairs pair, CandleTypes ct)
         {
             //ChartLoadingInfo = "チャートデータの更新中....";
-            await Task.Delay(600);
+            //await Task.Delay(600);
 
             // 今日の日付セット。UTCで。
             DateTime dtToday = DateTime.Now.ToUniversalTime();
@@ -8333,20 +8315,21 @@ namespace BitWallpaper.ViewModels
                     {
                         try
                         {
+                            // 一番古いの削除
+                            chartSeries[0].Values.RemoveAt(0);
+                            chartSeries[1].Values.RemoveAt(0);
+                            chartAxisX[0].Labels.RemoveAt(0);
 
                             // ポイント作成
                             OhlcPoint p = new OhlcPoint((double)newData.Open, (double)newData.High, (double)newData.Low, (double)newData.Close);
-                            // 一番古いの削除
-                            chartSeries[0].Values.RemoveAt(0);
-                            // 追加
+
+                            // ポイント追加
                             chartSeries[0].Values.Add(p);
 
-                            // 出来高
-                            chartSeries[1].Values.RemoveAt(0);
+                            // 出来高追加
                             chartSeries[1].Values.Add((double)newData.Volume);
 
-                            // ラベル
-                            chartAxisX[0].Labels.RemoveAt(0);
+                            // ラベル追加
                             if (ct == CandleTypes.OneMin)
                             {
                                 chartAxisX[0].Labels.Add(newData.TimeStamp.ToString("HH:mm"));
@@ -8374,7 +8357,7 @@ namespace BitWallpaper.ViewModels
                             Debug.WriteLine("■■■■■ " + pair.ToString() + " Chart adding error: " + ex.ToString());
                         }
 
-                    });
+                    }, DispatcherPriority.Normal);
 
                 }
             }
@@ -8445,18 +8428,26 @@ namespace BitWallpaper.ViewModels
             {
                 if (chartSeries[0].Values.Count > 0)
                 {
-
                     if (Application.Current == null) return;
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
 
+                    if (Application.Current.Dispatcher.CheckAccess())
+                    {
+                        Debug.WriteLine("Dispatcher.CheckAccess()");
                         ((OhlcPoint)chartSeries[0].Values[chartSeries[0].Values.Count - 1]).Open = (double)newData.Open;
                         ((OhlcPoint)chartSeries[0].Values[chartSeries[0].Values.Count - 1]).High = (double)newData.High;
                         ((OhlcPoint)chartSeries[0].Values[chartSeries[0].Values.Count - 1]).Low = (double)newData.Low;
-                        ((OhlcPoint)chartSeries[0].Values[chartSeries[0].Values.Count - 1]).Close = (double)newData.Close;
+                    }
+                    else
+                    {
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            ((OhlcPoint)chartSeries[0].Values[chartSeries[0].Values.Count - 1]).Open = (double)newData.Open;
+                            ((OhlcPoint)chartSeries[0].Values[chartSeries[0].Values.Count - 1]).High = (double)newData.High;
+                            ((OhlcPoint)chartSeries[0].Values[chartSeries[0].Values.Count - 1]).Low = (double)newData.Low;
+                            ((OhlcPoint)chartSeries[0].Values[chartSeries[0].Values.Count - 1]).Close = (double)newData.Close;
 
-                    });
-
+                        }, DispatcherPriority.Normal);
+                    }
                 }
             }
 
