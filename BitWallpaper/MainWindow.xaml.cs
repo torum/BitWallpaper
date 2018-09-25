@@ -135,6 +135,8 @@ namespace BitWallpaper
 
             _isSystemTray = false;
 
+            (this.DataContext as MainViewModel).MinMode = false;
+
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -325,7 +327,7 @@ namespace BitWallpaper
 
                 _dispatcherMouseTimer.Stop();
 
-                //BackgroundGrid.Margin = new Thickness(0);
+                MarginGrid.Margin = new Thickness(0);
             }
             else if (this.WindowState == WindowState.Maximized)
             {
@@ -334,7 +336,7 @@ namespace BitWallpaper
 
                 _dispatcherMouseTimer.Start();
 
-                //MarginGrid.Margin = new Thickness(3);
+                MarginGrid.Margin = new Thickness(8);
             }
 
         }
@@ -346,11 +348,17 @@ namespace BitWallpaper
 
         private void MaxButton_Click(object sender, RoutedEventArgs e)
         {
+
+            MarginGrid.Margin = new Thickness(8);
+
             this.WindowState = WindowState.Maximized;
         }
 
         private void RestoreButton_Click(object sender, RoutedEventArgs e)
         {
+
+            MarginGrid.Margin = new Thickness(0);
+
             this.WindowState = WindowState.Normal;
         }
 
@@ -391,9 +399,6 @@ namespace BitWallpaper
             if (_isSystemTray)
             {
                 BringToForeground();
-                //_isSystemTray = false;
-
-                (this.DataContext as MainViewModel).MinMode = false;
             }
             else
             {

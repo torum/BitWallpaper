@@ -7713,7 +7713,7 @@ namespace BitWallpaper.ViewModels
 
                                 // 期間設定
                                 chartAxisX[0].MaxValue = span - 1;
-                                //chartAxisX[0].MinValue = 0;
+                                chartAxisX[0].MinValue = 0;
 
                                 // まとめて追加
 
