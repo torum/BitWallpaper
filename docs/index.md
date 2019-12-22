@@ -39,8 +39,6 @@ __[マイクロソフトストアにて、無料公開中 (https://www.microsoft
 ### プロジェクトページ（GitHub）
 [https://github.com/torum/BitWallpaper](https://github.com/torum/BitWallpaper)
 
-### 更新情報（Twitter）
-[https://twitter.com/torum_apps](https://twitter.com/torum_apps)
  
 
  
