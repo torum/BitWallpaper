@@ -31,8 +31,6 @@ Lightテーマ
 __[マイクロソフトストアにて無料で公開中 (https://www.microsoft.com/ja-jp/p/bitwallpaper/9ncc3ntg9dp3)](https://www.microsoft.com/ja-jp/p/bitwallpaper/9ncc3ntg9dp3)__
 
 
-### 更新情報（Twitter）
-[https://twitter.com/torum_apps](https://twitter.com/torum_apps)
  
 
  
