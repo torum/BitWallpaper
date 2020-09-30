@@ -27,7 +27,8 @@ namespace BitWallpaper.ViewModels
     // 通貨ペア
     public enum Pairs
     {
-        btc_jpy, xrp_jpy, ltc_btc, eth_btc, mona_jpy, mona_btc, bcc_jpy, bcc_btc
+        //btc_jpy, xrp_jpy, ltc_btc, eth_btc, mona_jpy, mona_btc, bcc_jpy, bcc_btc
+        btc_jpy, xrp_jpy, eth_jpy, ltc_jpy, bcc_jpy, mona_jpy, xlm_jpy
     }
 
     #region == チック履歴 TickHistory クラス ==
@@ -92,6 +93,8 @@ namespace BitWallpaper.ViewModels
 
         #region == 基本 ==
 
+        /// 0.0.0.9
+        /// 通貨ペアXLM/JPY の表示を追加。通貨ペアETH/BTCからETH/JPY、LTC/BTCからLTC/JPYへ変更。通貨ペアの表示順序を公式サイトに合わせて並べ替え。
         /// 0.0.0.8  (1.5.3)
         /// カスタムアラート値が保存されないバグ修正、タイトルメニューのアイコン余白調整、午前9時問題でバグがあった、ウィンドウ最大時余白修正。
         /// 0.0.0.7  (1.5.2)
@@ -105,11 +108,11 @@ namespace BitWallpaper.ViewModels
         /// 0.0.0.3
         /// テーマ切替と背景透過率の変更機能を追加。
         /// 0.0.0.2
-        /// ロウソク足とチャート表示期間のアイコンを付けて、チャート表示期間を選択で切り替えられるようにしました。
+        /// ロウソク足とチャート表示期間のアイコンを付けて、チャート表示期間を選択で切り替えられるように。
         /// 
 
         // Application version
-        private string _appVer = "0.0.0.8";
+        private string _appVer = "0.0.0.9";
 
         // Application name
         private string _appName = "BitWallpaper";
@@ -320,14 +323,17 @@ namespace BitWallpaper.ViewModels
 
             public Dictionary<Pairs, string> PairStrings { get; set; } = new Dictionary<Pairs, string>()
         {
-            {Pairs.btc_jpy, "BTC/JPY"},
-            {Pairs.xrp_jpy, "XRP/JPY"},
-            {Pairs.eth_btc, "ETH/BTC"},
-            {Pairs.ltc_btc, "LTC/BTC"},
-            {Pairs.mona_jpy, "MONA/JPY"},
-            {Pairs.mona_btc, "MONA/BTC"},
-            {Pairs.bcc_jpy, "BCH/JPY"},
-            {Pairs.bcc_btc, "BCH/BTC"},
+                {Pairs.btc_jpy, "BTC/JPY"},
+                {Pairs.xrp_jpy, "XRP/JPY"},
+                //{Pairs.eth_btc, "ETH/BTC"},
+                {Pairs.eth_jpy, "ETH/JPY"},
+                //{Pairs.ltc_btc, "LTC/BTC"},
+                {Pairs.ltc_jpy, "LTC/JPY"},
+                {Pairs.mona_jpy, "MONA/JPY"},
+                //{Pairs.mona_btc, "MONA/BTC"},
+                {Pairs.bcc_jpy, "BCH/JPY"},
+                //{Pairs.bcc_btc, "BCH/BTC"},
+                {Pairs.xlm_jpy, "XLM/JPY"},
         };
 
             // 最終取引価格
@@ -1290,10 +1296,11 @@ namespace BitWallpaper.ViewModels
                     // 主にチャートの切替
                     IsBtcJpyVisible = true;
                     IsXrpJpyVisible = false;
-                    IsEthBtcVisible = false;
-                    IsLtcBtcVisible = false;
+                    IsEthJpyVisible = false;
+                    IsLtcJpyVisible = false;
                     IsMonaJpyVisible = false;
                     IsBchJpyVisible = false;
+                    IsXlmJpyVisible = false;
 
                     DepthGroupingChanged = true;
                 }
@@ -1304,66 +1311,86 @@ namespace BitWallpaper.ViewModels
 
                     IsBtcJpyVisible = false;
                     IsXrpJpyVisible = true;
-                    IsEthBtcVisible = false;
-                    IsLtcBtcVisible = false;
+                    IsEthJpyVisible = false;
+                    IsLtcJpyVisible = false;
                     IsMonaJpyVisible = false;
                     IsBchJpyVisible = false;
+                    IsXlmJpyVisible = false;
 
                     DepthGroupingChanged = true;
                 }
                 else if (_activePairIndex == 2)
                 {
-                    CurrentPair = Pairs.ltc_btc;
-                    ActivePair = PairLtcBtc;
+                    CurrentPair = Pairs.eth_jpy;
+                    ActivePair = PairEthJpy;
 
                     IsBtcJpyVisible = false;
                     IsXrpJpyVisible = false;
-                    IsEthBtcVisible = false;
-                    IsLtcBtcVisible = true;
+                    IsEthJpyVisible = true;
+                    IsLtcJpyVisible = false;
                     IsMonaJpyVisible = false;
                     IsBchJpyVisible = false;
+                    IsXlmJpyVisible = false;
 
                     DepthGroupingChanged = true;
                 }
                 else if (_activePairIndex == 3)
                 {
-                    CurrentPair = Pairs.eth_btc;
-                    ActivePair = PairEthBtc;
+                    CurrentPair = Pairs.ltc_jpy;
+                    ActivePair = PairLtcJpy;
 
                     IsBtcJpyVisible = false;
                     IsXrpJpyVisible = false;
-                    IsEthBtcVisible = true;
-                    IsLtcBtcVisible = false;
+                    IsEthJpyVisible = false;
+                    IsLtcJpyVisible = true;
                     IsMonaJpyVisible = false;
                     IsBchJpyVisible = false;
+                    IsXlmJpyVisible = false;
 
                     DepthGroupingChanged = true;
                 }
                 else if (_activePairIndex == 4)
-                {
-                    CurrentPair = Pairs.mona_jpy;
-                    ActivePair = PairMonaJpy;
-
-                    IsBtcJpyVisible = false;
-                    IsXrpJpyVisible = false;
-                    IsEthBtcVisible = false;
-                    IsLtcBtcVisible = false;
-                    IsMonaJpyVisible = true;
-                    IsBchJpyVisible = false;
-
-                    DepthGroupingChanged = true;
-                }
-                else if (_activePairIndex == 5)
                 {
                     CurrentPair = Pairs.bcc_jpy;
                     ActivePair = PairBchJpy;
 
                     IsBtcJpyVisible = false;
                     IsXrpJpyVisible = false;
-                    IsEthBtcVisible = false;
-                    IsLtcBtcVisible = false;
+                    IsEthJpyVisible = false;
+                    IsLtcJpyVisible = false;
                     IsMonaJpyVisible = false;
                     IsBchJpyVisible = true;
+                    IsXlmJpyVisible = false;
+
+                    DepthGroupingChanged = true;
+                }
+                else if (_activePairIndex == 5)
+                {
+                    CurrentPair = Pairs.mona_jpy;
+                    ActivePair = PairMonaJpy;
+
+                    IsBtcJpyVisible = false;
+                    IsXrpJpyVisible = false;
+                    IsEthJpyVisible = false;
+                    IsLtcJpyVisible = false;
+                    IsMonaJpyVisible = true;
+                    IsBchJpyVisible = false;
+                    IsXlmJpyVisible = false;
+
+                    DepthGroupingChanged = true;
+                }
+                else if (_activePairIndex == 6)
+                {
+                    CurrentPair = Pairs.xlm_jpy;
+                    ActivePair = PairXlmJpy;
+
+                    IsBtcJpyVisible = false;
+                    IsXrpJpyVisible = false;
+                    IsEthJpyVisible = false;
+                    IsLtcJpyVisible = false;
+                    IsMonaJpyVisible = false;
+                    IsBchJpyVisible = false;
+                    IsXlmJpyVisible = true;
 
                     DepthGroupingChanged = true;
                 }
@@ -1410,14 +1437,17 @@ namespace BitWallpaper.ViewModels
         {
             get
             {
-                if ((CurrentPair == Pairs.btc_jpy) || (CurrentPair == Pairs.xrp_jpy) || (CurrentPair == Pairs.mona_jpy) || (CurrentPair == Pairs.bcc_jpy))
+                //if ((CurrentPair == Pairs.btc_jpy) || (CurrentPair == Pairs.xrp_jpy) || (CurrentPair == Pairs.mona_jpy) || (CurrentPair == Pairs.bcc_jpy))
+                if ((CurrentPair == Pairs.btc_jpy) || (CurrentPair == Pairs.xrp_jpy) || (CurrentPair == Pairs.mona_jpy) || (CurrentPair == Pairs.bcc_jpy) || (CurrentPair == Pairs.eth_jpy) || (CurrentPair == Pairs.ltc_jpy) || (CurrentPair == Pairs.xlm_jpy))
                 {
                     return "円";
                 }
+                /*
                 else if ((CurrentPair == Pairs.eth_btc) || (CurrentPair == Pairs.ltc_btc))
                 {
                     return "BTC";
                 }
+                */
                 else
                 {
                     return "?";
@@ -1430,36 +1460,45 @@ namespace BitWallpaper.ViewModels
         {
             {Pairs.btc_jpy, "BTC/JPY"},
             {Pairs.xrp_jpy, "XRP/JPY"},
-            {Pairs.eth_btc, "ETH/BTC"},
-            {Pairs.ltc_btc, "LTC/BTC"},
+            //{Pairs.eth_btc, "ETH/BTC"},
+            {Pairs.eth_jpy, "ETH/JPY"},
+            //{Pairs.ltc_btc, "LTC/BTC"},
+            {Pairs.ltc_jpy, "LTC/JPY"},
             {Pairs.mona_jpy, "MONA/JPY"},
-            {Pairs.mona_btc, "MONA/BTC"},
+            //{Pairs.mona_btc, "MONA/BTC"},
             {Pairs.bcc_jpy, "BCH/JPY"},
-            {Pairs.bcc_btc, "BCH/BTC"},
+            //{Pairs.bcc_btc, "BCH/BTC"},
+            {Pairs.xlm_jpy, "XLM/JPY"},
         };
 
         public Dictionary<string, Pairs> GetPairs { get; set; } = new Dictionary<string, Pairs>()
         {
             {"btc_jpy", Pairs.btc_jpy},
             {"xrp_jpy", Pairs.xrp_jpy},
-            {"eth_btc", Pairs.eth_btc},
-            {"ltc_btc", Pairs.ltc_btc},
+            //{"eth_btc", Pairs.eth_btc},
+            {"eth_jpy", Pairs.eth_jpy},
+            //{"ltc_btc", Pairs.ltc_btc},
+            {"ltc_jpy", Pairs.ltc_jpy},
             {"mona_jpy", Pairs.mona_jpy},
-            {"mona_btc", Pairs.mona_btc},
+            //{"mona_btc", Pairs.mona_btc},
             {"bcc_jpy", Pairs.bcc_jpy},
-            {"bcc_btc", Pairs.bcc_btc},
+            //{"bcc_btc", Pairs.bcc_btc},
+            {"xlm_jpy", Pairs.xlm_jpy},
         };
 
         public Dictionary<Pairs, string> CurrentPairCoin { get; set; } = new Dictionary<Pairs, string>()
         {
             {Pairs.btc_jpy, "BTC"},
             {Pairs.xrp_jpy, "XRP"},
-            {Pairs.eth_btc, "ETH"},
-            {Pairs.ltc_btc, "LTC"},
+            //{Pairs.eth_btc, "ETH"},
+            {Pairs.eth_jpy, "ETH"},
+            //{Pairs.ltc_btc, "LTC"},
+            {Pairs.ltc_jpy, "LTC"},
             {Pairs.mona_jpy, "Mona"},
-            {Pairs.mona_btc, "Mona"},
+            //{Pairs.mona_btc, "Mona"},
             {Pairs.bcc_jpy, "BCH"},
-            {Pairs.bcc_btc, "BCH"},
+            //{Pairs.bcc_btc, "BCH"},
+            {Pairs.xlm_jpy, "XLM"},
         };
 
         // デフォの通貨ペアクラス
@@ -1532,55 +1571,55 @@ namespace BitWallpaper.ViewModels
             }
         }
 
-        private Pair _pairEthBtc = new Pair(Pairs.eth_btc, 24, "{0:#,0.00000000}", 0.0001M, 0.00001M);
-        public Pair PairEthBtc
+        private Pair _pairEthJpy = new Pair(Pairs.eth_jpy, 24, "{0:#,0}", 100M, 1000M);
+        public Pair PairEthJpy
         {
             get
             {
-                return _pairEthBtc;
+                return _pairEthJpy;
             }
         }
 
-        private bool _isEthBtcVisible;
-        public bool IsEthBtcVisible
+        private bool _isEthJpyVisible;
+        public bool IsEthJpyVisible
         {
             get
             {
-                return _isEthBtcVisible;
+                return _isEthJpyVisible;
             }
             set
             {
-                if (_isEthBtcVisible == value)
+                if (_isEthJpyVisible == value)
                     return;
 
-                _isEthBtcVisible = value;
-                this.NotifyPropertyChanged("IsEthBtcVisible");
+                _isEthJpyVisible = value;
+                this.NotifyPropertyChanged("IsEthJpyVisible");
             }
         }
 
-        private Pair _pairLtcBtc = new Pair(Pairs.ltc_btc, 24, "{0:#,0.00000000}", 0.0001M, 0.00001M);
-        public Pair PairLtcBtc
+        private Pair _pairLtcJpy = new Pair(Pairs.ltc_jpy, 24, "{0:#,0.0}", 100M, 1000M);
+        public Pair PairLtcJpy
         {
             get
             {
-                return _pairLtcBtc;
+                return _pairLtcJpy;
             }
         }
 
-        private bool _isLtcBtcVisible;
-        public bool IsLtcBtcVisible
+        private bool _isLtcJpyVisible;
+        public bool IsLtcJpyVisible
         {
             get
             {
-                return _isLtcBtcVisible;
+                return _isLtcJpyVisible;
             }
             set
             {
-                if (_isLtcBtcVisible == value)
+                if (_isLtcJpyVisible == value)
                     return;
 
-                _isLtcBtcVisible = value;
-                this.NotifyPropertyChanged("IsLtcBtcVisible");
+                _isLtcJpyVisible = value;
+                this.NotifyPropertyChanged("IsLtcJpyVisible");
             }
         }
 
@@ -1635,6 +1674,33 @@ namespace BitWallpaper.ViewModels
                 this.NotifyPropertyChanged("IsBchJpyVisible");
             }
         }
+
+        private Pair _pairXlmJpy = new Pair(Pairs.xlm_jpy, 24, "{0:#,0.000}", 0.1M, 0.01M);
+        public Pair PairXlmJpy
+        {
+            get
+            {
+                return _pairXlmJpy;
+            }
+        }
+
+        private bool _isXlmJpyVisible;
+        public bool IsXlmJpyVisible
+        {
+            get
+            {
+                return _isXlmJpyVisible;
+            }
+            set
+            {
+                if (_isXlmJpyVisible == value)
+                    return;
+
+                _isXlmJpyVisible = value;
+                this.NotifyPropertyChanged("IsXlmJpyVisible");
+            }
+        }
+
 
         #endregion
 
@@ -1990,54 +2056,54 @@ namespace BitWallpaper.ViewModels
         #region == LTCャートデータ用のプロパティ ==
 
         // === LTC === 
-        private SeriesCollection _chartSeriesLtcBtc = new SeriesCollection();
-        public SeriesCollection ChartSeriesLtcBtc
+        private SeriesCollection _chartSeriesLtcJpy = new SeriesCollection();
+        public SeriesCollection ChartSeriesLtcJpy
         {
             get
             {
-                return _chartSeriesLtcBtc;
+                return _chartSeriesLtcJpy;
             }
             set
             {
-                if (_chartSeriesLtcBtc == value)
+                if (_chartSeriesLtcJpy == value)
                     return;
 
-                _chartSeriesLtcBtc = value;
-                this.NotifyPropertyChanged("ChartSeriesLtcBtc");
+                _chartSeriesLtcJpy = value;
+                this.NotifyPropertyChanged("ChartSeriesLtcJpy");
             }
         }
 
-        private AxesCollection _chartAxisXLtcBtc = new AxesCollection();
-        public AxesCollection ChartAxisXLtcBtc
+        private AxesCollection _chartAxisXLtcJpy = new AxesCollection();
+        public AxesCollection ChartAxisXLtcJpy
         {
             get
             {
-                return _chartAxisXLtcBtc;
+                return _chartAxisXLtcJpy;
             }
             set
             {
-                if (_chartAxisXLtcBtc == value)
+                if (_chartAxisXLtcJpy == value)
                     return;
 
-                _chartAxisXLtcBtc = value;
-                this.NotifyPropertyChanged("ChartAxisXLtcBtc");
+                _chartAxisXLtcJpy = value;
+                this.NotifyPropertyChanged("ChartAxisXLtcJpy");
             }
         }
 
-        private AxesCollection _chartAxisYLtcBtc = new AxesCollection();
-        public AxesCollection ChartAxisYLtcBtc
+        private AxesCollection _chartAxisYLtcJpy = new AxesCollection();
+        public AxesCollection ChartAxisYLtcJpy
         {
             get
             {
-                return _chartAxisYLtcBtc;
+                return _chartAxisYLtcJpy;
             }
             set
             {
-                if (_chartAxisYLtcBtc == value)
+                if (_chartAxisYLtcJpy == value)
                     return;
 
-                _chartAxisYLtcBtc = value;
-                this.NotifyPropertyChanged("ChartAxisYLtcBtc");
+                _chartAxisYLtcJpy = value;
+                this.NotifyPropertyChanged("ChartAxisYLtcJpy");
             }
         }
 
@@ -2174,54 +2240,54 @@ namespace BitWallpaper.ViewModels
         #region == Ethャートデータ用のプロパティ ==
 
         // === Eth === 
-        private SeriesCollection _chartSeriesEthBtc;
-        public SeriesCollection ChartSeriesEthBtc
+        private SeriesCollection _chartSeriesEthJpy;
+        public SeriesCollection ChartSeriesEthJpy
         {
             get
             {
-                return _chartSeriesEthBtc;
+                return _chartSeriesEthJpy;
             }
             set
             {
-                if (_chartSeriesEthBtc == value)
+                if (_chartSeriesEthJpy == value)
                     return;
 
-                _chartSeriesEthBtc = value;
-                this.NotifyPropertyChanged("ChartSeriesEthBtc");
+                _chartSeriesEthJpy = value;
+                this.NotifyPropertyChanged("ChartSeriesEthJpy");
             }
         }
 
-        private AxesCollection _chartAxisXEthBtc;
-        public AxesCollection ChartAxisXEthBtc
+        private AxesCollection _chartAxisXEthJpy;
+        public AxesCollection ChartAxisXEthJpy
         {
             get
             {
-                return _chartAxisXEthBtc;
+                return _chartAxisXEthJpy;
             }
             set
             {
-                if (_chartAxisXEthBtc == value)
+                if (_chartAxisXEthJpy == value)
                     return;
 
-                _chartAxisXEthBtc = value;
-                this.NotifyPropertyChanged("ChartAxisXEthBtc");
+                _chartAxisXEthJpy = value;
+                this.NotifyPropertyChanged("ChartAxisXEthJpy");
             }
         }
 
-        private AxesCollection _chartAxisYEthBtc;
-        public AxesCollection ChartAxisYEthBtc
+        private AxesCollection _chartAxisYEthJpy;
+        public AxesCollection ChartAxisYEthJpy
         {
             get
             {
-                return _chartAxisYEthBtc;
+                return _chartAxisYEthJpy;
             }
             set
             {
-                if (_chartAxisYEthBtc == value)
+                if (_chartAxisYEthJpy == value)
                     return;
 
-                _chartAxisYEthBtc = value;
-                this.NotifyPropertyChanged("ChartAxisYEthBtc");
+                _chartAxisYEthJpy = value;
+                this.NotifyPropertyChanged("ChartAxisYEthJpy");
             }
         }
 
@@ -2442,6 +2508,98 @@ namespace BitWallpaper.ViewModels
             {
                 _ohlcvsOneDayBch = value;
                 this.NotifyPropertyChanged("OhlcvsOneDayBch");
+            }
+        }
+
+        #endregion
+
+        #region == Xlmャートデータ用のプロパティ ==
+
+        // === Xlm === 
+        private SeriesCollection _chartSeriesXlmJpy;
+        public SeriesCollection ChartSeriesXlmJpy
+        {
+            get
+            {
+                return _chartSeriesXlmJpy;
+            }
+            set
+            {
+                if (_chartSeriesXlmJpy == value)
+                    return;
+
+                _chartSeriesXlmJpy = value;
+                this.NotifyPropertyChanged("ChartSeriesXlmJpy");
+            }
+        }
+
+        private AxesCollection _chartAxisXXlmJpy;
+        public AxesCollection ChartAxisXXlmJpy
+        {
+            get
+            {
+                return _chartAxisXXlmJpy;
+            }
+            set
+            {
+                if (_chartAxisXXlmJpy == value)
+                    return;
+
+                _chartAxisXXlmJpy = value;
+                this.NotifyPropertyChanged("ChartAxisXXlmJpy");
+            }
+        }
+
+        private AxesCollection _chartAxisYXlmJpy;
+        public AxesCollection ChartAxisYXlmJpy
+        {
+            get
+            {
+                return _chartAxisYXlmJpy;
+            }
+            set
+            {
+                if (_chartAxisYXlmJpy == value)
+                    return;
+
+                _chartAxisYXlmJpy = value;
+                this.NotifyPropertyChanged("ChartAxisYXlmJpy");
+            }
+        }
+
+        // 一時間単位 
+        private List<Ohlcv> _ohlcvsOneHourXlm = new List<Ohlcv>();
+        public List<Ohlcv> OhlcvsOneHourXlm
+        {
+            get { return _ohlcvsOneHourXlm; }
+            set
+            {
+                _ohlcvsOneHourXlm = value;
+                this.NotifyPropertyChanged("OhlcvsOneHourXlm");
+            }
+        }
+
+        // 一分単位 
+        private List<Ohlcv> _ohlcvsOneMinXlm = new List<Ohlcv>();
+        public List<Ohlcv> OhlcvsOneMinXlm
+        {
+            get { return _ohlcvsOneMinXlm; }
+            set
+            {
+                _ohlcvsOneMinXlm = value;
+                this.NotifyPropertyChanged("OhlcvsOneMinXlm");
+            }
+        }
+
+        // 一日単位 
+        private List<Ohlcv> _ohlcvsOneDayXlm = new List<Ohlcv>();
+        public List<Ohlcv> OhlcvsOneDayXlm
+        {
+            get { return _ohlcvsOneDayXlm; }
+            set
+            {
+                _ohlcvsOneDayXlm = value;
+                this.NotifyPropertyChanged("OhlcvsOneDayXlm");
             }
         }
 
@@ -3136,11 +3294,11 @@ namespace BitWallpaper.ViewModels
                     ChartAxisXXrpJpy = chartAxisX;
                     ChartAxisYXrpJpy = chartAxisY;
                 }
-                else if (pair == Pairs.eth_btc)
+                else if (pair == Pairs.eth_jpy)
                 {
-                    ChartSeriesEthBtc = chartSeries;
-                    ChartAxisXEthBtc = chartAxisX;
-                    ChartAxisYEthBtc = chartAxisY;
+                    ChartSeriesEthJpy = chartSeries;
+                    ChartAxisXEthJpy = chartAxisX;
+                    ChartAxisYEthJpy = chartAxisY;
                 }
                 else if (pair == Pairs.mona_jpy)
                 {
@@ -3148,25 +3306,23 @@ namespace BitWallpaper.ViewModels
                     ChartAxisXMonaJpy = chartAxisX;
                     ChartAxisYMonaJpy = chartAxisY;
                 }
-                else if (pair == Pairs.mona_btc)
+                else if (pair == Pairs.ltc_jpy)
                 {
-                    //
-                }
-                else if (pair == Pairs.ltc_btc)
-                {
-                    ChartSeriesLtcBtc = chartSeries;
-                    ChartAxisXLtcBtc = chartAxisX;
-                    ChartAxisYLtcBtc = chartAxisY;
-                }
-                else if (pair == Pairs.bcc_btc)
-                {
-                    //
+                    ChartSeriesLtcJpy = chartSeries;
+                    ChartAxisXLtcJpy = chartAxisX;
+                    ChartAxisYLtcJpy = chartAxisY;
                 }
                 else if (pair == Pairs.bcc_jpy)
                 {
                     ChartSeriesBchJpy = chartSeries;
                     ChartAxisXBchJpy = chartAxisX;
                     ChartAxisYBchJpy = chartAxisY;
+                }
+                else if (pair == Pairs.xlm_jpy)
+                {
+                    ChartSeriesXlmJpy = chartSeries;
+                    ChartAxisXXlmJpy = chartAxisX;
+                    ChartAxisYXlmJpy = chartAxisY;
                 }
 
             }
@@ -3205,10 +3361,11 @@ namespace BitWallpaper.ViewModels
 
             IsBtcJpyVisible = true;
             IsXrpJpyVisible = false;
-            IsEthBtcVisible = false;
-            IsLtcBtcVisible = false;
+            IsEthJpyVisible = false;
+            IsLtcJpyVisible = false;
             IsMonaJpyVisible = false;
             IsBchJpyVisible = false;
+            IsXlmJpyVisible = false;
 
             UpdateDepth();
             UpdateTransactions();
@@ -3225,10 +3382,6 @@ namespace BitWallpaper.ViewModels
                 // 各通貨ペアをループ
                 foreach (Pairs pair in Enum.GetValues(typeof(Pairs)))
                 {
-                    if ((pair == Pairs.mona_btc) || pair == Pairs.bcc_btc)
-                    {
-                        continue;
-                    }
 
                     UpdateCandlestick(pair, SelectedCandleType);
 
@@ -3248,11 +3401,6 @@ namespace BitWallpaper.ViewModels
 
             foreach (Pairs pair in Enum.GetValues(typeof(Pairs)))
             {
-                if ((pair == Pairs.mona_btc) || pair == Pairs.bcc_btc)
-                {
-                    continue;
-                }
-
                 // 起動直後アラームを鳴らさない秒数
                 int waitTime = 10;
 
@@ -3918,43 +4066,43 @@ namespace BitWallpaper.ViewModels
                             }
 
                         }
-                        else if (pair == Pairs.eth_btc)
+                        else if (pair == Pairs.eth_jpy)
                         {
 
                             // 一旦前の値を保存
-                            var prevLtp = PairEthBtc.Ltp;
+                            var prevLtp = PairEthJpy.Ltp;
 
                             // 最新の価格をセット
-                            PairEthBtc.Ltp = tick.LTP;
-                            PairEthBtc.Bid = tick.Bid;
-                            PairEthBtc.Ask = tick.Ask;
-                            PairEthBtc.TickTimeStamp = tick.TimeStamp;
+                            PairEthJpy.Ltp = tick.LTP;
+                            PairEthJpy.Bid = tick.Bid;
+                            PairEthJpy.Ask = tick.Ask;
+                            PairEthJpy.TickTimeStamp = tick.TimeStamp;
 
-                            PairEthBtc.LowestIn24Price = tick.Low;
-                            PairEthBtc.HighestIn24Price = tick.High;
+                            PairEthJpy.LowestIn24Price = tick.Low;
+                            PairEthJpy.HighestIn24Price = tick.High;
 
                             // 起動時価格セット
-                            if (PairEthBtc.BasePrice == 0) PairEthBtc.BasePrice = tick.LTP;
+                            if (PairEthJpy.BasePrice == 0) PairEthJpy.BasePrice = tick.LTP;
 
                             // 最安値登録
-                            if (PairEthBtc.LowestPrice == 0)
+                            if (PairEthJpy.LowestPrice == 0)
                             {
-                                PairEthBtc.LowestPrice = tick.LTP;
+                                PairEthJpy.LowestPrice = tick.LTP;
                             }
-                            if (tick.LTP < PairEthBtc.LowestPrice)
+                            if (tick.LTP < PairEthJpy.LowestPrice)
                             {
-                                PairEthBtc.LowestPrice = tick.LTP;
+                                PairEthJpy.LowestPrice = tick.LTP;
                             }
 
                             // 最高値登録
-                            if (PairEthBtc.HighestPrice == 0)
+                            if (PairEthJpy.HighestPrice == 0)
                             {
-                                PairEthBtc.HighestPrice = tick.LTP;
+                                PairEthJpy.HighestPrice = tick.LTP;
                             }
-                            if (tick.LTP > PairEthBtc.HighestPrice)
+                            if (tick.LTP > PairEthJpy.HighestPrice)
                             {
                                 //SystemSounds.Asterisk.Play();
-                                PairEthBtc.HighestPrice = tick.LTP;
+                                PairEthJpy.HighestPrice = tick.LTP;
                             }
 
                             #region == チック履歴 ==
@@ -3962,71 +4110,71 @@ namespace BitWallpaper.ViewModels
                             TickHistory aym = new TickHistory();
                             aym.Price = tick.LTP;
                             aym.TimeAt = tick.TimeStamp;
-                            if (PairEthBtc.TickHistories.Count > 0)
+                            if (PairEthJpy.TickHistories.Count > 0)
                             {
-                                if (PairEthBtc.TickHistories[0].Price > aym.Price)
+                                if (PairEthJpy.TickHistories[0].Price > aym.Price)
                                 {
                                     //aym.TickHistoryPriceColor = _priceUpColor;
                                     aym.TickHistoryPriceUp = true;
-                                    PairEthBtc.TickHistories.Insert(0, aym);
+                                    PairEthJpy.TickHistories.Insert(0, aym);
 
                                 }
-                                else if (PairEthBtc.TickHistories[0].Price < aym.Price)
+                                else if (PairEthJpy.TickHistories[0].Price < aym.Price)
                                 {
                                     //aym.TickHistoryPriceColor = _priceDownColor;
                                     aym.TickHistoryPriceUp = false;
-                                    PairEthBtc.TickHistories.Insert(0, aym);
+                                    PairEthJpy.TickHistories.Insert(0, aym);
                                 }
                                 else
                                 {
                                     //aym.TickHistoryPriceColor = Colors.Gainsboro;
-                                    PairEthBtc.TickHistories.Insert(0, aym);
+                                    PairEthJpy.TickHistories.Insert(0, aym);
                                 }
                             }
                             else
                             {
                                 //aym.TickHistoryPriceColor = Colors.Gainsboro;
-                                PairEthBtc.TickHistories.Insert(0, aym);
+                                PairEthJpy.TickHistories.Insert(0, aym);
                             }
 
                             // limit the number of the list.
-                            if (PairEthBtc.TickHistories.Count > 60)
+                            if (PairEthJpy.TickHistories.Count > 60)
                             {
-                                PairEthBtc.TickHistories.RemoveAt(60);
+                                PairEthJpy.TickHistories.RemoveAt(60);
                             }
 
                             // 60(1分)の平均値を求める
                             decimal aSum = 0;
                             int c = 0;
-                            if (PairEthBtc.TickHistories.Count > 0)
+                            if (PairEthJpy.TickHistories.Count > 0)
                             {
 
-                                if (PairEthBtc.TickHistories.Count > 60)
+                                if (PairEthJpy.TickHistories.Count > 60)
                                 {
                                     c = 59;
                                 }
                                 else
                                 {
-                                    c = PairEthBtc.TickHistories.Count - 1;
+                                    c = PairEthJpy.TickHistories.Count - 1;
                                 }
 
                                 if (c == 0)
                                 {
-                                    PairEthBtc.AveragePrice = PairEthBtc.TickHistories[0].Price;
+                                    PairEthJpy.AveragePrice = PairEthJpy.TickHistories[0].Price;
                                 }
                                 else
                                 {
                                     for (int i = 0; i < c; i++)
                                     {
-                                        aSum = aSum + PairEthBtc.TickHistories[i].Price;
+                                        aSum = aSum + PairEthJpy.TickHistories[i].Price;
                                     }
-                                    PairEthBtc.AveragePrice = aSum / c;
+                                    PairEthJpy.AveragePrice = aSum / c;
                                 }
 
                             }
-                            else if (PairEthBtc.TickHistories.Count == 1)
+                            else if (PairEthJpy.TickHistories.Count == 1)
                             {
-                                PairEthBtc.AveragePrice = PairEthBtc.TickHistories[0].Price;
+                                PairEthJpy.AveragePrice = PairEthJpy.TickHistories[0].Price;
                             }
 
                             #endregion
@@ -4036,60 +4184,60 @@ namespace BitWallpaper.ViewModels
                             bool isPlayed = false;
 
                             // カスタムアラーム
-                            if (PairEthBtc.AlarmPlus > 0)
+                            if (PairEthJpy.AlarmPlus > 0)
                             {
-                                if (tick.LTP >= PairEthBtc.AlarmPlus)
+                                if (tick.LTP >= PairEthJpy.AlarmPlus)
                                 {
-                                    PairEthBtc.HighLowInfoTextColorFlag = true;
-                                    PairEthBtc.HighLowInfoText = PairEthBtc.PairString + " ⇑⇑⇑　高値アラーム ";
+                                    PairEthJpy.HighLowInfoTextColorFlag = true;
+                                    PairEthJpy.HighLowInfoText = PairEthJpy.PairString + " ⇑⇑⇑　高値アラーム ";
 
                                     ShowBalloonEventArgs ag = new ShowBalloonEventArgs
                                     {
-                                        Title = PairEthBtc.PairString + " 高値アラーム",
-                                        Text = PairEthBtc.AlarmPlus.ToString("#,0") + " に達しました。"
+                                        Title = PairEthJpy.PairString + " 高値アラーム",
+                                        Text = PairEthJpy.AlarmPlus.ToString("#,0") + " に達しました。"
                                     };
                                     // バルーン表示
                                     ShowBalloon?.Invoke(this, ag);
                                     // クリア
-                                    PairEthBtc.AlarmPlus = 0;
+                                    PairEthJpy.AlarmPlus = 0;
 
                                 }
                             }
 
-                            if (PairEthBtc.AlarmMinus > 0)
+                            if (PairEthJpy.AlarmMinus > 0)
                             {
-                                if (tick.LTP <= PairEthBtc.AlarmMinus)
+                                if (tick.LTP <= PairEthJpy.AlarmMinus)
                                 {
-                                    PairEthBtc.HighLowInfoTextColorFlag = false;
-                                    PairEthBtc.HighLowInfoText = PairEthBtc.PairString + " ⇓⇓⇓　安値アラーム ";
+                                    PairEthJpy.HighLowInfoTextColorFlag = false;
+                                    PairEthJpy.HighLowInfoText = PairEthJpy.PairString + " ⇓⇓⇓　安値アラーム ";
 
                                     ShowBalloonEventArgs ag = new ShowBalloonEventArgs
                                     {
-                                        Title = PairEthBtc.PairString + " 安値アラーム",
-                                        Text = PairEthBtc.AlarmMinus.ToString("#,0") + " に達しました。"
+                                        Title = PairEthJpy.PairString + " 安値アラーム",
+                                        Text = PairEthJpy.AlarmMinus.ToString("#,0") + " に達しました。"
                                     };
                                     // バルーン表示
                                     ShowBalloon?.Invoke(this, ag);
                                     // クリア
-                                    PairEthBtc.AlarmMinus = 0;
+                                    PairEthJpy.AlarmMinus = 0;
 
                                 }
                             }
 
                             // 起動後最高値
-                            if ((tick.LTP >= PairEthBtc.HighestPrice) && (prevLtp != tick.LTP))
+                            if ((tick.LTP >= PairEthJpy.HighestPrice) && (prevLtp != tick.LTP))
                             {
-                                if ((PairEthBtc.TickHistories.Count > waitTime) && ((PairEthBtc.BasePrice + 0.000001M) < tick.LTP))
+                                if ((PairEthJpy.TickHistories.Count > waitTime) && ((PairEthJpy.BasePrice + 0.000001M) < tick.LTP))
                                 {
 
-                                    if (PairEthBtc.PlaySoundHighest)
-                                        PairEthBtc.HighestPriceAlart = true;
+                                    if (PairEthJpy.PlaySoundHighest)
+                                        PairEthJpy.HighestPriceAlart = true;
 
-                                    if ((isPlayed == false) && (PairEthBtc.PlaySoundHighest == true))
+                                    if ((isPlayed == false) && (PairEthJpy.PlaySoundHighest == true))
                                     {
-                                        PairEthBtc.HighLowInfoTextColorFlag = true;
-                                        PairEthBtc.HighLowInfoText = "";
-                                        PairEthBtc.HighLowInfoText = PairEthBtc.PairString + " ⇑⇑⇑　起動後最高値 ";
+                                        PairEthJpy.HighLowInfoTextColorFlag = true;
+                                        PairEthJpy.HighLowInfoText = "";
+                                        PairEthJpy.HighLowInfoText = PairEthJpy.PairString + " ⇑⇑⇑　起動後最高値 ";
 
                                         if (PlaySound)
                                         {
@@ -4101,23 +4249,23 @@ namespace BitWallpaper.ViewModels
                             }
                             else
                             {
-                                PairEthBtc.HighestPriceAlart = false;
+                                PairEthJpy.HighestPriceAlart = false;
                             }
 
                             // 起動後最安値
-                            if ((tick.LTP <= PairEthBtc.LowestPrice) && (prevLtp != tick.LTP))
+                            if ((tick.LTP <= PairEthJpy.LowestPrice) && (prevLtp != tick.LTP))
                             {
-                                if ((PairEthBtc.TickHistories.Count > waitTime) && ((PairEthBtc.BasePrice - 0.000001M) > tick.LTP))
+                                if ((PairEthJpy.TickHistories.Count > waitTime) && ((PairEthJpy.BasePrice - 0.000001M) > tick.LTP))
                                 {
 
-                                    if (PairEthBtc.PlaySoundLowest)
-                                        PairEthBtc.LowestPriceAlart = true;
+                                    if (PairEthJpy.PlaySoundLowest)
+                                        PairEthJpy.LowestPriceAlart = true;
 
-                                    if ((isPlayed == false) && (PairEthBtc.PlaySoundLowest == true))
+                                    if ((isPlayed == false) && (PairEthJpy.PlaySoundLowest == true))
                                     {
-                                        PairEthBtc.HighLowInfoTextColorFlag = false;
-                                        PairEthBtc.HighLowInfoText = "";
-                                        PairEthBtc.HighLowInfoText = PairEthBtc.PairString + "⇓⇓⇓　起動後最安値 ";
+                                        PairEthJpy.HighLowInfoTextColorFlag = false;
+                                        PairEthJpy.HighLowInfoText = "";
+                                        PairEthJpy.HighLowInfoText = PairEthJpy.PairString + "⇓⇓⇓　起動後最安値 ";
 
                                         if (PlaySound)
                                         {
@@ -4129,21 +4277,21 @@ namespace BitWallpaper.ViewModels
                             }
                             else
                             {
-                                PairEthBtc.LowestPriceAlart = false;
+                                PairEthJpy.LowestPriceAlart = false;
                             }
 
                             // 過去24時間最高値
-                            if ((tick.LTP >= PairEthBtc.HighestIn24Price) && (prevLtp != tick.LTP) && (PairEthBtc.TickHistories.Count > waitTime))
+                            if ((tick.LTP >= PairEthJpy.HighestIn24Price) && (prevLtp != tick.LTP) && (PairEthJpy.TickHistories.Count > waitTime))
                             {
 
-                                if (PairEthBtc.PlaySoundHighest24h)
-                                    PairEthBtc.HighestIn24PriceAlart = true;
+                                if (PairEthJpy.PlaySoundHighest24h)
+                                    PairEthJpy.HighestIn24PriceAlart = true;
 
-                                if ((isPlayed == false) && (PairEthBtc.PlaySoundHighest24h == true))
+                                if ((isPlayed == false) && (PairEthJpy.PlaySoundHighest24h == true))
                                 {
-                                    PairEthBtc.HighLowInfoTextColorFlag = true;
-                                    PairEthBtc.HighLowInfoText = "";
-                                    PairEthBtc.HighLowInfoText = PairEthBtc.PairString + " ⇑⇑⇑⇑⇑⇑　24時間最高値 ";
+                                    PairEthJpy.HighLowInfoTextColorFlag = true;
+                                    PairEthJpy.HighLowInfoText = "";
+                                    PairEthJpy.HighLowInfoText = PairEthJpy.PairString + " ⇑⇑⇑⇑⇑⇑　24時間最高値 ";
 
                                     if (PlaySound)
                                     {
@@ -4154,21 +4302,21 @@ namespace BitWallpaper.ViewModels
                             }
                             else
                             {
-                                PairEthBtc.HighestIn24PriceAlart = false;
+                                PairEthJpy.HighestIn24PriceAlart = false;
                             }
 
                             // 過去24時間最安値
-                            if ((tick.LTP <= PairEthBtc.LowestIn24Price) && (prevLtp != tick.LTP) && (PairEthBtc.TickHistories.Count > waitTime))
+                            if ((tick.LTP <= PairEthJpy.LowestIn24Price) && (prevLtp != tick.LTP) && (PairEthJpy.TickHistories.Count > waitTime))
                             {
 
-                                if (PairEthBtc.PlaySoundLowest24h)
-                                    PairEthBtc.LowestIn24PriceAlart = true;
+                                if (PairEthJpy.PlaySoundLowest24h)
+                                    PairEthJpy.LowestIn24PriceAlart = true;
 
-                                if ((isPlayed == false) && (PairEthBtc.PlaySoundLowest24h == true))
+                                if ((isPlayed == false) && (PairEthJpy.PlaySoundLowest24h == true))
                                 {
-                                    PairEthBtc.HighLowInfoTextColorFlag = false;
-                                    PairEthBtc.HighLowInfoText = "";
-                                    PairEthBtc.HighLowInfoText = PairEthBtc.PairString + " ⇓⇓⇓⇓⇓⇓　24時間最安値 ";
+                                    PairEthJpy.HighLowInfoTextColorFlag = false;
+                                    PairEthJpy.HighLowInfoText = "";
+                                    PairEthJpy.HighLowInfoText = PairEthJpy.PairString + " ⇓⇓⇓⇓⇓⇓　24時間最安値 ";
 
                                     if (PlaySound)
                                     {
@@ -4179,7 +4327,7 @@ namespace BitWallpaper.ViewModels
                             }
                             else
                             {
-                                PairEthBtc.LowestIn24PriceAlart = false;
+                                PairEthJpy.LowestIn24PriceAlart = false;
                             }
 
                             #endregion
@@ -4188,11 +4336,11 @@ namespace BitWallpaper.ViewModels
                             if ((MinMode == false) && (pair == CurrentPair))
                             {
                                 // 最新取引価格のラインを更新
-                                if (ChartAxisYEthBtc != null)
+                                if (ChartAxisYEthJpy != null)
                                 {
-                                    if (ChartAxisYEthBtc[0].Sections.Count > 0)
+                                    if (ChartAxisYEthJpy[0].Sections.Count > 0)
                                     {
-                                        ChartAxisYEthBtc[0].Sections[0].Value = (double)tick.LTP;
+                                        ChartAxisYEthJpy[0].Sections[0].Value = (double)tick.LTP;
                                     }
                                 }
 
@@ -4543,48 +4691,44 @@ namespace BitWallpaper.ViewModels
                             }
 
                         }
-                        else if (pair == Pairs.mona_btc)
-                        {
-                            //
-                        }
-                        else if (pair == Pairs.ltc_btc)
+                        else if (pair == Pairs.ltc_jpy)
                         {
 
                             // 一旦前の値を保存
-                            var prevLtp = PairLtcBtc.Ltp;
+                            var prevLtp = PairLtcJpy.Ltp;
 
                             // 最新の価格をセット
-                            PairLtcBtc.Ltp = tick.LTP;
-                            PairLtcBtc.Bid = tick.Bid;
-                            PairLtcBtc.Ask = tick.Ask;
-                            PairLtcBtc.TickTimeStamp = tick.TimeStamp;
+                            PairLtcJpy.Ltp = tick.LTP;
+                            PairLtcJpy.Bid = tick.Bid;
+                            PairLtcJpy.Ask = tick.Ask;
+                            PairLtcJpy.TickTimeStamp = tick.TimeStamp;
 
-                            PairLtcBtc.LowestIn24Price = tick.Low;
-                            PairLtcBtc.HighestIn24Price = tick.High;
+                            PairLtcJpy.LowestIn24Price = tick.Low;
+                            PairLtcJpy.HighestIn24Price = tick.High;
 
                             // 起動時価格セット
-                            if (PairLtcBtc.BasePrice == 0) PairLtcBtc.BasePrice = tick.LTP;
+                            if (PairLtcJpy.BasePrice == 0) PairLtcJpy.BasePrice = tick.LTP;
 
                             // 最安値登録
-                            if (PairLtcBtc.LowestPrice == 0)
+                            if (PairLtcJpy.LowestPrice == 0)
                             {
-                                PairLtcBtc.LowestPrice = tick.LTP;
+                                PairLtcJpy.LowestPrice = tick.LTP;
                             }
-                            if (tick.LTP < PairLtcBtc.LowestPrice)
+                            if (tick.LTP < PairLtcJpy.LowestPrice)
                             {
                                 //SystemSounds.Beep.Play();
-                                PairLtcBtc.LowestPrice = tick.LTP;
+                                PairLtcJpy.LowestPrice = tick.LTP;
                             }
 
                             // 最高値登録
-                            if (PairLtcBtc.HighestPrice == 0)
+                            if (PairLtcJpy.HighestPrice == 0)
                             {
-                                PairLtcBtc.HighestPrice = tick.LTP;
+                                PairLtcJpy.HighestPrice = tick.LTP;
                             }
-                            if (tick.LTP > PairLtcBtc.HighestPrice)
+                            if (tick.LTP > PairLtcJpy.HighestPrice)
                             {
                                 //SystemSounds.Asterisk.Play();
-                                PairLtcBtc.HighestPrice = tick.LTP;
+                                PairLtcJpy.HighestPrice = tick.LTP;
                             }
 
                             #region == チック履歴 ==
@@ -4592,71 +4736,71 @@ namespace BitWallpaper.ViewModels
                             TickHistory aym = new TickHistory();
                             aym.Price = tick.LTP;
                             aym.TimeAt = tick.TimeStamp;
-                            if (PairLtcBtc.TickHistories.Count > 0)
+                            if (PairLtcJpy.TickHistories.Count > 0)
                             {
-                                if (PairLtcBtc.TickHistories[0].Price > aym.Price)
+                                if (PairLtcJpy.TickHistories[0].Price > aym.Price)
                                 {
                                     //aym.TickHistoryPriceColor = _priceUpColor;
                                     aym.TickHistoryPriceUp = true;
-                                    PairLtcBtc.TickHistories.Insert(0, aym);
+                                    PairLtcJpy.TickHistories.Insert(0, aym);
 
                                 }
-                                else if (PairLtcBtc.TickHistories[0].Price < aym.Price)
+                                else if (PairLtcJpy.TickHistories[0].Price < aym.Price)
                                 {
                                     //aym.TickHistoryPriceColor = _priceDownColor;
                                     aym.TickHistoryPriceUp = false;
-                                    PairLtcBtc.TickHistories.Insert(0, aym);
+                                    PairLtcJpy.TickHistories.Insert(0, aym);
                                 }
                                 else
                                 {
                                     //aym.TickHistoryPriceColor = Colors.Gainsboro;
-                                    PairLtcBtc.TickHistories.Insert(0, aym);
+                                    PairLtcJpy.TickHistories.Insert(0, aym);
                                 }
                             }
                             else
                             {
                                 //aym.TickHistoryPriceColor = Colors.Gainsboro;
-                                PairLtcBtc.TickHistories.Insert(0, aym);
+                                PairLtcJpy.TickHistories.Insert(0, aym);
                             }
 
                             // limit the number of the list.
-                            if (PairLtcBtc.TickHistories.Count > 60)
+                            if (PairLtcJpy.TickHistories.Count > 60)
                             {
-                                PairLtcBtc.TickHistories.RemoveAt(60);
+                                PairLtcJpy.TickHistories.RemoveAt(60);
                             }
 
                             // 60(1分)の平均値を求める
                             decimal aSum = 0;
                             int c = 0;
-                            if (PairLtcBtc.TickHistories.Count > 0)
+                            if (PairLtcJpy.TickHistories.Count > 0)
                             {
 
-                                if (PairLtcBtc.TickHistories.Count > 60)
+                                if (PairLtcJpy.TickHistories.Count > 60)
                                 {
                                     c = 59;
                                 }
                                 else
                                 {
-                                    c = PairLtcBtc.TickHistories.Count - 1;
+                                    c = PairLtcJpy.TickHistories.Count - 1;
                                 }
 
                                 if (c == 0)
                                 {
-                                    PairLtcBtc.AveragePrice = PairLtcBtc.TickHistories[0].Price;
+                                    PairLtcJpy.AveragePrice = PairLtcJpy.TickHistories[0].Price;
                                 }
                                 else
                                 {
                                     for (int i = 0; i < c; i++)
                                     {
-                                        aSum = aSum + PairLtcBtc.TickHistories[i].Price;
+                                        aSum = aSum + PairLtcJpy.TickHistories[i].Price;
                                     }
-                                    PairLtcBtc.AveragePrice = aSum / c;
+                                    PairLtcJpy.AveragePrice = aSum / c;
                                 }
 
                             }
-                            else if (PairLtcBtc.TickHistories.Count == 1)
+                            else if (PairLtcJpy.TickHistories.Count == 1)
                             {
-                                PairLtcBtc.AveragePrice = PairLtcBtc.TickHistories[0].Price;
+                                PairLtcJpy.AveragePrice = PairLtcJpy.TickHistories[0].Price;
                             }
 
                             #endregion
@@ -4666,60 +4810,60 @@ namespace BitWallpaper.ViewModels
                             bool isPlayed = false;
 
                             // カスタムアラーム
-                            if (PairLtcBtc.AlarmPlus > 0)
+                            if (PairLtcJpy.AlarmPlus > 0)
                             {
-                                if (tick.LTP >= PairLtcBtc.AlarmPlus)
+                                if (tick.LTP >= PairLtcJpy.AlarmPlus)
                                 {
-                                    PairLtcBtc.HighLowInfoTextColorFlag = true;
-                                    PairLtcBtc.HighLowInfoText = PairLtcBtc.PairString + " ⇑⇑⇑　高値アラーム ";
+                                    PairLtcJpy.HighLowInfoTextColorFlag = true;
+                                    PairLtcJpy.HighLowInfoText = PairLtcJpy.PairString + " ⇑⇑⇑　高値アラーム ";
 
                                     ShowBalloonEventArgs ag = new ShowBalloonEventArgs
                                     {
-                                        Title = PairLtcBtc.PairString + " 高値アラーム",
-                                        Text = PairLtcBtc.AlarmPlus.ToString("#,0") + " に達しました。"
+                                        Title = PairLtcJpy.PairString + " 高値アラーム",
+                                        Text = PairLtcJpy.AlarmPlus.ToString("#,0") + " に達しました。"
                                     };
                                     // バルーン表示
                                     ShowBalloon?.Invoke(this, ag);
                                     // クリア
-                                    PairLtcBtc.AlarmPlus = 0;
+                                    PairLtcJpy.AlarmPlus = 0;
 
                                 }
                             }
 
-                            if (PairLtcBtc.AlarmMinus > 0)
+                            if (PairLtcJpy.AlarmMinus > 0)
                             {
-                                if (tick.LTP <= PairLtcBtc.AlarmMinus)
+                                if (tick.LTP <= PairLtcJpy.AlarmMinus)
                                 {
-                                    PairLtcBtc.HighLowInfoTextColorFlag = false;
-                                    PairLtcBtc.HighLowInfoText = PairLtcBtc.PairString + " ⇓⇓⇓　安値アラーム ";
+                                    PairLtcJpy.HighLowInfoTextColorFlag = false;
+                                    PairLtcJpy.HighLowInfoText = PairLtcJpy.PairString + " ⇓⇓⇓　安値アラーム ";
 
                                     ShowBalloonEventArgs ag = new ShowBalloonEventArgs
                                     {
-                                        Title = PairLtcBtc.PairString + " 安値アラーム",
-                                        Text = PairLtcBtc.AlarmMinus.ToString("#,0") + " に達しました。"
+                                        Title = PairLtcJpy.PairString + " 安値アラーム",
+                                        Text = PairLtcJpy.AlarmMinus.ToString("#,0") + " に達しました。"
                                     };
                                     // バルーン表示
                                     ShowBalloon?.Invoke(this, ag);
                                     // クリア
-                                    PairLtcBtc.AlarmMinus = 0;
+                                    PairLtcJpy.AlarmMinus = 0;
 
                                 }
                             }
 
                             // 起動後最高値
-                            if ((tick.LTP >= PairLtcBtc.HighestPrice) && (prevLtp != tick.LTP))
+                            if ((tick.LTP >= PairLtcJpy.HighestPrice) && (prevLtp != tick.LTP))
                             {
-                                if ((PairLtcBtc.TickHistories.Count > waitTime) && ((PairLtcBtc.BasePrice + 0.000001M) < tick.LTP))
+                                if ((PairLtcJpy.TickHistories.Count > waitTime) && ((PairLtcJpy.BasePrice + 0.000001M) < tick.LTP))
                                 {
 
-                                    if (PairLtcBtc.PlaySoundHighest)
-                                        PairLtcBtc.HighestPriceAlart = true;
+                                    if (PairLtcJpy.PlaySoundHighest)
+                                        PairLtcJpy.HighestPriceAlart = true;
 
-                                    if ((isPlayed == false) && (PairLtcBtc.PlaySoundHighest == true))
+                                    if ((isPlayed == false) && (PairLtcJpy.PlaySoundHighest == true))
                                     {
-                                        PairLtcBtc.HighLowInfoTextColorFlag = true;
-                                        PairLtcBtc.HighLowInfoText = "";
-                                        PairLtcBtc.HighLowInfoText = PairLtcBtc.PairString + " ⇑⇑⇑　起動後最高値 ";
+                                        PairLtcJpy.HighLowInfoTextColorFlag = true;
+                                        PairLtcJpy.HighLowInfoText = "";
+                                        PairLtcJpy.HighLowInfoText = PairLtcJpy.PairString + " ⇑⇑⇑　起動後最高値 ";
 
                                         if (PlaySound)
                                         {
@@ -4731,22 +4875,22 @@ namespace BitWallpaper.ViewModels
                             }
                             else
                             {
-                                PairLtcBtc.HighestPriceAlart = false;
+                                PairLtcJpy.HighestPriceAlart = false;
                             }
                             // 起動後最安値
-                            if ((tick.LTP <= PairLtcBtc.LowestPrice) && (prevLtp != tick.LTP))
+                            if ((tick.LTP <= PairLtcJpy.LowestPrice) && (prevLtp != tick.LTP))
                             {
-                                if ((PairLtcBtc.TickHistories.Count > waitTime) && ((PairLtcBtc.BasePrice - 0.000001M) > tick.LTP))
+                                if ((PairLtcJpy.TickHistories.Count > waitTime) && ((PairLtcJpy.BasePrice - 0.000001M) > tick.LTP))
                                 {
 
-                                    if (PairLtcBtc.PlaySoundLowest)
-                                        PairLtcBtc.LowestPriceAlart = true;
+                                    if (PairLtcJpy.PlaySoundLowest)
+                                        PairLtcJpy.LowestPriceAlart = true;
 
-                                    if ((isPlayed == false) && (PairLtcBtc.PlaySoundLowest == true))
+                                    if ((isPlayed == false) && (PairLtcJpy.PlaySoundLowest == true))
                                     {
-                                        PairLtcBtc.HighLowInfoTextColorFlag = false;
-                                        PairLtcBtc.HighLowInfoText = "";
-                                        PairLtcBtc.HighLowInfoText = PairLtcBtc.PairString + " ⇓⇓⇓　起動後最安値 ";
+                                        PairLtcJpy.HighLowInfoTextColorFlag = false;
+                                        PairLtcJpy.HighLowInfoText = "";
+                                        PairLtcJpy.HighLowInfoText = PairLtcJpy.PairString + " ⇓⇓⇓　起動後最安値 ";
 
                                         if (PlaySound)
                                         {
@@ -4758,20 +4902,20 @@ namespace BitWallpaper.ViewModels
                             }
                             else
                             {
-                                PairLtcBtc.LowestPriceAlart = false;
+                                PairLtcJpy.LowestPriceAlart = false;
                             }
 
                             // 過去24時間最高値
-                            if ((tick.LTP >= PairLtcBtc.HighestIn24Price) && (prevLtp != tick.LTP) && (PairLtcBtc.TickHistories.Count > waitTime))
+                            if ((tick.LTP >= PairLtcJpy.HighestIn24Price) && (prevLtp != tick.LTP) && (PairLtcJpy.TickHistories.Count > waitTime))
                             {
-                                if (PairLtcBtc.PlaySoundHighest24h)
-                                    PairLtcBtc.HighestIn24PriceAlart = true;
+                                if (PairLtcJpy.PlaySoundHighest24h)
+                                    PairLtcJpy.HighestIn24PriceAlart = true;
 
-                                if ((isPlayed == false) && (PairLtcBtc.PlaySoundHighest24h == true))
+                                if ((isPlayed == false) && (PairLtcJpy.PlaySoundHighest24h == true))
                                 {
-                                    PairLtcBtc.HighLowInfoTextColorFlag = true;
-                                    PairLtcBtc.HighLowInfoText = "";
-                                    PairLtcBtc.HighLowInfoText = PairLtcBtc.PairString + " ⇑⇑⇑⇑⇑⇑　24時間最高値 ";
+                                    PairLtcJpy.HighLowInfoTextColorFlag = true;
+                                    PairLtcJpy.HighLowInfoText = "";
+                                    PairLtcJpy.HighLowInfoText = PairLtcJpy.PairString + " ⇑⇑⇑⇑⇑⇑　24時間最高値 ";
 
                                     if (PlaySound)
                                     {
@@ -4782,20 +4926,20 @@ namespace BitWallpaper.ViewModels
                             }
                             else
                             {
-                                PairLtcBtc.HighestIn24PriceAlart = false;
+                                PairLtcJpy.HighestIn24PriceAlart = false;
                             }
 
                             // 過去24時間最安値
-                            if ((tick.LTP <= PairLtcBtc.LowestIn24Price) && (prevLtp != tick.LTP) && (PairLtcBtc.TickHistories.Count > waitTime))
+                            if ((tick.LTP <= PairLtcJpy.LowestIn24Price) && (prevLtp != tick.LTP) && (PairLtcJpy.TickHistories.Count > waitTime))
                             {
-                                if (PairLtcBtc.PlaySoundLowest24h)
-                                    PairLtcBtc.LowestIn24PriceAlart = true;
+                                if (PairLtcJpy.PlaySoundLowest24h)
+                                    PairLtcJpy.LowestIn24PriceAlart = true;
 
-                                if ((isPlayed == false) && (PairLtcBtc.PlaySoundLowest24h == true))
+                                if ((isPlayed == false) && (PairLtcJpy.PlaySoundLowest24h == true))
                                 {
-                                    PairLtcBtc.HighLowInfoTextColorFlag = false;
-                                    PairLtcBtc.HighLowInfoText = "";
-                                    PairLtcBtc.HighLowInfoText = PairLtcBtc.PairString + " ⇓⇓⇓⇓⇓⇓　24時間最安値 ";
+                                    PairLtcJpy.HighLowInfoTextColorFlag = false;
+                                    PairLtcJpy.HighLowInfoText = "";
+                                    PairLtcJpy.HighLowInfoText = PairLtcJpy.PairString + " ⇓⇓⇓⇓⇓⇓　24時間最安値 ";
 
                                     if (PlaySound)
                                     {
@@ -4806,7 +4950,7 @@ namespace BitWallpaper.ViewModels
                             }
                             else
                             {
-                                PairLtcBtc.LowestIn24PriceAlart = false;
+                                PairLtcJpy.LowestIn24PriceAlart = false;
                             }
 
                             #endregion
@@ -4815,11 +4959,11 @@ namespace BitWallpaper.ViewModels
                             if ((MinMode == false) && (pair == CurrentPair))
                             {
                                 // 最新取引価格のラインを更新
-                                if (ChartAxisYLtcBtc != null)
+                                if (ChartAxisYLtcJpy != null)
                                 {
-                                    if (ChartAxisYLtcBtc[0].Sections.Count > 0)
+                                    if (ChartAxisYLtcJpy[0].Sections.Count > 0)
                                     {
-                                        ChartAxisYLtcBtc[0].Sections[0].Value = (double)tick.LTP;
+                                        ChartAxisYLtcJpy[0].Sections[0].Value = (double)tick.LTP;
                                     }
                                 }
 
@@ -4857,10 +5001,6 @@ namespace BitWallpaper.ViewModels
                                 */
                             }
 
-                        }
-                        else if (pair == Pairs.bcc_btc)
-                        {
-                            //
                         }
                         else if (pair == Pairs.bcc_jpy)
                         {
@@ -4968,7 +5108,7 @@ namespace BitWallpaper.ViewModels
                                 }
 
                             }
-                            else if (PairLtcBtc.TickHistories.Count == 1)
+                            else if (PairBchJpy.TickHistories.Count == 1)
                             {
                                 PairBchJpy.AveragePrice = PairBchJpy.TickHistories[0].Price;
                             }
@@ -5171,7 +5311,315 @@ namespace BitWallpaper.ViewModels
                             }
 
                         }
+                        else if (pair == Pairs.xlm_jpy)
+                        {
+                            // 一旦前の値を保存
+                            var prevLtp = PairXlmJpy.Ltp;
 
+                            // 最新の価格をセット
+                            PairXlmJpy.Ltp = tick.LTP;
+                            PairXlmJpy.Bid = tick.Bid;
+                            PairXlmJpy.Ask = tick.Ask;
+                            PairXlmJpy.TickTimeStamp = tick.TimeStamp;
+
+                            PairXlmJpy.LowestIn24Price = tick.Low;
+                            PairXlmJpy.HighestIn24Price = tick.High;
+
+                            // 起動時価格セット
+                            if (PairXlmJpy.BasePrice == 0) PairXlmJpy.BasePrice = tick.LTP;
+
+                            // 最安値登録
+                            if (PairXlmJpy.LowestPrice == 0)
+                            {
+                                PairXlmJpy.LowestPrice = tick.LTP;
+                            }
+                            if (tick.LTP < PairXlmJpy.LowestPrice)
+                            {
+                                //SystemSounds.Beep.Play();
+                                PairXlmJpy.LowestPrice = tick.LTP;
+                            }
+
+                            // 最高値登録
+                            if (PairXlmJpy.HighestPrice == 0)
+                            {
+                                PairXlmJpy.HighestPrice = tick.LTP;
+                            }
+                            if (tick.LTP > PairXlmJpy.HighestPrice)
+                            {
+                                //SystemSounds.Asterisk.Play();
+                                PairXlmJpy.HighestPrice = tick.LTP;
+                            }
+
+                            #region == チック履歴 ==
+
+                            TickHistory aym = new TickHistory();
+                            aym.Price = tick.LTP;
+                            aym.TimeAt = tick.TimeStamp;
+                            if (PairXlmJpy.TickHistories.Count > 0)
+                            {
+                                if (PairXlmJpy.TickHistories[0].Price > aym.Price)
+                                {
+                                    //aym.TickHistoryPriceColor = _priceUpColor;
+                                    aym.TickHistoryPriceUp = true;
+                                    PairXlmJpy.TickHistories.Insert(0, aym);
+
+                                }
+                                else if (PairXlmJpy.TickHistories[0].Price < aym.Price)
+                                {
+                                    //aym.TickHistoryPriceColor = _priceDownColor;
+                                    aym.TickHistoryPriceUp = false;
+                                    PairXlmJpy.TickHistories.Insert(0, aym);
+                                }
+                                else
+                                {
+                                    //aym.TickHistoryPriceColor = Colors.Gainsboro;
+                                    PairXlmJpy.TickHistories.Insert(0, aym);
+                                }
+                            }
+                            else
+                            {
+                                //aym.TickHistoryPriceColor = Colors.Gainsboro;
+                                PairXlmJpy.TickHistories.Insert(0, aym);
+                            }
+
+                            // limit the number of the list.
+                            if (PairXlmJpy.TickHistories.Count > 60)
+                            {
+                                PairXlmJpy.TickHistories.RemoveAt(60);
+                            }
+
+                            // 60(1分)の平均値を求める
+                            decimal aSum = 0;
+                            int c = 0;
+                            if (PairXlmJpy.TickHistories.Count > 0)
+                            {
+
+                                if (PairXlmJpy.TickHistories.Count > 60)
+                                {
+                                    c = 59;
+                                }
+                                else
+                                {
+                                    c = PairXlmJpy.TickHistories.Count - 1;
+                                }
+
+                                if (c == 0)
+                                {
+                                    PairXlmJpy.AveragePrice = PairXlmJpy.TickHistories[0].Price;
+                                }
+                                else
+                                {
+                                    for (int i = 0; i < c; i++)
+                                    {
+                                        aSum = aSum + PairXlmJpy.TickHistories[i].Price;
+                                    }
+                                    PairXlmJpy.AveragePrice = aSum / c;
+                                }
+
+                            }
+                            else if (PairXlmJpy.TickHistories.Count == 1)
+                            {
+                                PairXlmJpy.AveragePrice = PairXlmJpy.TickHistories[0].Price;
+                            }
+
+                            #endregion
+
+                            #region == アラーム ==
+
+                            bool isPlayed = false;
+
+                            // カスタムアラーム
+                            if (PairXlmJpy.AlarmPlus > 0)
+                            {
+                                if (tick.LTP >= PairXlmJpy.AlarmPlus)
+                                {
+                                    PairXlmJpy.HighLowInfoTextColorFlag = true;
+                                    PairXlmJpy.HighLowInfoText = PairXlmJpy.PairString + " ⇑⇑⇑　高値アラーム ";
+
+                                    ShowBalloonEventArgs ag = new ShowBalloonEventArgs
+                                    {
+                                        Title = PairXlmJpy.PairString + " 高値アラーム",
+                                        Text = PairXlmJpy.AlarmPlus.ToString("#,0") + " に達しました。"
+                                    };
+                                    // バルーン表示
+                                    ShowBalloon?.Invoke(this, ag);
+                                    // クリア
+                                    PairXlmJpy.AlarmPlus = 0;
+
+                                }
+                            }
+
+                            if (PairXlmJpy.AlarmMinus > 0)
+                            {
+                                if (tick.LTP <= PairXlmJpy.AlarmMinus)
+                                {
+                                    PairXlmJpy.HighLowInfoTextColorFlag = false;
+                                    PairXlmJpy.HighLowInfoText = PairXlmJpy.PairString + " ⇓⇓⇓　安値アラーム ";
+
+                                    ShowBalloonEventArgs ag = new ShowBalloonEventArgs
+                                    {
+                                        Title = PairXlmJpy.PairString + " 安値アラーム",
+                                        Text = PairXlmJpy.AlarmMinus.ToString("#,0") + " に達しました。"
+                                    };
+                                    // バルーン表示
+                                    ShowBalloon?.Invoke(this, ag);
+                                    // クリア
+                                    PairXlmJpy.AlarmMinus = 0;
+
+                                }
+                            }
+
+                            // 起動後最高値
+                            if ((tick.LTP >= PairXlmJpy.HighestPrice) && (prevLtp != tick.LTP))
+                            {
+                                if ((PairXlmJpy.TickHistories.Count > waitTime) && ((PairXlmJpy.BasePrice + 20M) < tick.LTP))
+                                {
+                                    if (PairXlmJpy.PlaySoundHighest)
+                                        PairXlmJpy.HighestPriceAlart = true;
+
+                                    if ((isPlayed == false) && (PairXlmJpy.PlaySoundHighest == true))
+                                    {
+                                        PairXlmJpy.HighLowInfoTextColorFlag = true;
+                                        PairXlmJpy.HighLowInfoText = "";
+                                        PairXlmJpy.HighLowInfoText = PairXlmJpy.PairString + " ⇑⇑⇑　起動後最高値 ";
+
+                                        if (PlaySound)
+                                        {
+                                            SystemSounds.Hand.Play();
+                                            isPlayed = true;
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                PairXlmJpy.HighestPriceAlart = false;
+                            }
+
+                            // 起動後最安値
+                            if ((tick.LTP <= PairXlmJpy.LowestPrice) && (prevLtp != tick.LTP))
+                            {
+                                if ((PairXlmJpy.TickHistories.Count > waitTime) && ((PairXlmJpy.BasePrice - 20M) > tick.LTP))
+                                {
+                                    if (PairXlmJpy.PlaySoundLowest)
+                                        PairXlmJpy.LowestPriceAlart = true;
+
+                                    if ((isPlayed == false) && (PairXlmJpy.PlaySoundLowest == true))
+                                    {
+                                        PairXlmJpy.HighLowInfoTextColorFlag = false;
+                                        PairXlmJpy.HighLowInfoText = "";
+                                        PairXlmJpy.HighLowInfoText = PairXlmJpy.PairString + " ⇓⇓⇓　起動後最安値 ";
+
+                                        if (PlaySound)
+                                        {
+                                            SystemSounds.Beep.Play();
+                                            isPlayed = true;
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                PairXlmJpy.LowestPriceAlart = false;
+                            }
+
+                            // 過去24時間最高値
+                            if ((tick.LTP >= PairXlmJpy.HighestIn24Price) && (prevLtp != tick.LTP) && (PairXlmJpy.TickHistories.Count > waitTime))
+                            {
+                                if (PairXlmJpy.PlaySoundHighest24h)
+                                    PairXlmJpy.HighestIn24PriceAlart = true;
+
+                                if ((isPlayed == false) && (PairXlmJpy.PlaySoundHighest24h == true))
+                                {
+                                    PairXlmJpy.HighLowInfoTextColorFlag = true;
+                                    PairXlmJpy.HighLowInfoText = "";
+                                    PairXlmJpy.HighLowInfoText = PairXlmJpy.PairString + " ⇑⇑⇑⇑⇑⇑　過去24時間最高値 ";
+
+                                    if (PlaySound)
+                                    {
+                                        SystemSounds.Hand.Play();
+                                        isPlayed = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                PairXlmJpy.HighestIn24PriceAlart = false;
+                            }
+
+                            // 過去24時間最安値
+                            if ((tick.LTP <= PairXlmJpy.LowestIn24Price) && (prevLtp != tick.LTP) && (PairXlmJpy.TickHistories.Count > waitTime))
+                            {
+                                if (PairXlmJpy.PlaySoundLowest24h)
+                                    PairXlmJpy.LowestIn24PriceAlart = true;
+
+                                if ((isPlayed == false) && (PairXlmJpy.PlaySoundLowest24h == true))
+                                {
+                                    PairXlmJpy.HighLowInfoTextColorFlag = false;
+                                    PairXlmJpy.HighLowInfoText = "";
+                                    PairXlmJpy.HighLowInfoText = PairXlmJpy.PairString + " ⇓⇓⇓⇓⇓⇓　過去24時間最安値 ";
+
+                                    if (PlaySound)
+                                    {
+                                        SystemSounds.Hand.Play();
+                                        isPlayed = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                PairXlmJpy.LowestIn24PriceAlart = false;
+                            }
+
+                            #endregion
+
+                            // 省エネモードでなかったら
+                            if ((MinMode == false) && (pair == CurrentPair))
+                            {
+                                // 最新取引価格のラインを更新
+                                if (ChartAxisYXlmJpy != null)
+                                {
+                                    if (ChartAxisYXlmJpy[0].Sections.Count > 0)
+                                    {
+                                        ChartAxisYXlmJpy[0].Sections[0].Value = (double)tick.LTP;
+                                    }
+                                }
+
+                                // 最新のロウソク足を更新する。＞＞＞重すぎ。負荷掛かり過ぎなので止め。
+                                /*
+                                if (ChartSeriesBchJpy[0].Values != null)
+                                {
+                                    int c = ChartSeriesBchJpy[0].Values.Count;
+
+                                    if (c > 0)
+                                    {
+                                        double l = ((OhlcPoint)ChartSeriesBchJpy[0].Values[c - 1]).Low;
+                                        double h = ((OhlcPoint)ChartSeriesBchJpy[0].Values[c - 1]).High;
+
+                                        if (Application.Current == null) return;
+                                        Application.Current.Dispatcher.Invoke(() =>
+                                        {
+
+                                            ((OhlcPoint)ChartSeriesBchJpy[0].Values[c - 1]).Close = (double)tick.LTP;
+
+                                            if (l > (double)tick.LTP)
+                                            {
+                                                ((OhlcPoint)ChartSeriesBchJpy[0].Values[c - 1]).Low = (double)tick.LTP;
+                                            }
+
+                                            if (h < (double)tick.LTP)
+                                            {
+                                                ((OhlcPoint)ChartSeriesBchJpy[0].Values[c - 1]).High = (double)tick.LTP;
+                                            }
+
+                                        });
+
+                                    }
+                                }
+                                */
+                            }
+
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -5566,8 +6014,8 @@ namespace BitWallpaper.ViewModels
                             }
                         }
 
-                        // PairEthBtc
-                        pair = pairs.Element("EthBtc");
+                        // PairEthJpy
+                        pair = pairs.Element("EthJpy");
                         if (pair != null)
                         {
                             var hoge = pair.Attribute("playSoundLowest");
@@ -5575,11 +6023,11 @@ namespace BitWallpaper.ViewModels
                             {
                                 if (hoge.Value == "true")
                                 {
-                                    PairEthBtc.PlaySoundLowest = true;
+                                    PairEthJpy.PlaySoundLowest = true;
                                 }
                                 else
                                 {
-                                    PairEthBtc.PlaySoundLowest = false;
+                                    PairEthJpy.PlaySoundLowest = false;
                                 }
                             }
 
@@ -5588,11 +6036,11 @@ namespace BitWallpaper.ViewModels
                             {
                                 if (hoge.Value == "true")
                                 {
-                                    PairEthBtc.PlaySoundHighest = true;
+                                    PairEthJpy.PlaySoundHighest = true;
                                 }
                                 else
                                 {
-                                    PairEthBtc.PlaySoundHighest = false;
+                                    PairEthJpy.PlaySoundHighest = false;
                                 }
                             }
 
@@ -5601,11 +6049,11 @@ namespace BitWallpaper.ViewModels
                             {
                                 if (hoge.Value == "true")
                                 {
-                                    PairEthBtc.PlaySoundLowest24h = true;
+                                    PairEthJpy.PlaySoundLowest24h = true;
                                 }
                                 else
                                 {
-                                    PairEthBtc.PlaySoundLowest24h = false;
+                                    PairEthJpy.PlaySoundLowest24h = false;
                                 }
                             }
 
@@ -5614,11 +6062,11 @@ namespace BitWallpaper.ViewModels
                             {
                                 if (hoge.Value == "true")
                                 {
-                                    PairEthBtc.PlaySoundHighest24h = true;
+                                    PairEthJpy.PlaySoundHighest24h = true;
                                 }
                                 else
                                 {
-                                    PairEthBtc.PlaySoundHighest24h = false;
+                                    PairEthJpy.PlaySoundHighest24h = false;
                                 }
                             }
 
@@ -5630,11 +6078,11 @@ namespace BitWallpaper.ViewModels
                                 {
                                     try
                                     {
-                                        PairEthBtc.DepthGrouping = Decimal.Parse(hoge.Value);
+                                        PairEthJpy.DepthGrouping = Decimal.Parse(hoge.Value);
                                     }
                                     catch
                                     {
-                                        PairEthBtc.DepthGrouping = 0;
+                                        PairEthJpy.DepthGrouping = 0;
                                     }
 
                                 }
@@ -5648,11 +6096,11 @@ namespace BitWallpaper.ViewModels
                                 {
                                     try
                                     {
-                                        PairEthBtc.AlarmPlus = Decimal.Parse(hoge.Value);
+                                        PairEthJpy.AlarmPlus = Decimal.Parse(hoge.Value);
                                     }
                                     catch
                                     {
-                                        PairEthBtc.AlarmPlus = 0;
+                                        PairEthJpy.AlarmPlus = 0;
                                     }
 
                                 }
@@ -5664,19 +6112,19 @@ namespace BitWallpaper.ViewModels
                                 {
                                     try
                                     {
-                                        PairEthBtc.AlarmMinus = Decimal.Parse(hoge.Value);
+                                        PairEthJpy.AlarmMinus = Decimal.Parse(hoge.Value);
                                     }
                                     catch
                                     {
-                                        PairEthBtc.AlarmMinus = 0;
+                                        PairEthJpy.AlarmMinus = 0;
                                     }
 
                                 }
                             }
                         }
 
-                        // PairLtcBtc
-                        pair = pairs.Element("LtcBtc");
+                        // PairLtcJpy
+                        pair = pairs.Element("LtcJpy");
                         if (pair != null)
                         {
                             var hoge = pair.Attribute("playSoundLowest");
@@ -5684,11 +6132,11 @@ namespace BitWallpaper.ViewModels
                             {
                                 if (hoge.Value == "true")
                                 {
-                                    PairLtcBtc.PlaySoundLowest = true;
+                                    PairLtcJpy.PlaySoundLowest = true;
                                 }
                                 else
                                 {
-                                    PairLtcBtc.PlaySoundLowest = false;
+                                    PairLtcJpy.PlaySoundLowest = false;
                                 }
                             }
 
@@ -5697,11 +6145,11 @@ namespace BitWallpaper.ViewModels
                             {
                                 if (hoge.Value == "true")
                                 {
-                                    PairLtcBtc.PlaySoundHighest = true;
+                                    PairLtcJpy.PlaySoundHighest = true;
                                 }
                                 else
                                 {
-                                    PairLtcBtc.PlaySoundHighest = false;
+                                    PairLtcJpy.PlaySoundHighest = false;
                                 }
                             }
 
@@ -5710,11 +6158,11 @@ namespace BitWallpaper.ViewModels
                             {
                                 if (hoge.Value == "true")
                                 {
-                                    PairLtcBtc.PlaySoundLowest24h = true;
+                                    PairLtcJpy.PlaySoundLowest24h = true;
                                 }
                                 else
                                 {
-                                    PairLtcBtc.PlaySoundLowest24h = false;
+                                    PairLtcJpy.PlaySoundLowest24h = false;
                                 }
                             }
 
@@ -5723,11 +6171,11 @@ namespace BitWallpaper.ViewModels
                             {
                                 if (hoge.Value == "true")
                                 {
-                                    PairLtcBtc.PlaySoundHighest24h = true;
+                                    PairLtcJpy.PlaySoundHighest24h = true;
                                 }
                                 else
                                 {
-                                    PairLtcBtc.PlaySoundHighest24h = false;
+                                    PairLtcJpy.PlaySoundHighest24h = false;
                                 }
                             }
 
@@ -5739,11 +6187,11 @@ namespace BitWallpaper.ViewModels
                                 {
                                     try
                                     {
-                                        PairLtcBtc.DepthGrouping = Decimal.Parse(hoge.Value);
+                                        PairLtcJpy.DepthGrouping = Decimal.Parse(hoge.Value);
                                     }
                                     catch
                                     {
-                                        PairLtcBtc.DepthGrouping = 0;
+                                        PairLtcJpy.DepthGrouping = 0;
                                     }
 
                                 }
@@ -5757,11 +6205,11 @@ namespace BitWallpaper.ViewModels
                                 {
                                     try
                                     {
-                                        PairLtcBtc.AlarmPlus = Decimal.Parse(hoge.Value);
+                                        PairLtcJpy.AlarmPlus = Decimal.Parse(hoge.Value);
                                     }
                                     catch
                                     {
-                                        PairLtcBtc.AlarmPlus = 0;
+                                        PairLtcJpy.AlarmPlus = 0;
                                     }
 
                                 }
@@ -5773,11 +6221,11 @@ namespace BitWallpaper.ViewModels
                                 {
                                     try
                                     {
-                                        PairLtcBtc.AlarmMinus = Decimal.Parse(hoge.Value);
+                                        PairLtcJpy.AlarmMinus = Decimal.Parse(hoge.Value);
                                     }
                                     catch
                                     {
-                                        PairLtcBtc.AlarmMinus = 0;
+                                        PairLtcJpy.AlarmMinus = 0;
                                     }
 
                                 }
@@ -6002,6 +6450,114 @@ namespace BitWallpaper.ViewModels
                             }
                         }
 
+                        // PairXlmJpy
+                        pair = pairs.Element("XlmJpy");
+                        if (pair != null)
+                        {
+                            var hoge = pair.Attribute("playSoundLowest");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairXlmJpy.PlaySoundLowest = true;
+                                }
+                                else
+                                {
+                                    PairXlmJpy.PlaySoundLowest = false;
+                                }
+                            }
+
+                            hoge = pair.Attribute("playSoundHighest");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairXlmJpy.PlaySoundHighest = true;
+                                }
+                                else
+                                {
+                                    PairXlmJpy.PlaySoundHighest = false;
+                                }
+                            }
+
+                            hoge = pair.Attribute("playSoundLowest24h");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairXlmJpy.PlaySoundLowest24h = true;
+                                }
+                                else
+                                {
+                                    PairXlmJpy.PlaySoundLowest24h = false;
+                                }
+                            }
+
+                            hoge = pair.Attribute("playSoundHighest24h");
+                            if (hoge != null)
+                            {
+                                if (hoge.Value == "true")
+                                {
+                                    PairXlmJpy.PlaySoundHighest24h = true;
+                                }
+                                else
+                                {
+                                    PairXlmJpy.PlaySoundHighest24h = false;
+                                }
+                            }
+
+                            // 板グルーピング
+                            hoge = pair.Attribute("depthGrouping");
+                            if (hoge != null)
+                            {
+                                if (!string.IsNullOrEmpty(hoge.Value))
+                                {
+                                    try
+                                    {
+                                        PairXlmJpy.DepthGrouping = Decimal.Parse(hoge.Value);
+                                    }
+                                    catch
+                                    {
+                                        PairXlmJpy.DepthGrouping = 0;
+                                    }
+
+                                }
+                            }
+
+                            // カスタムアラート
+                            hoge = pair.Attribute("alarmHigh");
+                            if (hoge != null)
+                            {
+                                if (!string.IsNullOrEmpty(hoge.Value))
+                                {
+                                    try
+                                    {
+                                        PairXlmJpy.AlarmPlus = Decimal.Parse(hoge.Value);
+                                    }
+                                    catch
+                                    {
+                                        PairXlmJpy.AlarmPlus = 0;
+                                    }
+
+                                }
+                            }
+                            hoge = pair.Attribute("alarmLow");
+                            if (hoge != null)
+                            {
+                                if (!string.IsNullOrEmpty(hoge.Value))
+                                {
+                                    try
+                                    {
+                                        PairXlmJpy.AlarmMinus = Decimal.Parse(hoge.Value);
+                                    }
+                                    catch
+                                    {
+                                        PairXlmJpy.AlarmMinus = 0;
+                                    }
+
+                                }
+                            }
+                        }
                     }
 
                     #endregion
@@ -6309,11 +6865,11 @@ namespace BitWallpaper.ViewModels
             //
             pairs.AppendChild(pairXrpJpy);
 
-            // PairEthBtc の設定
-            XmlElement pairEthBtc = doc.CreateElement(string.Empty, "EthBtc", string.Empty);
+            // PairEthJpy の設定
+            XmlElement pairEthBtc = doc.CreateElement(string.Empty, "EthJpy", string.Empty);
 
             attrs = doc.CreateAttribute("playSoundLowest");
-            if (PairEthBtc.PlaySoundLowest)
+            if (PairEthJpy.PlaySoundLowest)
             {
                 attrs.Value = "true";
             }
@@ -6324,7 +6880,7 @@ namespace BitWallpaper.ViewModels
             pairEthBtc.SetAttributeNode(attrs);
 
             attrs = doc.CreateAttribute("playSoundHighest");
-            if (PairEthBtc.PlaySoundHighest)
+            if (PairEthJpy.PlaySoundHighest)
             {
                 attrs.Value = "true";
             }
@@ -6335,7 +6891,7 @@ namespace BitWallpaper.ViewModels
             pairEthBtc.SetAttributeNode(attrs);
 
             attrs = doc.CreateAttribute("playSoundLowest24h");
-            if (PairEthBtc.PlaySoundLowest24h)
+            if (PairEthJpy.PlaySoundLowest24h)
             {
                 attrs.Value = "true";
             }
@@ -6346,7 +6902,7 @@ namespace BitWallpaper.ViewModels
             pairEthBtc.SetAttributeNode(attrs);
 
             attrs = doc.CreateAttribute("playSoundHighest24h");
-            if (PairEthBtc.PlaySoundHighest24h)
+            if (PairEthJpy.PlaySoundHighest24h)
             {
                 attrs.Value = "true";
             }
@@ -6358,25 +6914,25 @@ namespace BitWallpaper.ViewModels
 
             // カスタムアラート
             attrs = doc.CreateAttribute("alarmHigh");
-            attrs.Value = PairEthBtc.AlarmPlus.ToString();
+            attrs.Value = PairEthJpy.AlarmPlus.ToString();
             pairEthBtc.SetAttributeNode(attrs);
             attrs = doc.CreateAttribute("alarmLow");
-            attrs.Value = PairEthBtc.AlarmMinus.ToString();
+            attrs.Value = PairEthJpy.AlarmMinus.ToString();
             pairEthBtc.SetAttributeNode(attrs);
 
             // 板グルーピング
             attrs = doc.CreateAttribute("depthGrouping");
-            attrs.Value = PairEthBtc.DepthGrouping.ToString();
+            attrs.Value = PairEthJpy.DepthGrouping.ToString();
             pairEthBtc.SetAttributeNode(attrs);
 
             //
             pairs.AppendChild(pairEthBtc);
 
-            // PairLtcBtc の設定
-            XmlElement pairLtcBtc = doc.CreateElement(string.Empty, "LtcBtc", string.Empty);
+            // PairLtcJpy の設定
+            XmlElement pairLtcBtc = doc.CreateElement(string.Empty, "LtcJpy", string.Empty);
 
             attrs = doc.CreateAttribute("playSoundLowest");
-            if (PairLtcBtc.PlaySoundLowest)
+            if (PairLtcJpy.PlaySoundLowest)
             {
                 attrs.Value = "true";
             }
@@ -6387,7 +6943,7 @@ namespace BitWallpaper.ViewModels
             pairLtcBtc.SetAttributeNode(attrs);
 
             attrs = doc.CreateAttribute("playSoundHighest");
-            if (PairLtcBtc.PlaySoundHighest)
+            if (PairLtcJpy.PlaySoundHighest)
             {
                 attrs.Value = "true";
             }
@@ -6398,7 +6954,7 @@ namespace BitWallpaper.ViewModels
             pairLtcBtc.SetAttributeNode(attrs);
 
             attrs = doc.CreateAttribute("playSoundLowest24h");
-            if (PairLtcBtc.PlaySoundLowest24h)
+            if (PairLtcJpy.PlaySoundLowest24h)
             {
                 attrs.Value = "true";
             }
@@ -6409,7 +6965,7 @@ namespace BitWallpaper.ViewModels
             pairLtcBtc.SetAttributeNode(attrs);
 
             attrs = doc.CreateAttribute("playSoundHighest24h");
-            if (PairLtcBtc.PlaySoundHighest24h)
+            if (PairLtcJpy.PlaySoundHighest24h)
             {
                 attrs.Value = "true";
             }
@@ -6421,15 +6977,15 @@ namespace BitWallpaper.ViewModels
 
             // カスタムアラート
             attrs = doc.CreateAttribute("alarmHigh");
-            attrs.Value = PairLtcBtc.AlarmPlus.ToString();
+            attrs.Value = PairLtcJpy.AlarmPlus.ToString();
             pairLtcBtc.SetAttributeNode(attrs);
             attrs = doc.CreateAttribute("alarmLow");
-            attrs.Value = PairLtcBtc.AlarmMinus.ToString();
+            attrs.Value = PairLtcJpy.AlarmMinus.ToString();
             pairLtcBtc.SetAttributeNode(attrs);
 
             // 板グルーピング
             attrs = doc.CreateAttribute("depthGrouping");
-            attrs.Value = PairLtcBtc.DepthGrouping.ToString();
+            attrs.Value = PairLtcJpy.DepthGrouping.ToString();
             pairLtcBtc.SetAttributeNode(attrs);
 
             //
@@ -6561,7 +7117,68 @@ namespace BitWallpaper.ViewModels
             //
             pairs.AppendChild(pairBchJpy);
 
+            // PairXlmJpy の設定
+            XmlElement pairXlmJpy = doc.CreateElement(string.Empty, "XlmJpy", string.Empty);
 
+            attrs = doc.CreateAttribute("playSoundLowest");
+            if (PairXlmJpy.PlaySoundLowest)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairXlmJpy.SetAttributeNode(attrs);
+
+            attrs = doc.CreateAttribute("playSoundHighest");
+            if (PairXlmJpy.PlaySoundHighest)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairXlmJpy.SetAttributeNode(attrs);
+
+            attrs = doc.CreateAttribute("playSoundLowest24h");
+            if (PairXlmJpy.PlaySoundLowest24h)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairXlmJpy.SetAttributeNode(attrs);
+
+            attrs = doc.CreateAttribute("playSoundHighest24h");
+            if (PairXlmJpy.PlaySoundHighest24h)
+            {
+                attrs.Value = "true";
+            }
+            else
+            {
+                attrs.Value = "false";
+            }
+            pairXlmJpy.SetAttributeNode(attrs);
+
+            // カスタムアラート
+            attrs = doc.CreateAttribute("alarmHigh");
+            attrs.Value = PairXlmJpy.AlarmPlus.ToString();
+            pairXlmJpy.SetAttributeNode(attrs);
+            attrs = doc.CreateAttribute("alarmLow");
+            attrs.Value = PairXlmJpy.AlarmMinus.ToString();
+            pairXlmJpy.SetAttributeNode(attrs);
+
+            // 板グルーピング
+            attrs = doc.CreateAttribute("depthGrouping");
+            attrs.Value = PairXlmJpy.DepthGrouping.ToString();
+            pairXlmJpy.SetAttributeNode(attrs);
+
+            //
+            pairs.AppendChild(pairXlmJpy);
 
             // ////
             root.AppendChild(pairs);
@@ -7298,7 +7915,7 @@ namespace BitWallpaper.ViewModels
                 if (ListOhlcvsOneDay != null)
                     OhlcvsOneDayXrp = ListOhlcvsOneDay;
             }
-            else if (pair == Pairs.eth_btc)
+            else if (pair == Pairs.eth_jpy)
             {
                 if (ListOhlcvsOneHour != null)
                     OhlcvsOneHourEth = ListOhlcvsOneHour;
@@ -7316,11 +7933,7 @@ namespace BitWallpaper.ViewModels
                 if (ListOhlcvsOneDay != null)
                     OhlcvsOneDayMona = ListOhlcvsOneDay;
             }
-            else if (pair == Pairs.mona_btc)
-            {
-                //
-            }
-            else if (pair == Pairs.ltc_btc)
+            else if (pair == Pairs.ltc_jpy)
             {
                 if (ListOhlcvsOneHour != null)
                     OhlcvsOneHourLtc = ListOhlcvsOneHour;
@@ -7328,10 +7941,6 @@ namespace BitWallpaper.ViewModels
                     OhlcvsOneMinLtc = ListOhlcvsOneMin;
                 if (ListOhlcvsOneDay != null)
                     OhlcvsOneDayLtc = ListOhlcvsOneDay;
-            }
-            else if (pair == Pairs.bcc_btc)
-            {
-                //
             }
             else if (pair == Pairs.bcc_jpy)
             {
@@ -7341,6 +7950,15 @@ namespace BitWallpaper.ViewModels
                     OhlcvsOneMinBch = ListOhlcvsOneMin;
                 if (ListOhlcvsOneDay != null)
                     OhlcvsOneDayBch = ListOhlcvsOneDay;
+            }
+            else if (pair == Pairs.xlm_jpy)
+            {
+                if (ListOhlcvsOneHour != null)
+                    OhlcvsOneHourXlm = ListOhlcvsOneHour;
+                if (ListOhlcvsOneMin != null)
+                    OhlcvsOneMinXlm = ListOhlcvsOneMin;
+                if (ListOhlcvsOneDay != null)
+                    OhlcvsOneDayXlm = ListOhlcvsOneDay;
             }
 
             return true;
@@ -7372,7 +7990,7 @@ namespace BitWallpaper.ViewModels
                 {
                     lst = OhlcvsOneMinXrp;
                 }
-                else if (pair == Pairs.eth_btc)
+                else if (pair == Pairs.eth_jpy)
                 {
                     lst = OhlcvsOneMinEth;
                 }
@@ -7380,21 +7998,17 @@ namespace BitWallpaper.ViewModels
                 {
                     lst = OhlcvsOneMinMona;
                 }
-                else if (pair == Pairs.mona_btc)
-                {
-                    //
-                }
-                else if (pair == Pairs.ltc_btc)
+                else if (pair == Pairs.ltc_jpy)
                 {
                     lst = OhlcvsOneMinLtc;
-                }
-                else if (pair == Pairs.bcc_btc)
-                {
-                    //
                 }
                 else if (pair == Pairs.bcc_jpy)
                 {
                     lst = OhlcvsOneMinBch;
+                }
+                else if (pair == Pairs.xlm_jpy)
+                {
+                    lst = OhlcvsOneMinXlm;
                 }
 
                 // 一時間の期間か１日の期間
@@ -7433,7 +8047,7 @@ namespace BitWallpaper.ViewModels
                 {
                     lst = OhlcvsOneHourXrp;
                 }
-                else if (pair == Pairs.eth_btc)
+                else if (pair == Pairs.eth_jpy)
                 {
                     lst = OhlcvsOneHourEth;
                 }
@@ -7441,21 +8055,17 @@ namespace BitWallpaper.ViewModels
                 {
                     lst = OhlcvsOneHourMona;
                 }
-                else if (pair == Pairs.mona_btc)
-                {
-                    //
-                }
-                else if (pair == Pairs.ltc_btc)
+                else if (pair == Pairs.ltc_jpy)
                 {
                     lst = OhlcvsOneHourLtc;
-                }
-                else if (pair == Pairs.bcc_btc)
-                {
-                    //
                 }
                 else if (pair == Pairs.bcc_jpy)
                 {
                     lst = OhlcvsOneHourBch;
+                }
+                else if (pair == Pairs.xlm_jpy)
+                {
+                    lst = OhlcvsOneHourXlm;
                 }
 
                 // １日の期間か3日か１週間の期間
@@ -7490,7 +8100,7 @@ namespace BitWallpaper.ViewModels
                 {
                     lst = OhlcvsOneDayXrp;
                 }
-                else if (pair == Pairs.eth_btc)
+                else if (pair == Pairs.eth_jpy)
                 {
                     lst = OhlcvsOneDayEth;
                 }
@@ -7498,21 +8108,17 @@ namespace BitWallpaper.ViewModels
                 {
                     lst = OhlcvsOneDayMona;
                 }
-                else if (pair == Pairs.mona_btc)
-                {
-                    //
-                }
-                else if (pair == Pairs.ltc_btc)
+                else if (pair == Pairs.ltc_jpy)
                 {
                     lst = OhlcvsOneDayLtc;
-                }
-                else if (pair == Pairs.bcc_btc)
-                {
-                    //
                 }
                 else if (pair == Pairs.bcc_jpy)
                 {
                     lst = OhlcvsOneDayBch;
+                }
+                else if (pair == Pairs.xlm_jpy)
+                {
+                    lst = OhlcvsOneDayXlm;
                 }
 
                 // 1ヵ月、2ヵ月、１年、５年の期間
@@ -7587,11 +8193,11 @@ namespace BitWallpaper.ViewModels
                     chartAxisY = ChartAxisYXrpJpy;
 
                 }
-                else if (pair == Pairs.eth_btc)
+                else if (pair == Pairs.eth_jpy)
                 {
-                    chartSeries = ChartSeriesEthBtc;
-                    chartAxisX = ChartAxisXEthBtc;
-                    chartAxisY = ChartAxisYEthBtc;
+                    chartSeries = ChartSeriesEthJpy;
+                    chartAxisX = ChartAxisXEthJpy;
+                    chartAxisY = ChartAxisYEthJpy;
                 }
                 else if (pair == Pairs.mona_jpy)
                 {
@@ -7599,25 +8205,23 @@ namespace BitWallpaper.ViewModels
                     chartAxisX = ChartAxisXMonaJpy;
                     chartAxisY = ChartAxisYMonaJpy;
                 }
-                else if (pair == Pairs.mona_btc)
+                else if (pair == Pairs.ltc_jpy)
                 {
-                    //
-                }
-                else if (pair == Pairs.ltc_btc)
-                {
-                    chartSeries = ChartSeriesLtcBtc;
-                    chartAxisX = ChartAxisXLtcBtc;
-                    chartAxisY = ChartAxisYLtcBtc;
-                }
-                else if (pair == Pairs.bcc_btc)
-                {
-                    //
+                    chartSeries = ChartSeriesLtcJpy;
+                    chartAxisX = ChartAxisXLtcJpy;
+                    chartAxisY = ChartAxisYLtcJpy;
                 }
                 else if (pair == Pairs.bcc_jpy)
                 {
                     chartSeries = ChartSeriesBchJpy;
                     chartAxisX = ChartAxisXBchJpy;
                     chartAxisY = ChartAxisYBchJpy;
+                }
+                else if (pair == Pairs.xlm_jpy)
+                {
+                    chartSeries = ChartSeriesXlmJpy;
+                    chartAxisX = ChartAxisXXlmJpy;
+                    chartAxisY = ChartAxisYXlmJpy;
                 }
 
                 try
@@ -7776,22 +8380,11 @@ namespace BitWallpaper.ViewModels
             //foreach (DayOfWeek value in Enum.GetValues(typeof(DayOfWeek)))
             foreach (Pairs p in Enum.GetValues(typeof(Pairs)))
             {
-                //Debug.WriteLine(p.ToString());
+                bool bln = await GetCandlesticks(p, SelectedCandleType);
 
-                if ((p == Pairs.mona_btc) || p == Pairs.bcc_btc)
+                if (bln == true)
                 {
-                    //Debug.WriteLine(p.ToString() + " skipping.");
-                    continue;
-                }
-                else
-                {
-                    bool bln = await GetCandlesticks(p, SelectedCandleType);
-
-                    if (bln == true)
-                    {
-                        LoadChart(p, SelectedCandleType);
-                    }
-
+                    LoadChart(p, SelectedCandleType);
                 }
 
             }
@@ -7918,17 +8511,7 @@ namespace BitWallpaper.ViewModels
         {
             foreach (Pairs p in Enum.GetValues(typeof(Pairs)))
             {
-                //Debug.WriteLine(p.ToString());
-
-                if ((p == Pairs.mona_btc) || p == Pairs.bcc_btc)
-                {
-                    //Debug.WriteLine(p.ToString() + " skipping.");
-                    continue;
-                }
-                else
-                {
-                    ChangeChartSpan(p);
-                }
+                ChangeChartSpan(p);
             }
 
         }
@@ -7961,7 +8544,7 @@ namespace BitWallpaper.ViewModels
                 ListOhlcvsOneMin = OhlcvsOneMinXrp;
                 ListOhlcvsOneDay = OhlcvsOneDayXrp;
             }
-            else if (pair == Pairs.eth_btc)
+            else if (pair == Pairs.eth_jpy)
             {
                 ListOhlcvsOneHour = OhlcvsOneHourEth;
                 ListOhlcvsOneMin = OhlcvsOneMinEth;
@@ -7973,25 +8556,23 @@ namespace BitWallpaper.ViewModels
                 ListOhlcvsOneMin = OhlcvsOneMinMona;
                 ListOhlcvsOneDay = OhlcvsOneDayMona;
             }
-            else if (pair == Pairs.mona_btc)
-            {
-                //
-            }
-            else if (pair == Pairs.ltc_btc)
+            else if (pair == Pairs.ltc_jpy)
             {
                 ListOhlcvsOneHour = OhlcvsOneHourLtc;
                 ListOhlcvsOneMin = OhlcvsOneMinLtc;
                 ListOhlcvsOneDay = OhlcvsOneDayLtc;
-            }
-            else if (pair == Pairs.bcc_btc)
-            {
-                //
             }
             else if (pair == Pairs.bcc_jpy)
             {
                 ListOhlcvsOneHour = OhlcvsOneHourBch;
                 ListOhlcvsOneMin = OhlcvsOneMinBch;
                 ListOhlcvsOneDay = OhlcvsOneDayBch;
+            }
+            else if (pair == Pairs.xlm_jpy)
+            {
+                ListOhlcvsOneHour = OhlcvsOneHourXlm;
+                ListOhlcvsOneMin = OhlcvsOneMinXlm;
+                ListOhlcvsOneDay = OhlcvsOneDayXlm;
             }
 
             #region == １分毎のデータ ==
@@ -8270,11 +8851,11 @@ namespace BitWallpaper.ViewModels
                 chartAxisX = ChartAxisXXrpJpy;
                 chartAxisY = ChartAxisYXrpJpy;
             }
-            else if (pair == Pairs.eth_btc)
+            else if (pair == Pairs.eth_jpy)
             {
-                chartSeries = ChartSeriesEthBtc;
-                chartAxisX = ChartAxisXEthBtc;
-                chartAxisY = ChartAxisYEthBtc;
+                chartSeries = ChartSeriesEthJpy;
+                chartAxisX = ChartAxisXEthJpy;
+                chartAxisY = ChartAxisYEthJpy;
             }
             else if (pair == Pairs.mona_jpy)
             {
@@ -8282,25 +8863,23 @@ namespace BitWallpaper.ViewModels
                 chartAxisX = ChartAxisXMonaJpy;
                 chartAxisY = ChartAxisYMonaJpy;
             }
-            else if (pair == Pairs.mona_btc)
+            else if (pair == Pairs.ltc_jpy)
             {
-                //
-            }
-            else if (pair == Pairs.ltc_btc)
-            {
-                chartSeries = ChartSeriesLtcBtc;
-                chartAxisX = ChartAxisXLtcBtc;
-                chartAxisY = ChartAxisYLtcBtc;
-            }
-            else if (pair == Pairs.bcc_btc)
-            {
-                //
+                chartSeries = ChartSeriesLtcJpy;
+                chartAxisX = ChartAxisXLtcJpy;
+                chartAxisY = ChartAxisYLtcJpy;
             }
             else if (pair == Pairs.bcc_jpy)
             {
                 chartSeries = ChartSeriesBchJpy;
                 chartAxisX = ChartAxisXBchJpy;
                 chartAxisY = ChartAxisYBchJpy;
+            }
+            else if (pair == Pairs.xlm_jpy)
+            {
+                chartSeries = ChartSeriesXlmJpy;
+                chartAxisX = ChartAxisXXlmJpy;
+                chartAxisY = ChartAxisYXlmJpy;
             }
 
             if (chartSeries == null)
@@ -8388,11 +8967,11 @@ namespace BitWallpaper.ViewModels
                 chartAxisX = ChartAxisXXrpJpy;
                 chartAxisY = ChartAxisYXrpJpy;
             }
-            else if (pair == Pairs.eth_btc)
+            else if (pair == Pairs.eth_jpy)
             {
-                chartSeries = ChartSeriesEthBtc;
-                chartAxisX = ChartAxisXEthBtc;
-                chartAxisY = ChartAxisYEthBtc;
+                chartSeries = ChartSeriesEthJpy;
+                chartAxisX = ChartAxisXEthJpy;
+                chartAxisY = ChartAxisYEthJpy;
             }
             else if (pair == Pairs.mona_jpy)
             {
@@ -8400,25 +8979,23 @@ namespace BitWallpaper.ViewModels
                 chartAxisX = ChartAxisXMonaJpy;
                 chartAxisY = ChartAxisYMonaJpy;
             }
-            else if (pair == Pairs.mona_btc)
+            else if (pair == Pairs.ltc_jpy)
             {
-                //
-            }
-            else if (pair == Pairs.ltc_btc)
-            {
-                chartSeries = ChartSeriesLtcBtc;
-                chartAxisX = ChartAxisXLtcBtc;
-                chartAxisY = ChartAxisYLtcBtc;
-            }
-            else if (pair == Pairs.bcc_btc)
-            {
-                //
+                chartSeries = ChartSeriesLtcJpy;
+                chartAxisX = ChartAxisXLtcJpy;
+                chartAxisY = ChartAxisYLtcJpy;
             }
             else if (pair == Pairs.bcc_jpy)
             {
                 chartSeries = ChartSeriesBchJpy;
                 chartAxisX = ChartAxisXBchJpy;
                 chartAxisY = ChartAxisYBchJpy;
+            }
+            else if (pair == Pairs.xlm_jpy)
+            {
+                chartSeries = ChartSeriesXlmJpy;
+                chartAxisX = ChartAxisXXlmJpy;
+                chartAxisY = ChartAxisYXlmJpy;
             }
 
             if (chartSeries == null)
