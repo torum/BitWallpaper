@@ -93,7 +93,7 @@ namespace BitWallpaper.ViewModels
 
         #region == 基本 ==
 
-        /// 0.0.0.9
+        /// 0.0.0.9 (1.6.0)
         /// 通貨ペアXLM/JPY の表示を追加。通貨ペアETH/BTCからETH/JPY、LTC/BTCからLTC/JPYへ変更。通貨ペアの表示順序を公式サイトに合わせて並べ替え。
         /// 0.0.0.8  (1.5.3)
         /// カスタムアラート値が保存されないバグ修正、タイトルメニューのアイコン余白調整、午前9時問題でバグがあった、ウィンドウ最大時余白修正。
@@ -5472,7 +5472,7 @@ namespace BitWallpaper.ViewModels
                             // 起動後最高値
                             if ((tick.LTP >= PairXlmJpy.HighestPrice) && (prevLtp != tick.LTP))
                             {
-                                if ((PairXlmJpy.TickHistories.Count > waitTime) && ((PairXlmJpy.BasePrice + 20M) < tick.LTP))
+                                if ((PairXlmJpy.TickHistories.Count > waitTime) && ((PairXlmJpy.BasePrice + 0.1M) < tick.LTP))
                                 {
                                     if (PairXlmJpy.PlaySoundHighest)
                                         PairXlmJpy.HighestPriceAlart = true;
@@ -5499,7 +5499,7 @@ namespace BitWallpaper.ViewModels
                             // 起動後最安値
                             if ((tick.LTP <= PairXlmJpy.LowestPrice) && (prevLtp != tick.LTP))
                             {
-                                if ((PairXlmJpy.TickHistories.Count > waitTime) && ((PairXlmJpy.BasePrice - 20M) > tick.LTP))
+                                if ((PairXlmJpy.TickHistories.Count > waitTime) && ((PairXlmJpy.BasePrice - 0.1M) > tick.LTP))
                                 {
                                     if (PairXlmJpy.PlaySoundLowest)
                                         PairXlmJpy.LowestPriceAlart = true;
