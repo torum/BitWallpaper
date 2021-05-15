@@ -1202,7 +1202,7 @@
                                                 <Condition Property="IsMouseOver" Value="True" />
                                             </MultiTrigger.Conditions>
                                             <!--
-                                            <Setter TargetName="HeaderBorder" Property="Background" Value="{DynamicResource BoardBackground}" />
+                                            <Setter TargetName="HeaderBorder" Property="Background" Value="{DynamicResource BoardBackgroundColorBrush}" />
                                             -->
                                             <Setter TargetName="HeaderBorder" Property="BorderBrush" Value="DarkGray" />
                                             <Setter TargetName="HeaderBorder" Property="BorderThickness" Value="2 0 0 0" />
@@ -1216,7 +1216,7 @@
                                                 <Condition Property="IsMouseOver" Value="True" />
                                             </MultiTrigger.Conditions>
                                             <!--
-                                            <Setter TargetName="HeaderBorder" Property="Background" Value="{DynamicResource BoardBackground}" />
+                                            <Setter TargetName="HeaderBorder" Property="Background" Value="{DynamicResource BoardBackgroundColorBrush}" />
                                             -->
                                             <Setter TargetName="HeaderBorder" Property="BorderBrush" Value="Gray" />
                                             <Setter TargetName="HeaderBorder" Property="BorderThickness" Value="2 0 0 0" />
@@ -1230,9 +1230,9 @@
 
                                         <Trigger Property="IsSelected" Value="True">
                                             <Setter Property="Panel.ZIndex" Value="255" />
-                                            
-                                            <Setter TargetName="HeaderBorder" Property="Background" Value="{DynamicResource BoardBackground}" />
-                                            
+                                            <!--
+                                            <Setter TargetName="HeaderBorder" Property="Background" Value="{DynamicResource BoardBackgroundColorBrush}" />
+                                            -->
                                             <Setter TargetName="HeaderBorder" Property="BorderBrush" Value="{DynamicResource AccentWarmLightColorBrush}" />
                                             <Setter TargetName="HeaderBorder" Property="BorderThickness" Value="2 0 0 0" />
 
@@ -1241,11 +1241,6 @@
 
                                             <Setter Property="Foreground" Value="{DynamicResource NormalTextColorBrush}" />
 
-                                            <Setter Property="Effect">
-                                                <Setter.Value>
-                                                    <DropShadowEffect Color="{DynamicResource ShadowTabColor}" Opacity="0.1" ShadowDepth="0" BlurRadius="1" Direction="300"/>
-                                                </Setter.Value>
-                                            </Setter>
                                         </Trigger>
                                     </ControlTemplate.Triggers>
 
