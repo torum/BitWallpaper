@@ -6,6 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Threading;
+using System.Text;
+using System.IO;
 
 namespace BitWallpaper
 {
@@ -95,5 +97,15 @@ namespace BitWallpaper
             }
         }
 
+        public App()
+        {
+            // バックグラウンドタスク内で処理されなかったら発生する（.NET 4.0 より）
+            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+        }
+
+        private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+        {
+            e.SetObserved();
+        }
     }
 }

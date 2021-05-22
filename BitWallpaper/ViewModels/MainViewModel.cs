@@ -91,7 +91,9 @@ namespace BitWallpaper.ViewModels
     {
 
         #region == 基本 ==
-
+        /// 
+        /// v1.6.4 アルトコインの表示非・表示を切り替えられるようにした。
+        /// v1.6.3 UpDownの色がおかしかったのを修正。
         /// v1.6.2 全通貨ペアをタブで表示するようにした。
         /// v1.6.1 QTUM と BATを追加。
         /// 0.0.0.9 (1.6.0)
@@ -113,7 +115,7 @@ namespace BitWallpaper.ViewModels
         /// 
 
         // Application version
-        private string _appVer = "1.6.2";
+        private string _appVer = "1.6.4";
 
         // Application name
         private string _appName = "BitWallpaper";
@@ -499,6 +501,25 @@ namespace BitWallpaper.ViewModels
             public string TickTimeStampString
             {
                 get { return PairString + " - " + _tickTimeStamp.ToLocalTime().ToString("yyyy/MM/dd/HH:mm:ss"); }
+            }
+
+            // LTPのチェックをするかどうか（省エネ目的）
+            private bool _enabled;
+            public bool Enabled
+            {
+                get
+                {
+                    return _enabled;
+                }
+                set
+                {
+                    if (_enabled == value)
+                        return;
+
+                    _enabled = value;
+                    this.NotifyPropertyChanged("Enabled");
+
+                }
             }
 
             #region == アラーム用のプロパティ ==
@@ -3649,6 +3670,8 @@ namespace BitWallpaper.ViewModels
             //dispatcherChartTimer.Start();
 
             // 初期値
+
+            PairBtcJpy.Enabled = true;
             ActivePairIndex = 0;
             CurrentPair = Pairs.btc_jpy;
             ActivePair = PairBtcJpy;
@@ -3710,21 +3733,42 @@ namespace BitWallpaper.ViewModels
 
                     try
                     {
-
-                        if (pair == CurrentPair)
+                        // Enable（開始）のチェックがあるのだけLTPを取得する(省エネ)。
+                        if (pair == Pairs.btc_jpy)
                         {
-                            if (tick.LTP > ActivePair.Ltp)
-                            {
-                                ActivePair.LtpUpFlag = true;
-                            }
-                            else if (tick.LTP < ActivePair.Ltp)
-                            {
-                                ActivePair.LtpUpFlag = false;
-                            }
-                            else if (tick.LTP == ActivePair.Ltp)
-                            {
-                                //ActivePair.LtpColor = Colors.Gainsboro;
-                            }
+                            //if (PairBtcJpy.Enabled == false) continue;
+                        }
+                        else if (pair == Pairs.xrp_jpy)
+                        {
+                            if (PairXrpJpy.Enabled == false) continue;
+                        }
+                        else if (pair == Pairs.eth_jpy)
+                        {
+                            if (PairEthJpy.Enabled == false) continue;
+                        }
+                        else if (pair == Pairs.mona_jpy)
+                        {
+                            if (PairMonaJpy.Enabled == false) continue;
+                        }
+                        else if (pair == Pairs.ltc_jpy)
+                        {
+                            if (PairLtcJpy.Enabled == false) continue;
+                        }
+                        else if (pair == Pairs.bcc_jpy)
+                        {
+                            if (PairBchJpy.Enabled == false) continue;
+                        }
+                        else if (pair == Pairs.xlm_jpy)
+                        {
+                            if (PairXlmJpy.Enabled == false) continue;
+                        }
+                        else if (pair == Pairs.qtum_jpy)
+                        {
+                            if (PairQtumJpy.Enabled == false) continue;
+                        }
+                        else if (pair == Pairs.bat_jpy)
+                        {
+                            if (PairBatJpy.Enabled == false) continue;
                         }
 
                         if (pair == Pairs.btc_jpy)
@@ -3732,6 +3776,15 @@ namespace BitWallpaper.ViewModels
 
                             // 一旦前の値を保存
                             var prevLtp = PairBtcJpy.Ltp;
+
+                            if (tick.LTP > prevLtp)
+                            {
+                                PairBtcJpy.LtpUpFlag = true;
+                            }
+                            else if (tick.LTP < prevLtp)
+                            {
+                                PairBtcJpy.LtpUpFlag = false;
+                            }
 
                             // 最新の価格をセット
                             PairBtcJpy.Ltp = tick.LTP;
@@ -4058,6 +4111,15 @@ namespace BitWallpaper.ViewModels
                             // 一旦前の値を保存
                             var prevLtp = PairXrpJpy.Ltp;
 
+                            if (tick.LTP > prevLtp)
+                            {
+                                PairXrpJpy.LtpUpFlag = true;
+                            }
+                            else if (tick.LTP < prevLtp)
+                            {
+                                PairXrpJpy.LtpUpFlag = false;
+                            }
+
                             // 最新の価格をセット
                             PairXrpJpy.Ltp = tick.LTP;
                             PairXrpJpy.Bid = tick.Bid;
@@ -4368,6 +4430,15 @@ namespace BitWallpaper.ViewModels
 
                             // 一旦前の値を保存
                             var prevLtp = PairEthJpy.Ltp;
+
+                            if (tick.LTP > prevLtp)
+                            {
+                                PairEthJpy.LtpUpFlag = true;
+                            }
+                            else if (tick.LTP < prevLtp)
+                            {
+                                PairEthJpy.LtpUpFlag = false;
+                            }
 
                             // 最新の価格をセット
                             PairEthJpy.Ltp = tick.LTP;
@@ -4682,6 +4753,15 @@ namespace BitWallpaper.ViewModels
                             // 一旦前の値を保存
                             var prevLtp = PairMonaJpy.Ltp;
 
+                            if (tick.LTP > prevLtp)
+                            {
+                                PairMonaJpy.LtpUpFlag = true;
+                            }
+                            else if (tick.LTP < prevLtp)
+                            {
+                                PairMonaJpy.LtpUpFlag = false;
+                            }
+
                             // 最新の価格をセット
                             PairMonaJpy.Ltp = tick.LTP;
                             PairMonaJpy.Bid = tick.Bid;
@@ -4994,6 +5074,15 @@ namespace BitWallpaper.ViewModels
                             // 一旦前の値を保存
                             var prevLtp = PairLtcJpy.Ltp;
 
+                            if (tick.LTP > prevLtp)
+                            {
+                                PairLtcJpy.LtpUpFlag = true;
+                            }
+                            else if (tick.LTP < prevLtp)
+                            {
+                                PairLtcJpy.LtpUpFlag = false;
+                            }
+
                             // 最新の価格をセット
                             PairLtcJpy.Ltp = tick.LTP;
                             PairLtcJpy.Bid = tick.Bid;
@@ -5304,6 +5393,15 @@ namespace BitWallpaper.ViewModels
                             // 一旦前の値を保存
                             var prevLtp = PairBchJpy.Ltp;
 
+                            if (tick.LTP > prevLtp)
+                            {
+                                PairBchJpy.LtpUpFlag = true;
+                            }
+                            else if (tick.LTP < prevLtp)
+                            {
+                                PairBchJpy.LtpUpFlag = false;
+                            }
+
                             // 最新の価格をセット
                             PairBchJpy.Ltp = tick.LTP;
                             PairBchJpy.Bid = tick.Bid;
@@ -5612,6 +5710,15 @@ namespace BitWallpaper.ViewModels
                         {
                             // 一旦前の値を保存
                             var prevLtp = PairXlmJpy.Ltp;
+
+                            if (tick.LTP > prevLtp)
+                            {
+                                PairXlmJpy.LtpUpFlag = true;
+                            }
+                            else if (tick.LTP < prevLtp)
+                            {
+                                PairXlmJpy.LtpUpFlag = false;
+                            }
 
                             // 最新の価格をセット
                             PairXlmJpy.Ltp = tick.LTP;
@@ -5922,6 +6029,15 @@ namespace BitWallpaper.ViewModels
                             // 一旦前の値を保存
                             var prevLtp = PairQtumJpy.Ltp;
 
+                            if (tick.LTP > prevLtp)
+                            {
+                                PairQtumJpy.LtpUpFlag = true;
+                            }
+                            else if (tick.LTP < prevLtp)
+                            {
+                                PairQtumJpy.LtpUpFlag = false;
+                            }
+
                             // 最新の価格をセット
                             PairQtumJpy.Ltp = tick.LTP;
                             PairQtumJpy.Bid = tick.Bid;
@@ -6230,6 +6346,15 @@ namespace BitWallpaper.ViewModels
                         {
                             // 一旦前の値を保存
                             var prevLtp = PairBatJpy.Ltp;
+
+                            if (tick.LTP > prevLtp)
+                            {
+                                PairBatJpy.LtpUpFlag = true;
+                            }
+                            else if (tick.LTP < prevLtp)
+                            {
+                                PairBatJpy.LtpUpFlag = false;
+                            }
 
                             // 最新の価格をセット
                             PairBatJpy.Ltp = tick.LTP;
@@ -6817,7 +6942,27 @@ namespace BitWallpaper.ViewModels
 
                                 }
                             }
-                            
+
+                            // On/Off
+                            /*
+                            var enb = pair.Element("Enabled");
+                            if (enb != null)
+                            {
+                                var attr = enb.Attribute("value");
+                                if (attr != null)
+                                {
+
+                                    if (!string.IsNullOrEmpty(attr.Value))
+                                    {
+                                        if (attr.Value.ToString().ToLower() == "true")
+                                        {
+                                            PairBtcJpy.Enabled = true;
+                                        }
+                                    }
+                                }
+                            }
+                            */
+                            PairBtcJpy.Enabled = true;
                         }
 
                         // PairXrpJpy
@@ -6926,6 +7071,31 @@ namespace BitWallpaper.ViewModels
                                     }
 
                                 }
+                            }
+
+                            // On/Off
+                            var enb = pair.Element("Enabled");
+                            if (enb != null)
+                            {
+                                var attr = enb.Attribute("value");
+                                if (attr != null)
+                                {
+                                    if (!string.IsNullOrEmpty(attr.Value))
+                                    {
+                                        if (attr.Value.ToString().ToLower() == "true")
+                                        {
+                                            PairXrpJpy.Enabled = true;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    PairXrpJpy.Enabled = true;
+                                }
+                            }
+                            else
+                            {
+                                PairXrpJpy.Enabled = true;
                             }
                         }
 
@@ -7036,6 +7206,31 @@ namespace BitWallpaper.ViewModels
 
                                 }
                             }
+
+                            // On/Off
+                            var enb = pair.Element("Enabled");
+                            if (enb != null)
+                            {
+                                var attr = enb.Attribute("value");
+                                if (attr != null)
+                                {
+                                    if (!string.IsNullOrEmpty(attr.Value))
+                                    {
+                                        if (attr.Value.ToString().ToLower() == "true")
+                                        {
+                                            PairEthJpy.Enabled = true;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    PairEthJpy.Enabled = true;
+                                }
+                            }
+                            else
+                            {
+                                PairEthJpy.Enabled = true;
+                            }
                         }
 
                         // PairLtcJpy
@@ -7144,6 +7339,31 @@ namespace BitWallpaper.ViewModels
                                     }
 
                                 }
+                            }
+
+                            // On/Off
+                            var enb = pair.Element("Enabled");
+                            if (enb != null)
+                            {
+                                var attr = enb.Attribute("value");
+                                if (attr != null)
+                                {
+                                    if (!string.IsNullOrEmpty(attr.Value))
+                                    {
+                                        if (attr.Value.ToString().ToLower() == "true")
+                                        {
+                                            PairLtcJpy.Enabled = true;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    PairLtcJpy.Enabled = true;
+                                }
+                            }
+                            else
+                            {
+                                PairLtcJpy.Enabled = true;
                             }
                         }
 
@@ -7254,6 +7474,31 @@ namespace BitWallpaper.ViewModels
 
                                 }
                             }
+
+                            // On/Off
+                            var enb = pair.Element("Enabled");
+                            if (enb != null)
+                            {
+                                var attr = enb.Attribute("value");
+                                if (attr != null)
+                                {
+                                    if (!string.IsNullOrEmpty(attr.Value))
+                                    {
+                                        if (attr.Value.ToString().ToLower() == "true")
+                                        {
+                                            PairMonaJpy.Enabled = true;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    PairMonaJpy.Enabled = true;
+                                }
+                            }
+                            else
+                            {
+                                PairMonaJpy.Enabled = true;
+                            }
                         }
 
                         // PairBchJpy
@@ -7362,6 +7607,31 @@ namespace BitWallpaper.ViewModels
                                     }
 
                                 }
+                            }
+
+                            // On/Off
+                            var enb = pair.Element("Enabled");
+                            if (enb != null)
+                            {
+                                var attr = enb.Attribute("value");
+                                if (attr != null)
+                                {
+                                    if (!string.IsNullOrEmpty(attr.Value))
+                                    {
+                                        if (attr.Value.ToString().ToLower() == "true")
+                                        {
+                                            PairBchJpy.Enabled = true;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    PairBchJpy.Enabled = true;
+                                }
+                            }
+                            else
+                            {
+                                PairBchJpy.Enabled = true;
                             }
                         }
 
@@ -7472,6 +7742,31 @@ namespace BitWallpaper.ViewModels
 
                                 }
                             }
+
+                            // On/Off
+                            var enb = pair.Element("Enabled");
+                            if (enb != null)
+                            {
+                                var attr = enb.Attribute("value");
+                                if (attr != null)
+                                {
+                                    if (!string.IsNullOrEmpty(attr.Value))
+                                    {
+                                        if (attr.Value.ToString().ToLower() == "true")
+                                        {
+                                            PairXlmJpy.Enabled = true;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    PairXlmJpy.Enabled = true;
+                                }
+                            }
+                            else
+                            {
+                                PairXlmJpy.Enabled = true;
+                            }
                         }
 
                         // PairQtumJpy
@@ -7581,6 +7876,31 @@ namespace BitWallpaper.ViewModels
 
                                 }
                             }
+
+                            // On/Off
+                            var enb = pair.Element("Enabled");
+                            if (enb != null)
+                            {
+                                var attr = enb.Attribute("value");
+                                if (attr != null)
+                                {
+                                    if (!string.IsNullOrEmpty(attr.Value))
+                                    {
+                                        if (attr.Value.ToString().ToLower() == "true")
+                                        {
+                                            PairQtumJpy.Enabled = true;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    PairQtumJpy.Enabled = true;
+                                }
+                            }
+                            else
+                            {
+                                PairQtumJpy.Enabled = true;
+                            }
                         }
 
                         // PairBatJpy
@@ -7689,6 +8009,31 @@ namespace BitWallpaper.ViewModels
                                     }
 
                                 }
+                            }
+
+                            // On/Off
+                            var enb = pair.Element("Enabled");
+                            if (enb != null)
+                            {
+                                var attr = enb.Attribute("value");
+                                if (attr != null)
+                                {
+                                    if (!string.IsNullOrEmpty(attr.Value))
+                                    {
+                                        if (attr.Value.ToString().ToLower() == "true")
+                                        {
+                                            PairBatJpy.Enabled = true;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    PairBatJpy.Enabled = true;
+                                }
+                            }
+                            else
+                            {
+                                PairBatJpy.Enabled = true;
                             }
                         }
                     }
@@ -7932,6 +8277,15 @@ namespace BitWallpaper.ViewModels
             attrs.Value = PairBtcJpy.DepthGrouping.ToString();
             pairBtcJpy.SetAttributeNode(attrs);
 
+            // Enabled - On/Off
+            XmlElement enb = doc.CreateElement(string.Empty, "Enabled", string.Empty);
+
+            attrs = doc.CreateAttribute("value");
+            attrs.Value = PairBtcJpy.Enabled.ToString();
+            enb.SetAttributeNode(attrs);
+
+            pairBtcJpy.AppendChild(enb);
+
             //
             pairs.AppendChild(pairBtcJpy);
 
@@ -7994,6 +8348,15 @@ namespace BitWallpaper.ViewModels
             attrs = doc.CreateAttribute("depthGrouping");
             attrs.Value = PairXrpJpy.DepthGrouping.ToString();
             pairXrpJpy.SetAttributeNode(attrs);
+
+            // Enabled - On/Off
+            enb = doc.CreateElement(string.Empty, "Enabled", string.Empty);
+
+            attrs = doc.CreateAttribute("value");
+            attrs.Value = PairXrpJpy.Enabled.ToString();
+            enb.SetAttributeNode(attrs);
+
+            pairXrpJpy.AppendChild(enb);
 
             //
             pairs.AppendChild(pairXrpJpy);
@@ -8058,6 +8421,15 @@ namespace BitWallpaper.ViewModels
             attrs.Value = PairEthJpy.DepthGrouping.ToString();
             pairEthBtc.SetAttributeNode(attrs);
 
+            // Enabled - On/Off
+            enb = doc.CreateElement(string.Empty, "Enabled", string.Empty);
+
+            attrs = doc.CreateAttribute("value");
+            attrs.Value = PairEthJpy.Enabled.ToString();
+            enb.SetAttributeNode(attrs);
+
+            pairEthBtc.AppendChild(enb);
+
             //
             pairs.AppendChild(pairEthBtc);
 
@@ -8120,6 +8492,15 @@ namespace BitWallpaper.ViewModels
             attrs = doc.CreateAttribute("depthGrouping");
             attrs.Value = PairLtcJpy.DepthGrouping.ToString();
             pairLtcBtc.SetAttributeNode(attrs);
+
+            // Enabled - On/Off
+            enb = doc.CreateElement(string.Empty, "Enabled", string.Empty);
+
+            attrs = doc.CreateAttribute("value");
+            attrs.Value = PairLtcJpy.Enabled.ToString();
+            enb.SetAttributeNode(attrs);
+
+            pairLtcBtc.AppendChild(enb);
 
             //
             pairs.AppendChild(pairLtcBtc);
@@ -8184,6 +8565,15 @@ namespace BitWallpaper.ViewModels
             attrs.Value = PairMonaJpy.DepthGrouping.ToString();
             pairMonaJpy.SetAttributeNode(attrs);
 
+            // Enabled - On/Off
+            enb = doc.CreateElement(string.Empty, "Enabled", string.Empty);
+
+            attrs = doc.CreateAttribute("value");
+            attrs.Value = PairMonaJpy.Enabled.ToString();
+            enb.SetAttributeNode(attrs);
+
+            pairMonaJpy.AppendChild(enb);
+
             //
             pairs.AppendChild(pairMonaJpy);
 
@@ -8247,6 +8637,15 @@ namespace BitWallpaper.ViewModels
             attrs.Value = PairBchJpy.DepthGrouping.ToString();
             pairBchJpy.SetAttributeNode(attrs);
 
+            // Enabled - On/Off
+            enb = doc.CreateElement(string.Empty, "Enabled", string.Empty);
+
+            attrs = doc.CreateAttribute("value");
+            attrs.Value = PairBchJpy.Enabled.ToString();
+            enb.SetAttributeNode(attrs);
+
+            pairBchJpy.AppendChild(enb);
+
             //
             pairs.AppendChild(pairBchJpy);
 
@@ -8309,6 +8708,15 @@ namespace BitWallpaper.ViewModels
             attrs = doc.CreateAttribute("depthGrouping");
             attrs.Value = PairXlmJpy.DepthGrouping.ToString();
             pairXlmJpy.SetAttributeNode(attrs);
+
+            // Enabled - On/Off
+            enb = doc.CreateElement(string.Empty, "Enabled", string.Empty);
+
+            attrs = doc.CreateAttribute("value");
+            attrs.Value = PairXlmJpy.Enabled.ToString();
+            enb.SetAttributeNode(attrs);
+
+            pairXlmJpy.AppendChild(enb);
 
             //
             pairs.AppendChild(pairXlmJpy);
@@ -8374,6 +8782,15 @@ namespace BitWallpaper.ViewModels
             attrs.Value = PairQtumJpy.DepthGrouping.ToString();
             pairQtumJpy.SetAttributeNode(attrs);
 
+            // Enabled - On/Off
+            enb = doc.CreateElement(string.Empty, "Enabled", string.Empty);
+
+            attrs = doc.CreateAttribute("value");
+            attrs.Value = PairQtumJpy.Enabled.ToString();
+            enb.SetAttributeNode(attrs);
+
+            pairQtumJpy.AppendChild(enb);
+
             //
             pairs.AppendChild(pairQtumJpy);
 
@@ -8437,6 +8854,15 @@ namespace BitWallpaper.ViewModels
             attrs = doc.CreateAttribute("depthGrouping");
             attrs.Value = PairBatJpy.DepthGrouping.ToString();
             pairBatJpy.SetAttributeNode(attrs);
+
+            // Enabled - On/Off
+            enb = doc.CreateElement(string.Empty, "Enabled", string.Empty);
+
+            attrs = doc.CreateAttribute("value");
+            attrs.Value = PairBatJpy.Enabled.ToString();
+            enb.SetAttributeNode(attrs);
+
+            pairBatJpy.AppendChild(enb);
 
             //
             pairs.AppendChild(pairBatJpy);
