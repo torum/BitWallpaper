@@ -1174,6 +1174,8 @@
                         <Setter Property="SnapsToDevicePixels" Value="True"/>
                         <Setter Property="Effect" Value="{x:Null}"/>
                         <Setter Property="FocusVisualStyle" Value="{StaticResource SubNavTabFocusVisualStyle}"/>
+
+                        <Setter Property="TextElement.FontSize" Value="16"/>
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="{x:Type TabItem}">
@@ -1186,10 +1188,10 @@
                                         </Grid.ColumnDefinitions>
 
                                         <!-- ぼかし背景を合わせる -->
-                                        <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="{DynamicResource WindowBackgroundBaseColorBrush}" Opacity="0.1" Margin="0"></Rectangle>
+                                        <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="{DynamicResource WindowBackgroundBaseColorBrush}" Opacity="0.3" Margin="0"></Rectangle>
 
-                                        <Border Name="HeaderBorder" Grid.Row="0" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Margin="0 0 0 0" BorderThickness="2 0 0 0" HorizontalAlignment="Center" VerticalAlignment="Center" CornerRadius="1 1 1 1">
-                                            <ContentPresenter x:Name="ContentSite" HorizontalAlignment="Center" VerticalAlignment="Center" ContentSource="Header" RecognizesAccessKey="True" Margin="0 0 0 0"/>
+                                        <Border Name="HeaderBorder" Grid.Row="0" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Margin="0 0 0 0" BorderThickness="2 0 0 0" HorizontalAlignment="Left" VerticalAlignment="Center" CornerRadius="0" Background="Transparent">
+                                            <ContentPresenter x:Name="ContentSite" HorizontalAlignment="Left" VerticalAlignment="Center" ContentSource="Header" RecognizesAccessKey="True" Margin="0 0 0 0"/>
                                         </Border>
                                         <Border Name="SubContent" Grid.Row="0" Width="120" Height="80" Padding="0" Background="Transparent" BorderThickness="0" CornerRadius="1 1 1 1" Visibility="Collapsed">
                                             <ContentPresenter Name="Content" Margin="0" ContentSource="Content" KeyboardNavigation.DirectionalNavigation="Contained" KeyboardNavigation.TabNavigation="Local" />
@@ -1204,6 +1206,7 @@
                                             <!--
                                             <Setter TargetName="HeaderBorder" Property="Background" Value="{DynamicResource BoardBackgroundColorBrush}" />
                                             -->
+                                            
                                             <Setter TargetName="HeaderBorder" Property="BorderBrush" Value="DarkGray" />
                                             <Setter TargetName="HeaderBorder" Property="BorderThickness" Value="2 0 0 0" />
 
@@ -1233,11 +1236,11 @@
                                             <!--
                                             <Setter TargetName="HeaderBorder" Property="Background" Value="{DynamicResource BoardBackgroundColorBrush}" />
                                             -->
+                                            <Setter Property="TextElement.FontSize" Value="22"/>
+
                                             <Setter TargetName="HeaderBorder" Property="BorderBrush" Value="{DynamicResource AccentWarmLightColorBrush}" />
                                             <Setter TargetName="HeaderBorder" Property="BorderThickness" Value="2 0 0 0" />
 
-                                            <Setter TargetName="SubContent" Property="Visibility" Value="Visible" />
-                                            <Setter TargetName="SubContent" Property="Opacity" Value="0.4" />
 
                                             <Setter Property="Foreground" Value="{DynamicResource NormalTextColorBrush}" />
 

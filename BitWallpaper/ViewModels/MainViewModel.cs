@@ -92,6 +92,7 @@ namespace BitWallpaper.ViewModels
 
         #region == 基本 ==
 
+        /// v1.6.2 全通貨ペアをタブで表示するようにした。
         /// v1.6.1 QTUM と BATを追加。
         /// 0.0.0.9 (1.6.0)
         /// 通貨ペアXLM/JPY の表示を追加。通貨ペアETH/BTCからETH/JPY、LTC/BTCからLTC/JPYへ変更。通貨ペアの表示順序を公式サイトに合わせて並べ替え。
@@ -112,7 +113,7 @@ namespace BitWallpaper.ViewModels
         /// 
 
         // Application version
-        private string _appVer = "1.6.1";
+        private string _appVer = "1.6.2";
 
         // Application name
         private string _appName = "BitWallpaper";
