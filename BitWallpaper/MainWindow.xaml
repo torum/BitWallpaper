@@ -245,6 +245,9 @@
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
 
+                                        <!-- ぼかし背景を合わせる -->
+                                        <Border Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{DynamicResource WindowBackgroundBaseColorBrush}" Opacity="0.1" Margin="0" Style="{DynamicResource BoardStyle}"></Border>
+
                                         <Viewbox Grid.Row="0" Grid.Column="0" Margin="6 0 0 0" HorizontalAlignment="Left" VerticalAlignment="Center" Stretch="Uniform" Width="16" Height="16">
                                             <Viewbox.Style>
                                                 <Style TargetType="{x:Type Viewbox}">
@@ -891,7 +894,7 @@
                                 <!-- ぼかし背景を合わせる -->
                                 <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{DynamicResource WindowBackgroundBaseColorBrush}" Opacity="0.1" Margin="0" Style="{DynamicResource BoardStyle}"></Border>
 
-                                <Border Padding="6" Margin="0 2 0 0">
+                                <Border Padding="6" Margin="0 42 0 0">
                                     <StackPanel>
 
                                         <!-- Timestamp -->
