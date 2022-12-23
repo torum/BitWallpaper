@@ -1,0 +1,65 @@
+<windowex:WindowEx
+    x:Class="BitWallpaper4.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BitWallpaper4"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    PersistenceId="MainWindow"
+    xmlns:windowex="using:WinUIEx"
+    Activated="MainWindow_Activated">
+    <windowex:WindowEx.Backdrop>
+        <windowex:AcrylicSystemBackdrop/>
+    </windowex:WindowEx.Backdrop>
+    <Grid>
+        <Grid x:Name="AppTitleBar"
+              Canvas.ZIndex="1"
+              Height="{Binding ElementName=NavigationViewControl, Path=CompactPaneLength}"
+              IsHitTestVisible="True"
+              VerticalAlignment="Top">
+            <!--
+            <Image Source="/Assets/WindowIcon.ico"
+                   HorizontalAlignment="Left"
+                   Width="16"
+                   Height="16" />
+            <TextBlock x:Name="AppTitleBarText"
+                       VerticalAlignment="Center"
+                       TextWrapping="NoWrap"
+                       Style="{StaticResource CaptionTextBlockStyle}"
+                       Margin="28,0,0,0"/>
+-->
+        </Grid>
+        <NavigationView
+            x:Name="NavigationViewControl"
+            Canvas.ZIndex="0"
+            CornerRadius="0"
+            IsTitleBarAutoPaddingEnabled="False"
+            IsBackButtonVisible="Collapsed"
+            IsSettingsVisible="True"
+            ExpandedModeThresholdWidth="1280"
+             OpenPaneLength ="260"
+            DisplayModeChanged="NavigationViewControl_DisplayModeChanged"
+            Loaded="NavigationViewControl_Loaded">
+            <NavigationView.MenuItems>
+                <NavigationViewItem Content="asdf" ToolTipService.ToolTip="asdf">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe7c3;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="asdf" ToolTipService.ToolTip="asdf">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe7c3;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.MenuItems>
+            <Grid>
+                <Frame x:Name="NavigationFrame" CornerRadius="0"/>
+            </Grid>
+        </NavigationView>
+
+
+        <!-- 
+        <Style Button="{StaticResource ButtonRevealStyle}"></Style> -->
+    </Grid>
+</windowex:WindowEx>
