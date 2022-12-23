@@ -17,17 +17,17 @@
 
 ![alt text](https://github.com/torum/BitWallpaper/blob/master/docs/Images/BitWallpaper-screenshot.png?raw=true)
 
-Lightテーマ
-![alt text](https://github.com/torum/BitWallpaper/blob/master/docs/Images/BitWallpaper-screenshot-light.png?raw=true)
+
 
 ### 必要構成：
-- Windows 10
+- Windows 10+
 
 ### プライバシー　ポリシー：
 * 本アプリケーションは、アプリケーション状態を保存しチャート関係のデータを取得する以外、個人情報を含む一切の情報を収集・保存及び送信することはありません。
 
 ### ダウンロード：  
 
+(現在停止中)
 __[マイクロソフトストアにて無料で公開中 (https://www.microsoft.com/ja-jp/p/bitwallpaper/9ncc3ntg9dp3)](https://www.microsoft.com/ja-jp/p/bitwallpaper/9ncc3ntg9dp3)__
 
 
