@@ -1,6 +1,6 @@
 # BitWallpaper
 
-## 暗号資産（仮想通貨）のチャートを壁紙風に表示するデスクトップアプリ  
+## 暗号資産・暗号通貨のチャートを壁紙風に表示するデスクトップアプリ  
 ビットバンクのデータを利用しています。アカウント登録等は不要です。   
 （取引を行う場合はこちら[https://github.com/torum/BitDesk](https://github.com/torum/BitDesk)）
   
