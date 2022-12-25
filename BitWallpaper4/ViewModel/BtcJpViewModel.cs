@@ -50,7 +50,9 @@ public partial class BtcJpViewModel : INotifyPropertyChanged
         LabelsPaint = new SolidColorPaint(SKColors.Wheat),
         Labeler = value => new DateTime((long) value).ToString("MM/dd HH:mm"),
         UnitWidth = TimeSpan.FromMinutes(15).Ticks,
-        //MinStep = TimeSpan.FromHours(1).Ticks, // mark
+        MinStep = TimeSpan.FromHours(1).Ticks, 
+
+        //4294727256 UpFill = new SolidColorPaint(SKColors.Blue), 
     
         //Labeler =(p) => (new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Unspecified)).AddMilliseconds((long)p).ToString("dd"),
         //Labeler = (s) => new DateTime((long)s).ToString("yyyy MMM dd"),
@@ -64,12 +66,14 @@ public partial class BtcJpViewModel : INotifyPropertyChanged
         MaxLimit = null,
         //MinLimit = null,
         //MinLimit= DateTime.Now.Ticks - TimeSpan.FromDays(30).Ticks,
-        MinLimit= DateTime.Now.Ticks - TimeSpan.FromDays(3).Ticks
+        MinLimit= DateTime.Now.Ticks - TimeSpan.FromDays(3).Ticks,
         //Position = AxisPosition.Start  
         //MinLimit = 0
 
         // The MinStep property forces the separator to be greater than 1 day.
-        //MinStep = TimeSpan.FromDays(1).Ticks // mark
+        SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) { StrokeThickness = 1,
+                        PathEffect = new DashEffect(new float[] { 3, 3 }) }
+
     }
     };
 
@@ -140,6 +144,13 @@ public partial class BtcJpViewModel : INotifyPropertyChanged
                 }
             }};
   */
+    /*
+     
+        UpFill = new SolidColorPaint(SKColors.CadetBlue),
+        UpStroke = new SolidColorPaint(SKColors.CadetBlue) { StrokeThickness = 1 },
+        DownFill = new SolidColorPaint(SKColors.IndianRed),
+        DownStroke = new SolidColorPaint(SKColors.Orange) { StrokeThickness = 1 },
+    */
 
     private ISeries[] series =  { new CandlesticksSeries<FinancialPoint>
             {

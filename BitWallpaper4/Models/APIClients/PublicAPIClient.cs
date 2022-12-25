@@ -4,6 +4,7 @@ using BitWallpaper4.ViewModels;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System;
+using System.Diagnostics;
 
 namespace BitWallpaper4.Models.APIClients;
 
@@ -201,7 +202,7 @@ public class PublicAPIClient : BaseClient
 
                     foreach (var tr in deserialized.Data.Transactions)
                     {
-                        Transactions dd = new Transactions();
+                        Transaction dd = new Transaction();
                         dd.TransactionId = tr.TransactionId;
                         dd.Side = tr.Side;
                         if (!string.IsNullOrEmpty(tr.Price)) dd.Price = decimal.Parse(tr.Price);
@@ -210,6 +211,8 @@ public class PublicAPIClient : BaseClient
                         dd.ExecutedAt = (new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).AddMilliseconds(tr.ExecutedAt).ToLocalTime();
 
                         trs.Trans.Add(dd);
+
+                        //Debug.WriteLine(tr.ExecutedAt);
                     }
 
                     trs.ErrorCode = 0;
@@ -338,7 +341,7 @@ public class PublicAPIClient : BaseClient
                                     oh.Close = decimal.Parse(jcs[3].String);
                                     oh.Volume = decimal.Parse(jcs[4].String);
                                     //oh.TimeStamp = (new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Unspecified)).AddMilliseconds((double)jcs[5].Double);
-                                    oh.TimeStamp = (new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Unspecified)).AddMilliseconds((double)jcs[5].Long);
+                                    oh.TimeStamp = (new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).AddMilliseconds((double)jcs[5].Long).ToLocalTime();
                                     //oh.TimeStamp = new DateTime(2022,1,1);
 
                                 }

@@ -9,11 +9,9 @@
     PersistenceId="MainWindow"
     xmlns:windowex="using:WinUIEx"
     Activated="MainWindow_Activated">
-    <windowex:WindowEx.Backdrop>
-        <windowex:AcrylicSystemBackdrop/>
-    </windowex:WindowEx.Backdrop>
     <Grid>
         <Grid x:Name="AppTitleBar"
+              Margin="48,0,0,0"
               Canvas.ZIndex="1"
               Height="{Binding ElementName=NavigationViewControl, Path=CompactPaneLength}"
               IsHitTestVisible="True"
@@ -33,28 +31,41 @@
         <NavigationView
             x:Name="NavigationViewControl"
             Canvas.ZIndex="0"
-            CornerRadius="0"
-            IsTitleBarAutoPaddingEnabled="False"
+            IsTitleBarAutoPaddingEnabled="True"
             IsBackButtonVisible="Collapsed"
             IsSettingsVisible="True"
             ExpandedModeThresholdWidth="1280"
              OpenPaneLength ="260"
             DisplayModeChanged="NavigationViewControl_DisplayModeChanged"
-            Loaded="NavigationViewControl_Loaded">
+            ItemInvoked="NavigationViewControl_ItemInvoked"
+            Loaded="NavigationViewControl_Loaded"
+            >
             <NavigationView.MenuItems>
-                <NavigationViewItem Content="asdf" ToolTipService.ToolTip="asdf">
+                <NavigationViewItem x:Name="btc_jpy" ToolTipService.ToolTip="BTC/JPY" Tag="btc_jpy" Padding="3">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe7c3;"/>
                     </NavigationViewItem.Icon>
+                    <NavigationViewItem.Content>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{x:Bind ViewModel.LtpBtcJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Bottom" Margin="0"/>
+                            <TextBlock Text="円" FontSize="{StaticResource SmallFontSize}" VerticalAlignment="Bottom" Margin="2,0,0,2"/>
+                        </StackPanel>
+                    </NavigationViewItem.Content>
                 </NavigationViewItem>
-                <NavigationViewItem Content="asdf" ToolTipService.ToolTip="asdf">
+                <NavigationViewItem ToolTipService.ToolTip="XRP/JPY" Tag="xrp_jpy" Padding="3">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe7c3;"/>
                     </NavigationViewItem.Icon>
+                    <NavigationViewItem.Content>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{x:Bind ViewModel.LtpXrpJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Bottom" Margin="0"/>
+                            <TextBlock Text="円" FontSize="{StaticResource SmallFontSize}" VerticalAlignment="Bottom" Margin="2,0,0,2"/>
+                        </StackPanel>
+                    </NavigationViewItem.Content>
                 </NavigationViewItem>
             </NavigationView.MenuItems>
             <Grid>
-                <Frame x:Name="NavigationFrame" CornerRadius="0"/>
+                <Frame x:Name="NavigationFrame" Navigated="NavigationFrame_Navigated"/>
             </Grid>
         </NavigationView>
 

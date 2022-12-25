@@ -13,7 +13,9 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="BlankPage.xaml" />
-    <None Remove="Views\Settings.xaml" />
+    <None Remove="Views\SettingsPage.xaml" />
+    <None Remove="Views\UserControls\ChartContent.xaml" />
+    <None Remove="Views\XrpJpPage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,8 +49,16 @@
     <Page Update="BlankPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="Views\Settings.xaml">
+    <Page Update="Views\XrpJpPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Views\SettingsPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\ChartContent.xaml">
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
 

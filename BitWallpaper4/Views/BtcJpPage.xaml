@@ -10,19 +10,18 @@
     NavigationCacheMode="Required">
 
     <Grid x:Name="ContentArea">
-        <SplitView x:Name="splitView" PaneBackground="Transparent"
-           IsPaneOpen="True" OpenPaneLength="256" CompactPaneLength="48" DisplayMode="Inline">
+        <SplitView x:Name="splitView" PaneBackground="Transparent" PanePlacement="Right" IsPaneOpen="True" OpenPaneLength="256" CompactPaneLength="48" DisplayMode="Inline">
             <SplitView.Pane>
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="48"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <!--                 
                     <TextBlock Text="{x:Bind ViewModel.Ltp, Mode=OneWay}" x:Name="PaneHeader" Margin="60,12,0,0" Style="{StaticResource BaseTextBlockStyle}"/>
 -->
-                    <TextBlock Text="asdf" x:Name="PaneHeader" Margin="60,12,0,0" Style="{StaticResource BaseTextBlockStyle}"/>
+                    <TextBlock Grid.Row="1" Text="asdf" x:Name="PaneHeader" Margin="12,12,0,0" Style="{StaticResource BaseTextBlockStyle}"/>
                 </Grid>
             </SplitView.Pane>
 

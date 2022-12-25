@@ -10,12 +10,24 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
-                <!-- Other merged dictionaries here -->
+                <ResourceDictionary Source="/Styles/FontSizes.xaml" />
+                <ResourceDictionary Source="/Styles/Thickness.xaml" />
+                <ResourceDictionary Source="/Styles/TextBlock.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <!-- Other app resources here -->
 
             <CornerRadius x:Key="NavigationViewContentGridCornerRadius">0,0,0,0</CornerRadius>
-            
+
+            <x:Double x:Key="PivotHeaderItemFontSize">13</x:Double>
+
+            <SolidColorBrush x:Key="Price24HColorBrush" Color="DarkTurquoise"/>
+            <SolidColorBrush x:Key="PriceInitHColorBrush" Color="#a0d8ef"/>
+            <SolidColorBrush x:Key="PriceInitLColorBrush" Color="Thistle"/>
+            <SolidColorBrush x:Key="Price24LColorBrush" Color="#e597b2"/>
+
+            <SolidColorBrush x:Key="PriceUpColorBrush" Color="#a0d8ef"/>
+            <SolidColorBrush x:Key="PriceDownColorBrush" Color="#e597b2"/>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>
