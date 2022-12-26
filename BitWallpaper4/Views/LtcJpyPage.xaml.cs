@@ -27,7 +27,7 @@ namespace BitWallpaper4.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class XrpJpyPage : Page
+    public sealed partial class LtcJpyPage : Page
     {
         private MainViewModel _viewModel;
 
@@ -36,7 +36,7 @@ namespace BitWallpaper4.Views
             get=> _viewModel;
         }
 
-        public XrpJpyPage()
+        public LtcJpyPage()
         {
             this.InitializeComponent();
         }

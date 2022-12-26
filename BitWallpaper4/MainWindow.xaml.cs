@@ -15,6 +15,8 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using BitWallpaper4.Views;
 using BitWallpaper4.Models;
+using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace BitWallpaper4
 {
@@ -27,6 +29,13 @@ namespace BitWallpaper4
         {
             (PairCodes.btc_jpy.ToString(), typeof(BtcJpyPage)),
             (PairCodes.xrp_jpy.ToString(), typeof(XrpJpyPage)),
+            (PairCodes.eth_jpy.ToString(), typeof(EthJpyPage)),
+            (PairCodes.ltc_jpy.ToString(), typeof(LtcJpyPage)),
+            (PairCodes.mona_jpy.ToString(), typeof(MonaJpyPage)),
+            (PairCodes.bcc_jpy.ToString(), typeof(BccJpyPage)),
+            (PairCodes.xlm_jpy.ToString(), typeof(XlmJpyPage)),
+            (PairCodes.qtum_jpy.ToString(), typeof(QtumJpyPage)),
+            (PairCodes.bat_jpy.ToString(), typeof(BatJpyPage)),
             ("settings", typeof(SettingsPage)),
         };
 
@@ -63,15 +72,13 @@ namespace BitWallpaper4
 
         private void NavigationViewControl_DisplayModeChanged(NavigationView sender, NavigationViewDisplayModeChangedEventArgs args)
         {
-            /*
             AppTitleBar.Margin = new Thickness()
             {
                 Left = sender.CompactPaneLength * (sender.DisplayMode == NavigationViewDisplayMode.Minimal ? 2 : 1),
                 Top = AppTitleBar.Margin.Top,
-                Right = AppTitleBar.Margin.Right,
+                Right = sender.CompactPaneLength * (sender.DisplayMode == NavigationViewDisplayMode.Minimal ? 1 : 2),
                 Bottom = AppTitleBar.Margin.Bottom
             };
-            */
         }
 
         private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
@@ -162,7 +169,14 @@ namespace BitWallpaper4
                 //_activePair = null;
                 return;
             }
-            else if (e.SourcePageType == typeof(Views.BtcJpyPage))
+            
+            if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return;
+            (App.Current as App)?.CurrentDispatcherQueue.TryEnqueue(() =>
+            {    
+            });
+
+            // TODO:（個別設定が必要）
+            if (e.SourcePageType == typeof(Views.BtcJpyPage))
             {
                 _activePair = PairCodes.btc_jpy;
             }
@@ -170,17 +184,41 @@ namespace BitWallpaper4
             {
                 _activePair = PairCodes.xrp_jpy;
             }
+            else if (e.SourcePageType == typeof(Views.EthJpyPage))
+            {
+                _activePair = PairCodes.eth_jpy;
+            }
+            else if (e.SourcePageType == typeof(Views.LtcJpyPage))
+            {
+                _activePair = PairCodes.ltc_jpy;
+            }
+            else if (e.SourcePageType == typeof(Views.MonaJpyPage))
+            {
+                _activePair = PairCodes.mona_jpy;
+            }
+            else if (e.SourcePageType == typeof(Views.BccJpyPage))
+            {
+                _activePair = PairCodes.bcc_jpy;
+            }
+            else if (e.SourcePageType == typeof(Views.XlmJpyPage))
+            {
+                _activePair = PairCodes.xlm_jpy;
+            }
+            else if (e.SourcePageType == typeof(Views.QtumJpyPage))
+            {
+                _activePair = PairCodes.qtum_jpy;
+            }
+            else if (e.SourcePageType == typeof(Views.BatJpyPage))
+            {
+                _activePair = PairCodes.bat_jpy;
+            }
+            // TODO:more
 
             ViewModel.SetSelectedPairFromCode = _activePair;
-            ViewModel.SelectedPair.InitializeAndGetChartData(CandleTypes.OneHour);
 
-            /*
-            var selectedItem = NavigationViewService.GetSelectedItem(e.SourcePageType);
-            if (selectedItem != null)
-            {
-                Selected = selectedItem;
-            }
-            */
+            //ViewModel.SelectedPair?.InitializeAndGetChartData(CandleTypes.OneHour);
+            //Task.Run(() => ViewModel.SelectedPair?.InitializeAndGetChartData(CandleTypes.OneHour));
+
         }
 
     }

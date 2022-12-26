@@ -17,6 +17,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using BitWallpaper4.ViewModels;
 using System.Diagnostics;
+using BitWallpaper4.Models;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -45,6 +46,8 @@ namespace BitWallpaper4.Views
             if (e.Parameter is MainViewModel)
             {
                 _viewModel = (MainViewModel)e.Parameter;
+
+                _viewModel?.SelectedPair?.InitializeAndGetChartData(CandleTypes.OneHour);
             }
 
             base.OnNavigatedTo(e);

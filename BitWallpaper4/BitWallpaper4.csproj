@@ -13,8 +13,12 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="BlankPage.xaml" />
+    <None Remove="Views\BccJpyPage.xaml" />
+    <None Remove="Views\EthJpyPage.xaml" />
+    <None Remove="Views\MonaJpyPage.xaml" />
     <None Remove="Views\SettingsPage.xaml" />
     <None Remove="Views\UserControls\ChartContent.xaml" />
+    <None Remove="Views\XlmJpyPage.xaml" />
     <None Remove="Views\XrpJpPage.xaml" />
   </ItemGroup>
 
@@ -48,6 +52,20 @@
   <ItemGroup>
     <Page Update="BlankPage.xaml">
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\BccJpyPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Views\XlmJpyPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\EthJpyPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Views\MonaJpyPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\XrpJpPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>

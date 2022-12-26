@@ -41,7 +41,6 @@ namespace BitWallpaper4.Views.UserControls
         }
 
 
-
         public static readonly DependencyProperty BtcJpViewModelProperty = DependencyProperty.Register(
           nameof(MainViewModel),
           typeof(MainViewModel),
@@ -60,14 +59,14 @@ namespace BitWallpaper4.Views.UserControls
             Task.Run(() => SetDepthListboxScrollPosition());
         }
 
-        private async void SetDepthListboxScrollPosition()
+        private void SetDepthListboxScrollPosition()
         {
+            //await Task.Delay(1000);
+
             try
             {
-
-                await Task.Delay(1000);
-
-                _dispatcherQueue.TryEnqueue(() =>
+                if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return;
+                (App.Current as App)?.CurrentDispatcherQueue.TryEnqueue(() =>
                 {
                     if (this.DepthListBox.Items.Count > 0)
                     {
@@ -112,7 +111,6 @@ namespace BitWallpaper4.Views.UserControls
 
 
         }
-        readonly Microsoft.UI.Dispatching.DispatcherQueue _dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
 
     }
 }

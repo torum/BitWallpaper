@@ -21,6 +21,7 @@ using SkiaSharp;
 using LiveChartsCore.SkiaSharpView.Painting.Effects;
 using LiveChartsCore.Themes;
 using Newtonsoft.Json.Linq;
+using System.Reflection.Metadata.Ecma335;
 
 namespace BitWallpaper4.ViewModels;
 
@@ -61,19 +62,25 @@ public partial class MainViewModel : ViewModelBase
 
             _selectedPair = value;
 
-            foreach (var hoge in _pairs)
+            if (_selectedPair != null)
             {
-                if (hoge.PairCode == _selectedPair.PairCode)
+                if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return;
+                (App.Current as App)?.CurrentDispatcherQueue.TryEnqueue(() =>
                 {
-                    hoge.IsActive = true;
-                }
-                else
+                });
+                foreach (var hoge in _pairs)
                 {
-                    hoge.IsActive = false;
+                    if (hoge.PairCode == _selectedPair.PairCode)
+                    {
+                        hoge.IsActive = true;
+                    }
+                    else
+                    {
+                        hoge.IsActive = false;
+                    }
                 }
             }
 
-            Debug.WriteLine("SelectedPair "+_selectedPair.PairCode);
             NotifyPropertyChanged(nameof(SelectedPair));
         }
     }
@@ -83,10 +90,12 @@ public partial class MainViewModel : ViewModelBase
     {
         set
         {
-            Debug.WriteLine("SetSelectedPairFromCode " + value.ToString());
-
             if (_selectedPair?.PairCode == value) return;
 
+            if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return;
+            (App.Current as App)?.CurrentDispatcherQueue.TryEnqueue(() =>
+            {
+            });
             var hoge = Pairs.FirstOrDefault(x => x.PairCode == value);
             SelectedPair = hoge;
 
@@ -94,7 +103,9 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
-    //
+    #region == （個別設定が必要） ==
+
+    // TODO:
     private string _ltpJpyBtc = "...";
     public string LtpBtcJpy
     {
@@ -122,6 +133,106 @@ public partial class MainViewModel : ViewModelBase
             NotifyPropertyChanged(nameof(LtpXrpJpy));
         }
     }
+
+    private string _ltpEthJpy = "...";
+    public string LtpEthJpy
+    {
+        get => _ltpEthJpy;
+        set
+        {
+            if (_ltpEthJpy == value)
+                return;
+
+            _ltpEthJpy = value;
+            NotifyPropertyChanged(nameof(LtpEthJpy));
+        }
+    }
+
+    private string _ltpLtcJpy = "...";
+    public string LtpLtcJpy
+    {
+        get => _ltpLtcJpy;
+        set
+        {
+            if (_ltpLtcJpy == value)
+                return;
+
+            _ltpLtcJpy = value;
+            NotifyPropertyChanged(nameof(LtpLtcJpy));
+        }
+    }
+
+    private string _ltpMonaJpy = "...";
+    public string LtpMonaJpy
+    {
+        get => _ltpMonaJpy;
+        set
+        {
+            if (_ltpMonaJpy == value)
+                return;
+
+            _ltpMonaJpy = value;
+            NotifyPropertyChanged(nameof(LtpMonaJpy));
+        }
+    }
+
+    private string _ltpBccJpy = "...";
+    public string LtpBccJpy
+    {
+        get => _ltpBccJpy;
+        set
+        {
+            if (_ltpBccJpy == value)
+                return;
+
+            _ltpBccJpy = value;
+            NotifyPropertyChanged(nameof(LtpBccJpy));
+        }
+    }
+
+    private string _ltpXlmJpy = "...";
+    public string LtpXlmJpy
+    {
+        get => _ltpXlmJpy;
+        set
+        {
+            if (_ltpXlmJpy == value)
+                return;
+
+            _ltpXlmJpy = value;
+            NotifyPropertyChanged(nameof(LtpXlmJpy));
+        }
+    }
+
+    private string _ltpQtumJpy = "...";
+    public string LtpQtumJpy
+    {
+        get => _ltpQtumJpy;
+        set
+        {
+            if (_ltpQtumJpy == value)
+                return;
+
+            _ltpQtumJpy = value;
+            NotifyPropertyChanged(nameof(LtpQtumJpy));
+        }
+    }
+
+    private string _ltpBatJpy = "...";
+    public string LtpBatJpy
+    {
+        get => _ltpBatJpy;
+        set
+        {
+            if (_ltpBatJpy == value)
+                return;
+
+            _ltpBatJpy = value;
+            NotifyPropertyChanged(nameof(LtpBatJpy));
+        }
+    }
+
+    #endregion
 
     // HTTP Clients
     readonly PublicAPIClient _pubTickerApi = new();
@@ -153,22 +264,27 @@ public partial class MainViewModel : ViewModelBase
 
     }
 
-    private async void TickerTimerAllPairs(object? source, object e)
+    private async void TickerTimerAllPairs(object source, object e)
     {
         // 起動直後アラームを鳴らさない秒数
-        int waitTime = 10;
+        //int waitTime = 60;
 
         foreach (var hoge in Pairs)
         {
+            if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return;
+
             Ticker tick = await _pubTickerApi.GetTicker(hoge.PairCode.ToString());
+
+            if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return;
 
             if (tick != null)
             {
+                if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return;
+                (App.Current as App)?.CurrentDispatcherQueue.TryEnqueue(() =>
+                {
 
-                //hoge.Ltp = tick.LTP;
-                //hoge.TickTimeStamp = tick.TimeStamp;
+                });
 
-                // more?
 
                 // 一旦前の値を保存
                 var prevLtp = hoge.Ltp;
@@ -183,7 +299,7 @@ public partial class MainViewModel : ViewModelBase
                 }
 
 
-                // 最新の価格をセット
+                // TODO: （個別設定が必要）
                 if (hoge.PairCode == PairCodes.btc_jpy)
                 {
                     LtpBtcJpy = String.Format(hoge.LtpFormstString, tick.LTP);
@@ -192,10 +308,35 @@ public partial class MainViewModel : ViewModelBase
                 {
                     LtpXrpJpy = String.Format(hoge.LtpFormstString, tick.LTP);
                 }
-                //todo more
-
-
-
+                else if (hoge.PairCode == PairCodes.eth_jpy)
+                {
+                    LtpEthJpy = String.Format(hoge.LtpFormstString, tick.LTP);
+                }
+                else if (hoge.PairCode == PairCodes.ltc_jpy)
+                {
+                    LtpLtcJpy = String.Format(hoge.LtpFormstString, tick.LTP);
+                }
+                else if (hoge.PairCode == PairCodes.mona_jpy)
+                {
+                    LtpMonaJpy = String.Format(hoge.LtpFormstString, tick.LTP);
+                }
+                else if (hoge.PairCode == PairCodes.bcc_jpy)
+                {
+                    LtpBccJpy = String.Format(hoge.LtpFormstString, tick.LTP);
+                }
+                else if (hoge.PairCode == PairCodes.xlm_jpy)
+                {
+                    LtpXlmJpy = String.Format(hoge.LtpFormstString, tick.LTP);
+                }
+                else if (hoge.PairCode == PairCodes.qtum_jpy)
+                {
+                    LtpQtumJpy = String.Format(hoge.LtpFormstString, tick.LTP);
+                }
+                else if (hoge.PairCode == PairCodes.bat_jpy)
+                {
+                    LtpBatJpy = String.Format(hoge.LtpFormstString, tick.LTP);
+                }
+                // TODO: more
 
 
                 // 最新の価格をセット
@@ -229,6 +370,7 @@ public partial class MainViewModel : ViewModelBase
                 {
                     hoge.HighestPrice = tick.LTP;
                 }
+
 
                 #region == チック履歴 ==
 
@@ -303,7 +445,7 @@ public partial class MainViewModel : ViewModelBase
                 #endregion
 
                 #region == アラーム ==
-
+                /*
                 bool isPlayed = false;
 
                 // カスタムアラーム
@@ -313,15 +455,15 @@ public partial class MainViewModel : ViewModelBase
                     {
                         hoge.HighLowInfoTextColorFlag = true;
                         hoge.HighLowInfoText = hoge.PairString + " ⇑⇑⇑　高値アラーム ";
-                        /*
-                        ShowBalloonEventArgs ag = new ShowBalloonEventArgs
-                        {
-                            Title = PairBtcJpy.PairString + " 高値アラーム",
-                            Text = PairBtcJpy.AlarmPlus.ToString("#,0") + " に達しました。"
-                        };
+
+                        //ShowBalloonEventArgs ag = new ShowBalloonEventArgs
+                        //{
+                        //    Title = PairBtcJpy.PairString + " 高値アラーム",
+                        //    Text = PairBtcJpy.AlarmPlus.ToString("#,0") + " に達しました。"
+                        //};
                         // バルーン表示
-                        ShowBalloon?.Invoke(this, ag);
-                        */
+                        //ShowBalloon?.Invoke(this, ag);
+
                         // クリア
                         hoge.AlarmPlus = 0;
 
@@ -334,15 +476,15 @@ public partial class MainViewModel : ViewModelBase
                     {
                         hoge.HighLowInfoTextColorFlag = false;
                         hoge.HighLowInfoText = hoge.PairString + " ⇓⇓⇓　安値アラーム ";
-                        /*
-                        ShowBalloonEventArgs ag = new ShowBalloonEventArgs
-                        {
-                            Title = hoge.PairString + " 安値アラーム",
-                            Text = hoge.AlarmMinus.ToString("#,0") + " に達しました。"
-                        };
+
+                        //ShowBalloonEventArgs ag = new ShowBalloonEventArgs
+                        //{
+                        //    Title = hoge.PairString + " 安値アラーム",
+                        //    Text = hoge.AlarmMinus.ToString("#,0") + " に達しました。"
+                        //};
                         // バルーン表示
-                        ShowBalloon?.Invoke(this, ag);
-                        */
+                        //ShowBalloon?.Invoke(this, ag);
+
                         // クリア
                         hoge.AlarmMinus = 0;
 
@@ -369,13 +511,13 @@ public partial class MainViewModel : ViewModelBase
                             hoge.HighLowInfoText = "";
                             hoge.HighLowInfoText = hoge.PairString + " ⇑⇑⇑　起動後最高値 ";
 
-                            /*
-                            if (PlaySound)
-                            {
-                                SystemSounds.Hand.Play();
-                                isPlayed = true;
-                            }
-                            */
+
+                            //if (PlaySound)
+                            //{
+                            //    SystemSounds.Hand.Play();
+                            //    isPlayed = true;
+                            //}
+
                         }
                     }
                 }
@@ -398,13 +540,13 @@ public partial class MainViewModel : ViewModelBase
                             hoge.HighLowInfoTextColorFlag = false;
                             hoge.HighLowInfoText = "";
                             hoge.HighLowInfoText = hoge.PairString + " ⇓⇓⇓　起動後最安値 ";
-                            /*
-                            if (PlaySound)
-                            {
-                                SystemSounds.Beep.Play();
-                                isPlayed = true;
-                            }
-                            */
+
+                            //if (PlaySound)
+                            //{
+                            //    SystemSounds.Beep.Play();
+                            //    isPlayed = true;
+                            //}
+
                         }
 
                     }
@@ -425,13 +567,13 @@ public partial class MainViewModel : ViewModelBase
                         hoge.HighLowInfoTextColorFlag = true;
                         hoge.HighLowInfoText = "";
                         hoge.HighLowInfoText = hoge.PairString + " ⇑⇑⇑⇑⇑⇑　24時間最高値 ";
-                        /*
-                        if (PlaySound)
-                        {
-                            SystemSounds.Hand.Play();
-                            isPlayed = true;
-                        }
-                        */
+
+                        //if (PlaySound)
+                        //{
+                        //    SystemSounds.Hand.Play();
+                        //isPlayed = true;
+                        //}
+
                     }
                 }
                 else
@@ -451,24 +593,24 @@ public partial class MainViewModel : ViewModelBase
                         hoge.HighLowInfoTextColorFlag = false;
                         hoge.HighLowInfoText = "";
                         hoge.HighLowInfoText = hoge.PairString + " ⇓⇓⇓⇓⇓⇓　24時間最安値 ";
-                        /*
-                        if (PlaySound)
-                        {
-                            SystemSounds.Hand.Play();
-                            isPlayed = true;
-                        }
-                        */
+
+                        //if (PlaySound)
+                        //{
+                        //    SystemSounds.Hand.Play();
+                        //    isPlayed = true;
+                        //}
+
                     }
                 }
                 else
                 {
                     hoge.LowestIn24PriceAlart = false;
                 }
-
+                */
                 #endregion
 
-                }
-                else
+            }
+            else
             {
                 // TODO:
                 //APIResultTicker = "<<取得失敗>>";
@@ -476,11 +618,14 @@ public partial class MainViewModel : ViewModelBase
                 break;
             }
 
-            await Task.Delay(3);
+            if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return;
         }
     }
 
+    /*
+    private Microsoft.UI.Dispatching.DispatcherQueue _currentDispatcher = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
 
-
+    public Microsoft.UI.Dispatching.DispatcherQueue CurrentDispatcher { get => _(App.Current as App)?.CurrentDispatcherQueue; }
+    */
 }
 

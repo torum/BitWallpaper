@@ -13,7 +13,30 @@
     mc:Ignorable="d">
 
     <Grid>
-        <SplitView x:Name="SplitViewControl" PaneBackground="Transparent" PanePlacement="Right" IsPaneOpen="True" OpenPaneLength="300" CompactPaneLength="60" DisplayMode="CompactInline">
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="640" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="SecondaryTitle.Margin" Value="00"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="SecondaryTitle.Margin" Value="48,0,0,0"/>
+                        <Setter Target="SplitViewControl.IsPaneOpen" Value="False"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        
+        <SplitView x:Name="SplitViewControl" PaneBackground="Transparent" PanePlacement="Right" IsPaneOpen="True" OpenPaneLength="300" CompactPaneLength="0" DisplayMode="CompactInline">
             <SplitView.Pane>
                 <Grid Margin="12,0,0,0">
                     <Grid.RowDefinitions>
@@ -24,19 +47,19 @@
 
                     <Grid Grid.Row="0"></Grid>
 
-                    <TabView Grid.Row="1" TabWidthMode="Equal" IsAddTabButtonVisible="False">
+                    <TabView Grid.Row="1" TabWidthMode="Equal" IsAddTabButtonVisible="False" Background="Transparent" Visibility="Collapsed">
                         <TabView.TabItems>
-                            
-                            <TabViewItem Header="統計" IsClosable="False" ToolTipService.ToolTip="統計">
 
-                                <Grid Margin="6,0,0,0">
+                            <TabViewItem Header="統計" IsClosable="False" ToolTipService.ToolTip="統計" Background="Transparent">
+
+                                <Grid Margin="6,0,24,0" HorizontalAlignment="Stretch">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="6"/>
                                         <RowDefinition Height="24"/>
                                         <RowDefinition Height="24"/>
                                         <RowDefinition Height="24"/>
                                         <RowDefinition Height="24"/>
-                                        <RowDefinition Height="6"/>
+                                        <RowDefinition Height="0"/>
                                         <RowDefinition Height="24"/>
                                         <RowDefinition Height="24"/>
                                         <RowDefinition Height="24"/>
@@ -44,12 +67,12 @@
                                         <RowDefinition Height="6"/>
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="1*"/>
-                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="24時間 High" Padding="12 0 0 6" Style="{StaticResource CaptionTextBlockStyle}"></TextBlock>
-                                    <TextBlock Grid.Row="1" Grid.Column="1" Padding="6 0 0 6" Text="{x:Bind Path=vm.SelectedPair.High24String, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="24時間 High" Padding="12 0 0 6" Style="{StaticResource CaptionTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Padding="6 0 12 6" Text="{x:Bind Path=vm.SelectedPair.High24String, Mode=OneWay}" Opacity="{StaticResource CustumTextOpacity}" HorizontalAlignment="Right" VerticalAlignment="Center">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
                                                 <!--<Style.Triggers>
@@ -68,8 +91,8 @@
                                         </CheckBox.Content>
                                     </CheckBox>
 
-                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="起動後 High" Padding="12 0 0 6" Style="{StaticResource CaptionTextBlockStyle}"></TextBlock>
-                                    <TextBlock Grid.Row="2" Grid.Column="1" Padding="6 0 0 6" Text="{x:Bind Path=vm.SelectedPair.HighestPriceString, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="起動後 High" Padding="12 0 0 6" Style="{StaticResource CaptionTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" Padding="6 0 12 6" Text="{x:Bind Path=vm.SelectedPair.HighestPriceString, Mode=OneWay}" Opacity="{StaticResource CustumTextOpacity}" HorizontalAlignment="Right" VerticalAlignment="Center">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
                                                 <!--
@@ -90,8 +113,8 @@
                                         </CheckBox.Content>
                                     </CheckBox>
 
-                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="起動後 Low" Padding="12 0 0 6" Style="{StaticResource CaptionTextBlockStyle}"></TextBlock>
-                                    <TextBlock Grid.Row="3" Grid.Column="1" Padding="6 0 0 6" Text="{x:Bind Path=vm.SelectedPair.LowestPriceString, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="起動後 Low" Padding="12 0 0 6" Style="{StaticResource CaptionTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" Padding="6 0 12 6" Text="{x:Bind Path=vm.SelectedPair.LowestPriceString, Mode=OneWay}" Opacity="{StaticResource CustumTextOpacity}" HorizontalAlignment="Right" VerticalAlignment="Center">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
                                                 <!--
@@ -112,8 +135,8 @@
                                         </CheckBox.Content>
                                     </CheckBox>
 
-                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="24時間 Low" Padding="12 0 0 6" Style="{StaticResource CaptionTextBlockStyle}"></TextBlock>
-                                    <TextBlock Grid.Row="4" Grid.Column="1" Padding="6 0 0 6" Text="{x:Bind Path=vm.SelectedPair.Low24String, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="24時間 Low" Padding="12 0 0 6" Style="{StaticResource CaptionTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
+                                    <TextBlock Grid.Row="4" Grid.Column="1" Padding="6 0 12 6" Text="{x:Bind Path=vm.SelectedPair.Low24String, Mode=OneWay}" Opacity="{StaticResource CustumTextOpacity}" HorizontalAlignment="Right" VerticalAlignment="Center">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
                                                 <!--
@@ -135,11 +158,10 @@
                                     </CheckBox>
 
                                     <Border Grid.Row="5" Margin="3" />
-                                    
-                                    <TextBlock Grid.Row="6" Grid.Column="0" Padding="12 0 0 6" Text="24時間中央値" Style="{StaticResource CaptionTextBlockStyle}"></TextBlock>
-                                    <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal" Margin="6 0 0 6">
-                                        <TextBlock Text="{x:Bind Path=vm.SelectedPair.MiddleLast24PriceString, Mode=OneWay}" Style="{StaticResource CaptionTextBlockStyle}"></TextBlock>
-                                        <TextBlock Text="{x:Bind Path=vm.SelectedPair.MiddleLast24PriceIcon, Mode=OneWay}" Margin="3 0 0 0">
+
+                                    <TextBlock Grid.Row="6" Grid.Column="0" Padding="12 0 0 6" Text="24時間中央値" Style="{StaticResource CaptionTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
+                                    <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal" Margin="6 0 12 6" HorizontalAlignment="Right">
+                                        <TextBlock Text="{x:Bind Path=vm.SelectedPair.MiddleLast24PriceIcon, Mode=OneWay}" Margin="3 0 3 0" Opacity="{StaticResource CustumTextOpacity}">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
                                                     <!--
@@ -158,12 +180,12 @@
                                                 </Style>
                                             </TextBlock.Style>
                                         </TextBlock>
+                                        <TextBlock Text="{x:Bind Path=vm.SelectedPair.MiddleLast24PriceString, Mode=OneWay}" Style="{StaticResource CaptionTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
                                     </StackPanel>
 
-                                    <TextBlock Grid.Row="7" Grid.Column="0" Padding="12 0 0 6" Text="起動後中央値" Style="{StaticResource CaptionTextBlockStyle}"></TextBlock>
-                                    <StackPanel Grid.Row="7" Grid.Column="1" Orientation="Horizontal" Margin="6 0 0 6">
-                                        <TextBlock Text="{x:Bind Path=vm.SelectedPair.MiddleInitPriceString, Mode=OneWay}" Style="{StaticResource CaptionTextBlockStyle}"></TextBlock>
-                                        <TextBlock Text="{x:Bind Path=vm.SelectedPair.MiddleInitPriceIcon, Mode=OneWay}" Margin="3 0 0 0">
+                                    <TextBlock Grid.Row="7" Grid.Column="0" Padding="12 0 0 6" Text="起動後中央値" Style="{StaticResource CaptionTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
+                                    <StackPanel Grid.Row="7" Grid.Column="1" Orientation="Horizontal" Margin="6 0 12 6" HorizontalAlignment="Right">
+                                        <TextBlock Text="{x:Bind Path=vm.SelectedPair.MiddleInitPriceIcon, Mode=OneWay}" Margin="3 0 3 0" Opacity="{StaticResource CustumTextOpacity}">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
                                                     <!--
@@ -182,12 +204,12 @@
                                                 </Style>
                                             </TextBlock.Style>
                                         </TextBlock>
+                                        <TextBlock Text="{x:Bind Path=vm.SelectedPair.MiddleInitPriceString, Mode=OneWay}" Style="{StaticResource CaptionTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
                                     </StackPanel>
 
-                                    <TextBlock Grid.Row="8" Grid.Column="0" Padding="12 0 0 6" Text="起動時の値" Style="{StaticResource CaptionTextBlockStyle}"></TextBlock>
-                                    <StackPanel Grid.Row="8"  Grid.Column="1" Orientation="Horizontal" Margin="6 0 0 6">
-                                        <TextBlock Text="{x:Bind Path=vm.SelectedPair.BasePriceString, Mode=OneWay}" Style="{StaticResource CaptionTextBlockStyle}"></TextBlock>
-                                        <TextBlock Text="{x:Bind Path=vm.SelectedPair.BasePriceIcon, Mode=OneWay}" Margin="3 0 0 0">
+                                    <TextBlock Grid.Row="8" Grid.Column="0" Padding="12 0 0 6" Text="起動時の値" Style="{StaticResource CaptionTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
+                                    <StackPanel Grid.Row="8"  Grid.Column="1" Orientation="Horizontal" Margin="6 0 12 6" HorizontalAlignment="Right">
+                                        <TextBlock Text="{x:Bind Path=vm.SelectedPair.BasePriceIcon, Mode=OneWay}" Margin="3 0 3 0" Opacity="{StaticResource CustumTextOpacity}">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
                                                     <!--
@@ -206,12 +228,12 @@
                                                 </Style>
                                             </TextBlock.Style>
                                         </TextBlock>
+                                        <TextBlock Text="{x:Bind Path=vm.SelectedPair.BasePriceString, Mode=OneWay}" Style="{StaticResource CaptionTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
                                     </StackPanel>
 
-                                    <TextBlock Grid.Row="9" Grid.Column="0" Padding="12 0 0 6" Text="1分間の平均値" Style="{StaticResource CaptionTextBlockStyle}"></TextBlock>
-                                    <StackPanel Grid.Row="9"  Grid.Column="1" Orientation="Horizontal" Margin="6 0 0 6">
-                                        <TextBlock Text="{x:Bind Path=vm.SelectedPair.AveragePriceString, Mode=OneWay}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                                        <TextBlock Text="{x:Bind Path=vm.SelectedPair.AveragePriceIcon, Mode=OneWay}" Margin="3 0 0 0">
+                                    <TextBlock Grid.Row="9" Grid.Column="0" Padding="12 0 0 6" Text="1分間の平均値" Style="{StaticResource CaptionTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
+                                    <StackPanel Grid.Row="9"  Grid.Column="1" Orientation="Horizontal" Margin="6 0 12 6" HorizontalAlignment="Right">
+                                        <TextBlock Text="{x:Bind Path=vm.SelectedPair.AveragePriceIcon, Mode=OneWay}" Margin="3 0 3 0" Opacity="{StaticResource CustumTextOpacity}">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
                                                     <!--
@@ -230,6 +252,8 @@
                                                 </Style>
                                             </TextBlock.Style>
                                         </TextBlock>
+                                        <TextBlock Text="{x:Bind Path=vm.SelectedPair.AveragePriceString, Mode=OneWay}" Style="{StaticResource CaptionTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"/>
+
                                     </StackPanel>
                                     
                                     <Border Grid.Row="10" Margin="3" />
@@ -423,10 +447,10 @@
                                     <SymbolIconSource Symbol="Placeholder" />
                                 </TabViewItem.IconSource>
 -->
-                                <ListBox x:Name="DepthListBox" ItemsSource="{x:Bind Path=vm.SelectedPair.Depth, Mode=OneWay}" SizeChanged="ListBoxDepth_SizeChanged"  Background="Transparent" Margin="0,0,0,6" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                                <ListBox x:Name="DepthListBox" ItemsSource="{x:Bind Path=vm.SelectedPair.Depth, Mode=OneWay}" SizeChanged="ListBoxDepth_SizeChanged"  Background="Transparent" Margin="0,0,0,6" Padding="0,6,0,12" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
                                     <ListBox.ItemContainerStyle>
                                         <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItemStyle}">
-                                            <Setter Property="Padding" Value="3"/>
+                                            <Setter Property="Padding" Value="3,3,3,3"/>
                                             <Setter Property="Height" Value="25"/>
                                             <Setter Property="IsEnabled" Value="False" />
                                         </Style>
@@ -613,10 +637,27 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <StackPanel Grid.Row="0" Orientation="Horizontal">
-                    
-                    <TextBlock Margin="12,12,0,0" Text="{x:Bind Path=vm.SelectedPair.TickTimeStampString, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}"/>
+                <StackPanel x:Name="SecondaryTitle" Grid.Row="0" Margin="0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="12,12,0,0" Text="{x:Bind Path=vm.SelectedPair.PairString, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}"/>
 
+                        <TextBlock Text="-" Margin="12,12,0,0" Style="{StaticResource BaseTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
+
+                        <TextBlock Margin="12,12,0,0" Text="{x:Bind Path=vm.SelectedPair.TickTimeStampString, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"/>
+
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="6,0,0,0">
+                        <TextBlock Text="24H High: " Padding="6" Style="{StaticResource CaptionTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
+                        <TextBlock Text="{x:Bind Path=vm.SelectedPair.High24String, Mode=OneWay}" Padding="0,6,0,6" Style="{StaticResource CaptionTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
+                        <TextBlock Text="{x:Bind Path=vm.SelectedPair.CurrencyUnitString, Mode=OneWay}" Padding="0,6,0,6" Style="{StaticResource CaptionTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
+
+                        <TextBlock Text="," Padding="0,6,3,6" Style="{StaticResource CaptionTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
+                        
+                        <TextBlock Text="24H Low: " Padding="6" Style="{StaticResource CaptionTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
+                        <TextBlock Text="{x:Bind Path=vm.SelectedPair.Low24String, Mode=OneWay}" Padding="0,6,0,6" Style="{StaticResource CaptionTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
+                        <TextBlock Text="{x:Bind Path=vm.SelectedPair.CurrencyUnitString, Mode=OneWay}" Padding="0,6,0,6" Style="{StaticResource CaptionTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
+
+                    </StackPanel>
                 </StackPanel>
 
                 <Grid Grid.Row="1">

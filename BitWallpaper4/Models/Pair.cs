@@ -21,6 +21,8 @@ using System.Collections;
 using LiveChartsCore.Drawing;
 using Windows.Services.Store;
 using System.Reflection.Emit;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml;
 
 namespace BitWallpaper4.Models;
 
@@ -63,6 +65,42 @@ public class Pair : ViewModelBase
                 {PairCodes.qtum_jpy, "QTUM/JPY"},
                 {PairCodes.bat_jpy, "BAT/JPY"},
             };
+
+    public Dictionary<string, PairCodes> GetPairs { get; set; } = new Dictionary<string, PairCodes>()
+        {
+            {"btc_jpy", PairCodes.btc_jpy},
+            {"xrp_jpy", PairCodes.xrp_jpy},
+            //{"eth_btc", Pairs.eth_btc},
+            {"eth_jpy", PairCodes.eth_jpy},
+            //{"ltc_btc", Pairs.ltc_btc},
+            {"ltc_jpy", PairCodes.ltc_jpy},
+            {"mona_jpy", PairCodes.mona_jpy},
+            //{"mona_btc", Pairs.mona_btc},
+            {"bcc_jpy", PairCodes.bcc_jpy},
+            //{"bcc_btc", Pairs.bcc_btc},
+            {"xlm_jpy", PairCodes.xlm_jpy},
+            {"qtum_jpy", PairCodes.qtum_jpy},
+            {"bat_jpy", PairCodes.bat_jpy},
+        };
+
+    public string CurrencyUnitString { get => CurrentPairCoin[_p]; }
+
+    public Dictionary<PairCodes, string> CurrentPairCoin { get; set; } = new Dictionary<PairCodes, string>()
+        {
+            {PairCodes.btc_jpy, "BTC"},
+            {PairCodes.xrp_jpy, "XRP"},
+            //{Pairs.eth_btc, "ETH"},
+            {PairCodes.eth_jpy, "ETH"},
+            //{Pairs.ltc_btc, "LTC"},
+            {PairCodes.ltc_jpy, "LTC"},
+            {PairCodes.mona_jpy, "Mona"},
+            //{Pairs.mona_btc, "Mona"},
+            {PairCodes.bcc_jpy, "BCH"},
+            //{Pairs.bcc_btc, "BCH"},
+            {PairCodes.xlm_jpy, "XLM"},
+            {PairCodes.qtum_jpy, "QTUM"},
+            {PairCodes.bat_jpy, "BAT"},
+        };
 
     private decimal _ltp;
     public decimal Ltp
@@ -128,9 +166,12 @@ public class Pair : ViewModelBase
                 //series[1].Values = new double[] { (double)_ltp };
                 //YAxes[1]
 
-                Sections[0].Yi = (double)_ltp;
-                Sections[0].Yj = (double)_ltp;
-
+                if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return;
+                (App.Current as App)?.CurrentDispatcherQueue.TryEnqueue(() =>
+                {
+                    Sections[0].Yi = (double)_ltp;
+                    Sections[0].Yj = (double)_ltp;
+                });
                 /*
                 Sections[0] = new RectangularSection
                 {
@@ -145,11 +186,10 @@ public class Pair : ViewModelBase
                 };
                 */
 
-                this.NotifyPropertyChanged("Sections");
+                //this.NotifyPropertyChanged("Sections");
             }
         }
     }
-
     public string LtpString
     {
         get
@@ -285,7 +325,7 @@ public class Pair : ViewModelBase
     {
         get
         {
-            return PairString + " - " + _tickTimeStamp.ToLocalTime().ToString("yyyy/MM/dd/HH:mm:ss");
+            return _tickTimeStamp.ToLocalTime().ToString("yyyy/MM/dd HH:mm:ss");
         }
     }
 
@@ -1182,7 +1222,7 @@ public class Pair : ViewModelBase
         new Axis()
             {
                 LabelsRotation = -15,
-                LabelsPaint = new SolidColorPaint(SKColors.Wheat),
+                //LabelsPaint = new SolidColorPaint(SKColors.Wheat),
                 Labeler = value => new DateTime((long) value).ToString("MM/dd"),
                 UnitWidth = TimeSpan.FromHours(0.5).Ticks,
 
@@ -1222,12 +1262,12 @@ public class Pair : ViewModelBase
         new Axis()
             {
                 LabelsRotation = 0,
-                LabelsPaint = new SolidColorPaint(SKColors.Wheat),
+                //LabelsPaint = new SolidColorPaint(SKColors.Wheat),
                 IsVisible = false,
                 Position = LiveChartsCore.Measure.AxisPosition.Start,
-                ShowSeparatorLines = false
+                ShowSeparatorLines = false,
                 //Labeler =(value) => (new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).AddMilliseconds((long)value).ToString("hh:mm"),
-
+                MinLimit=0,
                 //Labeler = Labelers.Currency,
                 //Labeler = (value) => value.ToString("C", new System.Globalization.CultureInfo("ja-Jp")),
                 //Labeler = value => new DateTime((long)value).ToString("yyyy-MMM-dd"),
@@ -1243,7 +1283,7 @@ public class Pair : ViewModelBase
         new Axis()
             {
                 LabelsRotation = 0,
-                LabelsPaint = new SolidColorPaint(SKColors.Wheat),
+                //LabelsPaint = new SolidColorPaint(SKColors.Wheat),
                 Position = LiveChartsCore.Measure.AxisPosition.End,
                 //Labeler =(value) => (new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).AddMilliseconds((long)value).ToString("hh:mm"),
                 SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray)
@@ -1329,7 +1369,8 @@ public class Pair : ViewModelBase
             //TooltipLabelFormatter = (chartPoint) => $"Price: {new DateTime((long) chartPoint.SecondaryValue):yyy/MM/dd HH}: {chartPoint.PrimaryValue}",
             Values = new ObservableCollection<FinancialPoint>
             {
-                new(DateTime.Now, 100, 25, 75, 0),
+                //new(DateTime.Now, 100, 25, 75, 0),
+                new(DateTime.Now, 0, 0, 0, 0)
             }
         }
         /*
@@ -1438,6 +1479,10 @@ public class Pair : ViewModelBase
     readonly PublicAPIClient _pubTransactionsApi = new();
     readonly PublicAPIClient _pubDepthApi = new();
 
+    // Timer
+    readonly DispatcherTimer _dispatcherTimerDepth = new();
+    readonly DispatcherTimer _dispatcherTimerTransaction = new();
+
     // コンストラクタ
     public Pair(PairCodes p, double fontSize, string ltpFormstString, string currencyFormstString, decimal grouping100, decimal grouping1000)
     {
@@ -1449,6 +1494,32 @@ public class Pair : ViewModelBase
         _depthGrouping100 = grouping100;
         _depthGrouping1000 = grouping1000;
 
+
+        // Ticker update timer
+        _dispatcherTimerDepth.Tick += TickerTimerDepth;
+        _dispatcherTimerDepth.Interval = new TimeSpan(0, 0, 1);
+        _dispatcherTimerDepth.Start();
+
+        // Ticker update timer
+        _dispatcherTimerTransaction.Tick += TickerTimerTransaction;
+        _dispatcherTimerTransaction.Interval = new TimeSpan(0, 0, 2);
+        _dispatcherTimerTransaction.Start();
+
+        //InitializeAndGetChartData(CandleTypes.OneHour);
+    }
+
+    private void TickerTimerDepth(object source, object e)
+    {
+        if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return;
+        
+        UpdateDepth();
+    }
+
+    private void TickerTimerTransaction(object source, object e)
+    {
+        if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return;
+        
+        UpdateTransactions();
     }
 
     public async void InitializeAndGetChartData(CandleTypes ct)
@@ -1456,40 +1527,56 @@ public class Pair : ViewModelBase
         if (IsChartInitAndLoaded)
             return;
 
+
         SelectedCandleType = ct;
 
         bool bln = await GetCandlesticks(PairCode, ct);
+
+        if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return;
 
         if (bln == true)
         {
             LoadChart(PairCode, ct);
 
-            Sections[0].Yi = (double)_ltp;
-            Sections[0].Yj = (double)_ltp;
+            if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return;
+            (App.Current as App)?.CurrentDispatcherQueue.TryEnqueue(() =>
+            {
+                Sections[0].Yi = (double)_ltp;
+                Sections[0].Yj = (double)_ltp;
+            });
 
-            this.NotifyPropertyChanged("Sections");
+
+            //this.NotifyPropertyChanged("Sections");
+
+            IsChartInitAndLoaded = true;
         }
 
-        IsChartInitAndLoaded = true;
 
-        UpdateDepth();
-        UpdateTransactions();
+        // temp
+
+        //UpdateDepth();
+
+        //UpdateTransactions();
+
     }
 
-    // チャートのロード
-    private async void LoadChart(PairCodes pair, CandleTypes ct)
+    private void LoadChart(PairCodes pair, CandleTypes ct)
     {
+
+        if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return;
+        (App.Current as App)?.CurrentDispatcherQueue.TryEnqueue(() =>
+        {
+
+        });
         // TODO: temp hack
         if (_currencyFormstString.Equals("C3"))
         {
-            YAxes[1].Labeler  = (value) => value.ToString("C3", new System.Globalization.CultureInfo("ja-Jp"));
+            YAxes[1].Labeler = (value) => value.ToString("C3", new System.Globalization.CultureInfo("ja-Jp"));
         }
         else
         {
             YAxes[1].Labeler = (value) => value.ToString("C", new System.Globalization.CultureInfo("ja-Jp"));
         }
-
-
 
         var fuga = new CandlesticksSeries<FinancialPoint>();
         var test = new ObservableCollection<FinancialPoint>();
@@ -1579,8 +1666,7 @@ public class Pair : ViewModelBase
         Series.Append(vv);
         */
 
-        Series[0].Values = vols;
-        Series[1].Values = test;
+
 
         //await Task.Delay(1000);
 
@@ -1589,21 +1675,18 @@ public class Pair : ViewModelBase
         //Series[1] = new ColumnSeries<double> { Values= vols };
         //Series[1].Values = vols.ToArray();
 
-
-        _dispatcherQueue.TryEnqueue(() =>
+        if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return;
+        (App.Current as App)?.CurrentDispatcherQueue.TryEnqueue(() =>
         {
-            //Series[0] = fuga;
-
-            //Series= new ISeries[1];
-            //Series[0] = fuga;
-            //Series = new ISeries[1] { fuga };
-            //Series = new ISeries[1] { fuga };
         });
+
+        Series[0].Values = vols;
+        Series[1].Values = test;
 
         //await Task.Delay(100);
 
         //Series = new ISeries[1] { fuga };
-        this.NotifyPropertyChanged("Series");
+        //this.NotifyPropertyChanged("Series");
         //Thread.Sleep(2000);
         //await Task.Delay(100);
     }
@@ -1622,6 +1705,8 @@ public class Pair : ViewModelBase
 
         // データは、ローカルタイムで、朝9:00 から翌8:59分まで。8:59分までしか取れないので、 9:00過ぎていたら 最新のデータとるには日付を１日追加する
 
+        if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return false;
+
         #region == OhlcvsOneHour 1hour毎のデータ ==
 
         List<Ohlcv> ListOhlcvsOneHour = new List<Ohlcv>();
@@ -1632,6 +1717,8 @@ public class Pair : ViewModelBase
 
             // 一時間のロウソク足タイプなら今日、昨日、一昨日、その前の１週間分の1hourデータを取得する必要あり。
             ListOhlcvsOneHour = await GetCandlestick(pair, CandleTypes.OneHour, dtToday);
+            if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return false;
+
             if (ListOhlcvsOneHour != null)
             {
                 // 逆順にする
@@ -1648,6 +1735,8 @@ public class Pair : ViewModelBase
             DateTime dtTarget = dtToday.AddDays(-1);
 
             List<Ohlcv> res = await GetCandlestick(pair, CandleTypes.OneHour, dtTarget);
+            if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return false;
+
             if (res != null)
             {
                 // 逆順にする
@@ -1663,6 +1752,8 @@ public class Pair : ViewModelBase
                 // 一昨日
                 dtTarget = dtTarget.AddDays(-1);
                 List<Ohlcv> last2 = await GetCandlestick(pair, CandleTypes.OneHour, dtTarget);
+                if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return false;
+
                 if (last2 != null)
                 {
                     // 逆順にする
@@ -1678,6 +1769,8 @@ public class Pair : ViewModelBase
                     // ３日前
                     dtTarget = dtTarget.AddDays(-1);
                     List<Ohlcv> last3 = await GetCandlestick(pair, CandleTypes.OneHour, dtTarget);
+                    if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return false;
+
                     if (last3 != null)
                     {
                         // 逆順にする
@@ -1694,6 +1787,8 @@ public class Pair : ViewModelBase
                         // 4日前
                         dtTarget = dtTarget.AddDays(-1);
                         List<Ohlcv> last4 = await GetCandlestick(pair, CandleTypes.OneHour, dtTarget);
+                        if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return false;
+
                         if (last4 != null)
                         {
                             // 逆順にする
@@ -1775,6 +1870,8 @@ public class Pair : ViewModelBase
 
             // 一分毎のロウソク足タイプなら今日と昨日の1minデータを取得する必要あり。
             ListOhlcvsOneMin = await GetCandlestick(pair, CandleTypes.OneMin, dtToday);
+            if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return false;
+
             if (ListOhlcvsOneMin != null)
             {
                 // 逆順にする
@@ -1796,6 +1893,7 @@ public class Pair : ViewModelBase
                 DateTime dtTarget = dtToday.AddDays(-1);
 
                 List<Ohlcv> res = await GetCandlestick(pair, CandleTypes.OneMin, dtTarget);
+                if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return false;
                 if (res != null)
                 {
                     // 逆順にする
@@ -1827,6 +1925,8 @@ public class Pair : ViewModelBase
             //Debug.WriteLine("今年のOneDay取得開始 " + pair.ToString());
 
             ListOhlcvsOneDay = await GetCandlestick(pair, CandleTypes.OneDay, dtToday);
+            if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return false;
+
             if (ListOhlcvsOneDay != null)
             {
                 // 逆順にする
@@ -1847,6 +1947,8 @@ public class Pair : ViewModelBase
                 DateTime dtTarget = dtToday.AddYears(-1);
 
                 List<Ohlcv> res = await GetCandlestick(pair, CandleTypes.OneDay, dtTarget);
+                if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return false;
+
                 if (res != null)
                 {
                     // 逆順にする
@@ -1889,6 +1991,7 @@ public class Pair : ViewModelBase
 
         //ChartLoadingInfo = "";
 
+        if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return false;
 
         if (ListOhlcvsOneHour != null)
             OhlcvsOneHour = ListOhlcvsOneHour;
@@ -2013,6 +2116,7 @@ public class Pair : ViewModelBase
         // 1min 5min 15min 30min 1hour 4hour 8hour 12hour 1day 1week
 
         CandlestickResult csr = await _pubCandlestickApi.GetCandlestick(pair.ToString(), ctString, dtString);
+        if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return null;
 
         if (csr != null)
         {
@@ -2600,49 +2704,334 @@ public class Pair : ViewModelBase
 
     #endregion
 
+    #region == 板情報 ==
+
+    // 板情報 取得
+    private async Task<bool> GetDepth(PairCodes pair)
+    {
+
+        // まとめグルーピング単位 
+        decimal unit = DepthGrouping;
+
+        // リスト数 （基本 上売り200、下買い200）
+        int half = 200;
+        int listCount = (half * 2) + 1;
+
+        if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return false;
+        (App.Current as App)?.CurrentDispatcherQueue.TryEnqueue(() =>
+        {
+            // 初期化
+            if (_depth.Count == 0)
+            {
+                for (int i = 0; i < listCount; i++)
+                {
+                    Depth dd = new Depth(this._ltpFormstString);
+                    dd.DepthPrice = 0;
+                    dd.DepthBid = 0;
+                    dd.DepthAsk = 0;
+                    _depth.Add(dd);
+                }
+            }
+            else
+            {
+                if (IsDepthGroupingChanged)
+                {
+                    //グルーピング単位が変わったので、一旦クリアする。
+
+                    for (int i = 0; i < listCount; i++)
+                    {
+                        Depth dd = _depth[i];//new Depth();
+                        dd.DepthPrice = 0;
+                        dd.DepthBid = 0;
+                        dd.DepthAsk = 0;
+                        //_depth.Add(dd);
+                    }
+
+                    IsDepthGroupingChanged = false;
+                }
+            }
+        });
+
+
+        if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return false;
+        (App.Current as App)?.CurrentDispatcherQueue.TryEnqueue(() =>
+        {
+            // LTP を追加
+            //Depth ddd = new Depth();
+            _depth[half].DepthPrice = Ltp;
+            //_depth[half].DepthBid = 0;
+            //_depth[half].DepthAsk = 0;
+            _depth[half].IsLTP = true;
+            //_depth[half] = ddd;
+
+        });
+
+
+        if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return false;
+
+        try
+        {
+            DepthResult dpr = await _pubDepthApi.GetDepth(pair.ToString());
+
+            if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return false;
+
+            if (dpr != null)
+            {
+                if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return false;
+                (App.Current as App)?.CurrentDispatcherQueue.TryEnqueue(() =>
+                {
+                    if (_depth.Count != 0)
+                    {
+
+                        int i = 1;
+
+                        // 100円単位でまとめる
+                        // まとめた時の価格
+                        decimal c2 = 0;
+                        // 100単位ごとにまとめたAsk数量を保持
+                        decimal t = 0;
+                        // 先送りするAsk
+                        decimal d = 0;
+                        // 先送りする価格
+                        decimal e = 0;
+
+                        // ask をループ
+                        foreach (var dp in dpr.DepthAskList)
+                        {
+                            // まとめ表示On
+                            if (unit > 0)
+                            {
+
+                                if (c2 == 0) c2 = System.Math.Ceiling(dp.DepthPrice / unit);
+
+                                // 100円単位でまとめる
+                                if (System.Math.Ceiling(dp.DepthPrice / unit) == c2)
+                                {
+                                    t = t + dp.DepthAsk;
+                                }
+                                else
+                                {
+                                    //Debug.WriteLine(System.Math.Ceiling(dp.DepthPrice / unit).ToString() + " " + System.Math.Ceiling(c / unit).ToString());
+
+                                    // 一時保存
+                                    e = dp.DepthPrice;
+                                    dp.DepthPrice = (c2 * unit);
+
+                                    // 一時保存
+                                    d = dp.DepthAsk;
+                                    dp.DepthAsk = t;
+
+                                    _depth[half - i].DepthAsk = dp.DepthAsk;
+                                    _depth[half - i].DepthBid = dp.DepthBid;
+                                    _depth[half - i].DepthPrice = dp.DepthPrice;
+                                    _depth[half - i].PriceFormat = this._ltpFormstString;
+
+                                    // 今回のAskは先送り
+                                    t = d;
+                                    // 今回のPriceが基準になる
+                                    c2 = System.Math.Ceiling(e / unit);
+
+                                    i++;
+
+                                }
+
+                            }
+                            else
+                            {
+                                //dp.PriceFormat = this._ltpFormstString;
+                                //_depth[half - i] = dp;
+                                _depth[half - i].DepthPrice = dp.DepthPrice;
+                                _depth[half - i].DepthBid = dp.DepthBid;
+                                _depth[half - i].DepthAsk = dp.DepthAsk;
+                                _depth[half - i].PriceFormat= this._ltpFormstString;
+
+                                i++;
+                            }
+
+                        }
+
+                        _depth[half - 1].IsAskBest = true;
+
+                        i = half + 1;
+
+                        // 100円単位でまとめる
+                        // まとめた時の価格
+                        decimal c = 0;
+                        // 100単位ごとにまとめた数量を保持
+                        t = 0;
+                        // 先送りするBid
+                        d = 0;
+                        // 先送りする価格
+                        e = 0;
+
+                        // bid をループ
+                        foreach (var dp in dpr.DepthBidList)
+                        {
+
+                            if (unit > 0)
+                            {
+
+                                if (c == 0) c = System.Math.Ceiling(dp.DepthPrice / unit);
+
+                                // 100円単位でまとめる
+                                if (System.Math.Ceiling(dp.DepthPrice / unit) == c)
+                                {
+                                    t = t + dp.DepthBid;
+                                }
+                                else
+                                {
+
+                                    // 一時保存
+                                    e = dp.DepthPrice;
+                                    dp.DepthPrice = (c * unit);
+
+                                    // 一時保存
+                                    d = dp.DepthBid;
+                                    dp.DepthBid = t;
+
+                                    // 追加
+                                    _depth[i].DepthAsk = dp.DepthAsk;
+                                    _depth[i].DepthBid = dp.DepthBid;
+                                    _depth[i].DepthPrice = dp.DepthPrice;
+
+                                    // 今回のBidは先送り
+                                    t = d;
+                                    // 今回のPriceが基準になる
+                                    c = System.Math.Ceiling(e / unit);
+
+                                    i++;
+
+                                }
+                            }
+                            else
+                            {
+                                //dp.PriceFormat = this._ltpFormstString;
+                                //_depth[i] = dp;
+
+                                _depth[i].DepthPrice = dp.DepthPrice;
+                                _depth[i].DepthBid = dp.DepthBid;
+                                _depth[i].DepthAsk = dp.DepthAsk;
+                                _depth[i].PriceFormat = this._ltpFormstString;
+                                i++;
+                            }
+
+                        }
+
+                        _depth[half + 1].IsBidBest = true;
+
+                    }
+
+                });
+
+                return true;
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("■■■■■ GetDepth returned null");
+                return false;
+            }
+        }
+        catch (Exception e)
+        {
+            System.Diagnostics.Debug.WriteLine("■■■■■ GetDepth Exception: " + e);
+            return false;
+        }
+
+    }
+
+    // 板情報の更新ループ
+    private async void UpdateDepth()
+    {
+        if (IsActive)
+            await GetDepth(PairCode);
+        /*
+        while (true)
+        {
+            if (IsActive == false)
+            {
+                await Task.Delay(2000);
+                continue;
+            }
+            // 間隔 1/2
+            await Task.Delay(600);
+
+            if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return;
+            try
+            {
+                await GetDepth(PairCode);
+
+                if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return;
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine("■■■■■ UpdateDepth Exception: " + e);
+            }
+
+            // 間隔 1/2
+            await Task.Delay(600);
+        }
+        */
+    }
+
+    #endregion
+
     #region == 歩み値 ==
 
     // トランザクションの取得
     private async Task<bool> GetTransactions(PairCodes pair)
     {
+        if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return false;
+
         try
         {
             TransactionsResult trs = await _pubTransactionsApi.GetTransactions(pair.ToString());
+
+            if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return false;
 
             if (trs != null)
             {
                 //Debug.WriteLine(trs.Trans.Count.ToString());
 
-                if (_transactions.Count == 0)
+                if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return false;
+                (App.Current as App)?.CurrentDispatcherQueue.TryEnqueue(() =>
                 {
-                    // 60 で初期化
-                    for (int i = 0; i < 60; i++)
+
+                    if (_transactions.Count == 0)
                     {
-                        Transaction dd = new Transaction(_ltpFormstString);
-                        //
-                        _transactions.Add(dd);
+                        // 60 で初期化
+                        for (int i = 0; i < 60; i++)
+                        {
+                            Transaction dd = new Transaction(_ltpFormstString);
+                            //
+                            _transactions.Add(dd);
+                        }
                     }
-                }
 
-                int v = 0;
-                foreach (var tr in trs.Trans)
-                {
-                    //_transactions[v] = tr;
+                    if (trs.Trans != null)
+                    {
+                        int v = 0;
+                        foreach (var tr in trs.Trans)
+                        {
+                            //_transactions[v] = tr;
 
-                    _transactions[v].Amount = tr.Amount;
-                    _transactions[v].ExecutedAt = tr.ExecutedAt;
-                    _transactions[v].Price = tr.Price;
-                    _transactions[v].Side = tr.Side;
-                    _transactions[v].TransactionId = tr.TransactionId;
-                    //_transactions[v].ExecutedAtFormated= tr.ExecutedAtFormated;
+                            _transactions[v].Amount = tr.Amount;
+                            _transactions[v].ExecutedAt = tr.ExecutedAt;
+                            _transactions[v].Price = tr.Price;
+                            _transactions[v].Side = tr.Side;
+                            _transactions[v].TransactionId = tr.TransactionId;
 
-                    //Debug.WriteLine(_transactions[v].ExecutedAtFormated);
+                            //_transactions[v].ExecutedAtFormated= tr.ExecutedAtFormated;
 
-                    v++;
+                            //Debug.WriteLine(_transactions[v].ExecutedAtFormated);
 
-                    if (v >= 60)
-                        break;
-                }
+                            v++;
+
+                            if (v >= 60)
+                                break;
+                        }
+                    }
+
+                });
 
                 /*
                 _transactions.Clear();
@@ -2671,8 +3060,14 @@ public class Pair : ViewModelBase
     // トランザクションの更新ループ
     private async void UpdateTransactions()
     {
+        if (IsActive)
+            await GetTransactions(this.PairCode);
+
+        /*
         while (true)
         {
+            if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return;
+
             if (IsActive == false)
             {
                 await Task.Delay(2000);
@@ -2681,9 +3076,13 @@ public class Pair : ViewModelBase
             // 間隔 1/2
             await Task.Delay(1300);
 
+            if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return;
+
             try
             {
                 await GetTransactions(this.PairCode);
+
+                if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return;
             }
             catch (Exception e)
             {
@@ -2693,245 +3092,9 @@ public class Pair : ViewModelBase
             // 間隔 1/2
             await Task.Delay(1300);
         }
-
+        */
     }
 
     #endregion
 
-    #region == 板情報 ==
-
-    // 板情報 取得
-    private async Task<bool> GetDepth(PairCodes pair)
-    {
-
-        // まとめグルーピング単位 
-        decimal unit = DepthGrouping;
-
-        // リスト数 （基本 上売り200、下買い200）
-        int half = 200;
-        int listCount = (half * 2) + 1;
-
-        // 初期化
-        if (_depth.Count == 0)
-        {
-            for (int i = 0; i < listCount; i++)
-            {
-                Depth dd = new Depth(this._ltpFormstString);
-                dd.DepthPrice = 0;
-                dd.DepthBid = 0;
-                dd.DepthAsk = 0;
-                _depth.Add(dd);
-            }
-        }
-        else
-        {
-            if (IsDepthGroupingChanged)
-            {
-                //グルーピング単位が変わったので、一旦クリアする。
-
-                for (int i = 0; i < listCount; i++)
-                {
-                    Depth dd = _depth[i];//new Depth();
-                    dd.DepthPrice = 0;
-                    dd.DepthBid = 0;
-                    dd.DepthAsk = 0;
-                    //_depth.Add(dd);
-                }
-
-                IsDepthGroupingChanged = false;
-            }
-        }
-
-        // LTP を追加
-        //Depth ddd = new Depth();
-        _depth[half].DepthPrice = Ltp;
-        //_depth[half].DepthBid = 0;
-        //_depth[half].DepthAsk = 0;
-        _depth[half].IsLTP = true;
-        //_depth[half] = ddd;
-
-        try
-        {
-            DepthResult dpr = await _pubDepthApi.GetDepth(pair.ToString());
-
-            if (dpr != null)
-            {
-                if (_depth.Count != 0)
-                {
-
-                    int i = 1;
-
-                    // 100円単位でまとめる
-                    // まとめた時の価格
-                    decimal c2 = 0;
-                    // 100単位ごとにまとめたAsk数量を保持
-                    decimal t = 0;
-                    // 先送りするAsk
-                    decimal d = 0;
-                    // 先送りする価格
-                    decimal e = 0;
-
-                    // ask をループ
-                    foreach (var dp in dpr.DepthAskList)
-                    {
-                        // まとめ表示On
-                        if (unit > 0)
-                        {
-
-                            if (c2 == 0) c2 = System.Math.Ceiling(dp.DepthPrice / unit);
-
-                            // 100円単位でまとめる
-                            if (System.Math.Ceiling(dp.DepthPrice / unit) == c2)
-                            {
-                                t = t + dp.DepthAsk;
-                            }
-                            else
-                            {
-                                //Debug.WriteLine(System.Math.Ceiling(dp.DepthPrice / unit).ToString() + " " + System.Math.Ceiling(c / unit).ToString());
-
-                                // 一時保存
-                                e = dp.DepthPrice;
-                                dp.DepthPrice = (c2 * unit);
-
-                                // 一時保存
-                                d = dp.DepthAsk;
-                                dp.DepthAsk = t;
-
-                                _depth[half - i].DepthAsk = dp.DepthAsk;
-                                _depth[half - i].DepthBid = dp.DepthBid;
-                                _depth[half - i].DepthPrice = dp.DepthPrice;
-
-                                // 今回のAskは先送り
-                                t = d;
-                                // 今回のPriceが基準になる
-                                c2 = System.Math.Ceiling(e / unit);
-
-                                i++;
-
-                            }
-
-                        }
-                        else
-                        {
-                            dp.PriceFormat = this._ltpFormstString;
-                            _depth[half - i] = dp;
-                            i++;
-                        }
-
-                    }
-
-                    _depth[half - 1].IsAskBest = true;
-
-                    i = half + 1;
-
-                    // 100円単位でまとめる
-                    // まとめた時の価格
-                    decimal c = 0;
-                    // 100単位ごとにまとめた数量を保持
-                    t = 0;
-                    // 先送りするBid
-                    d = 0;
-                    // 先送りする価格
-                    e = 0;
-
-                    // bid をループ
-                    foreach (var dp in dpr.DepthBidList)
-                    {
-
-                        if (unit > 0)
-                        {
-
-                            if (c == 0) c = System.Math.Ceiling(dp.DepthPrice / unit);
-
-                            // 100円単位でまとめる
-                            if (System.Math.Ceiling(dp.DepthPrice / unit) == c)
-                            {
-                                t = t + dp.DepthBid;
-                            }
-                            else
-                            {
-
-                                // 一時保存
-                                e = dp.DepthPrice;
-                                dp.DepthPrice = (c * unit);
-
-                                // 一時保存
-                                d = dp.DepthBid;
-                                dp.DepthBid = t;
-
-                                // 追加
-                                _depth[i].DepthAsk = dp.DepthAsk;
-                                _depth[i].DepthBid = dp.DepthBid;
-                                _depth[i].DepthPrice = dp.DepthPrice;
-
-                                // 今回のBidは先送り
-                                t = d;
-                                // 今回のPriceが基準になる
-                                c = System.Math.Ceiling(e / unit);
-
-                                i++;
-
-                            }
-                        }
-                        else
-                        {
-                            dp.PriceFormat = this._ltpFormstString;
-                            _depth[i] = dp;
-                            i++;
-                        }
-
-                    }
-
-                    _depth[half + 1].IsBidBest = true;
-
-                }
-
-                return true;
-            }
-            else
-            {
-                System.Diagnostics.Debug.WriteLine("■■■■■ GetDepth returned null");
-                return false;
-            }
-        }
-        catch (Exception e)
-        {
-            System.Diagnostics.Debug.WriteLine("■■■■■ GetDepth Exception: " + e);
-            return false;
-        }
-
-    }
-
-    // 板情報の更新ループ
-    private async void UpdateDepth()
-    {
-        while (true)
-        {
-            if (IsActive == false)
-            {
-                await Task.Delay(2000);
-                continue;
-            }
-            // 間隔 1/2
-            await Task.Delay(600);
-
-            try
-            {
-                await GetDepth(PairCode);
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine("■■■■■ UpdateDepth Exception: " + e);
-            }
-
-            // 間隔 1/2
-            await Task.Delay(600);
-        }
-
-    }
-    
-    #endregion
-
-
-    readonly Microsoft.UI.Dispatching.DispatcherQueue _dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
 }

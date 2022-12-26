@@ -10,9 +10,6 @@ namespace BitWallpaper4.ViewModels;
 
 public abstract class ViewModelBase : INotifyPropertyChanged, IDataErrorInfo
 {
-
-    readonly Microsoft.UI.Dispatching.DispatcherQueue _dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
-
     public ViewModelBase()
     {
     }
@@ -25,9 +22,10 @@ public abstract class ViewModelBase : INotifyPropertyChanged, IDataErrorInfo
     {
         //this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        _dispatcherQueue.TryEnqueue(() =>
+        if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return;
+        (App.Current as App)?.CurrentDispatcherQueue.TryEnqueue(() =>
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         });
     }
 
