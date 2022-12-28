@@ -1,29 +1,9 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors.
-// Licensed under the MIT License.
-
-using BitWallpaper4.Helpers;
+﻿using BitWallpaper4.Helpers;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using Microsoft.UI.Xaml.Shapes;
 using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
-using System.Threading.Tasks;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using System.Windows;
-using System.Threading;
-using ABI.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -35,9 +15,14 @@ namespace BitWallpaper4
     /// </summary>
     public partial class App : Application
     {
+        private Window _window;
+        public Window MainWindow => _window;
+
+        private Microsoft.UI.Dispatching.DispatcherQueue _currentDispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
+        public Microsoft.UI.Dispatching.DispatcherQueue CurrentDispatcherQueue { get => _currentDispatcherQueue; }
 
         /*
-                // Prevent multiple instances.
+        // Prevent multiple instances.
         private bool _mutexOn = true;
 
         /// <summary>The event mutex name.</summary>
@@ -51,8 +36,20 @@ namespace BitWallpaper4
 
         /// <summary>The mutex.</summary>
         private Mutex mutex;
+        */
+
+        /// <summary>
+        /// Initializes the singleton application object.  This is the first line of authored code
+        /// executed, and as such is the logical equivalent of main() or WinMain().
+        /// </summary>
+        public App()
+        {
+            this.InitializeComponent();
+
+            this.RequestedTheme = ApplicationTheme.Dark;
 
 
+            /*
             if (_mutexOn)
             {
                 this.mutex = new Mutex(true, UniqueMutexName, out bool isOwned);
@@ -88,17 +85,11 @@ namespace BitWallpaper4
 
                 App.Current.Exit();
             }
+            */
 
-        */
-
-        /// <summary>
-        /// Initializes the singleton application object.  This is the first line of authored code
-        /// executed, and as such is the logical equivalent of main() or WinMain().
-        /// </summary>
-        public App()
-        {
-            this.InitializeComponent();
-
+            // This does not fire...because of winui3 bugs. should be fixed in v1.3 WinAppSDK
+            // see https://github.com/microsoft/microsoft-ui-xaml/issues/5221
+            UnhandledException += App_UnhandledException;
         }
 
         /// <summary>
@@ -107,33 +98,22 @@ namespace BitWallpaper4
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-
-            m_window = new MainWindow();
+            _window = new MainWindow();
+            _window.Activate();
 
             TitleBarHelper.UpdateTitleBar(ElementTheme.Default);
-
-            UnhandledException += App_UnhandledException;
-
-            m_window.Activate();
         }
-
-        private Window m_window;
-
-        public Window MainWindow => m_window;
-
-        private Microsoft.UI.Dispatching.DispatcherQueue _currentDispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
-
-        public Microsoft.UI.Dispatching.DispatcherQueue CurrentDispatcherQueue { get=> _currentDispatcherQueue; }
-
 
         private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
         {
-            // TODO: Log and handle exceptions as appropriate.
-            // https://docs.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.application.unhandledexception.
+            // This does not fire...because of winui3 bugs. should be fixed in v1.3 WinAppSDK
+            // see https://github.com/microsoft/microsoft-ui-xaml/issues/5221
 
-            System.Diagnostics.Debug.WriteLine("App_UnhandledException: " + e.Message);
+            Debug.WriteLine("App_UnhandledException: " + e.Message + " - " + e.Exception.StackTrace + " - " + e.Exception.Source);
 
-            AppendErrorLog("App_DispatcherUnhandledException", e.Message);
+            AppendErrorLog("App_UnhandledException", e.Message);
+            AppendErrorLog("StackTrace", e.Exception.StackTrace);
+            AppendErrorLog("Source", e.Exception.Source);
 
             SaveErrorLog();
         }
@@ -142,15 +122,15 @@ namespace BitWallpaper4
         public bool IsSaveErrorLog = true;
         public string LogFilePath = System.Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + System.IO.Path.DirectorySeparatorChar + "BitWallpaper_errors.txt";
 
-        public void AppendErrorLog(string errorTxt, string kindTxt)
+        public void AppendErrorLog(string kindTxt, string errorTxt)
         {
+            Errortxt.AppendLine(kindTxt + ": " + errorTxt);
             DateTime dt = DateTime.Now;
-            string nowString = dt.ToString("yyyy/MM/dd HH:mm:ss");
-
-            Errortxt.AppendLine(nowString + " - " + kindTxt + " - " + errorTxt);
+            Errortxt.AppendLine($"Occured at {dt.ToString("yyyy/MM/dd HH:mm:ss")}");
+            Errortxt.AppendLine("");
         }
 
-        public void SaveErrorLog()
+        private void SaveErrorLog()
         {
             if (!IsSaveErrorLog)
                 return;
@@ -158,9 +138,21 @@ namespace BitWallpaper4
             if (string.IsNullOrEmpty(LogFilePath))
                 return;
 
+            Errortxt.AppendLine("");
+            DateTime dt = DateTime.Now;
+            Errortxt.AppendLine($"Saved at {dt.ToString("yyyy/MM/dd HH:mm:ss")}");
+
             string s = Errortxt.ToString();
             if (!string.IsNullOrEmpty(s))
                 File.WriteAllText(LogFilePath, s);
+        }
+
+        public void SaveErrorLogIfAny()
+        {
+            if (Errortxt.Length > 0)
+            {
+                SaveErrorLog();
+            }
         }
 
     }

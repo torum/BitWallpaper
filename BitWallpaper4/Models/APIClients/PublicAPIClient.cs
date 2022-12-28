@@ -1,10 +1,9 @@
-﻿using System.Transactions;
+﻿using BitWallpaper4.ViewModels;
 using Newtonsoft.Json;
-using BitWallpaper4.ViewModels;
-using System.Threading.Tasks;
-using System.Net.Http;
 using System;
 using System.Diagnostics;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace BitWallpaper4.Models.APIClients;
 
@@ -23,63 +22,75 @@ public class PublicAPIClient : BaseClient
     {
         Uri _endpoint = new Uri((_HTTPConn.Client.BaseAddress).ToString() + pair + "/ticker");
 
-        //System.Diagnostics.Debug.WriteLine("GettingTicker..." + _endpoint.ToString());
-
-        var request = new HttpRequestMessage
-        {
-            Method = HttpMethod.Get,
-            RequestUri = _endpoint,
-        };
-
-        //System.Diagnostics.Debug.WriteLine("GettingTicker...");
+        var request = new HttpRequestMessage {Method = HttpMethod.Get, RequestUri = _endpoint};
 
         try
         {
-
             var response = await _HTTPConn.Client.SendAsync(request);
 
-            if (response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
-                string s = await response.Content.ReadAsStringAsync();
-                //System.Diagnostics.Debug.WriteLine("GetTicker: " + s);
-
-                var deserialized = JsonConvert.DeserializeObject<JsonTickerObject>(s);
-
-                if (deserialized.success > 0)
-                {
-
-                    Ticker ticker = new Ticker();
-
-                    ticker.LTP = decimal.Parse(deserialized.data.last);
-                    ticker.Bid = decimal.Parse(deserialized.data.buy);
-                    ticker.Ask = decimal.Parse(deserialized.data.sell);
-                    ticker.Low = decimal.Parse(deserialized.data.low);
-                    ticker.High = decimal.Parse(deserialized.data.high);
-
-                    DateTime start = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-                    DateTime date = start.AddMilliseconds(deserialized.data.timestamp).ToLocalTime();
-                    ticker.TimeStamp = date;
-
-                    return ticker;
-                }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine("GetTicker: API returned failed response.");
-
-                    return null;
-                }
+                Debug.WriteLine("GetTicker: HTTP Error " + response.StatusCode.ToString());
+                return null;
             }
-            else
-            {
-                System.Diagnostics.Debug.WriteLine("GetTicker: HTTP Error " + response.StatusCode.ToString());
 
+            string s = await response.Content.ReadAsStringAsync();
+
+            var deserialized = JsonConvert.DeserializeObject<JsonTickerObject>(s);
+
+            if (deserialized.success <= 0)
+            {
+                Debug.WriteLine("GetTicker: API returned failed response.");
+                return null;
+                /*
+                    // 
+                    ClientError er = new ClientError();
+                    er.ErrType = "API";
+                    er.ErrCode = jsonResult.data.code;
+                    if (ApiErrorCodesDictionary.ContainsKey(jsonResult.data.code))
+                    {
+                        er.ErrText = "「" + ApiErrorCodesDictionary[jsonResult.data.code] + "」";
+                    }
+                    er.ErrDatetime = DateTime.Now;
+                    er.ErrPlace = path.ToString();
+
+                    ErrorOccured?.Invoke(this, er);
+
+                    return null; 
+                */
+            }
+
+            try
+            {
+                Ticker ticker = new();
+
+                ticker.LTP = decimal.Parse(deserialized.data.last);
+                ticker.Bid = decimal.Parse(deserialized.data.buy);
+                ticker.Ask = decimal.Parse(deserialized.data.sell);
+                ticker.Low = decimal.Parse(deserialized.data.low);
+                ticker.High = decimal.Parse(deserialized.data.high);
+
+                DateTime start = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                DateTime date = start.AddMilliseconds(deserialized.data.timestamp).ToLocalTime();
+                ticker.TimeStamp = date;
+
+                return ticker;
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("GetTicker: Exception - " + ex.Message);
                 return null;
             }
         }
         catch (HttpRequestException ex)
         {
-            System.Diagnostics.Debug.WriteLine("GetTicker: HttpRequestException - " + ex.Message + " + 内部例外: " + ex.InnerException.Message);
-
+            Debug.WriteLine("GetTicker: HttpRequestException - " + ex.Message + " + 内部例外: " + ex.InnerException.Message);
+            return null;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("GetTicker: Exception - " + ex.Message);
             return null;
         }
     }
@@ -150,26 +161,29 @@ public class PublicAPIClient : BaseClient
                 {
                     var jsonResult = JsonConvert.DeserializeObject<JsonErrorObject>(json);
 
-                    System.Diagnostics.Debug.WriteLine("■■■■■ GetDepth: API error code - " + jsonResult.data.code.ToString() + " ■■■■■");
+                    Debug.WriteLine("■■■■■ GetDepth: API error code - " + jsonResult.data.code.ToString() + " ■■■■■");
 
                     return null;
                 }
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine("■■■■■ GetDepth: HTTP Error " + response.StatusCode.ToString());
+                Debug.WriteLine("■■■■■ GetDepth: HTTP Error " + response.StatusCode.ToString());
 
                 return null;
             }
         }
         catch (HttpRequestException ex)
         {
-            System.Diagnostics.Debug.WriteLine("■■■■■ GetDepth: HttpRequestException - " + ex.Message + " + 内部例外: " + ex.InnerException.Message);
+            Debug.WriteLine("■■■■■ GetDepth: HttpRequestException - " + ex.Message + " + 内部例外: " + ex.InnerException.Message);
 
             return null;
         }
-
-
+        catch (Exception ex)
+        {
+            Debug.WriteLine("GetDepth: Exception - " + ex.Message);
+            return null;
+        }
     }
 
     // トランザクション(歩み値)取得メソッド
@@ -202,7 +216,7 @@ public class PublicAPIClient : BaseClient
 
                     foreach (var tr in deserialized.Data.Transactions)
                     {
-                        Transaction dd = new Transaction();
+                        BitWallpaper4.ViewModels.Transaction dd = new BitWallpaper4.ViewModels.Transaction();
                         dd.TransactionId = tr.TransactionId;
                         dd.Side = tr.Side;
                         if (!string.IsNullOrEmpty(tr.Price)) dd.Price = decimal.Parse(tr.Price);
@@ -224,7 +238,7 @@ public class PublicAPIClient : BaseClient
                 {
                     var jsonResult = JsonConvert.DeserializeObject<JsonErrorObject>(json);
 
-                    System.Diagnostics.Debug.WriteLine("■■■■■ GetTransactions: API error code - " + jsonResult.data.code.ToString() + " ■■■■■");
+                    Debug.WriteLine("■■■■■ GetTransactions: API error code - " + jsonResult.data.code.ToString() + " ■■■■■");
 
                     // TODO
                     return null;
@@ -232,7 +246,7 @@ public class PublicAPIClient : BaseClient
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine("■■■■■ GetTransactions: HTTP Error " + response.StatusCode.ToString());
+                Debug.WriteLine("■■■■■ GetTransactions: HTTP Error " + response.StatusCode.ToString());
 
                 //TODO
                 return null;
@@ -240,24 +254,22 @@ public class PublicAPIClient : BaseClient
         }
         catch (HttpRequestException ex)
         {
-            System.Diagnostics.Debug.WriteLine("■■■■■ GetTransactions: HttpRequestException - " + ex.Message + " + 内部例外: " + ex.InnerException.Message);
+            Debug.WriteLine("■■■■■ GetTransactions: HttpRequestException - " + ex.Message + " + 内部例外: " + ex.InnerException.Message);
 
             //TODO
             return null;
         }
-
-
+        catch (Exception ex)
+        {
+            Debug.WriteLine("GetTransactions: Exception - " + ex.Message);
+            return null;
+        }
     }
 
     // ろうそく足取得メソッド
     public async Task<CandlestickResult> GetCandlestick(string pair, string CandleType, string YYYYMMDDD)
     {
-
         Uri _endpoint = new Uri((_HTTPConn.Client.BaseAddress).ToString() + pair + "/candlestick/" + CandleType + "/" + YYYYMMDDD);
-
-        //Uri _endpoint = new Uri((_HTTPConn.Client.BaseAddress).ToString() + "btc_jpy/candlestick/1day/2018");
-
-        //Uri _endpoint = new Uri((_HTTPConn.Client.BaseAddress).ToString() + "btc_jpy/candlestick/1hour/20180825");
 
         var request = new HttpRequestMessage
         {
@@ -282,47 +294,51 @@ public class PublicAPIClient : BaseClient
 
                     if (deserialized.Data.Candlestick.Count > 0)
                     {
-                        Candlestick cs = new Candlestick();
+                        //Candlestick cs = new Candlestick();
 
                         if (deserialized.Data.Candlestick[0].Type == "1min")
                         {
-                            cs.Type = CandleTypes.OneMin;
+                            csr.CandleType = CandleTypes.OneMin;
                         }
                         else if (deserialized.Data.Candlestick[0].Type == "5min")
                         {
-                            cs.Type = CandleTypes.FiveMin;
+                            csr.CandleType = CandleTypes.FiveMin;
                         }
                         else if (deserialized.Data.Candlestick[0].Type == "15min")
                         {
-                            cs.Type = CandleTypes.FifteenMin;
+                            csr.CandleType = CandleTypes.FifteenMin;
                         }
                         else if (deserialized.Data.Candlestick[0].Type == "30min")
                         {
-                            cs.Type = CandleTypes.ThirteenMin;
+                            csr.CandleType = CandleTypes.ThirtyMin;
                         }
                         else if (deserialized.Data.Candlestick[0].Type == "1hour")
                         {
-                            cs.Type = CandleTypes.OneHour;
+                            csr.CandleType = CandleTypes.OneHour;
                         }
                         else if (deserialized.Data.Candlestick[0].Type == "4hour")
                         {
-                            cs.Type = CandleTypes.FourHour;
+                            csr.CandleType = CandleTypes.FourHour;
                         }
                         else if (deserialized.Data.Candlestick[0].Type == "8hour")
                         {
-                            cs.Type = CandleTypes.EightHour;
+                            csr.CandleType = CandleTypes.EightHour;
                         }
                         else if (deserialized.Data.Candlestick[0].Type == "12hour")
                         {
-                            cs.Type = CandleTypes.TwelveHour;
+                            csr.CandleType = CandleTypes.TwelveHour;
                         }
                         else if (deserialized.Data.Candlestick[0].Type == "1day")
                         {
-                            cs.Type = CandleTypes.OneDay;
+                            csr.CandleType = CandleTypes.OneDay;
                         }
                         else if (deserialized.Data.Candlestick[0].Type == "1week")
                         {
-                            cs.Type = CandleTypes.OneWeek;
+                            csr.CandleType = CandleTypes.OneWeek;
+                        }
+                        else if (deserialized.Data.Candlestick[0].Type == "1month")
+                        {
+                            csr.CandleType = CandleTypes.OneMonth;
                         }
 
                         if (deserialized.Data.Candlestick[0].Ohlcv.Count > 0)
@@ -349,10 +365,10 @@ public class PublicAPIClient : BaseClient
                                 //System.Diagnostics.Debug.WriteLine("GetCandlestick: " + oh.TimeStamp.ToString("dd日 hh:mm:ss"));
                                 //System.Diagnostics.Debug.WriteLine(jcs[4].String);
 
-                                cs.Ohlcvs.Add(oh);
+                                csr.Candlesticks.Add(oh);
 
                             }
-                            csr.Candlesticks.Add(cs);
+                            //csr.Candlesticks = cs.Ohlcvs;
 
                         }
 
@@ -389,9 +405,12 @@ public class PublicAPIClient : BaseClient
             //TODO
             return null;
         }
-
+        catch (Exception ex)
+        {
+            Debug.WriteLine("GetCandlestick: Exception - " + ex.Message);
+            return null;
+        }
     }
-
 }
 
 

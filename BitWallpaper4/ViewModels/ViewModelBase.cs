@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
+using System.Diagnostics;
 
 namespace BitWallpaper4.ViewModels;
 
@@ -22,10 +19,18 @@ public abstract class ViewModelBase : INotifyPropertyChanged, IDataErrorInfo
     {
         //this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return;
-        (App.Current as App)?.CurrentDispatcherQueue.TryEnqueue(() =>
+        (App.Current as App)?.CurrentDispatcherQueue?.TryEnqueue(() =>
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            try
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception at NotifyPropertyChanged ({propertyName}): " + ex.Message);
+
+                (App.Current as App).AppendErrorLog($"Exception at NotifyPropertyChanged ({propertyName}): ", ex.Message);
+            }
         });
     }
 

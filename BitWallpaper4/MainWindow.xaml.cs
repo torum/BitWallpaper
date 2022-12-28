@@ -1,22 +1,17 @@
 using BitWallpaper4.ViewModels;
+using BitWallpaper4.Views;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using BitWallpaper4.Views;
-using BitWallpaper4.Models;
-using System.Threading.Tasks;
-using System.Diagnostics;
+using Windows.Storage;
 
 namespace BitWallpaper4
 {
@@ -40,7 +35,6 @@ namespace BitWallpaper4
         };
 
         //private object? _selected;
-        private PairCodes _activePair = PairCodes.btc_jpy; 
 
 
         public MainViewModel ViewModel
@@ -50,44 +44,86 @@ namespace BitWallpaper4
 
         public MainWindow()
         {
+            AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "App_Icon.ico"));
+
             ViewModel = new MainViewModel();
 
-            this.InitializeComponent();
+            // load a setting for each pair.
+            ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
 
+            foreach (var hoge in ViewModel.Pairs)
+            {
+                Windows.Storage.ApplicationDataCompositeValue compositePairs = (ApplicationDataCompositeValue)localSettings.Values[hoge.PairCode.ToString()];
+                if (compositePairs != null)
+                {
+                    hoge.IsPaneVisible = (bool)compositePairs["IsPaneVisible"];
+                }
+            }
+
+            try
+            {
+                InitializeComponent();
+            }
+            catch (XamlParseException parseException)
+            {
+                Debug.WriteLine($"Unhandled XamlParseException in MainPage: {parseException.Message}");
+                foreach (var key in parseException.Data.Keys)
+                {
+                    Debug.WriteLine("{Key}:{Value}", key.ToString(), parseException.Data[key]?.ToString());
+                }
+                throw;
+            }
+            
             this.ExtendsContentIntoTitleBar = true;
-
+            
             this.SetTitleBar(AppTitleBar);
 
-            this.SetWindowSize(1360, 768);
-            this.CenterOnScreen();
+            // load window setting
+            Windows.Storage.ApplicationDataCompositeValue compositeMainWin = (ApplicationDataCompositeValue)localSettings.Values["MainWindow"];
+            if (compositeMainWin != null)
+            {
+                //String fontName = composite["Font"] as string;
+                double width = (double)compositeMainWin["Width"];
+                double height = (double)compositeMainWin["Height"];
 
+                this.CenterOnScreen(width, height);
+
+                if (compositeMainWin["NavigationViewControl_IsPaneOpen"] != null)
+                    NavigationViewControl.IsPaneOpen = (bool)compositeMainWin["NavigationViewControl_IsPaneOpen"];
+            }
+            else
+            {
+                //this.SetWindowSize(1360, 768);
+                this.CenterOnScreen(1360, 768);
+            }
+
+            // need to be here(last).
             var manager = WinUIEx.WindowManager.Get(this);
             manager.PersistenceId = "MainWindowPersistanceId";
             manager.MinWidth = 640;
             manager.MinHeight = 480;
             //manager.Backdrop = new WinUIEx.AcrylicSystemBackdrop();
             manager.Backdrop = new WinUIEx.MicaSystemBackdrop();
-
         }
 
         private void NavigationViewControl_DisplayModeChanged(NavigationView sender, NavigationViewDisplayModeChangedEventArgs args)
         {
+            /*
             AppTitleBar.Margin = new Thickness()
             {
                 Left = sender.CompactPaneLength * (sender.DisplayMode == NavigationViewDisplayMode.Minimal ? 2 : 1),
                 Top = AppTitleBar.Margin.Top,
-                Right = sender.CompactPaneLength * (sender.DisplayMode == NavigationViewDisplayMode.Minimal ? 1 : 2),
+                Right = AppTitleBar.Margin.Right,
                 Bottom = AppTitleBar.Margin.Bottom
             };
+            */
         }
 
         private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
         {
-            //var resource = args.WindowActivationState == WindowActivationState.Deactivated ? "WindowCaptionForegroundDisabled" : "WindowCaptionForeground";
+            var resource = args.WindowActivationState == WindowActivationState.Deactivated ? "WindowCaptionForegroundDisabled" : "WindowCaptionForeground";
 
-            //AppTitleBarText.Foreground = (SolidColorBrush)App.Current.Resources[resource];
-
-
+            AppTitleBarText.Foreground = (SolidColorBrush)App.Current.Resources[resource];
         }
 
         private void NavigationViewControl_Loaded(object sender, RoutedEventArgs e)
@@ -108,7 +144,7 @@ namespace BitWallpaper4
 
             // Any other way?
             var settings = (Microsoft.UI.Xaml.Controls.NavigationViewItem)NavigationViewControl.SettingsItem;
-            settings.Content = "設定";
+            settings.Content = "";
         }
 
         private void NavigationViewControl_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
@@ -117,17 +153,8 @@ namespace BitWallpaper4
             {
                 NavigationFrame.Navigate(typeof(SettingsPage), args.RecommendedNavigationTransitionInfo);
             }
-            else if (args.InvokedItemContainer != null && (args.InvokedItemContainer.Tag != null))
+            else if (args.InvokedItemContainer != null && (args.InvokedItemContainer?.Tag != null))
             {
-                /*
-                var navItemTag = args.InvokedItemContainer.Tag.ToString();
-
-                if (navItemTag is not null)
-                {
-                    NavView_Navigate(navItemTag, args.RecommendedNavigationTransitionInfo);
-
-                }
-                */
                 if (_pages is null)
                     return;
 
@@ -139,10 +166,10 @@ namespace BitWallpaper4
                     return;
 
                 // Pass Frame when navigate.
-                NavigationFrame.Navigate(_page, ViewModel, args.RecommendedNavigationTransitionInfo);
+                //NavigationFrame.Navigate(_page, ViewModel, args.RecommendedNavigationTransitionInfo);
+                NavigationFrame.Navigate(_page, ViewModel, new SuppressNavigationTransitionInfo());
             }
         }
-
 
         private void NavigationFrame_Navigated(object sender, NavigationEventArgs e)
         {
@@ -156,7 +183,7 @@ namespace BitWallpaper4
             {
                 //NavigationViewControl.Header = null;
 
-                var item = _pages.FirstOrDefault(p => p.Page == e.SourcePageType);
+                //var item = _pages.FirstOrDefault(p => p.Page == e.SourcePageType);
 
                 //NavigationViewControl.SelectedItem = NavigationViewControl.MenuItems.OfType<NavigationViewItem>().First(n => n.Tag.Equals(item.Tag));
 
@@ -169,57 +196,100 @@ namespace BitWallpaper4
                 //_activePair = null;
                 return;
             }
-            
-            if ((App.Current == null) || ((App.Current as App)?.CurrentDispatcherQueue == null)) return;
-            (App.Current as App)?.CurrentDispatcherQueue.TryEnqueue(() =>
-            {    
-            });
 
-            // TODO:（個別設定が必要）
-            if (e.SourcePageType == typeof(Views.BtcJpyPage))
+            PairCodes _activePair = PairCodes.btc_jpy;
+
+            // （個別設定が必要）
+            if (e.SourcePageType == typeof(BtcJpyPage))
             {
                 _activePair = PairCodes.btc_jpy;
             }
-            else if (e.SourcePageType == typeof(Views.XrpJpyPage))
+            else if (e.SourcePageType == typeof(XrpJpyPage))
             {
                 _activePair = PairCodes.xrp_jpy;
             }
-            else if (e.SourcePageType == typeof(Views.EthJpyPage))
+            else if (e.SourcePageType == typeof(EthJpyPage))
             {
                 _activePair = PairCodes.eth_jpy;
             }
-            else if (e.SourcePageType == typeof(Views.LtcJpyPage))
+            else if (e.SourcePageType == typeof(LtcJpyPage))
             {
                 _activePair = PairCodes.ltc_jpy;
             }
-            else if (e.SourcePageType == typeof(Views.MonaJpyPage))
+            else if (e.SourcePageType == typeof(MonaJpyPage))
             {
                 _activePair = PairCodes.mona_jpy;
             }
-            else if (e.SourcePageType == typeof(Views.BccJpyPage))
+            else if (e.SourcePageType == typeof(BccJpyPage))
             {
                 _activePair = PairCodes.bcc_jpy;
             }
-            else if (e.SourcePageType == typeof(Views.XlmJpyPage))
+            else if (e.SourcePageType == typeof(XlmJpyPage))
             {
                 _activePair = PairCodes.xlm_jpy;
             }
-            else if (e.SourcePageType == typeof(Views.QtumJpyPage))
+            else if (e.SourcePageType == typeof(QtumJpyPage))
             {
                 _activePair = PairCodes.qtum_jpy;
             }
-            else if (e.SourcePageType == typeof(Views.BatJpyPage))
+            else if (e.SourcePageType == typeof(BatJpyPage))
             {
                 _activePair = PairCodes.bat_jpy;
             }
-            // TODO:more
+            else
+            {
+                throw new NotImplementedException();
+            }
 
-            ViewModel.SetSelectedPairFromCode = _activePair;
+            /*
+            (App.Current as App)?.CurrentDispatcherQueue?.TryEnqueue(() =>
+            {
+            });
+            */
+            ViewModel.SetSelectedPairFromCode(_activePair);
 
-            //ViewModel.SelectedPair?.InitializeAndGetChartData(CandleTypes.OneHour);
+            //ViewModel?.SelectedPair?.InitializeAndStart();
             //Task.Run(() => ViewModel.SelectedPair?.InitializeAndGetChartData(CandleTypes.OneHour));
 
         }
 
+        private void NavigationFrame_NavigationFailed(object sender, NavigationFailedEventArgs e)
+        {
+            Debug.WriteLine("NavigationFrame_NavigationFailed: " + e.Exception.Message + " - " + e.Exception.StackTrace);
+
+            (App.Current as App).AppendErrorLog("NavigationFrame_NavigationFailed", e.Exception.Message + ", StackTrace: " + e.Exception.StackTrace);
+
+            e.Handled = true;
+        }
+
+        private void WindowEx_Closed(object sender, WindowEventArgs args)
+        {
+            // Save a setting locally on the device
+            ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            
+            localSettings.Values["test_setting"] = "a device specific setting";
+
+            // Save a composite setting locally on the device
+            Windows.Storage.ApplicationDataCompositeValue composite = new Windows.Storage.ApplicationDataCompositeValue();
+            composite["Width"] = this.Width;
+            composite["Height"] = this.Height;
+            //composite["Top"] = 
+            //composite["Left"] = ;
+            composite["NavigationViewControl_IsPaneOpen"] = NavigationViewControl.IsPaneOpen;
+            localSettings.Values["MainWindow"] = composite;
+
+
+            foreach (var hoge in ViewModel.Pairs)
+            {
+                composite = new();
+                composite["IsPaneVisible"] = hoge.IsPaneVisible;
+                // more
+
+                localSettings.Values[hoge.PairCode.ToString()] = composite;
+            }
+
+            // error logs.
+            (App.Current as App).SaveErrorLogIfAny();
+        }
     }
 }

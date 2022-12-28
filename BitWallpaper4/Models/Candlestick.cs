@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,9 +9,9 @@ namespace BitWallpaper4.Models;
 
 public enum CandleTypes
 {
-    OneMin, FiveMin, FifteenMin, ThirteenMin, OneHour, FourHour, EightHour, TwelveHour, OneDay, OneWeek
+    OneMin, FiveMin, FifteenMin, ThirtyMin, OneHour, FourHour, EightHour, TwelveHour, OneDay, OneWeek, OneMonth
 
-    // 1min 5min 15min 30min 1hour 4hour 8hour 12hour 1day 1week
+    // 1min 5min 15min 30min 1hour 4hour 8hour 12hour 1day 1week 1month
 }
 
 public class Ohlcv
@@ -24,27 +25,42 @@ public class Ohlcv
     public decimal Volume;
     public DateTime TimeStamp;
 
-    public Ohlcv()
-    {
-
-    }
-
 }
-
-public class Candlestick
+/*
+public class CandlestickTemp
 {
-    public CandleTypes Type
-    {
-        get; set;
-    }
+    public CandleTypes CandleType { get; set; }
+
+    //public CandleSpanFormats CandleSpanFormat { get; set; }
 
     public List<Ohlcv> Ohlcvs;
 
-    public Candlestick()
+    public CandlestickTemp()
     {
+        /
+        CandleSpanFormat = span;
+
+        if (span == CandleSpanFormats.yealy)
+        {
+            if ((ct == CandleTypes.OneMin) || (ct == CandleTypes.FiveMin) || (ct == CandleTypes.FifteenMin) || (ct == CandleTypes.ThirtyMin) || (ct == CandleTypes.OneHour))
+            {
+                throw new ArgumentException("Not supported.");
+            }
+        }
+        else if (span == CandleSpanFormats.daily)
+        {
+            if ((ct == CandleTypes.FourHour) || (ct == CandleTypes.EightHour) || (ct == CandleTypes.TwelveHour) || (ct == CandleTypes.OneDay) || (ct == CandleTypes.OneWeek) || (ct == CandleTypes.OneMonth))
+            {
+                throw new ArgumentException("Not supported.");
+            }
+        }
+        CandleType = ct;
+        /
+
         Ohlcvs = new List<Ohlcv>();
     }
 }
+*/
 
 public class CandlestickResult
 {
@@ -57,11 +73,13 @@ public class CandlestickResult
         get; set;
     }
 
-    public List<Candlestick> Candlesticks;
+    public CandleTypes CandleType { get; set; }
+
+    public List<Ohlcv> Candlesticks;
 
     public CandlestickResult()
     {
-        Candlesticks = new List<Candlestick>();
+        Candlesticks = new List<Ohlcv>();
     }
 }
 

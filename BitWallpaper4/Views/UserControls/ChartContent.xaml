@@ -10,8 +10,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:lvc="using:LiveChartsCore.SkiaSharpView.WinUI"
     xmlns:model="using:BitWallpaper4.Models"
+    xmlns:vm="using:BitWallpaper4.ViewModels"
     mc:Ignorable="d">
-
     <Grid>
 
         <VisualStateManager.VisualStateGroups>
@@ -21,7 +21,7 @@
                         <AdaptiveTrigger MinWindowWidth="640" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="SecondaryTitle.Margin" Value="00"/>
+                        <Setter Target="SecondaryTitle.Margin" Value="0"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState>
@@ -35,12 +35,14 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        
-        <SplitView x:Name="SplitViewControl" PaneBackground="Transparent" PanePlacement="Right" IsPaneOpen="True" OpenPaneLength="300" CompactPaneLength="0" DisplayMode="CompactInline">
+
+        <!--  IsPaneOpen="{x:Bind Path=vm.SelectedPair.IsPaneVisible, Mode=TwoWay}" -->
+
+        <SplitView x:Name="SplitViewControl" PaneBackground="Transparent" IsPaneOpen="{x:Bind Path=vm.SelectedPair.IsPaneVisible, Mode=OneWay}" PanePlacement="Right" OpenPaneLength="280" CompactPaneLength="0" DisplayMode="CompactInline">
             <SplitView.Pane>
                 <Grid Margin="12,0,0,0">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="32"/>
+                        <RowDefinition Height="3"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
@@ -441,7 +443,7 @@
                     <TabView Grid.Row="2" TabWidthMode="Equal" IsAddTabButtonVisible="False">
                         <TabView.TabItems>
 
-                            <TabViewItem Header="板情報" IsClosable="False" ToolTipService.ToolTip="板情報">
+                            <TabViewItem Header="板情報" IsClosable="False" Opacity="0.7">
                                 <!--
                                 <TabViewItem.IconSource>
                                     <SymbolIconSource Symbol="Placeholder" />
@@ -456,7 +458,7 @@
                                         </Style>
                                     </ListBox.ItemContainerStyle>
                                     <ListBox.ItemTemplate>
-                                        <DataTemplate x:DataType="model:Depth">
+                                        <DataTemplate x:DataType="vm:Depth">
 <!--
                                             <DataTemplate.Triggers>
                                                 <DataTrigger Binding="{Binding IsLTP}" Value="true">
@@ -576,7 +578,7 @@
 -->
                             </TabViewItem>
 
-                            <TabViewItem Header="歩み値" IsClosable="False" ToolTipService.ToolTip="歩み値">
+                            <TabViewItem Header="歩み値" IsClosable="False" Opacity="0.7">
                                 <!--
                                 <TabViewItem.IconSource>
                                     <SymbolIconSource Symbol="Placeholder" />
@@ -593,7 +595,7 @@
                                             </Style>
                                         </ListBox.ItemContainerStyle>
                                         <ListBox.ItemTemplate>
-                                            <DataTemplate x:DataType="model:Transaction">
+                                            <DataTemplate x:DataType="vm:Transaction">
                                                 <Grid Margin="0">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="80" />
@@ -636,10 +638,17 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-                <StackPanel x:Name="SecondaryTitle" Grid.Row="0" Margin="0">
+                <StackPanel x:Name="SecondaryTitle" Grid.Row="0" Grid.Column="0" Margin="0">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Margin="12,12,0,0" Text="{x:Bind Path=vm.SelectedPair.PairString, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}"/>
+
+                        <TextBlock Margin="12,12,0,0" Text="" Style="{StaticResource BaseTextBlockStyle}"/>
+                        <TextBlock Margin="0,12,0,0" Text="{x:Bind Mode=OneWay, Path=vm.SelectedPair.LtpString}" Style="{StaticResource BaseTextBlockStyle}"/>
 
                         <TextBlock Text="-" Margin="12,12,0,0" Style="{StaticResource BaseTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
 
@@ -649,18 +658,64 @@
                     <StackPanel Orientation="Horizontal" Margin="6,0,0,0">
                         <TextBlock Text="24H High: " Padding="6" Style="{StaticResource CaptionTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
                         <TextBlock Text="{x:Bind Path=vm.SelectedPair.High24String, Mode=OneWay}" Padding="0,6,0,6" Style="{StaticResource CaptionTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
-                        <TextBlock Text="{x:Bind Path=vm.SelectedPair.CurrencyUnitString, Mode=OneWay}" Padding="0,6,0,6" Style="{StaticResource CaptionTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
 
                         <TextBlock Text="," Padding="0,6,3,6" Style="{StaticResource CaptionTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
                         
                         <TextBlock Text="24H Low: " Padding="6" Style="{StaticResource CaptionTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
                         <TextBlock Text="{x:Bind Path=vm.SelectedPair.Low24String, Mode=OneWay}" Padding="0,6,0,6" Style="{StaticResource CaptionTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
-                        <TextBlock Text="{x:Bind Path=vm.SelectedPair.CurrencyUnitString, Mode=OneWay}" Padding="0,6,0,6" Style="{StaticResource CaptionTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
 
                     </StackPanel>
                 </StackPanel>
 
-                <Grid Grid.Row="1">
+                <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                    <CommandBar Background="Transparent" IsOpen="False" DefaultLabelPosition="Right" Margin="0,0,9,6" Opacity="0.4">
+
+                        <CommandBar.SecondaryCommands>
+                            <AppBarButton Icon="ClosePane" Label="情報パネルの表示" Command="{x:Bind vm.SelectedPair.TogglePaneVisibilityCommand}">
+                                <AppBarButton.KeyboardAccelerators>
+                                    <KeyboardAccelerator Modifiers="Control" Key="I" />
+                                </AppBarButton.KeyboardAccelerators>
+                            </AppBarButton>
+                            <AppBarButton Icon="Switch" Label="{x:Bind vm.SelectedPair.SelectedCandleTypeLabelString, Mode=OneWay}" IsCompact="False" AutomationProperties.Name="CandleType">
+                                <AppBarButton.Flyout>
+                                    <MenuFlyout>
+                                        <MenuFlyoutItem Text="１分" Command="{x:Bind vm.SelectedPair.ChangeCandleTypeCommand}" CommandParameter="{x:Bind model:CandleTypes.OneMin}"/>
+                                        <MenuFlyoutItem Text="５分" Command="{x:Bind vm.SelectedPair.ChangeCandleTypeCommand}" CommandParameter="{x:Bind model:CandleTypes.FiveMin}"/>
+                                        <MenuFlyoutItem Text="１５分" Command="{x:Bind vm.SelectedPair.ChangeCandleTypeCommand}" CommandParameter="{x:Bind model:CandleTypes.FifteenMin}"/>
+                                        <MenuFlyoutItem Text="３０分" Command="{x:Bind vm.SelectedPair.ChangeCandleTypeCommand}" CommandParameter="{x:Bind model:CandleTypes.ThirtyMin}"/>
+                                        <MenuFlyoutSeparator/>
+
+                                        <MenuFlyoutItem Text="１時間" Command="{x:Bind vm.SelectedPair.ChangeCandleTypeCommand}" CommandParameter="{x:Bind model:CandleTypes.OneHour}"/>
+                                        <MenuFlyoutItem Text="４時間" Command="{x:Bind vm.SelectedPair.ChangeCandleTypeCommand}" CommandParameter="{x:Bind model:CandleTypes.FourHour}"/>
+                                        <MenuFlyoutItem Text="８時間" Command="{x:Bind vm.SelectedPair.ChangeCandleTypeCommand}" CommandParameter="{x:Bind model:CandleTypes.EightHour}"/>
+                                        <MenuFlyoutItem Text="１２時間" Command="{x:Bind vm.SelectedPair.ChangeCandleTypeCommand}" CommandParameter="{x:Bind model:CandleTypes.TwelveHour}"/>
+                                        <MenuFlyoutSeparator/>
+
+                                        <MenuFlyoutItem Text="１日" Command="{x:Bind vm.SelectedPair.ChangeCandleTypeCommand}" CommandParameter="{x:Bind model:CandleTypes.OneDay}"/>
+                                        <MenuFlyoutItem Text="１週間" Command="{x:Bind vm.SelectedPair.ChangeCandleTypeCommand}" CommandParameter="{x:Bind model:CandleTypes.OneWeek}"/>
+                                        <MenuFlyoutItem Text="１ヵ月" Command="{x:Bind vm.SelectedPair.ChangeCandleTypeCommand}" CommandParameter="{x:Bind model:CandleTypes.OneMonth}"/>
+                                    </MenuFlyout>
+                                </AppBarButton.Flyout>
+                            </AppBarButton>
+                            
+
+                            
+                        </CommandBar.SecondaryCommands>
+                    </CommandBar>
+                    <!--
+                    <DropDownButton Content="Email" VerticalAlignment="Bottom" Margin="0,0,9,6" Opacity="0.4">
+                        <DropDownButton.Flyout>
+                            <MenuFlyout Placement="Bottom">
+                                <MenuFlyoutItem Text="Send"/>
+                                <MenuFlyoutItem Text="Reply"/>
+                                <MenuFlyoutItem Text="Reply All"/>
+                            </MenuFlyout>
+                        </DropDownButton.Flyout>
+                    </DropDownButton>
+                    -->
+                </StackPanel>
+
+                <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
                     <lvc:CartesianChart Margin="0,0,0,0" 
                                     Series="{x:Bind vm.SelectedPair.Series}" 
                                     XAxes="{x:Bind vm.SelectedPair.XAxes}" 
@@ -673,6 +728,7 @@
 
 
             </Grid>
+            
         </SplitView>
     </Grid>
 </UserControl>

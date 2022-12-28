@@ -5,10 +5,28 @@ using System.Text;
 using System.Threading.Tasks;
 using BitWallpaper4.ViewModels;
 
-namespace BitWallpaper4.Models;
+namespace BitWallpaper4.ViewModels;
 
-public class Transactions : ViewModelBase
+public class Transaction : ViewModelBase
 {
+    private string _priceFormat = "";
+    public string PriceFormat
+    {
+        get
+        {
+            return _priceFormat;
+        }
+        set
+        {
+            if (_priceFormat == value)
+                return;
+
+            _priceFormat = value;
+            NotifyPropertyChanged("PriceFormat");
+            NotifyPropertyChanged("PriceFormatted");
+        }
+    }
+
     private long _transactionId;
     public long TransactionId
     {
@@ -22,7 +40,7 @@ public class Transactions : ViewModelBase
                 return;
 
             _transactionId = value;
-            this.NotifyPropertyChanged("TransactionId");
+            NotifyPropertyChanged("TransactionId");
 
         }
     }
@@ -40,7 +58,7 @@ public class Transactions : ViewModelBase
                 return;
 
             _side = value;
-            this.NotifyPropertyChanged("Side");
+            NotifyPropertyChanged("Side");
 
         }
     }
@@ -58,10 +76,16 @@ public class Transactions : ViewModelBase
                 return;
 
             _price = value;
-            this.NotifyPropertyChanged("Price");
-
+            NotifyPropertyChanged("Price");
+            NotifyPropertyChanged("PriceFormatted");
         }
     }
+
+    public string PriceFormatted
+    {
+        get => string.Format(_priceFormat, _price);
+    }
+    //PriceFormated
 
     private decimal _amount;
     public decimal Amount
@@ -76,7 +100,7 @@ public class Transactions : ViewModelBase
                 return;
 
             _amount = value;
-            this.NotifyPropertyChanged("Amount");
+            NotifyPropertyChanged("Amount");
 
         }
     }
@@ -94,14 +118,22 @@ public class Transactions : ViewModelBase
                 return;
 
             _executedAt = value;
-            this.NotifyPropertyChanged("ExecutedAt");
-
+            NotifyPropertyChanged("ExecutedAt");
+            NotifyPropertyChanged("ExecutedAtFormatted");
         }
     }
 
-    public Transactions()
+    public string ExecutedAtFormatted
     {
+        get => _executedAt.ToString("HH:mm:ss");
+    }
 
+    public Transaction(string priceFormat)
+    {
+        _priceFormat = priceFormat;
+    }
+    public Transaction()
+    {
     }
 }
 
@@ -116,11 +148,11 @@ public class TransactionsResult
         get; set;
     }
 
-    public List<Transactions> Trans;
+    public List<Transaction> Trans;
 
     public TransactionsResult()
     {
-        Trans = new List<Transactions>();
+        Trans = new List<Transaction>();
     }
 }
 

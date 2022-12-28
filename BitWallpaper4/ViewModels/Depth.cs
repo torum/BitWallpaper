@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BitWallpaper4.ViewModels;
+﻿using System.Collections.Generic;
 
-namespace BitWallpaper4.Models;
+namespace BitWallpaper4.ViewModels;
 
 public class Depth : ViewModelBase
 {
@@ -22,8 +17,8 @@ public class Depth : ViewModelBase
                 return;
 
             _priceFormat = value;
-            this.NotifyPropertyChanged("PriceFormat");
-            this.NotifyPropertyChanged("DepthPriceFormatted");
+            NotifyPropertyChanged("PriceFormat");
+            NotifyPropertyChanged("DepthPriceFormatted");
         }
     }
 
@@ -40,14 +35,14 @@ public class Depth : ViewModelBase
                 return;
 
             _depthBid = value;
-            this.NotifyPropertyChanged("DepthBid");
-            this.NotifyPropertyChanged("DepthBidFormatted");
+            NotifyPropertyChanged("DepthBid");
+            NotifyPropertyChanged("DepthBidFormatted");
         }
     }
     public string DepthBidFormatted
     {
-        get 
-        { 
+        get
+        {
             if (_depthBid == 0)
             {
                 return "";
@@ -72,13 +67,13 @@ public class Depth : ViewModelBase
                 return;
 
             _depthPrice = value;
-            this.NotifyPropertyChanged("DepthPrice");
-            this.NotifyPropertyChanged("DepthPriceFormatted");
+            NotifyPropertyChanged("DepthPrice");
+            NotifyPropertyChanged("DepthPriceFormatted");
         }
     }
     public string DepthPriceFormatted
     {
-        get => String.Format(_priceFormat, _depthPrice);//_depthPrice.ToString(_priceFormat);
+        get => string.Format(_priceFormat, _depthPrice);//_depthPrice.ToString(_priceFormat);
     }
 
     private decimal _depthAsk;
@@ -94,8 +89,8 @@ public class Depth : ViewModelBase
                 return;
 
             _depthAsk = value;
-            this.NotifyPropertyChanged("DepthAsk");
-            this.NotifyPropertyChanged("DepthAskFormatted");
+            NotifyPropertyChanged("DepthAsk");
+            NotifyPropertyChanged("DepthAskFormatted");
         }
     }
     public string DepthAskFormatted
@@ -126,7 +121,7 @@ public class Depth : ViewModelBase
                 return;
 
             _isLTP = value;
-            this.NotifyPropertyChanged("IsLTP");
+            NotifyPropertyChanged("IsLTP");
 
         }
     }
@@ -145,7 +140,7 @@ public class Depth : ViewModelBase
 
             _isAskBest = value;
 
-            this.NotifyPropertyChanged("IsAskBest");
+            NotifyPropertyChanged("IsAskBest");
         }
     }
     private bool _isBidBest;
@@ -161,7 +156,7 @@ public class Depth : ViewModelBase
                 return;
 
             _isBidBest = value;
-            this.NotifyPropertyChanged("IsBidBest");
+            NotifyPropertyChanged("IsBidBest");
 
         }
     }

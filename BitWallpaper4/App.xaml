@@ -18,7 +18,7 @@
                 <ResourceDictionary Source="/Styles/TextBlock.xaml" />
 
                 <ResourceDictionary>
-                    
+
                     <Style x:Key="NavigationViewItemStyle1" TargetType="controls:NavigationViewItem">
                         <Setter Property="Foreground" Value="{ThemeResource NavigationViewItemForeground}" />
                         <Setter Property="Background" Value="{ThemeResource NavigationViewItemBackground}" />
@@ -145,7 +145,7 @@
                                                         <Setter Target="Icon.(controls:AnimatedIcon.State)" Value="PointerOver" />
 
                                                         <Setter Target="LayoutRoot.Opacity" Value="0.8" />
-                                                        
+
                                                     </VisualState.Setters>
                                                 </VisualState>
 
@@ -157,7 +157,7 @@
                                                         <Setter Target="Icon.(controls:AnimatedIcon.State)" Value="Pressed" />
 
                                                         <Setter Target="LayoutRoot.Opacity" Value="0.9" />
-                                                        
+
                                                     </VisualState.Setters>
                                                 </VisualState>
 
@@ -178,7 +178,7 @@
                                                         <Setter Target="Icon.Foreground" Value="{ThemeResource NavigationViewItemForegroundSelectedPointerOver}" />
                                                         <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource NavigationViewItemForegroundSelectedPointerOver}" />
                                                         <Setter Target="Icon.(controls:AnimatedIcon.State)" Value="PointerOver" />
-                                                        
+
                                                         <Setter Target="LayoutRoot.Opacity" Value="0.9" />
 
                                                     </VisualState.Setters>
@@ -190,7 +190,7 @@
                                                         <Setter Target="Icon.Foreground" Value="{ThemeResource NavigationViewItemForegroundSelectedPressed}" />
                                                         <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource NavigationViewItemForegroundSelectedPressed}" />
                                                         <Setter Target="Icon.(controls:AnimatedIcon.State)" Value="Pressed" />
-                                                        
+
                                                         <Setter Target="LayoutRoot.Opacity" Value="1" />
 
                                                     </VisualState.Setters>
@@ -322,7 +322,7 @@
                                             </VisualStateGroup>
 
                                         </VisualStateManager.VisualStateGroups>
-                                        
+
                                         <Grid x:Name="PresenterContentRootGrid">
                                             <!-- Wrap SelectionIndicator in a grid so that its offset is 0,0 - this enables the offset animation. -->
                                             <Grid HorizontalAlignment="Left" VerticalAlignment="Center">
@@ -363,9 +363,9 @@
                             </Setter.Value>
                         </Setter>
                     </Style>
-                    
+
                 </ResourceDictionary>
-                
+
             </ResourceDictionary.MergedDictionaries>
             <!-- Other app resources here -->
 <!--
