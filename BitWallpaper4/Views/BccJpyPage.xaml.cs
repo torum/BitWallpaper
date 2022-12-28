@@ -8,9 +8,9 @@ namespace BitWallpaper4.Views
 {
     public sealed partial class BccJpyPage : Page
     {
-        private MainViewModel _viewModel;
+        private PairViewModel _viewModel;
 
-        public MainViewModel ViewModel
+        public PairViewModel ViewModel
         {
             get=> _viewModel;
         }
@@ -36,9 +36,9 @@ namespace BitWallpaper4.Views
         {
             //base.OnNavigatedTo(e);
 
-            if (e.Parameter is MainViewModel)
+            if (e.Parameter is PairViewModel)
             {
-                _viewModel = (MainViewModel)e.Parameter;
+                _viewModel = (PairViewModel)e.Parameter;
             }
 
             base.OnNavigatedTo(e);

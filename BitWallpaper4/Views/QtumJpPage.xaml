@@ -11,6 +11,6 @@
     NavigationCacheMode="Required">
 
     <Grid x:Name="ContentArea">
-        <uc:ChartContent vm="{x:Bind ViewModel}"/>
+        <uc:ChartContent PairVM="{x:Bind ViewModel}"/>
     </Grid>
 </Page>

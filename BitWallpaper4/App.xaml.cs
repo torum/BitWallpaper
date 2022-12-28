@@ -5,14 +5,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace BitWallpaper4
 {
-    /// <summary>
-    /// Provides application-specific behavior to supplement the default Application class.
-    /// </summary>
     public partial class App : Application
     {
         private Window _window;
@@ -46,7 +40,8 @@ namespace BitWallpaper4
         {
             this.InitializeComponent();
 
-            this.RequestedTheme = ApplicationTheme.Dark;
+            // TODO: change theme in the setting.
+            //this.RequestedTheme = ApplicationTheme.Dark;
 
 
             /*
@@ -118,9 +113,9 @@ namespace BitWallpaper4
             SaveErrorLog();
         }
 
-        private StringBuilder Errortxt = new StringBuilder();
         public bool IsSaveErrorLog = true;
         public string LogFilePath = System.Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + System.IO.Path.DirectorySeparatorChar + "BitWallpaper_errors.txt";
+        private StringBuilder Errortxt = new StringBuilder();
 
         public void AppendErrorLog(string kindTxt, string errorTxt)
         {

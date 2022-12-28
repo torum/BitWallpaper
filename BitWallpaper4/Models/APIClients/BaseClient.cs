@@ -6,42 +6,47 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BitWallpaper4.Models.APIClients;
-public abstract class BaseClient
+
+public abstract class BaseClient : IDisposable
 {
-    protected HTTPConnection _HTTPConn;
+    private static object _locker = new object();
+    private static volatile HttpClient _client;
 
-    public BaseClient()
+    protected static HttpClient Client
     {
-        //_HTTPConn = HTTPConnection.Instance;
-        _HTTPConn = new HTTPConnection();
+        get
+        {
+            if (_client == null)
+            {
+                lock (_locker)
+                {
+                    if (_client == null)
+                    {
+                        _client = new HttpClient();
+                    }
+                }
+            }
 
+            return _client;
+        }
     }
 
-    /*
-    #region == Events ==
-
-    public delegate void ClientDebugOutput(BaseClient sender, string data);
-
-    public event ClientDebugOutput DebugOutput;
-
-    #endregion
-
-    protected async void ToDebugWindow(string data)
+    public void Dispose()
     {
-        await Task.Run(() => { DebugOutput?.Invoke(this, data); });
-    }
-    */
-}
-
-public class HTTPConnection
-{
-    public HttpClient Client
-    {
-        get;
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 
-    public HTTPConnection()
+    public virtual void Dispose(bool disposing)
     {
-        Client = new HttpClient();
+        if (disposing)
+        {
+            if (_client != null)
+            {
+                _client.Dispose();
+            }
+
+            _client = null;
+        }
     }
 }

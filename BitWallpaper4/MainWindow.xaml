@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    PersistenceId="MainWindow"
+    PersistenceId="MainWindowPersistanceId"
     xmlns:windowex="using:WinUIEx"
     Activated="MainWindow_Activated" Closed="WindowEx_Closed">
     <windowex:WindowEx.Backdrop>

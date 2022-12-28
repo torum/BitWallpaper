@@ -1,30 +1,16 @@
-using Microsoft.UI.Xaml;
+using BitWallpaper4.ViewModels;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using BitWallpaper4.ViewModels;
-using System.Diagnostics;
-using BitWallpaper4.Models;
-using BitWallpaper4.ViewModels;
 using Microsoft.UI.Xaml.Markup;
+using Microsoft.UI.Xaml.Navigation;
+using System.Diagnostics;
 
 namespace BitWallpaper4.Views
 {
     public sealed partial class BatJpyPage : Page
     {
-        private MainViewModel _viewModel;
+        private PairViewModel _viewModel;
 
-        public MainViewModel ViewModel
+        public PairViewModel ViewModel
         {
             get=> _viewModel;
         }
@@ -50,9 +36,9 @@ namespace BitWallpaper4.Views
         {
             //base.OnNavigatedTo(e);
 
-            if (e.Parameter is MainViewModel)
+            if (e.Parameter is PairViewModel)
             {
-                _viewModel = (MainViewModel)e.Parameter;
+                _viewModel = (PairViewModel)e.Parameter;
             }
 
             base.OnNavigatedTo(e);

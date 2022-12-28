@@ -1,5 +1,6 @@
 using BitWallpaper4.ViewModels;
 using BitWallpaper4.Views;
+using LiveChartsCore.SkiaSharpView.Painting;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Markup;
@@ -11,13 +12,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Windows.Storage;
 
 namespace BitWallpaper4
 {
-    /// <summary>
-    /// An empty window that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class MainWindow : WinUIEx.WindowEx
     {
         private readonly List<(string Tag, Type Page)> _pages = new()
@@ -132,7 +131,8 @@ namespace BitWallpaper4
             NavigationViewControl.SelectedItem = NavigationViewControl.MenuItems.OfType<NavigationViewItem>().First();
 
             // Pass vm to destination Frame when navigate.
-            NavigationFrame.Navigate(typeof(BtcJpyPage), ViewModel, new Microsoft.UI.Xaml.Media.Animation.EntranceNavigationTransitionInfo());
+            var pairViewModel = ViewModel.Pairs.FirstOrDefault(x => x.PairCode == PairCodes.btc_jpy);
+            NavigationFrame.Navigate(typeof(BtcJpyPage), pairViewModel, new Microsoft.UI.Xaml.Media.Animation.EntranceNavigationTransitionInfo());
 
             // Listen to the window directly so the app responds to accelerator keys regardless of which element has focus.
             //Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated +=  CoreDispatcher_AcceleratorKeyActivated;
@@ -151,7 +151,9 @@ namespace BitWallpaper4
         {
             if (args.IsSettingsInvoked == true)
             {
-                NavigationFrame.Navigate(typeof(SettingsPage), args.RecommendedNavigationTransitionInfo);
+                // pass mainviewmodel for setting page.
+                NavigationFrame.Navigate(typeof(SettingsPage), ViewModel, new Microsoft.UI.Xaml.Media.Animation.EntranceNavigationTransitionInfo());
+                //NavigationFrame.Navigate(typeof(SettingsPage), ViewModel, args.RecommendedNavigationTransitionInfo);
             }
             else if (args.InvokedItemContainer != null && (args.InvokedItemContainer?.Tag != null))
             {
@@ -165,9 +167,52 @@ namespace BitWallpaper4
                 if (_page is null)
                     return;
 
-                // Pass Frame when navigate.
-                //NavigationFrame.Navigate(_page, ViewModel, args.RecommendedNavigationTransitionInfo);
-                NavigationFrame.Navigate(_page, ViewModel, new SuppressNavigationTransitionInfo());
+                // Pass pairviewmodel when navigate to each pair page.
+                PairViewModel vm;
+                if (_page == typeof(BtcJpyPage))
+                {
+                    vm = ViewModel.Pairs.FirstOrDefault(x => x.PairCode == PairCodes.btc_jpy);
+                }
+                else if (_page == typeof(XrpJpyPage))
+                {
+                    vm = ViewModel.Pairs.FirstOrDefault(x => x.PairCode == PairCodes.xrp_jpy);
+                }
+                else if (_page == typeof(EthJpyPage))
+                {
+                    vm = ViewModel.Pairs.FirstOrDefault(x => x.PairCode == PairCodes.eth_jpy);
+                }
+                else if (_page == typeof(LtcJpyPage))
+                {
+                    vm = ViewModel.Pairs.FirstOrDefault(x => x.PairCode == PairCodes.ltc_jpy);
+                }
+                else if (_page == typeof(MonaJpyPage))
+                {
+                    vm = ViewModel.Pairs.FirstOrDefault(x => x.PairCode == PairCodes.mona_jpy);
+                }
+                else if (_page == typeof(BccJpyPage))
+                {
+                    vm = ViewModel.Pairs.FirstOrDefault(x => x.PairCode == PairCodes.bcc_jpy);
+                }
+                else if (_page == typeof(XlmJpyPage))
+                {
+                    vm = ViewModel.Pairs.FirstOrDefault(x => x.PairCode == PairCodes.xlm_jpy);
+                }
+                else if (_page == typeof(QtumJpyPage))
+                {
+                    vm = ViewModel.Pairs.FirstOrDefault(x => x.PairCode == PairCodes.qtum_jpy);
+                }
+                else if (_page == typeof(BatJpyPage))
+                {
+                    vm = ViewModel.Pairs.FirstOrDefault(x => x.PairCode == PairCodes.bat_jpy);
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+
+                NavigationFrame.Navigate(_page, vm, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromLeft });
+                //NavigationFrame.Navigate(_page, vm, args.RecommendedNavigationTransitionInfo);
+                //NavigationFrame.Navigate(_page, vm, new SuppressNavigationTransitionInfo());
             }
         }
 
@@ -178,6 +223,7 @@ namespace BitWallpaper4
                 // SettingsItem is not part of NavView.MenuItems, and doesn't have a Tag.
                 //NavigationViewControl.SelectedItem = (NavigationViewItem)NavigationViewControl.SettingsItem;
                 //NavigationViewControl.Header = "ê›íË";
+                return;
             }
             else if (NavigationFrame.SourcePageType != null)
             {
@@ -188,6 +234,8 @@ namespace BitWallpaper4
                 //NavigationViewControl.SelectedItem = NavigationViewControl.MenuItems.OfType<NavigationViewItem>().First(n => n.Tag.Equals(item.Tag));
 
                 //NavigationViewControl.Header = ((NavigationViewItem)NavigationViewControl.SelectedItem)?.Content?.ToString();
+
+                // Do nothing.
             }
 
             if (e.SourcePageType == typeof(SettingsPage))
@@ -241,16 +289,8 @@ namespace BitWallpaper4
                 throw new NotImplementedException();
             }
 
-            /*
-            (App.Current as App)?.CurrentDispatcherQueue?.TryEnqueue(() =>
-            {
-            });
-            */
+            // Set IsActive and Init & Start.
             ViewModel.SetSelectedPairFromCode(_activePair);
-
-            //ViewModel?.SelectedPair?.InitializeAndStart();
-            //Task.Run(() => ViewModel.SelectedPair?.InitializeAndGetChartData(CandleTypes.OneHour));
-
         }
 
         private void NavigationFrame_NavigationFailed(object sender, NavigationFailedEventArgs e)
@@ -277,7 +317,6 @@ namespace BitWallpaper4
             //composite["Left"] = ;
             composite["NavigationViewControl_IsPaneOpen"] = NavigationViewControl.IsPaneOpen;
             localSettings.Values["MainWindow"] = composite;
-
 
             foreach (var hoge in ViewModel.Pairs)
             {

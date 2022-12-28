@@ -1,5 +1,6 @@
 ﻿using BitWallpaper4.Models;
 using BitWallpaper4.Models.APIClients;
+using Microsoft.UI.Xaml;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -10,20 +11,23 @@ namespace BitWallpaper4.ViewModels;
 
 public partial class MainViewModel : ViewModelBase
 {
-    //
-    private ObservableCollection<PairViewMode> _pairs = new() 
+
+    public string VersionText { get => "v2.0.0.1"; }
+
+
+    private ObservableCollection<PairViewModel> _pairs = new() 
     {
-        new PairViewMode(PairCodes.btc_jpy, 24, "{0:#,0}", "C", 100M, 1000M),
-        new PairViewMode(PairCodes.xrp_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
-        new PairViewMode(PairCodes.eth_jpy, 24, "{0:#,0}", "C", 100M, 1000M),
-        new PairViewMode(PairCodes.ltc_jpy, 24, "{0:#,0.0}", "C1", 100M, 1000M),
-        new PairViewMode(PairCodes.mona_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 1M),
-        new PairViewMode(PairCodes.bcc_jpy, 24, "{0:#,0}", "C", 10M, 100M),
-        new PairViewMode(PairCodes.xlm_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
-        new PairViewMode(PairCodes.qtum_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
-        new PairViewMode(PairCodes.bat_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
+        new PairViewModel(PairCodes.btc_jpy, 24, "{0:#,0}", "C", 100M, 1000M),
+        new PairViewModel(PairCodes.xrp_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
+        new PairViewModel(PairCodes.eth_jpy, 24, "{0:#,0}", "C", 100M, 1000M),
+        new PairViewModel(PairCodes.ltc_jpy, 24, "{0:#,0.0}", "C1", 100M, 1000M),
+        new PairViewModel(PairCodes.mona_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 1M),
+        new PairViewModel(PairCodes.bcc_jpy, 24, "{0:#,0}", "C", 10M, 100M),
+        new PairViewModel(PairCodes.xlm_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
+        new PairViewModel(PairCodes.qtum_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
+        new PairViewModel(PairCodes.bat_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
     };
-    public ObservableCollection<PairViewMode> Pairs
+    public ObservableCollection<PairViewModel> Pairs
     {
         get => _pairs;
         set
@@ -35,8 +39,8 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
-    private PairViewMode _selectedPair;
-    public PairViewMode SelectedPair
+    private PairViewModel _selectedPair;
+    public PairViewModel SelectedPair
     {
         get => _selectedPair;
         set
@@ -64,24 +68,43 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
-    //
     public void SetSelectedPairFromCode(PairCodes pairCode)
     {
         if (_selectedPair?.PairCode == pairCode) return;
 
-        var hoge = Pairs.FirstOrDefault(x => x.PairCode == pairCode);
+        var fuga = Pairs.FirstOrDefault(x => x.PairCode == pairCode);
+        
+        // little hack.
+        _selectedPair = fuga;
 
-        Debug.WriteLine(hoge.PairString);
+        if (_selectedPair != null)
+        {
+            foreach (var hoge in _pairs)
+            {
+                if (hoge.PairCode == _selectedPair.PairCode)
+                {
+                    hoge.IsActive = true;
+                }
+                else
+                {
+                    hoge.IsActive = false;
+                }
+            }
+        }
 
-        SelectedPair = hoge;
+        NotifyPropertyChanged(nameof(SelectedPair));
 
-        SelectedPair.InitializeAndStart();
+        Task.Run(() =>
+        {
+            _selectedPair.InitializeAndStart();
+        });
+
     }
 
     #region == （個別設定が必要） ==
 
     // TODO:
-    private string _ltpJpyBtc = "...";
+    private string _ltpJpyBtc = "";
     public string LtpBtcJpy
     {
         get => _ltpJpyBtc;
@@ -95,7 +118,7 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
-    private string _ltpXrpJpy = "...";
+    private string _ltpXrpJpy = "";
     public string LtpXrpJpy
     {
         get => _ltpXrpJpy;
@@ -109,7 +132,7 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
-    private string _ltpEthJpy = "...";
+    private string _ltpEthJpy = "";
     public string LtpEthJpy
     {
         get => _ltpEthJpy;
@@ -123,7 +146,7 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
-    private string _ltpLtcJpy = "...";
+    private string _ltpLtcJpy = "";
     public string LtpLtcJpy
     {
         get => _ltpLtcJpy;
@@ -137,7 +160,7 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
-    private string _ltpMonaJpy = "...";
+    private string _ltpMonaJpy = "";
     public string LtpMonaJpy
     {
         get => _ltpMonaJpy;
@@ -151,7 +174,7 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
-    private string _ltpBccJpy = "...";
+    private string _ltpBccJpy = "";
     public string LtpBccJpy
     {
         get => _ltpBccJpy;
@@ -165,7 +188,7 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
-    private string _ltpXlmJpy = "...";
+    private string _ltpXlmJpy = "";
     public string LtpXlmJpy
     {
         get => _ltpXlmJpy;
@@ -179,7 +202,7 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
-    private string _ltpQtumJpy = "...";
+    private string _ltpQtumJpy = "";
     public string LtpQtumJpy
     {
         get => _ltpQtumJpy;
@@ -193,7 +216,7 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
-    private string _ltpBatJpy = "...";
+    private string _ltpBatJpy = "";
     public string LtpBatJpy
     {
         get => _ltpBatJpy;
@@ -214,22 +237,19 @@ public partial class MainViewModel : ViewModelBase
     //_pubTickerApi.ErrorOccured += new PrivateAPIClient.ClinetErrorEvent(OnError);
 
     // Timer
-    //readonly DispatcherTimer _dispatcherTimerTickAllPairs = new();
+    readonly DispatcherTimer _dispatcherTimerTickAllPairs = new();
 
     public MainViewModel()
     {
         // Ticker update timer
-        //_dispatcherTimerTickAllPairs.Tick += TickerTimerAllPairs;
-        //_dispatcherTimerTickAllPairs.Interval = new TimeSpan(0, 0, 1);
-        //_dispatcherTimerTickAllPairs.Start();
+        _dispatcherTimerTickAllPairs.Tick += TickerTimerAllPairs;
+        _dispatcherTimerTickAllPairs.Interval = new TimeSpan(0, 0, 2);
+        _dispatcherTimerTickAllPairs.Start();
 
-        /*
-        Task.Run( () =>
+        Task.Run(() =>
         {
-            
+            //TickerLoop();
         });
-        */
-        TickerLoop();
     }
 
     private async void TickerTimerAllPairs(object source, object e)
@@ -577,7 +597,6 @@ public partial class MainViewModel : ViewModelBase
                 break;
             }
 
-            await Task.Delay(100);
         }
     }
 
@@ -932,10 +951,11 @@ public partial class MainViewModel : ViewModelBase
                     Debug.WriteLine("TickerLoop: " + ex);
                 }
 
-                await Task.Delay(100);
+                //await Task.Delay(100);
             }
 
-            await Task.Delay(1000);
+            await Task.Delay(2000);
+            Debug.WriteLine("getting ticker");
         }
     }
 }

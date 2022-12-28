@@ -1,9 +1,9 @@
-﻿using BitWallpaper4.ViewModels;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
+using BitWallpaper4.Models;
 
 namespace BitWallpaper4.Models.APIClients;
 
@@ -14,19 +14,19 @@ public class PublicAPIClient : BaseClient
     // コンストラクタ
     public PublicAPIClient()
     {
-        _HTTPConn.Client.BaseAddress = PublicAPIUri;
+        Client.BaseAddress = PublicAPIUri;
     }
 
     // Ticker取得メソッド
     public async Task<Ticker> GetTicker(string pair)
     {
-        Uri _endpoint = new Uri((_HTTPConn.Client.BaseAddress).ToString() + pair + "/ticker");
+        Uri _endpoint = new Uri((Client.BaseAddress).ToString() + pair + "/ticker");
 
         var request = new HttpRequestMessage {Method = HttpMethod.Get, RequestUri = _endpoint};
 
         try
         {
-            var response = await _HTTPConn.Client.SendAsync(request);
+            var response = await Client.SendAsync(request);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -98,7 +98,7 @@ public class PublicAPIClient : BaseClient
     // 板情報取得メソッド
     public async Task<DepthResult> GetDepth(string pair)
     {
-        Uri _endpoint = new Uri((_HTTPConn.Client.BaseAddress).ToString() + pair + "/depth");
+        Uri _endpoint = new Uri((Client.BaseAddress).ToString() + pair + "/depth");
 
         //System.Diagnostics.Debug.WriteLine("GettingDepth..." + _endpoint.ToString());
 
@@ -110,7 +110,7 @@ public class PublicAPIClient : BaseClient
 
         try
         {
-            var response = await _HTTPConn.Client.SendAsync(request);
+            var response = await Client.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
             {
@@ -189,7 +189,7 @@ public class PublicAPIClient : BaseClient
     // トランザクション(歩み値)取得メソッド
     public async Task<TransactionsResult> GetTransactions(string pair)
     {
-        Uri _endpoint = new Uri((_HTTPConn.Client.BaseAddress).ToString() + pair + "/transactions");
+        Uri _endpoint = new Uri((Client.BaseAddress).ToString() + pair + "/transactions");
 
         //System.Diagnostics.Debug.WriteLine("GettingDepth..." + _endpoint.ToString());
 
@@ -201,7 +201,7 @@ public class PublicAPIClient : BaseClient
 
         try
         {
-            var response = await _HTTPConn.Client.SendAsync(request);
+            var response = await Client.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
             {
@@ -216,7 +216,7 @@ public class PublicAPIClient : BaseClient
 
                     foreach (var tr in deserialized.Data.Transactions)
                     {
-                        BitWallpaper4.ViewModels.Transaction dd = new BitWallpaper4.ViewModels.Transaction();
+                        Transaction dd = new BitWallpaper4.Models.Transaction();
                         dd.TransactionId = tr.TransactionId;
                         dd.Side = tr.Side;
                         if (!string.IsNullOrEmpty(tr.Price)) dd.Price = decimal.Parse(tr.Price);
@@ -269,7 +269,7 @@ public class PublicAPIClient : BaseClient
     // ろうそく足取得メソッド
     public async Task<CandlestickResult> GetCandlestick(string pair, string CandleType, string YYYYMMDDD)
     {
-        Uri _endpoint = new Uri((_HTTPConn.Client.BaseAddress).ToString() + pair + "/candlestick/" + CandleType + "/" + YYYYMMDDD);
+        Uri _endpoint = new Uri((Client.BaseAddress).ToString() + pair + "/candlestick/" + CandleType + "/" + YYYYMMDDD);
 
         var request = new HttpRequestMessage
         {
@@ -279,7 +279,7 @@ public class PublicAPIClient : BaseClient
 
         try
         {
-            var response = await _HTTPConn.Client.SendAsync(request);
+            var response = await Client.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
             {

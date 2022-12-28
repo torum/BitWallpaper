@@ -89,4 +89,5 @@ internal class TitleBarHelper
             }
         }
     }
+
 }

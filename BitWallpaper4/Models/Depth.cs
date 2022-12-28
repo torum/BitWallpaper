@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using BitWallpaper4.ViewModels;
 
-namespace BitWallpaper4.ViewModels;
+namespace BitWallpaper4.Models;
 
 public class Depth : ViewModelBase
 {

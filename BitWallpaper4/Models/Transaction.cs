@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BitWallpaper4.ViewModels;
 
-namespace BitWallpaper4.ViewModels;
+namespace BitWallpaper4.Models;
 
 public class Transaction : ViewModelBase
 {

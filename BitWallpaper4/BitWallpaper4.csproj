@@ -15,6 +15,13 @@
     <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
+    <Content Remove="Assets\CryptLogos\bcc.svg" />
+    <Content Remove="Assets\CryptLogos\btc.svg" />
+    <Content Remove="Assets\CryptLogos\eth.svg" />
+    <Content Remove="Assets\CryptLogos\ltc.svg" />
+    <Content Remove="Assets\CryptLogos\xrp.svg" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="BlankPage.xaml" />
     <None Remove="Views\BccJpyPage.xaml" />
     <None Remove="Views\EthJpyPage.xaml" />
@@ -55,6 +62,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Update="App.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\CryptLogos\bcc.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\CryptLogos\btc.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\CryptLogos\eth.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\CryptLogos\ltc.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\CryptLogos\xrp.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -98,21 +120,21 @@
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
-    <Optimize>True</Optimize>
+    <Optimize>False</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Optimize>True</Optimize>
+    <Optimize>False</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
-    <Optimize>True</Optimize>
+    <Optimize>False</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-    <Optimize>False</Optimize>
+    <Optimize>True</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Optimize>False</Optimize>
+    <Optimize>True</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
-    <Optimize>False</Optimize>
+    <Optimize>True</Optimize>
   </PropertyGroup>
 </Project>
