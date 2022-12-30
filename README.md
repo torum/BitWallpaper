@@ -3,8 +3,8 @@
 ## Crypt currency charting app.
 Display's Crypt currency charts using BitBank's API. No registration required.
 
-Trading app is over here > 
-[https://github.com/torum/BitDesk](https://github.com/torum/BitDesk)
+(Trading app is over here > 
+[https://github.com/torum/BitDesk](https://github.com/torum/BitDesk))
 
 ## Download：
  [Download from Microsoft Store](https://www.microsoft.com/ja-jp/p/bitwallpaper/9ncc3ntg9dp3)
