@@ -6,6 +6,8 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.System.Threading;
+using Windows.UI.Core;
 
 namespace BitWallpaper.ViewModels;
 
@@ -13,7 +15,7 @@ public partial class MainViewModel : ViewModelBase
 {
     #region == Application general ==
 
-    public string VersionText { get => "v2.0.0.3"; }
+    public string VersionText { get => "v2.0.0.6"; }
 
     #endregion
 
@@ -419,21 +421,6 @@ public partial class MainViewModel : ViewModelBase
         _dispatcherTimerTickAllPairs.Tick += TickerTimerAllPairs;
         _dispatcherTimerTickAllPairs.Interval = new TimeSpan(0, 0, 2);
         _dispatcherTimerTickAllPairs.Start();
-
-        /*
-        foreach (var hoge in _pairs)
-        {
-            if (hoge.PairCode == PairCodes.btc_jpy)
-            {
-                _isOnBtcJpy = hoge.IsEnabled;
-            }
-            else if (hoge.PairCode == PairCodes.xrp_jpy)
-            {
-                _isOnXrpJpy = hoge.IsEnabled;
-            }
-        }
-        */
-
     }
 
     public void SetSelectedPairFromCode(PairCodes pairCode)
@@ -479,7 +466,7 @@ public partial class MainViewModel : ViewModelBase
             if (!hoge.IsEnabled)
                 continue;
 
-            Ticker tick = await _pubTickerApi.GetTicker(hoge.PairCode.ToString());
+            Ticker tick = await _pubTickerApi?.GetTicker(hoge.PairCode.ToString());
 
             if (tick != null)
             {

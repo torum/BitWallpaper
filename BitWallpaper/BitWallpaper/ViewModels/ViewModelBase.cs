@@ -16,7 +16,6 @@ public abstract class ViewModelBase : INotifyPropertyChanged, IDataErrorInfo
     protected void NotifyPropertyChanged(string propertyName)
     {
         //this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        
         (App.Current as App)?.CurrentDispatcherQueue?.TryEnqueue(() =>
         {
             try
@@ -30,7 +29,6 @@ public abstract class ViewModelBase : INotifyPropertyChanged, IDataErrorInfo
                 (App.Current as App).AppendErrorLog($"Exception at NotifyPropertyChanged ({propertyName}): ", ex.Message);
             }
         });
-        
     }
 
     #endregion

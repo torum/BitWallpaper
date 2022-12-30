@@ -640,6 +640,7 @@
                     
                 </Grid>
             </SplitView.Pane>
+            
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>

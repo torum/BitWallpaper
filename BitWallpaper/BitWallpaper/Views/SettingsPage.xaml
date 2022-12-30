@@ -112,7 +112,7 @@
                                 </RichTextBlock>
 
 
-                                <TextBlock x:Uid="About_Description" Margin="0,10,0,0" IsTextSelectionEnabled="True" HorizontalAlignment="Left"></TextBlock>
+                                <TextBlock x:Uid="About_Description" MaxWidth="650" Margin="0,10,0,0" HorizontalAlignment="Left" TextWrapping="Wrap"></TextBlock>
 
 
                                 <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,24,0,0" Text="Privacy Policy" HorizontalAlignment="Left" />

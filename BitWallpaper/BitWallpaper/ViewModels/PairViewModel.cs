@@ -8,12 +8,14 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.Painting.Effects;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Data;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -1351,6 +1353,8 @@ public class PairViewModel : ViewModelBase
         }
     }
 
+    TimeSpan chartUpdateInterval = new TimeSpan(1, 0, 0);
+
     private CandleTypes _selectedCandleType = CandleTypes.OneHour;
     public CandleTypes SelectedCandleType
     {
@@ -1363,6 +1367,33 @@ public class PairViewModel : ViewModelBase
             _selectedCandleType = value;
             NotifyPropertyChanged(nameof(SelectedCandleType));
             NotifyPropertyChanged(nameof(SelectedCandleTypeLabelString));
+
+            if (_selectedCandleType == CandleTypes.OneMin)
+                chartUpdateInterval = new TimeSpan(0, 1, 0);
+            else if (_selectedCandleType == CandleTypes.FiveMin)
+                chartUpdateInterval = new TimeSpan(0, 5, 0);
+            else if (_selectedCandleType == CandleTypes.FifteenMin)
+                chartUpdateInterval = new TimeSpan(0, 15, 0);
+            else if (_selectedCandleType == CandleTypes.ThirtyMin)
+                chartUpdateInterval = new TimeSpan(0, 30, 0);
+            else if (_selectedCandleType == CandleTypes.OneHour)
+                chartUpdateInterval = new TimeSpan(1, 0, 0);
+            else if (_selectedCandleType == CandleTypes.FourHour)
+                chartUpdateInterval = new TimeSpan(4, 0, 0);
+            else if (_selectedCandleType == CandleTypes.EightHour)
+                chartUpdateInterval = new TimeSpan(8, 0, 0);
+            else if (_selectedCandleType == CandleTypes.TwelveHour)
+                chartUpdateInterval = new TimeSpan(12, 0, 0);
+            else if (_selectedCandleType == CandleTypes.OneDay)
+                chartUpdateInterval = new TimeSpan(24, 0, 0);
+            else if (_selectedCandleType == CandleTypes.OneWeek)
+                chartUpdateInterval = new TimeSpan(168, 0, 0);
+            else if (_selectedCandleType == CandleTypes.OneMonth)
+                chartUpdateInterval = new TimeSpan(720, 0, 0);
+
+            _dispatcherTimerChart.Stop();
+            _dispatcherTimerChart.Interval = chartUpdateInterval;
+            _dispatcherTimerChart.Start();
         }
     }
 
@@ -1435,8 +1466,8 @@ public class PairViewModel : ViewModelBase
 
     #region == Timers ==
     // Timer
-    //readonly DispatcherTimer _dispatcherTimerDepth = new();
-    //readonly DispatcherTimer _dispatcherTimerTransaction = new();
+    readonly DispatcherTimer _dispatcherTimerDepth = new();
+    readonly DispatcherTimer _dispatcherTimerTransaction = new();
     readonly DispatcherTimer _dispatcherTimerChart = new();
     #endregion
 
@@ -1463,19 +1494,18 @@ public class PairViewModel : ViewModelBase
         #region == Timers ==
 
         // Depth update timer
-        //_dispatcherTimerDepth.Tick += TickerTimerDepth;
-        //_dispatcherTimerDepth.Interval = new TimeSpan(0, 0, 2);
-        //_dispatcherTimerDepth.Start();
+        _dispatcherTimerDepth.Tick += TickerTimerDepth;
+        _dispatcherTimerDepth.Interval = new TimeSpan(0, 0, 2);
+        _dispatcherTimerDepth.Start();
 
         // Transaction update timer
-        //_dispatcherTimerTransaction.Tick += TickerTimerTransaction;
-        //_dispatcherTimerTransaction.Interval = new TimeSpan(0, 0, 3);
-        //_dispatcherTimerTransaction.Start();
+        _dispatcherTimerTransaction.Tick += TickerTimerTransaction;
+        _dispatcherTimerTransaction.Interval = new TimeSpan(0, 0, 3);
+        _dispatcherTimerTransaction.Start();
 
-
-        // Transaction update timer
+        // Chart update timer
         _dispatcherTimerChart.Tick += TickerTimerChart;
-        _dispatcherTimerChart.Interval = new TimeSpan(0, 1, 0);
+        _dispatcherTimerChart.Interval = chartUpdateInterval;
         _dispatcherTimerChart.Start();
 
         #endregion
@@ -1483,9 +1513,20 @@ public class PairViewModel : ViewModelBase
         // Do nothing... call InitializeAndStart();
     }
 
-    private void TickerTimerChart(object source, object e)
+    private async void TickerTimerChart(object source, object e)
     {
-        UpdateDepth();
+        List<Ohlcv> res = await GetCandlesticks(this.PairCode, SelectedCandleType);
+
+        if (res == null)
+            return;
+
+        if (res.Count > 0)
+        {
+            LoadChart(res, SelectedCandleType);
+
+            Sections[0].Yi = (double)_ltp;
+            Sections[0].Yj = (double)_ltp;
+        }
     }
 
     private void TickerTimerDepth(object source, object e)
@@ -1526,8 +1567,8 @@ public class PairViewModel : ViewModelBase
             IsChartInitAndLoaded = true;
         }
 
-        UpdateDepth();
-        UpdateTransactions();
+        //UpdateDepth();
+        //UpdateTransactions();
     }
 
     private void LoadChart(List<Ohlcv> list, CandleTypes ct)
@@ -1904,561 +1945,6 @@ public class PairViewModel : ViewModelBase
         return null;
     }
 
-    // タイマーで、最新のロウソク足データを取得して追加する。
-    private async void UpdateCandlestick(PairCodes pair, CandleTypes ct)
-    {
-        //ChartLoadingInfo = "チャートデータの更新中....";
-        //await Task.Delay(600);
-
-        // 今日の日付セット。UTCで。
-        DateTime dtToday = DateTime.Now.ToUniversalTime();
-
-        DateTime dtLastUpdate;
-
-
-        List<Ohlcv> ListOhlcvsOneMin = new();// OhlcvsOneMin;
-        List<Ohlcv> ListOhlcvsOneHour = new();//OhlcvsOneHour;
-        List<Ohlcv> ListOhlcvsOneDay = new();//OhlcvsOneDay;
-
-
-        /*
-        if (pair == PairCodes.btc_jpy)
-        {
-            ListOhlcvsOneHour = OhlcvsOneHourBtc;
-            ListOhlcvsOneMin = OhlcvsOneMinBtc;
-            ListOhlcvsOneDay = OhlcvsOneDayBtc;
-        }
-        else if (pair == PairCodes.xrp_jpy)
-        {
-            ListOhlcvsOneHour = OhlcvsOneHourXrp;
-            ListOhlcvsOneMin = OhlcvsOneMinXrp;
-            ListOhlcvsOneDay = OhlcvsOneDayXrp;
-        }
-        else if (pair == PairCodes.eth_jpy)
-        {
-            ListOhlcvsOneHour = OhlcvsOneHourEth;
-            ListOhlcvsOneMin = OhlcvsOneMinEth;
-            ListOhlcvsOneDay = OhlcvsOneDayEth;
-        }
-        else if (pair == PairCodes.mona_jpy)
-        {
-            ListOhlcvsOneHour = OhlcvsOneHourMona;
-            ListOhlcvsOneMin = OhlcvsOneMinMona;
-            ListOhlcvsOneDay = OhlcvsOneDayMona;
-        }
-        else if (pair == PairCodes.ltc_jpy)
-        {
-            ListOhlcvsOneHour = OhlcvsOneHourLtc;
-            ListOhlcvsOneMin = OhlcvsOneMinLtc;
-            ListOhlcvsOneDay = OhlcvsOneDayLtc;
-        }
-        else if (pair == PairCodes.bcc_jpy)
-        {
-            ListOhlcvsOneHour = OhlcvsOneHourBch;
-            ListOhlcvsOneMin = OhlcvsOneMinBch;
-            ListOhlcvsOneDay = OhlcvsOneDayBch;
-        }
-        else if (pair == PairCodes.xlm_jpy)
-        {
-            ListOhlcvsOneHour = OhlcvsOneHourXlm;
-            ListOhlcvsOneMin = OhlcvsOneMinXlm;
-            ListOhlcvsOneDay = OhlcvsOneDayXlm;
-        }
-        else if (pair == PairCodes.qtum_jpy)
-        {
-            ListOhlcvsOneHour = OhlcvsOneHourQtum;
-            ListOhlcvsOneMin = OhlcvsOneMinQtum;
-            ListOhlcvsOneDay = OhlcvsOneDayQtum;
-        }
-        else if (pair == PairCodes.bat_jpy)
-        {
-            ListOhlcvsOneHour = OhlcvsOneHourBat;
-            ListOhlcvsOneMin = OhlcvsOneMinBat;
-            ListOhlcvsOneDay = OhlcvsOneDayBat;
-        }
-        */
-
-        #region == １分毎のデータ ==
-
-        if (ct == CandleTypes.OneMin)
-        {
-            if (ListOhlcvsOneMin.Count > 0)
-            {
-                dtLastUpdate = ListOhlcvsOneMin[0].TimeStamp;
-
-                //Debug.WriteLine(dtLastUpdate.ToString());
-
-                List<Ohlcv> latestOneMin = new List<Ohlcv>();
-
-                latestOneMin = await GetCandlestick(pair, CandleTypes.OneMin, dtToday);
-
-                if (latestOneMin != null)
-                {
-                    //latestOneMin.Reverse();
-
-                    if (latestOneMin.Count > 0)
-                    {
-                        foreach (var hoge in latestOneMin)
-                        {
-
-                            //Debug.WriteLine(hoge.TimeStamp.ToString()+" : "+ dtLastUpdate.ToString());
-
-                            if (hoge.TimeStamp >= dtLastUpdate)
-                            {
-
-                                // 全てのポイントが同じ場合、スキップする。変なデータ？ 本家もスキップしている。
-                                if (hoge.Open == hoge.High && hoge.Open == hoge.Low && hoge.Open == hoge.Close && hoge.Volume == 0)
-                                {
-                                    Debug.WriteLine("■ UpdateCandlestick 全てのポイントが同じ " + pair.ToString());
-                                    //continue;
-                                }
-
-                                if (hoge.TimeStamp == dtLastUpdate)
-                                {
-                                    // 更新前の最後のポイントを更新する。最終データは中途半端なので。
-
-                                    Debug.WriteLine("１分毎のチャートデータ更新: " + hoge.TimeStamp.ToString() + " " + pair.ToString());
-
-                                    ListOhlcvsOneMin[0].Open = hoge.Open;
-                                    ListOhlcvsOneMin[0].High = hoge.High;
-                                    ListOhlcvsOneMin[0].Low = hoge.Low;
-                                    ListOhlcvsOneMin[0].Close = hoge.Close;
-                                    ListOhlcvsOneMin[0].TimeStamp = hoge.TimeStamp;
-
-                                    UpdateLastCandle(pair, CandleTypes.OneMin, hoge);
-
-                                    //Debug.WriteLine(hoge.TimeStamp.ToString()+" : "+ dtLastUpdate.ToString());
-                                }
-                                else
-                                {
-                                    // 新規ポイントを追加する。
-
-                                    Debug.WriteLine("１分毎のチャートデータ追加: " + hoge.TimeStamp.ToString() + " " + pair.ToString());
-
-                                    ListOhlcvsOneMin.Insert(0, hoge);
-
-                                    AddCandle(pair, CandleTypes.OneMin, hoge);
-
-                                    dtLastUpdate = hoge.TimeStamp;
-                                }
-
-
-                            }
-
-                        }
-
-
-                    }
-
-                }
-            }
-        }
-
-        #endregion
-
-        #region == １時間毎のデータ ==
-
-        if (ct == CandleTypes.OneHour)
-        {
-            if (ListOhlcvsOneHour.Count > 0)
-            {
-                dtLastUpdate = ListOhlcvsOneHour[0].TimeStamp;
-
-                //TimeSpan ts = dtLastUpdate - dtToday;
-
-                //if (ts.TotalHours >= 1)
-                //{
-                //Debug.WriteLine(dtLastUpdate.ToString());
-
-                List<Ohlcv> latestOneHour = new List<Ohlcv>();
-
-                latestOneHour = await GetCandlestick(pair, CandleTypes.OneHour, dtToday);
-
-                if (latestOneHour != null)
-                {
-                    //latestOneMin.Reverse();
-
-                    if (latestOneHour.Count > 0)
-                    {
-                        foreach (var hoge in latestOneHour)
-                        {
-
-                            // 全てのポイントが同じ場合、スキップする。変なデータ？ 本家もスキップしている。
-                            if (hoge.Open == hoge.High && hoge.Open == hoge.Low && hoge.Open == hoge.Close && hoge.Volume == 0)
-                            {
-                                Debug.WriteLine("■ UpdateCandlestick 全てのポイントが同じ " + pair.ToString());
-                                //continue;
-                            }
-
-                            //Debug.WriteLine(hoge.TimeStamp.ToString()+" : "+ dtLastUpdate.ToString());
-
-                            if (hoge.TimeStamp >= dtLastUpdate)
-                            {
-
-                                if (hoge.TimeStamp == dtLastUpdate)
-                                {
-                                    // 更新前の最後のポイントを更新する。最終データは中途半端なので。
-
-                                    Debug.WriteLine("１時間チャートデータ更新: " + hoge.TimeStamp.ToString() + " " + pair.ToString());
-
-                                    ListOhlcvsOneHour[0].Open = hoge.Open;
-                                    ListOhlcvsOneHour[0].High = hoge.High;
-                                    ListOhlcvsOneHour[0].Low = hoge.Low;
-                                    ListOhlcvsOneHour[0].Close = hoge.Close;
-                                    ListOhlcvsOneHour[0].TimeStamp = hoge.TimeStamp;
-
-                                    UpdateLastCandle(pair, CandleTypes.OneHour, hoge);
-
-                                    //Debug.WriteLine(hoge.TimeStamp.ToString() + " : " + dtLastUpdate.ToString());
-                                }
-                                else
-                                {
-                                    // 新規ポイントを追加する。
-
-                                    Debug.WriteLine("１時間チャートデータ追加: " + hoge.TimeStamp.ToString());
-
-                                    ListOhlcvsOneHour.Insert(0, hoge);
-
-                                    AddCandle(pair, CandleTypes.OneHour, hoge);
-
-                                    dtLastUpdate = hoge.TimeStamp;
-                                }
-
-                            }
-
-                        }
-
-                    }
-
-                }
-                else
-                {
-                    Debug.WriteLine("■■■■■ UpdateCandlestick GetCandlestick One hour returned null " + pair.ToString());
-                }
-
-
-                //}
-
-            }
-
-        }
-
-        #endregion
-
-        #region == １日毎のデータ ==
-
-        if (ct == CandleTypes.OneDay)
-        {
-            if (ListOhlcvsOneDay.Count > 0)
-            {
-                dtLastUpdate = ListOhlcvsOneDay[0].TimeStamp;
-
-                //TimeSpan ts = dtLastUpdate - dtToday;
-
-                //if (ts.TotalDays >= 1)
-                //{
-                //Debug.WriteLine(dtLastUpdate.ToString());
-
-                List<Ohlcv> latestOneDay = new List<Ohlcv>();
-
-                latestOneDay = await GetCandlestick(pair, CandleTypes.OneDay, dtToday);
-
-                if (latestOneDay != null)
-                {
-                    //latestOneMin.Reverse();
-
-                    if (latestOneDay.Count > 0)
-                    {
-                        foreach (var hoge in latestOneDay)
-                        {
-
-                            // 全てのポイントが同じ場合、スキップする。変なデータ？ 本家もスキップしている。
-                            if (hoge.Open == hoge.High && hoge.Open == hoge.Low && hoge.Open == hoge.Close && hoge.Volume == 0)
-                            {
-                                //continue;
-                            }
-
-                            //Debug.WriteLine(hoge.TimeStamp.ToString()+" : "+ dtLastUpdate.ToString());
-
-                            if (hoge.TimeStamp >= dtLastUpdate)
-                            {
-
-                                if (hoge.TimeStamp == dtLastUpdate)
-                                {
-                                    // 更新前の最後のポイントを更新する。最終データは中途半端なので。
-
-                                    Debug.WriteLine("１日チャートデータ更新: " + hoge.TimeStamp.ToString());
-
-                                    ListOhlcvsOneDay[0].Open = hoge.Open;
-                                    ListOhlcvsOneDay[0].High = hoge.High;
-                                    ListOhlcvsOneDay[0].Low = hoge.Low;
-                                    ListOhlcvsOneDay[0].Close = hoge.Close;
-                                    ListOhlcvsOneDay[0].TimeStamp = hoge.TimeStamp;
-
-                                    UpdateLastCandle(pair, CandleTypes.OneDay, hoge);
-
-                                    //Debug.WriteLine(hoge.TimeStamp.ToString() + " : " + dtLastUpdate.ToString());
-                                }
-                                else
-                                {
-                                    // 新規ポイントを追加する。
-
-                                    Debug.WriteLine("１日チャートデータ追加: " + hoge.TimeStamp.ToString());
-
-                                    ListOhlcvsOneDay.Insert(0, hoge);
-
-                                    AddCandle(pair, CandleTypes.OneDay, hoge);
-
-                                    dtLastUpdate = hoge.TimeStamp;
-                                }
-
-                            }
-
-                        }
-
-                    }
-
-                }
-
-
-                //}
-
-            }
-        }
-
-        #endregion
-
-    }
-
-    // チャートの最後に最新ポイントを追加して更新表示する。
-    private void AddCandle(PairCodes pair, CandleTypes ct, Ohlcv newData)
-    {
-        // 表示されているのだけ更新。それ以外は不要。
-        //if (SelectedCandleType != ct) return;
-
-        //Debug.WriteLine("チャートの更新 追加: "+ newData.TimeStamp.ToString());
-
-        /*
-        SeriesCollection chartSeries = null;
-        AxesCollection chartAxisX = null;
-        AxesCollection chartAxisY = null;
-
-        if (pair == PairCodes.btc_jpy)
-        {
-            chartSeries = ChartSeriesBtcJpy;
-            chartAxisX = ChartAxisXBtcJpy;
-            chartAxisY = ChartAxisYBtcJpy;
-        }
-        else if (pair == PairCodes.xrp_jpy)
-        {
-            chartSeries = ChartSeriesXrpJpy;
-            chartAxisX = ChartAxisXXrpJpy;
-            chartAxisY = ChartAxisYXrpJpy;
-        }
-        else if (pair == PairCodes.eth_jpy)
-        {
-            chartSeries = ChartSeriesEthJpy;
-            chartAxisX = ChartAxisXEthJpy;
-            chartAxisY = ChartAxisYEthJpy;
-        }
-        else if (pair == PairCodes.mona_jpy)
-        {
-            chartSeries = ChartSeriesMonaJpy;
-            chartAxisX = ChartAxisXMonaJpy;
-            chartAxisY = ChartAxisYMonaJpy;
-        }
-        else if (pair == PairCodes.ltc_jpy)
-        {
-            chartSeries = ChartSeriesLtcJpy;
-            chartAxisX = ChartAxisXLtcJpy;
-            chartAxisY = ChartAxisYLtcJpy;
-        }
-        else if (pair == PairCodes.bcc_jpy)
-        {
-            chartSeries = ChartSeriesBchJpy;
-            chartAxisX = ChartAxisXBchJpy;
-            chartAxisY = ChartAxisYBchJpy;
-        }
-        else if (pair == PairCodes.xlm_jpy)
-        {
-            chartSeries = ChartSeriesXlmJpy;
-            chartAxisX = ChartAxisXXlmJpy;
-            chartAxisY = ChartAxisYXlmJpy;
-        }
-        else if (pair == PairCodes.qtum_jpy)
-        {
-            chartSeries = ChartSeriesQtumJpy;
-            chartAxisX = ChartAxisXQtumJpy;
-            chartAxisY = ChartAxisYQtumJpy;
-        }
-        else if (pair == PairCodes.bat_jpy)
-        {
-            chartSeries = ChartSeriesBatJpy;
-            chartAxisX = ChartAxisXBatJpy;
-            chartAxisY = ChartAxisYBatJpy;
-        }
-
-        if (chartSeries == null)
-            return;
-
-        if (chartSeries[0].Values != null)
-        {
-            if (chartSeries[0].Values.Count > 0)
-            {
-                if (Application.Current == null) return;
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    try
-                    {
-                        // 一番古いの削除
-                        chartSeries[0].Values.RemoveAt(0);
-                        chartSeries[1].Values.RemoveAt(0);
-                        chartAxisX[0].Labels.RemoveAt(0);
-
-                        // ポイント作成
-                        OhlcPoint p = new OhlcPoint((double)newData.Open, (double)newData.High, (double)newData.Low, (double)newData.Close);
-
-                        // ポイント追加
-                        chartSeries[0].Values.Add(p);
-
-                        // 出来高追加
-                        chartSeries[1].Values.Add((double)newData.Volume);
-
-                        // ラベル追加
-                        if (ct == CandleTypes.OneMin)
-                        {
-                            chartAxisX[0].Labels.Add(newData.TimeStamp.ToString("HH:mm"));
-                        }
-                        else if (ct == CandleTypes.OneHour)
-                        {
-                            chartAxisX[0].Labels.Add(newData.TimeStamp.ToString("dd日 HH:mm"));
-
-                        }
-                        else if (ct == CandleTypes.OneDay)
-                        {
-                            chartAxisX[0].Labels.Add(newData.TimeStamp.ToString("MM月dd日"));
-                        }
-                        else
-                        {
-                            throw new System.InvalidOperationException("UpdateChart: 不正な CandleTypes");
-                        }
-
-                    }
-                    catch (Exception ex)
-                    {
-
-                        ChartLoadingInfo = pair.ToString() + " チャートの追加中にエラーが発生しました 1 ";
-
-                        Debug.WriteLine("■■■■■ " + pair.ToString() + " Chart adding error: " + ex.ToString());
-                    }
-
-                }, DispatcherPriority.Normal);
-
-            }
-        }
-        */
-    }
-
-    // チャートの最後のポイントを最新情報に更新表示する。
-    private void UpdateLastCandle(PairCodes pair, CandleTypes ct, Ohlcv newData)
-    {
-        // 表示されているのだけ更新。それ以外は不要。
-        //if (SelectedCandleType != ct) return;
-
-        //Debug.WriteLine("チャートの更新 追加: "+ newData.TimeStamp.ToString());
-
-        /*
-        SeriesCollection chartSeries = null;
-        AxesCollection chartAxisX = null;
-        AxesCollection chartAxisY = null;
-
-        if (pair == PairCodes.btc_jpy)
-        {
-            chartSeries = ChartSeriesBtcJpy;
-            chartAxisX = ChartAxisXBtcJpy;
-            chartAxisY = ChartAxisYBtcJpy;
-        }
-        else if (pair == PairCodes.xrp_jpy)
-        {
-            chartSeries = ChartSeriesXrpJpy;
-            chartAxisX = ChartAxisXXrpJpy;
-            chartAxisY = ChartAxisYXrpJpy;
-        }
-        else if (pair == PairCodes.eth_jpy)
-        {
-            chartSeries = ChartSeriesEthJpy;
-            chartAxisX = ChartAxisXEthJpy;
-            chartAxisY = ChartAxisYEthJpy;
-        }
-        else if (pair == PairCodes.mona_jpy)
-        {
-            chartSeries = ChartSeriesMonaJpy;
-            chartAxisX = ChartAxisXMonaJpy;
-            chartAxisY = ChartAxisYMonaJpy;
-        }
-        else if (pair == PairCodes.ltc_jpy)
-        {
-            chartSeries = ChartSeriesLtcJpy;
-            chartAxisX = ChartAxisXLtcJpy;
-            chartAxisY = ChartAxisYLtcJpy;
-        }
-        else if (pair == PairCodes.bcc_jpy)
-        {
-            chartSeries = ChartSeriesBchJpy;
-            chartAxisX = ChartAxisXBchJpy;
-            chartAxisY = ChartAxisYBchJpy;
-        }
-        else if (pair == PairCodes.xlm_jpy)
-        {
-            chartSeries = ChartSeriesXlmJpy;
-            chartAxisX = ChartAxisXXlmJpy;
-            chartAxisY = ChartAxisYXlmJpy;
-        }
-        else if (pair == PairCodes.qtum_jpy)
-        {
-            chartSeries = ChartSeriesQtumJpy;
-            chartAxisX = ChartAxisXQtumJpy;
-            chartAxisY = ChartAxisYQtumJpy;
-        }
-        else if (pair == PairCodes.bat_jpy)
-        {
-            chartSeries = ChartSeriesBatJpy;
-            chartAxisX = ChartAxisXBatJpy;
-            chartAxisY = ChartAxisYBatJpy;
-        }
-
-        if (chartSeries == null)
-            return;
-
-        if (chartSeries[0].Values != null)
-        {
-            if (chartSeries[0].Values.Count > 0)
-            {
-                if (Application.Current == null) return;
-
-                if (Application.Current.Dispatcher.CheckAccess())
-                {
-                    Debug.WriteLine("Dispatcher.CheckAccess()");
-                    ((OhlcPoint)chartSeries[0].Values[chartSeries[0].Values.Count - 1]).Open = (double)newData.Open;
-                    ((OhlcPoint)chartSeries[0].Values[chartSeries[0].Values.Count - 1]).High = (double)newData.High;
-                    ((OhlcPoint)chartSeries[0].Values[chartSeries[0].Values.Count - 1]).Low = (double)newData.Low;
-                }
-                else
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        ((OhlcPoint)chartSeries[0].Values[chartSeries[0].Values.Count - 1]).Open = (double)newData.Open;
-                        ((OhlcPoint)chartSeries[0].Values[chartSeries[0].Values.Count - 1]).High = (double)newData.High;
-                        ((OhlcPoint)chartSeries[0].Values[chartSeries[0].Values.Count - 1]).Low = (double)newData.Low;
-                        ((OhlcPoint)chartSeries[0].Values[chartSeries[0].Values.Count - 1]).Close = (double)newData.Close;
-
-                    }, DispatcherPriority.Normal);
-                }
-            }
-        }
-        */
-    }
-
     #endregion
 
     #region == 板情報 ==
@@ -2471,17 +1957,20 @@ public class PairViewModel : ViewModelBase
 
         // リスト数 （基本 上売り200、下買い200）
         int half = 200;
-        int listCount = half * 2 + 1;
+        int listCount = (half * 2) + 1;
+
+        if (_depth == null) return false;
 
         (App.Current as App)?.CurrentDispatcherQueue?.TryEnqueue(() =>
         {
             // 初期化
-            if (_depth.Count == 0)
+            if ((_depth.Count == 0) || (_depth.Count < listCount))
             {
-                for (int i = 0; i < listCount; i++)
+                _depth.Clear();
+                for (int i = 0; i < listCount + 1; i++)
                 {
                     Depth dd = new Depth(_ltpFormstString);
-                    dd.DepthPrice = 0;
+                    dd.DepthPrice = i;
                     dd.DepthBid = 0;
                     dd.DepthAsk = 0;
                     _depth.Add(dd);
@@ -2492,197 +1981,179 @@ public class PairViewModel : ViewModelBase
                 if (IsDepthGroupingChanged)
                 {
                     //グルーピング単位が変わったので、一旦クリアする。
-
-                    for (int i = 0; i < listCount; i++)
+                    for (int i = 0; i < _depth.Count-1; i++)
                     {
-                        Depth dd = _depth[i];//new Depth();
-                        dd.DepthPrice = 0;
-                        dd.DepthBid = 0;
-                        dd.DepthAsk = 0;
-                        //_depth.Add(dd);
+                        _depth[i].DepthPrice = 0;
+                        _depth[i].DepthBid = 0;
+                        _depth[i].DepthAsk = 0;
                     }
 
                     IsDepthGroupingChanged = false;
                 }
             }
-        });
 
-        (App.Current as App)?.CurrentDispatcherQueue?.TryEnqueue(() =>
-        {
             // LTP を追加
-            //Depth ddd = new Depth();
             _depth[half].DepthPrice = Ltp;
-            //_depth[half].DepthBid = 0;
-            //_depth[half].DepthAsk = 0;
             _depth[half].IsLTP = true;
-            //_depth[half] = ddd;
         });
 
-        try
+        DepthResult dpr = await _pubDepthApi?.GetDepth(pair.ToString());
+
+        if (dpr != null)
         {
-            DepthResult dpr = await _pubDepthApi.GetDepth(pair.ToString());
+            if (_depth == null) return false;
 
-            if (dpr != null)
+            (App.Current as App)?.CurrentDispatcherQueue?.TryEnqueue(() =>
             {
-                (App.Current as App)?.CurrentDispatcherQueue?.TryEnqueue(() =>
+                if (_depth.Count != 0)
                 {
-                    if (_depth.Count != 0)
+                    int i = 1;
+
+                    // 100円単位でまとめる
+                    // まとめた時の価格
+                    decimal c2 = 0;
+                    // 100単位ごとにまとめたAsk数量を保持
+                    decimal t = 0;
+                    // 先送りするAsk
+                    decimal d = 0;
+                    // 先送りする価格
+                    decimal e = 0;
+
+                    // ask をループ
+                    foreach (var dp in dpr.DepthAskList)
                     {
-                        int i = 1;
-
-                        // 100円単位でまとめる
-                        // まとめた時の価格
-                        decimal c2 = 0;
-                        // 100単位ごとにまとめたAsk数量を保持
-                        decimal t = 0;
-                        // 先送りするAsk
-                        decimal d = 0;
-                        // 先送りする価格
-                        decimal e = 0;
-
-                        // ask をループ
-                        foreach (var dp in dpr.DepthAskList)
+                        // まとめ表示On
+                        if (unit > 0)
                         {
-                            // まとめ表示On
-                            if (unit > 0)
+
+                            if (c2 == 0) c2 = Math.Ceiling(dp.DepthPrice / unit);
+
+                            // 100円単位でまとめる
+                            if (Math.Ceiling(dp.DepthPrice / unit) == c2)
                             {
-
-                                if (c2 == 0) c2 = Math.Ceiling(dp.DepthPrice / unit);
-
-                                // 100円単位でまとめる
-                                if (Math.Ceiling(dp.DepthPrice / unit) == c2)
-                                {
-                                    t = t + dp.DepthAsk;
-                                }
-                                else
-                                {
-                                    //Debug.WriteLine(System.Math.Ceiling(dp.DepthPrice / unit).ToString() + " " + System.Math.Ceiling(c / unit).ToString());
-
-                                    // 一時保存
-                                    e = dp.DepthPrice;
-                                    dp.DepthPrice = c2 * unit;
-
-                                    // 一時保存
-                                    d = dp.DepthAsk;
-                                    dp.DepthAsk = t;
-
-                                    _depth[half - i].DepthAsk = dp.DepthAsk;
-                                    _depth[half - i].DepthBid = dp.DepthBid;
-                                    _depth[half - i].DepthPrice = dp.DepthPrice;
-                                    _depth[half - i].PriceFormat = _ltpFormstString;
-
-                                    // 今回のAskは先送り
-                                    t = d;
-                                    // 今回のPriceが基準になる
-                                    c2 = Math.Ceiling(e / unit);
-
-                                    i++;
-                                }
-
+                                t = t + dp.DepthAsk;
                             }
                             else
                             {
-                                //dp.PriceFormat = this._ltpFormstString;
-                                //_depth[half - i] = dp;
-                                _depth[half - i].DepthPrice = dp.DepthPrice;
-                                _depth[half - i].DepthBid = dp.DepthBid;
+                                //Debug.WriteLine(System.Math.Ceiling(dp.DepthPrice / unit).ToString() + " " + System.Math.Ceiling(c / unit).ToString());
+
+                                // 一時保存
+                                e = dp.DepthPrice;
+                                dp.DepthPrice = c2 * unit;
+
+                                // 一時保存
+                                d = dp.DepthAsk;
+                                dp.DepthAsk = t;
+
                                 _depth[half - i].DepthAsk = dp.DepthAsk;
+                                _depth[half - i].DepthBid = dp.DepthBid;
+                                _depth[half - i].DepthPrice = dp.DepthPrice;
                                 _depth[half - i].PriceFormat = _ltpFormstString;
 
+                                // 今回のAskは先送り
+                                t = d;
+                                // 今回のPriceが基準になる
+                                c2 = Math.Ceiling(e / unit);
+
                                 i++;
                             }
+
                         }
+                        else
+                        {
+                            //dp.PriceFormat = this._ltpFormstString;
+                            //_depth[half - i] = dp;
+                            _depth[half - i].DepthPrice = dp.DepthPrice;
+                            _depth[half - i].DepthBid = dp.DepthBid;
+                            _depth[half - i].DepthAsk = dp.DepthAsk;
+                            _depth[half - i].PriceFormat = _ltpFormstString;
 
-                        _depth[half - 1].IsAskBest = true;
+                            i++;
+                        }
+                    }
 
-                        i = half + 1;
+                    _depth[half - 1].IsAskBest = true;
 
-                        // 100円単位でまとめる
-                        // まとめた時の価格
-                        decimal c = 0;
-                        // 100単位ごとにまとめた数量を保持
-                        t = 0;
-                        // 先送りするBid
-                        d = 0;
-                        // 先送りする価格
-                        e = 0;
+                    i = half + 1;
 
-                        // bid をループ
-                        foreach (var dp in dpr.DepthBidList)
+                    // 100円単位でまとめる
+                    // まとめた時の価格
+                    decimal c = 0;
+                    // 100単位ごとにまとめた数量を保持
+                    t = 0;
+                    // 先送りするBid
+                    d = 0;
+                    // 先送りする価格
+                    e = 0;
+
+                    // bid をループ
+                    foreach (var dp in dpr.DepthBidList)
+                    {
+                        if (unit > 0)
                         {
 
-                            if (unit > 0)
+                            if (c == 0) c = Math.Ceiling(dp.DepthPrice / unit);
+
+                            // 100円単位でまとめる
+                            if (Math.Ceiling(dp.DepthPrice / unit) == c)
                             {
-
-                                if (c == 0) c = Math.Ceiling(dp.DepthPrice / unit);
-
-                                // 100円単位でまとめる
-                                if (Math.Ceiling(dp.DepthPrice / unit) == c)
-                                {
-                                    t = t + dp.DepthBid;
-                                }
-                                else
-                                {
-                                    // 一時保存
-                                    e = dp.DepthPrice;
-                                    dp.DepthPrice = c * unit;
-
-                                    // 一時保存
-                                    d = dp.DepthBid;
-                                    dp.DepthBid = t;
-
-                                    // 追加
-                                    _depth[i].DepthAsk = dp.DepthAsk;
-                                    _depth[i].DepthBid = dp.DepthBid;
-                                    _depth[i].DepthPrice = dp.DepthPrice;
-
-                                    // 今回のBidは先送り
-                                    t = d;
-                                    // 今回のPriceが基準になる
-                                    c = Math.Ceiling(e / unit);
-
-                                    i++;
-                                }
+                                t = t + dp.DepthBid;
                             }
                             else
                             {
-                                //dp.PriceFormat = this._ltpFormstString;
-                                //_depth[i] = dp;
+                                // 一時保存
+                                e = dp.DepthPrice;
+                                dp.DepthPrice = c * unit;
 
-                                _depth[i].DepthPrice = dp.DepthPrice;
-                                _depth[i].DepthBid = dp.DepthBid;
+                                // 一時保存
+                                d = dp.DepthBid;
+                                dp.DepthBid = t;
+
+                                // 追加
                                 _depth[i].DepthAsk = dp.DepthAsk;
-                                _depth[i].PriceFormat = _ltpFormstString;
+                                _depth[i].DepthBid = dp.DepthBid;
+                                _depth[i].DepthPrice = dp.DepthPrice;
+
+                                // 今回のBidは先送り
+                                t = d;
+                                // 今回のPriceが基準になる
+                                c = Math.Ceiling(e / unit);
+
                                 i++;
                             }
                         }
+                        else
+                        {
+                            //dp.PriceFormat = this._ltpFormstString;
+                            //_depth[i] = dp;
 
-                        _depth[half + 1].IsBidBest = true;
+                            _depth[i].DepthPrice = dp.DepthPrice;
+                            _depth[i].DepthBid = dp.DepthBid;
+                            _depth[i].DepthAsk = dp.DepthAsk;
+                            _depth[i].PriceFormat = _ltpFormstString;
+                            i++;
+                        }
                     }
-                });
-                return true;
-            }
-            else
-            {
-                Debug.WriteLine("■■■■■ GetDepth returned null");
-                return false;
-            }
+
+                    _depth[half + 1].IsBidBest = true;
+                }
+            });
+            
+            return true;
         }
-        catch (Exception e)
+        else
         {
-            Debug.WriteLine("■■■■■ GetDepth Exception: " + e);
             return false;
         }
-
     }
 
     // 板情報の更新ループ
     private async void UpdateDepth()
     {
         // timer ver
-        //if (IsActive && IsPaneVisible)
-        //    await GetDepth(PairCode);
-
+        if (IsSelectedActive && IsPaneVisible && IsEnabled)
+            await GetDepth(PairCode);
+        /*
         while (true)
         {
             if ((IsSelectedActive == false) || (IsPaneVisible == false) || (IsEnabled == false))
@@ -2700,9 +2171,9 @@ public class PairViewModel : ViewModelBase
                 Debug.WriteLine("■■■■■ UpdateDepth Exception: " + e);
             }
             
-            await Task.Delay(1000);
-
+            await Task.Delay(1500);
         }
+        */
     }
 
     #endregion
@@ -2712,69 +2183,49 @@ public class PairViewModel : ViewModelBase
     // トランザクションの取得
     private async Task<bool> GetTransactions(PairCodes pair)
     {
-        try
+        TransactionsResult trs = await _pubTransactionsApi?.GetTransactions(pair.ToString());
+
+        if (trs != null)
         {
-            TransactionsResult trs = await _pubTransactionsApi.GetTransactions(pair.ToString());
-
-            if (trs != null)
+            (Application.Current as App)?.CurrentDispatcherQueue?.TryEnqueue(() =>
             {
-                (Application.Current as App)?.CurrentDispatcherQueue?.TryEnqueue(() =>
+                if (_transactions == null) return;
+
+                if (_transactions.Count == 0)
                 {
-                    if (_transactions.Count == 0)
+                    // 60 で初期化
+                    for (int i = 0; i < 60; i++)
                     {
-                        // 60 で初期化
-                        for (int i = 0; i < 60; i++)
-                        {
-                            Transaction dd = new Transaction(_ltpFormstString);
-                            //
-                            _transactions.Add(dd);
-                        }
+                        Transaction dd = new Transaction(_ltpFormstString);
+                        
+                        _transactions.Add(dd);
                     }
+                }
 
-                    if (trs.Trans != null)
-                    {
-                        int v = 0;
-                        foreach (var tr in trs.Trans)
-                        {
-                            //_transactions[v] = tr;
-
-                            _transactions[v].Amount = tr.Amount;
-                            _transactions[v].ExecutedAt = tr.ExecutedAt;
-                            _transactions[v].Price = tr.Price;
-                            _transactions[v].Side = tr.Side;
-                            _transactions[v].TransactionId = tr.TransactionId;
-
-                            //_transactions[v].ExecutedAtFormated= tr.ExecutedAtFormated;
-
-                            //Debug.WriteLine(_transactions[v].ExecutedAtFormated);
-
-                            v++;
-
-                            if (v >= 60)
-                                break;
-                        }
-                    }
-                    /*
-                    _transactions.Clear();
-
+                if (trs.Trans != null)
+                {
+                    int v = 0;
                     foreach (var tr in trs.Trans)
                     {
-                        _transactions.Add(tr);
-                    }
-                    */
-                });
+                        _transactions[v].Amount = tr.Amount;
+                        _transactions[v].ExecutedAt = tr.ExecutedAt;
+                        _transactions[v].Price = tr.Price;
+                        _transactions[v].Side = tr.Side;
+                        _transactions[v].TransactionId = tr.TransactionId;
 
-                return true;
-            }
-            else
-            {
-                Debug.WriteLine("■■■■■ GetTransactions returned null");
-                return false;
-            }
+                        v++;
+
+                        if (v >= 60)
+                            break;
+                    }
+                }
+            });
+
+            return true;
         }
-        catch (Exception e)
+        else
         {
-            Debug.WriteLine("■■■■■ GetTransactions Exception: " + e);
+            Debug.WriteLine("■■■■■ GetTransactions returned null");
             return false;
         }
     }
@@ -2783,9 +2234,9 @@ public class PairViewModel : ViewModelBase
     private async void UpdateTransactions()
     {
         // timer ver
-        //if (IsActive && IsPaneVisible)
-        //    await GetTransactions(PairCode);
-
+        if (IsSelectedActive && IsPaneVisible && IsEnabled)
+            await GetTransactions(PairCode);
+        /*
         while (true)
         {
             if ((IsSelectedActive == false) || (IsPaneVisible == false) || (IsEnabled == false))
@@ -2793,18 +2244,21 @@ public class PairViewModel : ViewModelBase
                 await Task.Delay(2000);
                 continue;
             }
-
-            try
+            else
             {
-                await GetTransactions(this.PairCode);
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("■■■■■ UpdateTransactions Exception: " + e);
+                try
+                {
+                    await GetTransactions(this.PairCode);
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("■■■■■ UpdateTransactions Exception: " + e);
+                }
             }
 
             await Task.Delay(2000);
         }
+        */
     }
 
     #endregion
