@@ -2,41 +2,30 @@
 ---------------------------------------
 
 
-## 暗号資産（仮想通貨）のチャートを壁紙風に表示するデスクトップアプリ  
-ビットバンクのデータを利用しています。アカウント登録等は不要です。  
-（取引を行う場合はこちら [https://torum.github.io/BitDesk/](https://torum.github.io/BitDesk/)）
+## Crypt currency charting app 
+Display's Crypt currency charts using BitBank's API. No registration required.
   
-### 機能：
-- ビットコイン/円、リップル/円、イーサリアム/円、ライトコイン/円、ビットコインキャッシュ/円、モナーコイン/円、ステラルーメン/円、クアンタム/円、ベーシックアテンショントークン/円の通貨ペアのチャートと最新取引価格を表示します。
-- 統計情報の表示
-- 気配値（板）の表示（グルーピング機能付き）
-- 歩み値の表示
-- 背景の透過率変更
-- テーマの切り替え
-- アラームの設定
-  
-### スクリーンショット：
+(Trading app is over here > 
+[https://github.com/torum/BitDesk](https://github.com/torum/BitDesk))
 
-![alt text](https://github.com/torum/BitWallpaper/blob/master/docs/Images/BitWallpaper-screenshot.png?raw=true)
+## Download:
+ [Download from Microsoft Store](https://www.microsoft.com/ja-jp/p/bitwallpaper/9ncc3ntg9dp3)
+ 
+## Screenshots:
 
-Lightテーマ
-![alt text](https://github.com/torum/BitWallpaper/blob/master/docs/Images/BitWallpaper-screenshot-light.png?raw=true)
-
-背景透過率変更
-![alt text](https://github.com/torum/BitWallpaper/blob/master/docs/Images/BitWallpaper-screenshot-opacity.png?raw=true)
+![alt text](https://github.com/torum/BitWallpaper/blob/master/docs/Images/BitWallpaper-screenshot-V2-full.png?raw=true)
 
 
-### 必要構成：
-- Windows 10
+Small display, compact
 
-### プライバシー　ポリシー：
-* 本アプリケーションは、アプリケーション状態を保存しチャート関係のデータを取得する以外、個人情報を含む一切の情報を収集・保存及び送信することはありません。
+![alt text](https://github.com/torum/BitWallpaper/blob/master/docs/Images/BitWallpaper-screenshot-V2-small.png?raw=true)
 
-### ダウンロード：  
 
-__[マイクロソフトストアにて、無料公開中 (https://www.microsoft.com/ja-jp/p/bitwallpaper/9ncc3ntg9dp3)](https://www.microsoft.com/ja-jp/p/bitwallpaper/9ncc3ntg9dp3)__
+### Privacy olicy:
+* This application does not collect nor send any information.
+* 本アプリケーションは、アプリケーション状態をローカルに保存し、チャート関係のデータを取得するだけで、個人情報を含む一切の情報を収集・保存及び送信することはありません。
 
-### プロジェクトページ（GitHub）
+### GitHub
 [https://github.com/torum/BitWallpaper](https://github.com/torum/BitWallpaper)
 
  
