@@ -54,51 +54,67 @@ namespace BitWallpaper.Views.UserControls
 
         private void ListBoxDepth_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Task.Run(() => SetDepthListboxScrollPosition());
-            //SetDepthListboxScrollPosition();
+            //Task.Run(() => SetDepthListboxScrollPosition());
+            SetDepthListboxScrollPosition();
         }
 
-        private void SetDepthListboxScrollPosition()
+        private async void SetDepthListboxScrollPosition()
         {
-            //await Task.Delay(100);
-            (App.Current as App)?.CurrentDispatcherQueue?.TryEnqueue(() =>
-            {
-                if (this.DepthListBox.Items.Count > 0)
-                {
-                    try
-                    {
-                        // ListBoxからAutomationPeerを取得
-                        var peer = ItemsControlAutomationPeer.CreatePeerForElement(this.DepthListBox);
-                        // GetPatternでIScrollProviderを取得
-                        var scrollProvider = peer.GetPattern(Microsoft.UI.Xaml.Automation.Peers.PatternInterface.Scroll) as IScrollProvider;
+            await Task.Delay(10);
 
-                        if (scrollProvider != null)
+            bool? uithread = (App.Current as App)?.CurrentDispatcherQueue?.HasThreadAccess;
+            if (uithread != null)
+            {
+                if (uithread == true)
+                {
+                    DoScroll();
+                }
+                else
+                {
+                    (App.Current as App)?.CurrentDispatcherQueue?.TryEnqueue(() =>
+                    {
+                        DoScroll();
+                    });
+                }
+            }
+        }
+
+        private void DoScroll()
+        {
+            if (this.DepthListBox.Items.Count > 0)
+            {
+                try
+                {
+                    // ListBoxからAutomationPeerを取得
+                    var peer = ItemsControlAutomationPeer.CreatePeerForElement(this.DepthListBox);
+                    // GetPatternでIScrollProviderを取得
+                    var scrollProvider = peer.GetPattern(Microsoft.UI.Xaml.Automation.Peers.PatternInterface.Scroll) as IScrollProvider;
+
+                    if (scrollProvider != null)
+                    {
+                        if (scrollProvider.VerticallyScrollable)
                         {
-                            if (scrollProvider.VerticallyScrollable)
+                            try
                             {
-                                try
-                                {
-                                    // パーセントで位置を指定してスクロール
-                                    scrollProvider.SetScrollPercent(
-                                        // 水平スクロールは今の位置
-                                        scrollProvider.HorizontalScrollPercent,
-                                        // 垂直方向50%
-                                        50.0);
-                                }
-                                catch
-                                {
-                                    Debug.WriteLine("■■■■■ SetDepthListboxScrollPosition scrollProvider null Error");
-                                }
+                                // パーセントで位置を指定してスクロール
+                                scrollProvider.SetScrollPercent(
+                                    // 水平スクロールは今の位置
+                                    scrollProvider.HorizontalScrollPercent,
+                                    // 垂直方向50%
+                                    50.0);
+                            }
+                            catch
+                            {
+                                Debug.WriteLine("■■■■■ SetDepthListboxScrollPosition scrollProvider null Error");
                             }
                         }
                     }
-                    catch
-                    {
-                        Debug.WriteLine("■■■■■ SetDepthListboxScrollPosition SetScrollPercent Error");
-                    }
                 }
-            });
-
+                catch
+                {
+                    Debug.WriteLine("■■■■■ SetDepthListboxScrollPosition SetScrollPercent Error");
+                }
+            }
         }
 
     }

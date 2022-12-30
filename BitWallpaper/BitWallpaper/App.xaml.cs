@@ -10,6 +10,7 @@ using System.ComponentModel;
 using BitWallpaper.Views;
 using Microsoft.UI.Xaml.Controls;
 using BitWallpaper.ViewModels;
+using System.Threading;
 
 namespace BitWallpaper
 {
@@ -27,6 +28,9 @@ namespace BitWallpaper
 
         private Microsoft.UI.Dispatching.DispatcherQueue _currentDispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
         public Microsoft.UI.Dispatching.DispatcherQueue CurrentDispatcherQueue { get => _currentDispatcherQueue; }
+
+        //private static SynchronizationContext _theSynchronizationContext = SynchronizationContext.Current;
+        //public SynchronizationContext TheSynchronizationContext { get => _theSynchronizationContext; }
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code

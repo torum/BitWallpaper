@@ -16,6 +16,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -1405,47 +1406,47 @@ public class PairViewModel : ViewModelBase
             string candleTypeText = "";
             if (ct == CandleTypes.OneMin)
             {
-                candleTypeText = "1 Min";//"１分";
+                candleTypeText = "1 min";//"１分";
             }
             else if (ct == CandleTypes.FiveMin)
             {
-                candleTypeText = "5 Min";//"５分";
+                candleTypeText = "5 min";//"５分";
             }
             else if (ct == CandleTypes.FifteenMin)
             {
-                candleTypeText = "15 Min";//"１５分";
+                candleTypeText = "15 min";//"１５分";
             }
             else if (ct == CandleTypes.ThirtyMin)
             {
-                candleTypeText = "30 Min";//"３０分";
+                candleTypeText = "30 min";//"３０分";
             }
             else if (ct == CandleTypes.OneHour)
             {
-                candleTypeText = "1 Hour";//"１時間";
+                candleTypeText = "1 hour";//"１時間";
             }
             else if (ct == CandleTypes.FourHour)
             {
-                candleTypeText = "4 Hours";//"４時間";
+                candleTypeText = "4 hours";//"４時間";
             }
             else if (ct == CandleTypes.EightHour)
             {
-                candleTypeText = "8 Hours";//"８時間";
+                candleTypeText = "8 hours";//"８時間";
             }
             else if (ct == CandleTypes.TwelveHour)
             {
-                candleTypeText = "12 Hours";//"１２時間";
+                candleTypeText = "12 hours";//"１２時間";
             }
             else if (ct == CandleTypes.OneDay)
             {
-                candleTypeText = "1 Day";//"１日";
+                candleTypeText = "1 day";//"１日";
             }
             else if (ct == CandleTypes.OneWeek)
             {
-                candleTypeText = "1 Week";//"１週間";
+                candleTypeText = "1 week";//"１週間";
             }
             else if (ct == CandleTypes.OneMonth)
             {
-                candleTypeText = "1 Month";//"１ヵ月";
+                candleTypeText = "1 month";//"１ヵ月";
             }
 
             return candleTypeText;
@@ -1466,10 +1467,12 @@ public class PairViewModel : ViewModelBase
 
     #region == Timers ==
     // Timer
+    readonly DispatcherTimer _dispatcherTimerChart = new();
     readonly DispatcherTimer _dispatcherTimerDepth = new();
     readonly DispatcherTimer _dispatcherTimerTransaction = new();
-    readonly DispatcherTimer _dispatcherTimerChart = new();
     #endregion
+
+    private DateTime lastChartLoadedDateTime= DateTime.MinValue;
 
     // 
     public PairViewModel(PairCodes p, double fontSize, string ltpFormstString, string currencyFormstString, decimal grouping100, decimal grouping1000)
@@ -1510,15 +1513,35 @@ public class PairViewModel : ViewModelBase
 
         #endregion
 
-        // Do nothing... call InitializeAndStart();
     }
 
-    private async void TickerTimerChart(object source, object e)
+    // Called from MainViewModel.
+    public void InitializeAndLoad()
     {
+        if (IsChartInitAndLoaded) 
+        {
+            if (lastChartLoadedDateTime.Add(chartUpdateInterval) < DateTime.Now)
+            {
+                LoadChart(SelectedCandleType);
+                _dispatcherTimerChart.Stop();
+                _dispatcherTimerChart.Start();
+            }
+        }
+        else
+        {
+            LoadChart(SelectedCandleType);
+        }
+
+        /*
+        Task.Run(async () =>
+        {
+
+        });
+        */
+        /*
         List<Ohlcv> res = await GetCandlesticks(this.PairCode, SelectedCandleType);
 
-        if (res == null)
-            return;
+        if (res == null) return;
 
         if (res.Count > 0)
         {
@@ -1527,52 +1550,88 @@ public class PairViewModel : ViewModelBase
             Sections[0].Yi = (double)_ltp;
             Sections[0].Yj = (double)_ltp;
         }
+        */
     }
 
-    private void TickerTimerDepth(object source, object e)
+    #region == チャート ==
+
+    private void TickerTimerChart(object source, object e)
     {
-        UpdateDepth();
+        Debug.WriteLine("TickerTimerChart: " + this.PairCode);
+
+        UpdateChart();
     }
 
-    private void TickerTimerTransaction(object source, object e)
+    private void UpdateChart()
     {
-        UpdateTransactions();
-    }
-
-    public async void InitializeAndStart()
-    {
-        if (IsChartInitAndLoaded) return;
-
-        // TODO:
-        CandleTypes ct = SelectedCandleType;
+        if (!IsChartInitAndLoaded) return;
+        if (!IsEnabled) return;
+        if (!IsSelectedActive) return;
 
         /*
-        await Task.Run(async () =>
+        Task.Run(async () =>
         {
 
         });
         */
-        List<Ohlcv> res = await GetCandlesticks(this.PairCode, ct);
+        /*
+        List<Ohlcv> res = await GetCandlesticks(this.PairCode, SelectedCandleType);
 
-        if (res == null)
-            return;
+        if (res == null) return;
 
         if (res.Count > 0)
         {
-            LoadChart(res, ct);
+            LoadChart(res, SelectedCandleType);
 
             Sections[0].Yi = (double)_ltp;
             Sections[0].Yj = (double)_ltp;
-
-            IsChartInitAndLoaded = true;
         }
+        */
 
-        //UpdateDepth();
-        //UpdateTransactions();
+        LoadChart(SelectedCandleType);
     }
 
-    private void LoadChart(List<Ohlcv> list, CandleTypes ct)
+    private void ChangeCandleType(CandleTypes candleType)
     {
+        if (candleType == SelectedCandleType) return;
+
+        // set new candle type
+        SelectedCandleType = candleType;
+
+        // clear chart data.
+        Series[0].Values = new ObservableCollection<DateTimePoint>
+        {
+            //new DateTimePoint(DateTime.Now, 1)
+        };
+        Series[1].Values = new ObservableCollection<FinancialPoint>
+        {
+            //new(DateTime.Now, 100, 0, 0, 0)
+        };
+
+        LoadChart(SelectedCandleType);
+    }
+
+    private async void LoadChart(CandleTypes ct)
+    {        
+        // gets new data.
+        List<Ohlcv> res = await GetCandlesticks(this.PairCode, ct);
+
+        if (res == null) return;
+
+        if (res.Count > 0)
+        {
+            DoLoadChart(res, ct);
+
+            Sections[0].Yi = (double)_ltp;
+            Sections[0].Yj = (double)_ltp;
+        }
+
+    }
+
+    private void DoLoadChart(List<Ohlcv> list, CandleTypes ct)
+    {
+        Debug.WriteLine("DoLoadChart: " + this.PairCode + ", " + ct.ToString());
+
         // Need to be here. not static and all.
         if (_currencyFormstString.Equals("C3"))
         {
@@ -1590,8 +1649,6 @@ public class PairViewModel : ViewModelBase
         {
             YAxes[1].Labeler = (value) => value.ToString("C", new CultureInfo("ja-Jp"));
         }
-        // do I need this?
-        this.NotifyPropertyChanged(nameof(YAxes));
 
         //TODO: localize aware
         // キャンドルタイプにあわせてチャートXAxes[0]表示tweak
@@ -1674,10 +1731,6 @@ public class PairViewModel : ViewModelBase
             XAxes[0].MinLimit = DateTime.Now.Ticks - TimeSpan.FromDays(360*3).Ticks;
         }
 
-        // do I need this?
-        this.NotifyPropertyChanged(nameof(XAxes));
-
-
         var ohlcs = new ObservableCollection<FinancialPoint>();
         var vols = new ObservableCollection<DateTimePoint>();
 
@@ -1691,43 +1744,11 @@ public class PairViewModel : ViewModelBase
         Series[0].Values = vols;
         Series[1].Values = ohlcs;
 
-        // do I need this?
-        this.NotifyPropertyChanged(nameof(Series));
+        IsChartInitAndLoaded = true;
+
+        lastChartLoadedDateTime = DateTime.Now;
     }
 
-    private void ChangeCandleType(CandleTypes candleType)
-    {
-        if (candleType == SelectedCandleType)
-            return;
-
-        SelectedCandleType = candleType;
-
-        Task.Run(async () =>
-        {
-            Series[0].Values = new ObservableCollection<DateTimePoint>
-            {
-                //new DateTimePoint(DateTime.Now, 1)
-            };
-            Series[1].Values = new ObservableCollection<FinancialPoint>
-            {
-                //new(DateTime.Now, 100, 0, 0, 0)
-            };
-
-            List<Ohlcv> res = await GetCandlesticks(this.PairCode, candleType);
-
-            if (res == null)
-                return;
-
-            if (res.Count > 0)
-            {
-                LoadChart(res, candleType);
-            }
-        });
-    }
-
-    #region == チャート ==
-
-    // 初回に各種Candlestickをまとめて取得
     private async Task<List<Ohlcv>> GetCandlesticks(PairCodes pair, CandleTypes ct)
     {
         List<Ohlcv> OhlcvList =  new List<Ohlcv>();
@@ -1844,13 +1865,14 @@ public class PairViewModel : ViewModelBase
                 }
             }
 
+            await Task.Delay(200);
+
             i++;
         }
 
         return OhlcvList;
     }
 
-    // ロウソク足 Candlestick取得メソッド
     private async Task<List<Ohlcv>> GetCandlestick(PairCodes pair, CandleTypes ct, DateTime dtTarget)
     {
         string ctString;
@@ -1947,9 +1969,41 @@ public class PairViewModel : ViewModelBase
 
     #endregion
 
-    #region == 板情報 ==
+    #region == 板情報 (Depth) ==
 
-    // 板情報 取得
+    private void TickerTimerDepth(object source, object e)
+    {
+        UpdateDepth();
+    }
+
+    private async void UpdateDepth()
+    {
+        // timer ver
+        if (IsSelectedActive && IsPaneVisible && IsEnabled)
+            await GetDepth(PairCode);
+        /*
+        while (true)
+        {
+            if ((IsSelectedActive == false) || (IsPaneVisible == false) || (IsEnabled == false))
+            {
+                await Task.Delay(1000);
+                continue;
+            }
+            
+            try
+            {
+                await GetDepth(PairCode);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("■■■■■ UpdateDepth Exception: " + e);
+            }
+            
+            await Task.Delay(1500);
+        }
+        */
+    }
+
     private async Task<bool> GetDepth(PairCodes pair)
     {
         // まとめグルーピング単位 
@@ -1981,7 +2035,7 @@ public class PairViewModel : ViewModelBase
                 if (IsDepthGroupingChanged)
                 {
                     //グルーピング単位が変わったので、一旦クリアする。
-                    for (int i = 0; i < _depth.Count-1; i++)
+                    for (int i = 0; i < _depth.Count - 1; i++)
                     {
                         _depth[i].DepthPrice = 0;
                         _depth[i].DepthBid = 0;
@@ -2138,7 +2192,7 @@ public class PairViewModel : ViewModelBase
                     _depth[half + 1].IsBidBest = true;
                 }
             });
-            
+
             return true;
         }
         else
@@ -2147,40 +2201,45 @@ public class PairViewModel : ViewModelBase
         }
     }
 
-    // 板情報の更新ループ
-    private async void UpdateDepth()
+    #endregion
+
+    #region == 歩み値 (Transaction) ==
+
+    private void TickerTimerTransaction(object source, object e)
+    {
+        UpdateTransactions();
+    }
+
+    private async void UpdateTransactions()
     {
         // timer ver
         if (IsSelectedActive && IsPaneVisible && IsEnabled)
-            await GetDepth(PairCode);
+            await GetTransactions(PairCode);
         /*
         while (true)
         {
             if ((IsSelectedActive == false) || (IsPaneVisible == false) || (IsEnabled == false))
             {
-                await Task.Delay(1000);
+                await Task.Delay(2000);
                 continue;
             }
-            
-            try
+            else
             {
-                await GetDepth(PairCode);
+                try
+                {
+                    await GetTransactions(this.PairCode);
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("■■■■■ UpdateTransactions Exception: " + e);
+                }
             }
-            catch (Exception e)
-            {
-                Debug.WriteLine("■■■■■ UpdateDepth Exception: " + e);
-            }
-            
-            await Task.Delay(1500);
+
+            await Task.Delay(2000);
         }
         */
     }
 
-    #endregion
-
-    #region == 歩み値 ==
-
-    // トランザクションの取得
     private async Task<bool> GetTransactions(PairCodes pair)
     {
         TransactionsResult trs = await _pubTransactionsApi?.GetTransactions(pair.ToString());
@@ -2197,7 +2256,7 @@ public class PairViewModel : ViewModelBase
                     for (int i = 0; i < 60; i++)
                     {
                         Transaction dd = new Transaction(_ltpFormstString);
-                        
+
                         _transactions.Add(dd);
                     }
                 }
@@ -2228,37 +2287,6 @@ public class PairViewModel : ViewModelBase
             Debug.WriteLine("■■■■■ GetTransactions returned null");
             return false;
         }
-    }
-
-    // トランザクションの更新ループ
-    private async void UpdateTransactions()
-    {
-        // timer ver
-        if (IsSelectedActive && IsPaneVisible && IsEnabled)
-            await GetTransactions(PairCode);
-        /*
-        while (true)
-        {
-            if ((IsSelectedActive == false) || (IsPaneVisible == false) || (IsEnabled == false))
-            {
-                await Task.Delay(2000);
-                continue;
-            }
-            else
-            {
-                try
-                {
-                    await GetTransactions(this.PairCode);
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine("■■■■■ UpdateTransactions Exception: " + e);
-                }
-            }
-
-            await Task.Delay(2000);
-        }
-        */
     }
 
     #endregion

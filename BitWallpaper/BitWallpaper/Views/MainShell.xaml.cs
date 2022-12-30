@@ -12,6 +12,8 @@ using System.Linq;
 using Windows.Storage;
 using BitWallpaper.Helpers;
 using WinUIEx;
+using Microsoft.UI;
+using Microsoft.UI.Windowing;
 
 namespace BitWallpaper.Views
 {
@@ -140,7 +142,7 @@ namespace BitWallpaper.Views
                     double height = (double)compositeMainWin["Height"];
 
                     // Be carefull!
-                    (App.Current as App).MainWindow.CenterOnScreen(width, height);
+                    //(App.Current as App).MainWindow.CenterOnScreen(width, height);
                 }
 
                 if (compositeMainWin["NavigationViewControl_IsPaneOpen"] != null)
@@ -186,10 +188,18 @@ namespace BitWallpaper.Views
             // Save a setting locally on the device
             ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
 
+            /*
+            IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle((App.Current as App).MainWindow); // _window in App.cs
+            WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
+            AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
+            */
+
+            //Debug.WriteLine((App.Current as App).MainWindow.GetAppWindow().Size.Width.ToString());
+
             // Save a composite setting locally on the device
             Windows.Storage.ApplicationDataCompositeValue composite = new Windows.Storage.ApplicationDataCompositeValue();
-            composite["Width"] = (App.Current as App).MainWindow.Bounds.Width;
-            composite["Height"] = (App.Current as App).MainWindow.Bounds.Height;
+            composite["Width"] = (double)(App.Current as App).MainWindow.GetAppWindow().Size.Width;
+            composite["Height"] = (double)(App.Current as App).MainWindow.GetAppWindow().Size.Height;
             //composite["Top"] = 
             //composite["Left"] = ;
             composite["NavigationViewControl_IsPaneOpen"] = MainVM.NavigationViewControl_IsPaneOpen;

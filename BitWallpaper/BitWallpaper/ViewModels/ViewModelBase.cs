@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Threading;
 
 namespace BitWallpaper.ViewModels;
 
@@ -16,19 +17,43 @@ public abstract class ViewModelBase : INotifyPropertyChanged, IDataErrorInfo
     protected void NotifyPropertyChanged(string propertyName)
     {
         //this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        (App.Current as App)?.CurrentDispatcherQueue?.TryEnqueue(() =>
-        {
-            try
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Exception at NotifyPropertyChanged ({propertyName}): " + ex.Message);
 
-                (App.Current as App).AppendErrorLog($"Exception at NotifyPropertyChanged ({propertyName}): ", ex.Message);
+        bool? uithread = (App.Current as App)?.CurrentDispatcherQueue?.HasThreadAccess;
+
+        if (uithread != null)
+        {
+            if (uithread == true)
+            {
+                DoNotifyPropertyChanged(propertyName);
             }
-        });
+            else
+            {
+                (App.Current as App)?.CurrentDispatcherQueue?.TryEnqueue(() =>
+                {
+                    DoNotifyPropertyChanged(propertyName);
+                });
+            }
+        }
+
+        /*
+        (App.Current as App)?.TheSynchronizationContext?.Post(d => {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }, null);
+        */
+    }
+
+    private void DoNotifyPropertyChanged(string propertyName)
+    {
+        try
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Exception at NotifyPropertyChanged ({propertyName}): " + ex.Message);
+
+            (App.Current as App).AppendErrorLog($"Exception at NotifyPropertyChanged ({propertyName}): ", ex.Message);
+        }
     }
 
     #endregion
