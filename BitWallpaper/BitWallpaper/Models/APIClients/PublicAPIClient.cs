@@ -20,6 +20,9 @@ public class PublicAPIClient : BaseClient
     // Ticker取得メソッド
     public async Task<Ticker> GetTicker(string pair)
     {
+        if (Client is null) return null;
+        if (Client.BaseAddress is null) return null;
+
         Uri _endpoint = new Uri((Client.BaseAddress).ToString() + pair + "/ticker");
 
         var request = new HttpRequestMessage {Method = HttpMethod.Get, RequestUri = _endpoint};
@@ -98,6 +101,9 @@ public class PublicAPIClient : BaseClient
     // 板情報取得メソッド
     public async Task<DepthResult> GetDepth(string pair)
     {
+        if (Client is null) return null;
+        if (Client.BaseAddress is null) return null;
+
         Uri _endpoint = new Uri((Client.BaseAddress).ToString() + pair + "/depth");
 
         //System.Diagnostics.Debug.WriteLine("GettingDepth..." + _endpoint.ToString());
@@ -189,6 +195,9 @@ public class PublicAPIClient : BaseClient
     // トランザクション(歩み値)取得メソッド
     public async Task<TransactionsResult> GetTransactions(string pair)
     {
+        if (Client is null) return null;
+        if (Client.BaseAddress is null) return null;
+
         Uri _endpoint = new Uri((Client.BaseAddress).ToString() + pair + "/transactions");
 
         //System.Diagnostics.Debug.WriteLine("GettingDepth..." + _endpoint.ToString());
@@ -269,7 +278,10 @@ public class PublicAPIClient : BaseClient
     // ろうそく足取得メソッド
     public async Task<CandlestickResult> GetCandlestick(string pair, string CandleType, string YYYYMMDDD)
     {
-        Uri _endpoint = new Uri((Client.BaseAddress).ToString() + pair + "/candlestick/" + CandleType + "/" + YYYYMMDDD);
+        if (Client is null) return null;
+        if (Client.BaseAddress is null) return null;
+
+        Uri _endpoint = new Uri(Client.BaseAddress.ToString() + pair + "/candlestick/" + CandleType + "/" + YYYYMMDDD);
 
         var request = new HttpRequestMessage
         {

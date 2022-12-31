@@ -23,7 +23,7 @@ namespace BitWallpaper.Views
             }
             catch (XamlParseException parseException)
             {
-                Debug.WriteLine($"Unhandled XamlParseException in ChartUserControl: {parseException.Message}");
+                Debug.WriteLine($"Unhandled XamlParseException in BtcJpyPage: {parseException.Message}");
                 foreach (var key in parseException.Data.Keys)
                 {
                     Debug.WriteLine("{Key}:{Value}", key.ToString(), parseException.Data[key]?.ToString());

@@ -4,7 +4,6 @@ using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Automation.Provider;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Markup;
-using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
@@ -49,13 +48,14 @@ namespace BitWallpaper.Views.UserControls
 
         private void ValueChanged()
         {
-            
+            //
         }
 
         private void ListBoxDepth_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            //Task.Run(() => SetDepthListboxScrollPosition());
-            SetDepthListboxScrollPosition();
+            Task.Run(() => SetDepthListboxScrollPosition());
+            //SetDepthListboxScrollPosition();
+            //DoScroll();
         }
 
         private async void SetDepthListboxScrollPosition()
@@ -88,9 +88,8 @@ namespace BitWallpaper.Views.UserControls
                     // ListBox‚©‚çAutomationPeer‚ðŽæ“¾
                     var peer = ItemsControlAutomationPeer.CreatePeerForElement(this.DepthListBox);
                     // GetPattern‚ÅIScrollProvider‚ðŽæ“¾
-                    var scrollProvider = peer.GetPattern(Microsoft.UI.Xaml.Automation.Peers.PatternInterface.Scroll) as IScrollProvider;
 
-                    if (scrollProvider != null)
+                    if (peer.GetPattern(Microsoft.UI.Xaml.Automation.Peers.PatternInterface.Scroll) is IScrollProvider scrollProvider)
                     {
                         if (scrollProvider.VerticallyScrollable)
                         {

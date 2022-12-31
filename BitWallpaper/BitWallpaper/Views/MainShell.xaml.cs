@@ -142,7 +142,7 @@ namespace BitWallpaper.Views
                     double height = (double)compositeMainWin["Height"];
 
                     // Be carefull!
-                    //(App.Current as App).MainWindow.CenterOnScreen(width, height);
+                    (App.Current as App).MainWindow.CenterOnScreen(width, height);
                 }
 
                 if (compositeMainWin["NavigationViewControl_IsPaneOpen"] != null)
@@ -184,17 +184,8 @@ namespace BitWallpaper.Views
         private void MainWindow_Closed(object sender, WindowEventArgs args)
         {
             // TODO
-
             // Save a setting locally on the device
             ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-
-            /*
-            IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle((App.Current as App).MainWindow); // _window in App.cs
-            WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
-            AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
-            */
-
-            //Debug.WriteLine((App.Current as App).MainWindow.GetAppWindow().Size.Width.ToString());
 
             // Save a composite setting locally on the device
             Windows.Storage.ApplicationDataCompositeValue composite = new Windows.Storage.ApplicationDataCompositeValue();
@@ -220,7 +211,12 @@ namespace BitWallpaper.Views
                 // more
 
                 localSettings.Values[hoge.PairCode.ToString()] = composite;
+
+                hoge.IsEnabled = false;
+                hoge.CleanUp();
             }
+
+            MainVM.CleanUp();
 
             // error logs.
             (App.Current as App).SaveErrorLogIfAny();
@@ -283,7 +279,7 @@ namespace BitWallpaper.Views
 
             // Any other way?
             var settings = (Microsoft.UI.Xaml.Controls.NavigationViewItem)NavigationViewControl.SettingsItem;
-            settings.Content = "Setting".GetLocalized();
+            settings.Content = "";//"Setting".GetLocalized();
         }
 
         private void NavigationViewControl_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)

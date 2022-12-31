@@ -11,6 +11,8 @@ using BitWallpaper.Views;
 using Microsoft.UI.Xaml.Controls;
 using BitWallpaper.ViewModels;
 using System.Threading;
+using Microsoft.UI.Xaml.Markup;
+using System.Threading.Tasks;
 
 namespace BitWallpaper
 {
@@ -25,9 +27,8 @@ namespace BitWallpaper
         private MainShell _shell;
         public MainShell Shell => _shell;
 
-
-        private Microsoft.UI.Dispatching.DispatcherQueue _currentDispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
-        public Microsoft.UI.Dispatching.DispatcherQueue CurrentDispatcherQueue { get => _currentDispatcherQueue; }
+        private readonly Microsoft.UI.Dispatching.DispatcherQueue _currentDispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
+        public Microsoft.UI.Dispatching.DispatcherQueue CurrentDispatcherQueue => _currentDispatcherQueue;
 
         //private static SynchronizationContext _theSynchronizationContext = SynchronizationContext.Current;
         //public SynchronizationContext TheSynchronizationContext { get => _theSynchronizationContext; }
@@ -38,14 +39,38 @@ namespace BitWallpaper
         /// </summary>
         public App()
         {
-            this.InitializeComponent();
+            try
+            {
+                InitializeComponent();
 
-            // TODO: change theme in the setting.
-            this.RequestedTheme = ApplicationTheme.Dark;
+                // TODO: change theme in the setting.
+                this.RequestedTheme = ApplicationTheme.Dark;
+            }
+            catch (XamlParseException parseException)
+            {
+                Debug.WriteLine($"Unhandled XamlParseException in App: {parseException.Message}");
+                foreach (var key in parseException.Data.Keys)
+                {
+                    Debug.WriteLine("{Key}:{Value}", key.ToString(), parseException.Data[key]?.ToString());
+                }
+                throw;
+            }
+            catch(Exception ex) 
+            {
+                Debug.WriteLine("Exception at App(): ", ex);
+
+                AppendErrorLog($"Exception at App()", ex.Message);
+                SaveErrorLog();
+                //throw;
+            }
 
             // This does not fire...because of winui3 bugs. should be fixed in v1.3 WinAppSDK
             // see https://github.com/microsoft/microsoft-ui-xaml/issues/5221
-            UnhandledException += App_UnhandledException;
+            Microsoft.UI.Xaml.Application.Current.UnhandledException += App_UnhandledException;
+
+            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            
 
             // For testing.
             //Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = "en-US";
@@ -131,9 +156,39 @@ namespace BitWallpaper
             Debug.WriteLine("App_UnhandledException", e.Message + $"StackTrace: {e.Exception.StackTrace}, Source: {e.Exception.Source}");
             AppendErrorLog("App_UnhandledException", e.Message + $"StackTrace: {e.Exception.StackTrace}, Source: {e.Exception.Source}");
 
+            try
+            {
+                SaveErrorLog();
+            }catch(Exception) { }
+        }
+        private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+        {
+            var exception = e.Exception.InnerException as Exception;
+
+            Debug.WriteLine("TaskScheduler_UnobservedTaskException: " + exception.Message);
+            AppendErrorLog("TaskScheduler_UnobservedTaskException", exception.Message);
             SaveErrorLog();
+
+            e.SetObserved();
         }
 
+        private void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e)
+        {
+            var exception = e.ExceptionObject as Exception;
+
+            if (exception is TaskCanceledException)
+            {
+                // can ignore.
+                Debug.WriteLine("CurrentDomain_UnhandledException (TaskCanceledException): " + exception.Message);
+                AppendErrorLog("CurrentDomain_UnhandledException (TaskCanceledException)", exception.Message);
+            }
+            else
+            {
+                Debug.WriteLine("CurrentDomain_UnhandledException: " + exception.Message);
+                AppendErrorLog("CurrentDomain_UnhandledException", exception.Message);
+                SaveErrorLog();
+            }
+        }
 
 #if DEBUG
         public bool IsSaveErrorLog = true;
@@ -141,7 +196,7 @@ namespace BitWallpaper
         public bool IsSaveErrorLog = false;
 #endif
         public string LogFilePath = System.Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + System.IO.Path.DirectorySeparatorChar + "BitWallpaper_errors.txt";
-        private StringBuilder Errortxt = new StringBuilder();
+        private StringBuilder Errortxt = new ();
 
         public void AppendErrorLog(string kindTxt, string errorTxt)
         {

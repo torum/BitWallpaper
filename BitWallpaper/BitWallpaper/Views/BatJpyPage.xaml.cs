@@ -23,7 +23,7 @@ namespace BitWallpaper.Views
             }
             catch (XamlParseException parseException)
             {
-                Debug.WriteLine($"Unhandled XamlParseException in ChartUserControl: {parseException.Message}");
+                Debug.WriteLine($"Unhandled XamlParseException in BatJpyPage: {parseException.Message}");
                 foreach (var key in parseException.Data.Keys)
                 {
                     Debug.WriteLine("{Key}:{Value}", key.ToString(), parseException.Data[key]?.ToString());
@@ -36,9 +36,9 @@ namespace BitWallpaper.Views
         {
             //base.OnNavigatedTo(e);
 
-            if (e.Parameter is PairViewModel)
+            if (e.Parameter is PairViewModel model)
             {
-                _viewModel = (PairViewModel)e.Parameter;
+                _viewModel = model;
             }
 
             base.OnNavigatedTo(e);

@@ -417,6 +417,8 @@ public partial class MainViewModel : ViewModelBase
 
     public MainViewModel()
     {
+        GetTickers();
+
         // Ticker update timer
         _dispatcherTimerTickAllPairs.Tick += TickerTimerAllPairs;
         _dispatcherTimerTickAllPairs.Interval = new TimeSpan(0, 0, 2);
@@ -458,7 +460,33 @@ public partial class MainViewModel : ViewModelBase
         _selectedPair.InitializeAndLoad();
     }
 
-    private async void TickerTimerAllPairs(object source, object e)
+    public void CleanUp()
+    {
+        try
+        {
+            _dispatcherTimerTickAllPairs.Stop();
+
+            _pubTickerApi.Dispose();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("Error while Shutdown() : " + ex);
+        }
+    }
+
+    private void TickerTimerAllPairs(object source, object e)
+    {
+        try
+        {
+            GetTickers();
+        }
+        catch(Exception ex)
+        {
+            Debug.WriteLine("Error while GetTickers() : " + ex);
+        }
+    }
+
+    private async void GetTickers()
     {
         // 起動直後アラームを鳴らさない秒数
         //int waitTime = 60;
@@ -469,6 +497,9 @@ public partial class MainViewModel : ViewModelBase
                 continue;
 
             Ticker tick = await _pubTickerApi?.GetTicker(hoge.PairCode.ToString());
+
+            if (!hoge.IsEnabled)
+                continue;
 
             if (tick != null)
             {
@@ -807,6 +838,7 @@ public partial class MainViewModel : ViewModelBase
             }
 
         }
+
     }
 
 }
