@@ -31,7 +31,7 @@
                             </StackPanel>
                             -->
 
-                                <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Pages" Margin="12" />
+                                <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Pairs" Margin="12" />
 
                                 <StackPanel Orientation="Horizontal" Margin="24,12,0,0">
                                     <ImageIcon Source="ms-appx:///Assets/CryptLogos/btc.svg" Width="30"/>

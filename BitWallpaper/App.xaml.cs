@@ -13,6 +13,8 @@ using BitWallpaper.ViewModels;
 using System.Threading;
 using Microsoft.UI.Xaml.Markup;
 using System.Threading.Tasks;
+using Microsoft.Windows.AppNotifications;
+using Microsoft.Windows.AppNotifications.Builder;
 
 namespace BitWallpaper
 {
@@ -33,10 +35,9 @@ namespace BitWallpaper
         //private static SynchronizationContext _theSynchronizationContext = SynchronizationContext.Current;
         //public SynchronizationContext TheSynchronizationContext { get => _theSynchronizationContext; }
 
-        /// <summary>
-        /// Initializes the singleton application object.  This is the first line of authored code
-        /// executed, and as such is the logical equivalent of main() or WinMain().
-        /// </summary>
+
+        private readonly BitWallpaper.Helpers.NotificationManager notificationManager;
+
         public App()
         {
             try
@@ -70,7 +71,11 @@ namespace BitWallpaper
 
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            
+
+            // Notification
+            notificationManager = new BitWallpaper.Helpers.NotificationManager();
+            AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
+
 
             // For testing.
             //Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = "en-US";
@@ -121,9 +126,38 @@ namespace BitWallpaper
             //manager.Backdrop = new WinUIEx.AcrylicSystemBackdrop();
             manager.Backdrop = new WinUIEx.MicaSystemBackdrop();
 
+            //
+            notificationManager.Init();
+
             _window.Activate();
+
+
+            _viewModel.ShowBalloon += (sender, arg) => { ShowBalloon(arg); };
         }
 
+        private void ShowBalloon(ShowBalloonEventArgs arg)
+        {
+
+            // https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/notifications/app-notifications/app-notifications-quickstart?tabs=cs
+            var appNotification = new AppNotificationBuilder()
+    .AddText(arg.Title)
+    .AddText(arg.Text)
+        .AddButton(new AppNotificationButton("OK")
+            .AddArgument("action", "dissmiss"))
+    .SetTimeStamp(new DateTime(2017, 04, 15, 19, 45, 00, DateTimeKind.Utc)).BuildNotification();
+
+            //.SetTimeStamp(new DateTime(2017, 04, 15, 19, 45, 00, DateTimeKind.Utc));
+
+            //.SetScenario(AppNotificationScenario.Alarm)
+            AppNotificationManager.Default.Show(appNotification);
+        }
+
+        protected void OnProcessExit(object sender, EventArgs e)
+        {
+            notificationManager.Unregister();
+        }
+
+        // Activated from other instance.
         private void App_Activated(object sender, Microsoft.Windows.AppLifecycle.AppActivationArguments e)
         {
             CurrentDispatcherQueue?.TryEnqueue(() =>
@@ -147,6 +181,9 @@ namespace BitWallpaper
             // And call SetForegroundWindow... requires Microsoft.Windows.CsWin32 NuGet package and a NativeMethods.txt file with SetForegroundWindow method
             Windows.Win32.PInvoke.SetForegroundWindow(hwnd);
             */
+
+
+
         }
 
         private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
@@ -197,7 +234,7 @@ namespace BitWallpaper
         public bool IsSaveErrorLog = false;
 #endif
         public string LogFilePath = System.Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + System.IO.Path.DirectorySeparatorChar + "BitWallpaper_errors.txt";
-        private StringBuilder Errortxt = new ();
+        private readonly StringBuilder Errortxt = new ();
 
         public void AppendErrorLog(string kindTxt, string errorTxt)
         {

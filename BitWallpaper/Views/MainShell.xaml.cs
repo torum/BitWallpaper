@@ -14,6 +14,10 @@ using BitWallpaper.Helpers;
 using WinUIEx;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
+using Microsoft.Windows.ApplicationModel.Resources;
+using System.Xml;
+using System.Xml.Linq;
+using LiveChartsCore.SkiaSharpView.Painting;
 
 namespace BitWallpaper.Views
 {
@@ -38,76 +42,242 @@ namespace BitWallpaper.Views
             ("settings", typeof(SettingsPage)),
         };
 
+        private string _envDataFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        private string _appDataFolder;
+        private string _appConfigFilePath;
+
+        private static readonly ResourceLoader _resourceLoader = new();
 
         public MainShell(MainViewModel mainVM)
         {
             MainVM = mainVM;
-            
-            // load a setting for each pair.
-            //ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+
+            var _appName = _resourceLoader.GetString("AppName");
+            var _appDeveloper = "torum";
+
+            _appDataFolder = _envDataFolder + System.IO.Path.DirectorySeparatorChar + _appDeveloper + System.IO.Path.DirectorySeparatorChar + _appName;
+            System.IO.Directory.CreateDirectory(_appDataFolder);
+            _appConfigFilePath = _appDataFolder + System.IO.Path.DirectorySeparatorChar + _appName + ".config";
 
             #region == Load settings ==
-            /*
-            Windows.Storage.ApplicationDataCompositeValue compositeOpts = (ApplicationDataCompositeValue)localSettings.Values["Opts"];
-            if (compositeOpts != null)
-            {
-                if (compositeOpts["IsChartTooltipVisible"] != null)
-                    MainVM.IsChartTooltipVisible = (bool)compositeOpts["IsChartTooltipVisible"];
-            }
 
-            foreach (var hoge in MainVM.Pairs)
+            double height = (App.Current as App).MainWindow.GetAppWindow().Size.Height;
+            double width = (App.Current as App).MainWindow.GetAppWindow().Size.Width;
+            bool navigationViewControl_IsPaneOpen = false;  
+
+            if (System.IO.File.Exists(_appConfigFilePath))
             {
-                //Windows.Storage.ApplicationDataCompositeValue compositePairs = (ApplicationDataCompositeValue)localSettings.Values[hoge.PairCode.ToString()];
-                
-                if (compositePairs != null)
+                XDocument xdoc = XDocument.Load(_appConfigFilePath);
+
+                //Debug.WriteLine(xdoc.ToString());
+
+                // Main window
+                if ((App.Current as App).MainWindow != null)
                 {
-                    //hoge.IsChartTooltipVisible = MainVM.IsChartTooltipVisible;
-
-                    if (compositePairs["IsPaneVisible"] != null)
-                        hoge.IsPaneVisible = (bool)compositePairs["IsPaneVisible"];
-                    if (compositePairs["IsEnabled"] != null)
+                    // Main Window element
+                    var mainWindow = xdoc.Root.Element("MainWindow");
+                    if (mainWindow != null)
                     {
-                        //hoge.IsEnabled = (bool)compositePairs["IsEnabled"]; // not gonna work.
-                        if (hoge.PairCode == PairCodes.btc_jpy)
+                        /*
+                        var hoge = mainWindow.Attribute("top");
+                        if (hoge != null)
                         {
-                            MainVM.IsOnBtcJpy = (bool)compositePairs["IsEnabled"];
+                            (sender as Window).Top = double.Parse(hoge.Value);
                         }
-                        else if (hoge.PairCode == PairCodes.xrp_jpy)
+                        */
+                        /*
+                        hoge = mainWindow.Attribute("left");
+                        if (hoge != null)
                         {
-                            MainVM.IsOnXrpJpy = (bool)compositePairs["IsEnabled"];
+                            (sender as Window).Left = double.Parse(hoge.Value);
                         }
-                        else if (hoge.PairCode == PairCodes.eth_jpy)
+                        */
+                        var hoge = mainWindow.Attribute("height");
+                        if (hoge != null)
                         {
-                            MainVM.IsOnEthJpy = (bool)compositePairs["IsEnabled"];
+                            height = double.Parse(hoge.Value);
                         }
-                        else if (hoge.PairCode == PairCodes.ltc_jpy)
+
+                        hoge = mainWindow.Attribute("width");
+                        if (hoge != null)
                         {
-                            MainVM.IsOnLtcJpy = (bool)compositePairs["IsEnabled"];
+                            width = double.Parse(hoge.Value);
                         }
-                        else if (hoge.PairCode == PairCodes.bcc_jpy)
+                        /*
+                        hoge = mainWindow.Attribute("state");
+                        if (hoge != null)
                         {
-                            MainVM.IsOnBccJpy = (bool)compositePairs["IsEnabled"];
+                            if (hoge.Value == "Maximized")
+                            {
+                                (sender as Window).WindowState = WindowState.Maximized;
+                            }
+                            else if (hoge.Value == "Normal")
+                            {
+                                (sender as Window).WindowState = WindowState.Normal;
+                            }
+                            else if (hoge.Value == "Minimized")
+                            {
+                                (sender as Window).WindowState = WindowState.Normal;
+                            }
                         }
-                        else if (hoge.PairCode == PairCodes.mona_jpy)
+                        */
+
+                    }
+
+                    var xNavView = mainWindow.Element("NavigationViewControl");
+                    if (xNavView != null)
+                    {
+                        if (xNavView.Attribute("IsPaneOpen") != null)
                         {
-                            MainVM.IsOnMonaJpy = (bool)compositePairs["IsEnabled"];
+                            var xvalue = xNavView.Attribute("IsPaneOpen").Value;
+                            if (!string.IsNullOrEmpty(xvalue))
+                            {
+                                if (xvalue == "True")
+                                    navigationViewControl_IsPaneOpen = true;
+                                else
+                                    navigationViewControl_IsPaneOpen = false;
+                            }
                         }
-                        else if (hoge.PairCode == PairCodes.xlm_jpy)
+                    }
+                }
+
+                // Options
+                var opts = xdoc.Root.Element("Opts");
+                if (opts != null)
+                {
+                    var xvalue = opts.Attribute("IsChartTooltipVisible");
+                    if (xvalue != null)
+                    {
+                        if (!string.IsNullOrEmpty(xvalue.Value))
                         {
-                            MainVM.IsOnXlmJpy = (bool)compositePairs["IsEnabled"];
+                            if (xvalue.Value == "True")
+                                MainVM.IsChartTooltipVisible = true;
+                            else
+
+                                MainVM.IsChartTooltipVisible = false;
                         }
-                        else if (hoge.PairCode == PairCodes.qtum_jpy)
+                    }
+                }
+
+                // Pairs
+                var xPairs = xdoc.Root.Element("Pairs");
+                if (xPairs != null)
+                {
+                    var pairList = xPairs.Elements("Pair");
+
+                    foreach (var hoge in pairList)
+                    {
+                        var xvalue = hoge.Attribute("PairCode");
+                        if (xvalue != null)
                         {
-                            MainVM.IsOnQtumJpy = (bool)compositePairs["IsEnabled"];
-                        }
-                        else if (hoge.PairCode == PairCodes.bat_jpy)
-                        {
-                            MainVM.IsOnBatJpy = (bool)compositePairs["IsEnabled"];
+                            if (!string.IsNullOrEmpty(xvalue.Value))
+                            {
+                                PairCodes pc = MainVM.GetPairs[xvalue.Value];
+                                var pair = MainVM.Pairs.FirstOrDefault(x => x.PairCode == pc);
+
+                                // TODO:
+                                pair.IsChartTooltipVisible = MainVM.IsChartTooltipVisible;
+
+                                var attrv = hoge.Attribute("IsEnabled");
+                                if (attrv != null)
+                                {
+                                    if (!string.IsNullOrEmpty(attrv.Value))
+                                    {
+                                        if (attrv.Value == "True")
+                                            pair.IsEnabled= true;
+                                        else
+                                            pair.IsEnabled = false;
+                                    }
+                                }
+
+                                attrv = hoge.Attribute("IsPaneVisible");
+                                if (attrv != null)
+                                {
+                                    if (!string.IsNullOrEmpty(attrv.Value))
+                                    {
+                                        if (attrv.Value == "True")
+                                            pair.IsPaneVisible = true;
+                                        else
+                                            pair.IsPaneVisible = false;
+                                    }
+                                }
+
+                                attrv = hoge.Attribute("CandleType");
+                                if (attrv != null)
+                                {
+                                    if (!string.IsNullOrEmpty(attrv.Value))
+                                    {
+                                        var candleTypeString = attrv.Value;
+
+                                        if (candleTypeString == "OneMin")
+                                            pair.SelectedCandleType = Models.CandleTypes.OneMin;
+                                        else if (candleTypeString == "FiveMin")
+                                            pair.SelectedCandleType = Models.CandleTypes.FiveMin;
+                                        else if (candleTypeString == "FifteenMin")
+                                            pair.SelectedCandleType = Models.CandleTypes.FifteenMin;
+                                        else if (candleTypeString == "ThirtyMin")
+                                            pair.SelectedCandleType = Models.CandleTypes.ThirtyMin;
+                                        else if (candleTypeString == "OneHour")
+                                            pair.SelectedCandleType = Models.CandleTypes.OneHour;
+                                        else if (candleTypeString == "FourHour")
+                                            pair.SelectedCandleType = Models.CandleTypes.FourHour;
+                                        else if (candleTypeString == "EightHour")
+                                            pair.SelectedCandleType = Models.CandleTypes.EightHour;
+                                        else if (candleTypeString == "TwelveHour")
+                                            pair.SelectedCandleType = Models.CandleTypes.TwelveHour;
+                                        else if (candleTypeString == "OneDay")
+                                            pair.SelectedCandleType = Models.CandleTypes.OneDay;
+                                        else if (candleTypeString == "OneWeek")
+                                            pair.SelectedCandleType = Models.CandleTypes.OneWeek;
+                                        else if (candleTypeString == "OneMonth")
+                                            pair.SelectedCandleType = Models.CandleTypes.OneMonth;
+
+                                    }
+                                }
+
+                                // TODO: 個別設定が必要
+                                if (pair.PairCode == PairCodes.btc_jpy)
+                                {
+                                    MainVM.IsOnBtcJpy = pair.IsEnabled;
+                                }
+                                else if (pair.PairCode == PairCodes.xrp_jpy)
+                                {
+                                    MainVM.IsOnXrpJpy = pair.IsEnabled;
+                                }
+                                else if (pair.PairCode == PairCodes.eth_jpy)
+                                {
+                                    MainVM.IsOnEthJpy = pair.IsEnabled;
+                                }
+                                else if (pair.PairCode == PairCodes.ltc_jpy)
+                                {
+                                    MainVM.IsOnLtcJpy = pair.IsEnabled;
+                                }
+                                else if (pair.PairCode == PairCodes.bcc_jpy)
+                                {
+                                    MainVM.IsOnBccJpy = pair.IsEnabled;
+                                }
+                                else if (pair.PairCode == PairCodes.mona_jpy)
+                                {
+                                    MainVM.IsOnMonaJpy = pair.IsEnabled;
+                                }
+                                else if (pair.PairCode == PairCodes.xlm_jpy)
+                                {
+                                    MainVM.IsOnXlmJpy = pair.IsEnabled;
+                                }
+                                else if (pair.PairCode == PairCodes.qtum_jpy)
+                                {
+                                    MainVM.IsOnQtumJpy = pair.IsEnabled;
+                                }
+                                else if (pair.PairCode == PairCodes.bat_jpy)
+                                {
+                                    MainVM.IsOnBatJpy = pair.IsEnabled;
+                                }
+                            }
                         }
                     }
                 }
             }
-            */
+
             #endregion
 
             try
@@ -126,48 +296,21 @@ namespace BitWallpaper.Views
 
             //AppTitleBarText.Text = "AppDisplayName".GetLocalized();
 
+
             //(App.Current as App).MainWindow.ExtendsContentIntoTitleBar = true;
             (App.Current as App).MainWindow.SetTitleBar(AppTitleBar);
             (App.Current as App).MainWindow.Activated += MainWindow_Activated;
             (App.Current as App).MainWindow.Closed += MainWindow_Closed;
             //AppTitleBarText.Text = "AppDisplayName".GetLocalized();
 
-            /*
-            // load window setting
-            Windows.Storage.ApplicationDataCompositeValue compositeMainWin = (ApplicationDataCompositeValue)localSettings.Values["MainWindow"];
-            if (compositeMainWin != null)
-            {
-                //String fontName = composite["Font"] as string;
-                if ((compositeMainWin["Width"] != null) && (compositeMainWin["Height"] != null))
-                {
-                    double width = (double)compositeMainWin["Width"];
-                    double height = (double)compositeMainWin["Height"];
 
-                    // Be carefull!
-                    (App.Current as App).MainWindow.CenterOnScreen(width, height);
-                }
-
-                if (compositeMainWin["NavigationViewControl_IsPaneOpen"] != null)
-                    MainVM.NavigationViewControl_IsPaneOpen = (bool)compositeMainWin["NavigationViewControl_IsPaneOpen"];
-            }
-            else
-            {
-                // let's not.
-                //(App.Current as App).MainWindow.CenterOnScreen(1360, 768);
-            }
-            */
-
-
-
-            /*
             //
-            var manager = WinUIEx.WindowManager.Get((App.Current as App).MainWindow);
-            manager.PersistenceId = "MainWindowPersistanceId";
-            manager.MinWidth = 640;
-            manager.MinHeight = 480;
-            //manager.Backdrop = new WinUIEx.AcrylicSystemBackdrop();
-            manager.Backdrop = new WinUIEx.MicaSystemBackdrop();
-            */
+            MainVM.NavigationViewControl_IsPaneOpen = navigationViewControl_IsPaneOpen;
+
+            // Be carefull!
+            (App.Current as App).MainWindow.CenterOnScreen(width, height);
+
+
         }
 
         private void OnLoaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
@@ -179,6 +322,7 @@ namespace BitWallpaper.Views
 
 
         }
+
         private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
         {
             var resource = args.WindowActivationState == WindowActivationState.Deactivated ? "WindowCaptionForegroundDisabled" : "WindowCaptionForeground";
@@ -188,38 +332,165 @@ namespace BitWallpaper.Views
         }
         private void MainWindow_Closed(object sender, WindowEventArgs args)
         {
-            /*
-            // Save a setting locally on the device
-            ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            // 設定ファイル用のXMLオブジェクト
+            XmlDocument doc = new XmlDocument();
+            XmlDeclaration xmlDeclaration = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
+            doc.InsertBefore(xmlDeclaration, doc.DocumentElement);
 
-            // Save a composite setting locally on the device
-            Windows.Storage.ApplicationDataCompositeValue composite = new Windows.Storage.ApplicationDataCompositeValue();
-            composite["Width"] = (double)(App.Current as App).MainWindow.GetAppWindow().Size.Width;
-            composite["Height"] = (double)(App.Current as App).MainWindow.GetAppWindow().Size.Height;
-            //composite["Top"] = 
-            //composite["Left"] = ;
-            composite["NavigationViewControl_IsPaneOpen"] = MainVM.NavigationViewControl_IsPaneOpen;
-            localSettings.Values["MainWindow"] = composite;
+            // Root Document Element
+            XmlElement root = doc.CreateElement(string.Empty, "App", string.Empty);
+            doc.AppendChild(root);
+
+            //XmlAttribute attrs = doc.CreateAttribute("Version");
+            //attrs.Value = _appVer;
+            //root.SetAttributeNode(attrs);
+            XmlAttribute attrs;
+
+            // Main window
+            if ((App.Current as App).MainWindow != null)
+            {
+                // Main Window element
+                XmlElement mainWindow = doc.CreateElement(string.Empty, "MainWindow", string.Empty);
+
+                // Main Window attributes
+                attrs = doc.CreateAttribute("width");
+                /*
+                if ((sender as Window).WindowState == WindowState.Maximized)
+                {
+                    attrs.Value = (sender as Window).RestoreBounds.Width.ToString();
+                }
+                else
+                {
+                    attrs.Value = (sender as Window).Width.ToString();
+                }
+                */
+                attrs.Value = (App.Current as App).MainWindow.GetAppWindow().Size.Width.ToString();
+                mainWindow.SetAttributeNode(attrs);
+
+                attrs = doc.CreateAttribute("height");
+                /*
+                if ((sender as Window).WindowState == WindowState.Maximized)
+                {
+                    attrs.Value = (sender as Window).RestoreBounds.Height.ToString();
+                }
+                else
+                {
+                    attrs.Value = (sender as Window).Height.ToString();
+                }
+                */
+                attrs.Value = (App.Current as App).MainWindow.GetAppWindow().Size.Height.ToString();
+                mainWindow.SetAttributeNode(attrs);
+
+                /*
+                attrs = doc.CreateAttribute("top");
+                if ((sender as Window).WindowState == WindowState.Maximized)
+                {
+                    attrs.Value = (sender as Window).RestoreBounds.Top.ToString();
+                }
+                else
+                {
+                    attrs.Value = (sender as Window).Top.ToString();
+                }
+                mainWindow.SetAttributeNode(attrs);
+                */
+                /*
+                attrs = doc.CreateAttribute("left");
+                if ((sender as Window).WindowState == WindowState.Maximized)
+                {
+                    attrs.Value = (sender as Window).RestoreBounds.Left.ToString();
+                }
+                else
+                {
+                    attrs.Value = (sender as Window).Left.ToString();
+                }
+                mainWindow.SetAttributeNode(attrs);
+                */
+                /*
+                attrs = doc.CreateAttribute("state");
+                if ((sender as Window).WindowState == WindowState.Maximized)
+                {
+                    attrs.Value = "Maximized";
+                }
+                else if ((sender as Window).WindowState == WindowState.Normal)
+                {
+                    attrs.Value = "Normal";
+
+                }
+                else if ((sender as Window).WindowState == WindowState.Minimized)
+                {
+                    attrs.Value = "Minimized";
+                }
+                mainWindow.SetAttributeNode(attrs);
+                */
 
 
-            composite = new();
-            composite["IsChartTooltipVisible"] = MainVM.IsChartTooltipVisible;
-            // more
-            localSettings.Values["Opts"] = composite;
-            */
+                XmlElement xNavigationViewControl = doc.CreateElement(string.Empty, "NavigationViewControl", string.Empty);
+               
+                XmlAttribute xAttrs = doc.CreateAttribute("IsPaneOpen");
+                xAttrs.Value = MainVM.NavigationViewControl_IsPaneOpen.ToString();
+                xNavigationViewControl.SetAttributeNode(xAttrs);
+
+                mainWindow.AppendChild(xNavigationViewControl);
+
+                // set Main Window element to root.
+                root.AppendChild(mainWindow);
+
+            }
+
+            // Options
+            XmlElement xOpts = doc.CreateElement(string.Empty, "Opts", string.Empty);
+            attrs = doc.CreateAttribute("IsChartTooltipVisible");
+            attrs.Value = MainVM.IsChartTooltipVisible.ToString();
+            xOpts.SetAttributeNode(attrs);
+
+            root.AppendChild(xOpts);
+
+            // Each pairs
+            XmlElement xPairs = doc.CreateElement(string.Empty, "Pairs", string.Empty);
             foreach (var hoge in MainVM.Pairs)
             {
-                /*
-                composite = new();
-                composite["IsPaneVisible"] = hoge.IsPaneVisible;
-                composite["IsEnabled"] = hoge.IsEnabled;
-                //composite["IsChartTooltipVisible"] = MainVM.IsChartTooltipVisible;
-                // more
+                XmlElement xPair = doc.CreateElement(string.Empty, "Pair", string.Empty);
 
-                localSettings.Values[hoge.PairCode.ToString()] = composite;
-                */
+                XmlAttribute xAttrs = doc.CreateAttribute("PairCode");
+                xAttrs.Value = hoge.PairCode.ToString();
+                xPair.SetAttributeNode(xAttrs);
+
+                xAttrs = doc.CreateAttribute("IsEnabled");
+                xAttrs.Value = hoge.IsEnabled.ToString();
+                xPair.SetAttributeNode(xAttrs);
+
+                xAttrs = doc.CreateAttribute("IsPaneVisible");
+                xAttrs.Value = hoge.IsPaneVisible.ToString();
+                xPair.SetAttributeNode(xAttrs);
+
+                xAttrs = doc.CreateAttribute("CandleType");
+                xAttrs.Value = hoge.SelectedCandleType.ToString();
+                xPair.SetAttributeNode(xAttrs);
+
+
+                xAttrs = doc.CreateAttribute("IsChartTooltipVisible");
+                // TODO:
+                //xAttrs.Value = hoge.IsChartTooltipVisible.ToString();
+                //xAttrs.Value = MainVM.IsChartTooltipVisible.ToString();
+                xPair.SetAttributeNode(xAttrs);
+
+
+                xPairs.AppendChild(xPair);
+
+                // Since we are here, we might as well clean up.
                 hoge.IsEnabled = false;
                 hoge.CleanUp();
+            }
+            root.AppendChild(xPairs);
+
+            try
+            {
+                doc.Save(_appConfigFilePath);
+            }
+            //catch (System.IO.FileNotFoundException) { }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("■■■■■ Error  設定ファイルの保存中: " + ex + " while opening : " + _appConfigFilePath);
             }
 
             MainVM.CleanUp();

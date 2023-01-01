@@ -231,4 +231,7 @@
   <data name="Settings.Title" xml:space="preserve">
     <value>設定</value>
   </data>
+  <data name="AppName" xml:space="preserve">
+    <value>BitWallpaper</value>
+  </data>
 </root>

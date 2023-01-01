@@ -65,22 +65,6 @@ public class PairViewModel : ViewModelBase
                 {PairCodes.bat_jpy, "BAT/JPY"},
             };
 
-    public Dictionary<string, PairCodes> GetPairs { get; set; } = new Dictionary<string, PairCodes>()
-        {
-            {"btc_jpy", PairCodes.btc_jpy},
-            {"xrp_jpy", PairCodes.xrp_jpy},
-            //{"eth_btc", Pairs.eth_btc},
-            {"eth_jpy", PairCodes.eth_jpy},
-            //{"ltc_btc", Pairs.ltc_btc},
-            {"ltc_jpy", PairCodes.ltc_jpy},
-            {"mona_jpy", PairCodes.mona_jpy},
-            //{"mona_btc", Pairs.mona_btc},
-            {"bcc_jpy", PairCodes.bcc_jpy},
-            //{"bcc_btc", Pairs.bcc_btc},
-            {"xlm_jpy", PairCodes.xlm_jpy},
-            {"qtum_jpy", PairCodes.qtum_jpy},
-            {"bat_jpy", PairCodes.bat_jpy},
-        };
 
     public string CurrencyUnitString { get => CurrentPairCoin[_p]; }
 
@@ -461,9 +445,16 @@ public class PairViewModel : ViewModelBase
             if (_alarmPlus == value)
                 return;
 
+            if (value != 0)
+            {
+                if (value <= _ltp)
+                    return;
+            }
+
             _alarmPlus = value;
             NotifyPropertyChanged("AlarmPlus");
             NotifyPropertyChanged("AlarmPlusString");
+            NotifyPropertyChanged("AlarmLabel");
         }
     }
     public string AlarmPlusString
@@ -486,9 +477,16 @@ public class PairViewModel : ViewModelBase
             if (_alarmMinus == value)
                 return;
 
+            if (value != 0)
+            {
+                if (value >= _ltp)
+                    return;
+            }
+
             _alarmMinus = value;
             NotifyPropertyChanged("AlarmMinus");
             NotifyPropertyChanged("AlarmMinusString");
+            NotifyPropertyChanged("AlarmLabel");
         }
     }
     public string AlarmMinusString
@@ -496,6 +494,21 @@ public class PairViewModel : ViewModelBase
         get
         {
             return string.Format(_ltpFormstString, AlarmMinus);
+        }
+    }
+
+    public string AlarmLabel
+    {
+        get
+        {
+            if ((AlarmPlus > 0) || (AlarmMinus > 0))
+            {
+                return "set";
+            }
+            else
+            {
+                return "none";
+            }
         }
     }
 
@@ -1802,22 +1815,22 @@ public class PairViewModel : ViewModelBase
         else if (ct == CandleTypes.FourHour)
         {
             isYearly = true;
-            daysOrYearsCountToGetData = 1;
+            daysOrYearsCountToGetData = 2;
         }
         else if (ct == CandleTypes.EightHour)
         {
             isYearly = true;
-            daysOrYearsCountToGetData = 1;
+            daysOrYearsCountToGetData = 2;
         }
         else if (ct == CandleTypes.TwelveHour)
         {
             isYearly = true;
-            daysOrYearsCountToGetData = 1;
+            daysOrYearsCountToGetData = 2;
         }
         else if (ct == CandleTypes.OneDay)
         {
             isYearly = true;
-            daysOrYearsCountToGetData = 2;
+            daysOrYearsCountToGetData = 3;
         }
         else if (ct == CandleTypes.OneWeek)
         {
@@ -1845,7 +1858,7 @@ public class PairViewModel : ViewModelBase
                 else
                 {
                     Debug.WriteLine("failed to get candlestic.");
-                    //return OhlcvList  = new List<Ohlcv>(); ;
+                    //return OhlcvList  = new List<Ohlcv>(); 
                 }
             }
             else
@@ -1869,6 +1882,8 @@ public class PairViewModel : ViewModelBase
 
                     foreach (var r in responseOhlcvList)
                     {
+                        if (OhlcvList == null)
+                            OhlcvList = new List<Ohlcv>();
                         OhlcvList.Add(r);
                     }
                 }

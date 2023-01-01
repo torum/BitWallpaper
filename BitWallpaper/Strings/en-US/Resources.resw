@@ -231,4 +231,7 @@
   <data name="PrivacyPolicy.Text" xml:space="preserve">
     <value>This application does not collect nor send any information.</value>
   </data>
+  <data name="AppName" xml:space="preserve">
+    <value>BitWallpaper</value>
+  </data>
 </root>

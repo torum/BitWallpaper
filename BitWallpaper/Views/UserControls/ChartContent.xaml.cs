@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Automation.Provider;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Markup;
+using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
@@ -116,5 +117,35 @@ namespace BitWallpaper.Views.UserControls
             }
         }
 
+        private async void AppBarButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (PairVM == null) return;
+
+            ContentDialog dialog = new ContentDialogContent();
+
+            if (PairVM.AlarmPlus > 0)
+                (dialog as ContentDialogContent).HighPrice = PairVM.AlarmPlus;
+
+            if (PairVM.AlarmMinus > 0)
+                (dialog as ContentDialogContent).LowPrice = PairVM.AlarmMinus;
+
+            // XamlRoot must be set in the case of a ContentDialog running in a Desktop app
+            dialog.XamlRoot = this.XamlRoot;
+            dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+            dialog.Title = "Notification";
+            dialog.PrimaryButtonText = "Set";
+            dialog.CloseButtonText = "Cancel";
+            dialog.DefaultButton = ContentDialogButton.Primary;
+            //dialog.Content = new ContentDialogContent();
+
+            var result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+            {
+                PairVM.AlarmPlus = (dialog as ContentDialogContent).HighPrice;
+                PairVM.AlarmMinus = (dialog as ContentDialogContent).LowPrice;
+            }
+            
+        }
     }
 }
