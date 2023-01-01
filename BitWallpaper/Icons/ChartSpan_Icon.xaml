@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--This file is compatible with Silverlight-->
+<Canvas xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Name="svg5121" Width="48" Height="48">
+  <Canvas.RenderTransform>
+    <TranslateTransform X="0" Y="0"/>
+  </Canvas.RenderTransform>
+  <Canvas.Resources/>
+  <!--Unknown tag: metadata-->
+  <!--Unknown tag: sodipodi:namedview-->
+  <Canvas Name="Rectangle" Opacity="1"/>
+  <Canvas Name="icon_data" Opacity="1"/>
+  <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="path4528" StrokeThickness="1.65" Stroke="#FF676767" StrokeMiterLimit="4" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Data="m 11.037903 40.507879 v 3.397486 H 36.997419 V 40.633712 M 5.1774598 4.2792283 5.4650965 44.116905 H 42.13877"/>
+</Canvas>
