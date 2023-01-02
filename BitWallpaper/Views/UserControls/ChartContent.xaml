@@ -9,6 +9,69 @@
     xmlns:model="using:BitWallpaper.Models"
     xmlns:vm="using:BitWallpaper.ViewModels"
     mc:Ignorable="d">
+    <UserControl.Resources>
+        
+        <DataTemplate x:Key="FolderTemplate" x:DataType="model:Depth">
+            <Grid Margin="0" HorizontalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="90" />
+                    <ColumnDefinition Width="80" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" x:Name="DepthAskBest" Text="{x:Bind Path=DepthAskFormatted, Mode=OneWay}" Foreground="{ThemeResource PriceUpColorBrush}" Margin="0" Padding="0 0 0 0" HorizontalAlignment="Right">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                <TextBlock Grid.Column="1" x:Name="DepthPrice" FontWeight="ExtraBold" FontSize="13" Opacity="0.8" Foreground="{ThemeResource ListBoxItemSelectedForegroundThemeBrush}" Text="{x:Bind Path=DepthPriceFormatted, Mode=OneWay}" Margin="0 0 3 0" Padding="3 1 3 1" HorizontalAlignment="Right">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                <TextBlock Grid.Column="2" x:Name="DepthBidBest" Text="{x:Bind Path=DepthBidFormatted, Mode=OneWay}" Foreground="{ThemeResource PriceDownColorBrush}" Margin="0" Padding="0 0 0 0" HorizontalAlignment="Right">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="FileTemplate" x:DataType="model:Depth">
+            <Grid Margin="0" HorizontalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="90" />
+                    <ColumnDefinition Width="80" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" x:Name="DepthAskBest" Text="{x:Bind Path=DepthAskFormatted, Mode=OneWay}" Foreground="{ThemeResource PriceUpColorBrush}" Margin="0" Padding="0 0 0 0" HorizontalAlignment="Right">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                <TextBlock Grid.Column="1" x:Name="DepthPrice" Text="{x:Bind Path=DepthPriceFormatted, Mode=OneWay}" Margin="3 0 3 0" Padding="3 0 3 0" HorizontalAlignment="Right">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                <TextBlock Grid.Column="2" x:Name="DepthBidBest" Text="{x:Bind Path=DepthBidFormatted, Mode=OneWay}" Foreground="{ThemeResource PriceDownColorBrush}" Margin="0" Padding="0 0 0 0" HorizontalAlignment="Right">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
+        </DataTemplate>
+
+        <model:ExplorerItemTemplateSelector x:Key="ExplorerItemTemplateSelector" FolderTemplate="{StaticResource FolderTemplate}" FileTemplate="{StaticResource FileTemplate}" />
+
+    </UserControl.Resources>
     <Grid>
 
         <VisualStateManager.VisualStateGroups>
@@ -454,7 +517,8 @@
                             <TabViewItem x:Uid="TabHeader_Orders" IsClosable="False" Opacity="0.7" Background="Transparent">
 
                                 <Border BorderBrush="{ThemeResource ApplicationPageBackgroundThemeBrush}" BorderThickness="0.5,0,0,0">
-                                    <ListBox x:Name="DepthListBox"  ItemsSource="{x:Bind Path=PairVM.Depth, Mode=OneWay}" SizeChanged="ListBoxDepth_SizeChanged" Background="Transparent" Margin="0,0,0,6" Padding="0,6,0,12" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                    <ListBox x:Name="DepthListBox" ItemTemplateSelector="{StaticResource ExplorerItemTemplateSelector}" ItemsSource="{x:Bind Path=PairVM.Depth, Mode=OneWay}" SizeChanged="ListBoxDepth_SizeChanged" Background="Transparent" Margin="0,0,0,6" Padding="0,6,0,12" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+
                                         <ListBox.ItemContainerStyle>
                                             <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItemStyle}">
                                                 <Setter Property="Padding" Value="3,3,3,3"/>
@@ -462,8 +526,8 @@
                                                 <Setter Property="IsEnabled" Value="False" />
                                             </Style>
                                         </ListBox.ItemContainerStyle>
-                                        <ListBox.ItemTemplate>
-                                            <DataTemplate x:DataType="model:Depth">
+                                        <!--<ListBox.ItemTemplate>
+                                            <DataTemplate x:DataType="model:Depth">-->
                                                 <!--
                                             <DataTemplate.Triggers>
                                                 <DataTrigger Binding="{Binding IsLTP}" Value="true">
@@ -491,6 +555,7 @@
                                                 </DataTrigger>
                                             </DataTemplate.Triggers>
                                             -->
+<!--
                                                 <Grid Margin="0" HorizontalAlignment="Stretch">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="80" />
@@ -517,9 +582,11 @@
                                                         </TextBlock.Style>
                                                     </TextBlock>
                                                 </Grid>
-                                            </DataTemplate>
-                                        </ListBox.ItemTemplate>
 
+                                            </DataTemplate>
+
+                                        </ListBox.ItemTemplate>
+-->
                                     </ListBox>
                                     <!--
                                 <ListBox x:Name="DepthListBox" Margin="3 6 3 6" Padding="0 0 3 0" ItemsSource="{Binding Depths}" Style="{StaticResource DepthListBoxStyle}" AlternationCount="2" Background="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Visible" SizeChanged="DepthListBox_SizeChanged" MouseDoubleClick="DepthListBox_MouseDoubleClick">

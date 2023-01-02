@@ -2054,13 +2054,14 @@ public class PairViewModel : ViewModelBase
         // 初期化
         if ((_depth.Count == 0) || (_depth.Count < listCount))
         {
-            _depth.Clear();
-            for (int i = 0; i < listCount + 1; i++)
+            //_depth.Clear();
+            for (int i = 0; i < listCount; i++)
             {
                 Depth dd = new Depth(_ltpFormstString);
                 dd.DepthPrice = i;
                 dd.DepthBid = 0;
                 dd.DepthAsk = 0;
+                //if (i == (half-1)) dd.IsLTP = true;
                 _depth.Add(dd);
             }
         }

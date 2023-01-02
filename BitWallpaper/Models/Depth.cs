@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using BitWallpaper.ViewModels;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
 
 namespace BitWallpaper.Models;
 
@@ -169,6 +171,28 @@ public class Depth : ViewModelBase
 
     public Depth()
     {
+    }
+}
+
+public class ExplorerItemTemplateSelector : DataTemplateSelector
+{
+    public DataTemplate FolderTemplate { get; set; }
+    public DataTemplate FileTemplate { get; set; }
+    protected override DataTemplate SelectTemplateCore(object item)
+    {
+        return base.SelectTemplateCore(item, null);
+    }
+
+    protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
+    {
+        /*
+        var explorerItem = (ExplorerItem)item;
+        return explorerItem.Type == ExplorerItem.ExplorerItemType.Folder ? FolderTemplate : FileTemplate;
+        */
+        var explorerItem = (Depth)item;
+        return explorerItem.IsLTP ? FolderTemplate : FileTemplate;
+
+        //return base.SelectTemplateCore(item, null); 
     }
 }
 

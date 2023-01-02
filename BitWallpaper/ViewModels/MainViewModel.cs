@@ -20,7 +20,7 @@ public partial class MainViewModel : ViewModelBase
 {
     #region == Application general ==
 
-    public string VersionText { get => "v2.0.1.0"; }
+    public string VersionText { get => "v2.0.1.2"; }
 
     #endregion
 
