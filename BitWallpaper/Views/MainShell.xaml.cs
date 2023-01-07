@@ -61,8 +61,8 @@ namespace BitWallpaper.Views
 
             #region == Load settings ==
 
-            double height = (App.Current as App).MainWindow.GetAppWindow().Size.Height;
-            double width = (App.Current as App).MainWindow.GetAppWindow().Size.Width;
+            double height = 640; //(App.Current as App).MainWindow.GetAppWindow().Size.Height;
+            double width = 480;//(App.Current as App).MainWindow.GetAppWindow().Size.Width;
             bool navigationViewControl_IsPaneOpen = false;  
 
             if (System.IO.File.Exists(_appConfigFilePath))
@@ -155,6 +155,19 @@ namespace BitWallpaper.Views
                             else
 
                                 MainVM.IsChartTooltipVisible = false;
+                        }
+                    }
+
+                    xvalue = opts.Attribute("IsDebugSaveLog");
+                    if (xvalue != null)
+                    {
+                        if (!string.IsNullOrEmpty(xvalue.Value))
+                        {
+                            if (xvalue.Value == "True")
+                                MainVM.IsDebugSaveLog = true;
+                            else
+
+                                MainVM.IsDebugSaveLog = false;
                         }
                     }
                 }
@@ -278,6 +291,8 @@ namespace BitWallpaper.Views
                 }
             }
 
+            (App.Current as App).IsSaveErrorLog = MainVM.IsDebugSaveLog;
+
             #endregion
 
             try
@@ -307,10 +322,11 @@ namespace BitWallpaper.Views
             //
             MainVM.NavigationViewControl_IsPaneOpen = navigationViewControl_IsPaneOpen;
 
-            // Be carefull!
-            (App.Current as App).MainWindow.CenterOnScreen(width, height);
-
-
+            if (((width > 100) && (height > 100)) && ((width < 2000) && (height < 2000)))
+            {
+                // Be carefull!
+                (App.Current as App).MainWindow.CenterOnScreen(width, height);
+            }
         }
 
         private void OnLoaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
@@ -439,8 +455,13 @@ namespace BitWallpaper.Views
 
             // Options
             XmlElement xOpts = doc.CreateElement(string.Empty, "Opts", string.Empty);
+
             attrs = doc.CreateAttribute("IsChartTooltipVisible");
             attrs.Value = MainVM.IsChartTooltipVisible.ToString();
+            xOpts.SetAttributeNode(attrs);
+
+            attrs = doc.CreateAttribute("IsDebugSaveLog");
+            attrs.Value = MainVM.IsDebugSaveLog.ToString();
             xOpts.SetAttributeNode(attrs);
 
             root.AppendChild(xOpts);

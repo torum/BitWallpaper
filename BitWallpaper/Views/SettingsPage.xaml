@@ -84,6 +84,13 @@
                                     <ToggleSwitch Margin="0" VerticalAlignment="Center" IsOn="{x:Bind ViewModel.IsChartTooltipVisible, Mode=TwoWay}" />
                                 </StackPanel>
 
+
+                                <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Save error log on desktop if unexpected error occured" Margin="12,36,12,12" />
+
+                                <StackPanel Orientation="Horizontal" Margin="24,12,0,0">
+                                    <ToggleSwitch Margin="0" VerticalAlignment="Center" IsOn="{x:Bind ViewModel.IsDebugSaveLog, Mode=TwoWay}" />
+                                </StackPanel>
+
                                 <StackPanel Margin="42"></StackPanel>
                                 
                             </StackPanel>

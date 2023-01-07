@@ -20,7 +20,7 @@ public partial class MainViewModel : ViewModelBase
 {
     #region == Application general ==
 
-    public string VersionText { get => "v2.0.2.0"; }
+    public string VersionText { get => "v2.0.3.0"; }
 
     #endregion
 
@@ -425,6 +425,23 @@ public partial class MainViewModel : ViewModelBase
 
             _isChartTooltipVisible = value;
             NotifyPropertyChanged(nameof(IsChartTooltipVisible));
+        }
+    }
+
+    private bool _isDebugSaveLog = true;
+    public bool IsDebugSaveLog
+    {
+        get
+        {
+            return _isDebugSaveLog;
+        }
+        set
+        {
+            if (_isDebugSaveLog == value)
+                return;
+
+            _isDebugSaveLog = value;
+            NotifyPropertyChanged(nameof(IsDebugSaveLog));
         }
     }
 

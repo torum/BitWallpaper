@@ -10,14 +10,20 @@
     <UseWinUI>true</UseWinUI>
 	<ApplicationIcon>App_Icon.ico</ApplicationIcon>
 	  <!--
-
-      <WindowsPackageType>None</WindowsPackageType>
-	  <EnableMsixTooling>true</EnableMsixTooling>
-	  <PublishProfile>win10-$(Platform).pubxml</PublishProfile>
-	 -->
-	  <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 	  
-      <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+	  <WindowsPackageType>None</WindowsPackageType>
+	 -->
+
+	  <!--
+	  
+	  <PublishProfile>win10-$(Platform).pubxml</PublishProfile>
+	  <EnableMsixTooling>true</EnableMsixTooling>
+	  <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+	  -->
+
+
+
+	  <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
       <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
       <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
       <GenerateTestArtifacts>True</GenerateTestArtifacts>
@@ -25,6 +31,7 @@
       <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
       <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
 	  <PackageIcon>App_Icon.png</PackageIcon>
+	  <AssemblyVersion>2.0.3.0</AssemblyVersion>
   </PropertyGroup>
 
 
@@ -79,7 +86,7 @@
 	  </PackageReference>
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
     <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
-    <PackageReference Include="WinUIEx" Version="2.0.0" />
+    <PackageReference Include="WinUIEx" Version="2.1.0" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 

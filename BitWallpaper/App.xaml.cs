@@ -11,6 +11,7 @@ using BitWallpaper.Views;
 using Microsoft.UI.Xaml.Controls;
 using BitWallpaper.ViewModels;
 using System.Threading;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Markup;
 using System.Threading.Tasks;
 using Microsoft.Windows.AppNotifications;
@@ -35,6 +36,9 @@ namespace BitWallpaper
         //private static SynchronizationContext _theSynchronizationContext = SynchronizationContext.Current;
         //public SynchronizationContext TheSynchronizationContext { get => _theSynchronizationContext; }
 
+        public bool IsSaveErrorLog = true;
+        public string LogFilePath = System.Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + System.IO.Path.DirectorySeparatorChar + "BitWallpaper_errors.txt";
+        private readonly StringBuilder Errortxt = new();
 
         private readonly BitWallpaper.Helpers.NotificationManager notificationManager;
 
@@ -44,8 +48,17 @@ namespace BitWallpaper
             {
                 InitializeComponent();
 
+                // For testing.
+                //Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = "en-US";
+                //Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = "ja-JP";
+
                 // TODO: change theme in the setting.
                 this.RequestedTheme = ApplicationTheme.Dark;
+
+                // Notification
+                notificationManager = new BitWallpaper.Helpers.NotificationManager();
+                AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
+
             }
             catch (XamlParseException parseException)
             {
@@ -62,7 +75,7 @@ namespace BitWallpaper
 
                 AppendErrorLog($"Exception at App()", ex.Message);
                 SaveErrorLog();
-                //throw;
+                throw;
             }
 
             // This does not fire...because of winui3 bugs. should be fixed in v1.3 WinAppSDK
@@ -72,26 +85,20 @@ namespace BitWallpaper
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-            // Notification
-            notificationManager = new BitWallpaper.Helpers.NotificationManager();
-            AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
-
-
-            // For testing.
-            //Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = "en-US";
-            //Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = "ja-JP";
         }
 
         /// <summary>
         /// Invoked when the application is launched.
         /// </summary>
         /// <param name="args">Details about the launch request and process.</param>
-        protected override async void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+        protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
+            /*
+             * https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/migrate-to-windows-app-sdk/guides/applifecycle
             // If this is the first instance launched, then register it as the "main" instance.
             // If this isn't the first instance launched, then "main" will already be registered,
             // so retrieve it.
-            var mainInstance = Microsoft.Windows.AppLifecycle.AppInstance.FindOrRegisterForKey("main");
+            var mainInstance = Microsoft.Windows.AppLifecycle.AppInstance.FindOrRegisterForKey("BitWallPaperMain");
 
             // If the instance that's executing the OnLaunched handler right now
             // isn't the "main" instance.
@@ -109,7 +116,7 @@ namespace BitWallpaper
                 // Otherwise, register for activation redirection
                 Microsoft.Windows.AppLifecycle.AppInstance.GetCurrent().Activated += App_Activated;
             }
-
+            */
             //
             _window = new MainWindow();
             _viewModel = new MainViewModel();
@@ -207,7 +214,7 @@ namespace BitWallpaper
             AppendErrorLog("TaskScheduler_UnobservedTaskException", exception.Message);
             SaveErrorLog();
 
-            //e.SetObserved();
+            e.SetObserved();
         }
 
         private void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e)
@@ -228,13 +235,6 @@ namespace BitWallpaper
             }
         }
 
-#if DEBUG
-        public bool IsSaveErrorLog = true;
-#else
-        public bool IsSaveErrorLog = false;
-#endif
-        public string LogFilePath = System.Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + System.IO.Path.DirectorySeparatorChar + "BitWallpaper_errors.txt";
-        private readonly StringBuilder Errortxt = new ();
 
         public void AppendErrorLog(string kindTxt, string errorTxt)
         {
