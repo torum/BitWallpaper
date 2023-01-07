@@ -1,7 +1,7 @@
 # BitWallpaper
 
-## Crypt currency charting app.
-Display's crypt currency charts using BitBank's API. No registration required. (The trading app BitDesk is over
+## Cryptocurrency charting app.
+Displays cryptocurrency charts using BitBank's API. No registration required. (The trading app BitDesk is over
 [here](https://github.com/torum/BitDesk)).
 
 ## Download：
