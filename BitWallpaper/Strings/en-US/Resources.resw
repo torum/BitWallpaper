@@ -234,4 +234,7 @@
   <data name="AppName" xml:space="preserve">
     <value>BitWallpaper</value>
   </data>
+  <data name="Shell_Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
 </root>

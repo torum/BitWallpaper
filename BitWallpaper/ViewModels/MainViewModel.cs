@@ -20,7 +20,7 @@ public partial class MainViewModel : ViewModelBase
 {
     #region == Application general ==
 
-    public string VersionText { get => "v2.0.1.2"; }
+    public string VersionText { get => "v2.0.2.0"; }
 
     #endregion
 
@@ -449,17 +449,6 @@ public partial class MainViewModel : ViewModelBase
         _dispatcherTimerTickAllPairs.Interval = new TimeSpan(0, 0, 2);
         _dispatcherTimerTickAllPairs.Start();
 
-
-
-        //ShowBalloonEventArgs ag = new ShowBalloonEventArgs
-        //{
-        //    Title = PairBtcJpy.PairString + " 高値アラーム",
-        //    Text = PairBtcJpy.AlarmPlus.ToString("#,0") + " に達しました。"
-        //};
-        // バルーン表示
-        //ShowBalloon?.Invoke(this, ag);
-
-
     }
 
     public void SetSelectedPairFromCode(PairCodes pairCode)
@@ -706,12 +695,12 @@ public partial class MainViewModel : ViewModelBase
                         if (hoge.Ltp >= hoge.AlarmPlus)
                         {
                             hoge.HighLowInfoTextColorFlag = true;
-                            hoge.HighLowInfoText = hoge.PairString + " ⇑⇑⇑　高値アラーム ";
+                            hoge.HighLowInfoText = hoge.PairString + "Alarm";
 
                             ShowBalloonEventArgs ag = new ShowBalloonEventArgs
                             {
-                                Title = hoge.PairString + " 高値アラーム",
-                                Text = hoge.AlarmPlusString + " に達しました。"
+                                Title = hoge.PairString + " High Price Alarm",
+                                Text = hoge.AlarmPlusString
                             };
 
                             // クリア
@@ -727,12 +716,12 @@ public partial class MainViewModel : ViewModelBase
                         if (hoge.Ltp <= hoge.AlarmMinus)
                         {
                             hoge.HighLowInfoTextColorFlag = false;
-                            hoge.HighLowInfoText = hoge.PairString + " ⇓⇓⇓　安値アラーム ";
+                            hoge.HighLowInfoText = hoge.PairString + "Alarm";
 
                             ShowBalloonEventArgs ag = new ShowBalloonEventArgs
                             {
-                                Title = hoge.PairString + " 安値アラーム",
-                                Text = hoge.AlarmMinusString + " に達しました。"
+                                Title = hoge.PairString + " Low Price Alarm",
+                                Text = hoge.AlarmMinusString
                             };
 
                             // クリア

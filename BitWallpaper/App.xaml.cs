@@ -142,10 +142,10 @@ namespace BitWallpaper
             var appNotification = new AppNotificationBuilder()
     .AddText(arg.Title)
     .AddText(arg.Text)
-        .AddButton(new AppNotificationButton("OK")
-            .AddArgument("action", "dissmiss"))
     .SetTimeStamp(new DateTime(2017, 04, 15, 19, 45, 00, DateTimeKind.Utc)).BuildNotification();
-
+            
+        //.AddButton(new AppNotificationButton("OK")
+            //.AddArgument("action", "dissmiss"))
             //.SetTimeStamp(new DateTime(2017, 04, 15, 19, 45, 00, DateTimeKind.Utc));
 
             //.SetScenario(AppNotificationScenario.Alarm)
@@ -207,7 +207,7 @@ namespace BitWallpaper
             AppendErrorLog("TaskScheduler_UnobservedTaskException", exception.Message);
             SaveErrorLog();
 
-            e.SetObserved();
+            //e.SetObserved();
         }
 
         private void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e)
