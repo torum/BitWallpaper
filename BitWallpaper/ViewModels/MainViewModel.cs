@@ -1,4 +1,5 @@
-﻿using BitWallpaper.Models;
+﻿using BitWallpaper.Helpers;
+using BitWallpaper.Models;
 using BitWallpaper.Models.APIClients;
 using Microsoft.UI.Xaml;
 using System;
@@ -6,7 +7,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.System.Threading;
 using Windows.UI.Core;
 
@@ -20,7 +24,25 @@ public partial class MainViewModel : ViewModelBase
 {
     #region == Application general ==
 
-    public string VersionText { get => "v2.0.3.0"; }
+    public string VersionText {
+        get
+        {
+            Version version;
+
+            if (RuntimeHelper.IsMSIX)
+            {
+                var packageVersion = Package.Current.Id.Version;
+
+                version = new(packageVersion.Major, packageVersion.Minor, packageVersion.Build, packageVersion.Revision);
+            }
+            else
+            {
+                version = Assembly.GetExecutingAssembly().GetName().Version!;
+            }
+
+            return $"{"AppDisplayName/Text".GetLocalized()} - {version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
+        }
+    }
 
     #endregion
 

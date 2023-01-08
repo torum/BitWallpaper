@@ -7,6 +7,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     xmlns:windowex="using:WinUIEx"
+        MinWidth="500"
+    MinHeight="500"
+     Width="1024" Height="768"
+    PersistenceId="MainWindowPersistanceId"
     xmlns:views="using:BitWallpaper.Views">
     <windowex:WindowEx.Backdrop>
         <windowex:MicaSystemBackdrop/>

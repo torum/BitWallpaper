@@ -16,6 +16,12 @@ using Microsoft.UI.Xaml.Markup;
 using System.Threading.Tasks;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
+using Microsoft.Windows.ApplicationModel.Resources;
+using System.Collections;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Collections.Immutable;
+using System.Text.Json.Nodes;
 
 namespace BitWallpaper
 {
@@ -30,8 +36,16 @@ namespace BitWallpaper
         private MainShell _shell;
         public MainShell Shell => _shell;
 
-        private readonly Microsoft.UI.Dispatching.DispatcherQueue _currentDispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
-        public Microsoft.UI.Dispatching.DispatcherQueue CurrentDispatcherQueue => _currentDispatcherQueue;
+        private static readonly Microsoft.UI.Dispatching.DispatcherQueue _currentDispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
+        public static Microsoft.UI.Dispatching.DispatcherQueue CurrentDispatcherQueue => _currentDispatcherQueue;
+
+        private static readonly string _appName = "BitWallpaper";//_resourceLoader.GetString("AppName");
+        private static readonly string _appDeveloper = "torum";
+        private static readonly string _envDataFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        public static string AppDataFolder { get; } = _envDataFolder + System.IO.Path.DirectorySeparatorChar + _appDeveloper + System.IO.Path.DirectorySeparatorChar + _appName;
+        public static string AppConfigFilePath { get; } = AppDataFolder + System.IO.Path.DirectorySeparatorChar + _appName + ".config";
+
+        private static readonly ResourceLoader _resourceLoader = new();
 
         //private static SynchronizationContext _theSynchronizationContext = SynchronizationContext.Current;
         //public SynchronizationContext TheSynchronizationContext { get => _theSynchronizationContext; }
@@ -40,7 +54,7 @@ namespace BitWallpaper
         public string LogFilePath = System.Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + System.IO.Path.DirectorySeparatorChar + "BitWallpaper_errors.txt";
         private readonly StringBuilder Errortxt = new();
 
-        private readonly BitWallpaper.Helpers.NotificationManager notificationManager;
+        private readonly BitWallpaper.Helpers.NotificationManager notificationManager = new BitWallpaper.Helpers.NotificationManager();
 
         public App()
         {
@@ -48,16 +62,11 @@ namespace BitWallpaper
             {
                 InitializeComponent();
 
+                this.RequestedTheme = ApplicationTheme.Dark;
+
                 // For testing.
                 //Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = "en-US";
                 //Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = "ja-JP";
-
-                // TODO: change theme in the setting.
-                this.RequestedTheme = ApplicationTheme.Dark;
-
-                // Notification
-                notificationManager = new BitWallpaper.Helpers.NotificationManager();
-                AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
 
             }
             catch (XamlParseException parseException)
@@ -84,6 +93,7 @@ namespace BitWallpaper
 
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
 
         }
 
@@ -118,13 +128,17 @@ namespace BitWallpaper
             }
             */
             //
+
+            WinUIEx.WindowManager.PersistenceStorage = new FilePersistence(Path.Combine(AppDataFolder, "WinUIExPersistence.json"));
+
             _window = new MainWindow();
             _viewModel = new MainViewModel();
             _shell = new MainShell(_viewModel);
             _window.Content = _shell;
 
+            // TODO: change theme in the setting.
             TitleBarHelper.UpdateTitleBar(ElementTheme.Default);
-
+            /*
             var manager = WinUIEx.WindowManager.Get(_window);
             // https://stackoverflow.com/questions/74879865/invalidoperationexception-when-closing-a-windowex-window-in-winui-3
             //manager.PersistenceId = "MainWindowPersistanceId";
@@ -132,14 +146,16 @@ namespace BitWallpaper
             manager.MinHeight = 480;
             //manager.Backdrop = new WinUIEx.AcrylicSystemBackdrop();
             manager.Backdrop = new WinUIEx.MicaSystemBackdrop();
-
+            */
             //
+
+            AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
             notificationManager.Init();
 
-            _window.Activate();
+            MainWindow.Activate();
 
 
-            _viewModel.ShowBalloon += (sender, arg) => { ShowBalloon(arg); };
+            ViewModel.ShowBalloon += (sender, arg) => { ShowBalloon(arg); };
         }
 
         private void ShowBalloon(ShowBalloonEventArgs arg)
@@ -269,5 +285,78 @@ namespace BitWallpaper
             }
         }
 
+        private class FilePersistence : IDictionary<string, object>
+        {
+            private readonly Dictionary<string, object> _data = new Dictionary<string, object>();
+            private readonly string _file;
+
+            public FilePersistence(string filename)
+            {
+                _file = filename;
+                try
+                {
+                    if (File.Exists(filename))
+                    {
+                        var jo = System.Text.Json.Nodes.JsonObject.Parse(File.ReadAllText(filename)) as JsonObject;
+                        foreach (var node in jo)
+                        {
+                            if (node.Value is JsonValue jvalue && jvalue.TryGetValue<string>(out string value))
+                                _data[node.Key] = value;
+                        }
+                    }
+                }
+                catch { }
+            }
+            private void Save()
+            {
+                JsonObject jo = new JsonObject();
+                foreach (var item in _data)
+                {
+                    if (item.Value is string s) // In this case we only need string support. TODO: Support other types
+                        jo.Add(item.Key, s);
+                }
+                File.WriteAllText(_file, jo.ToJsonString());
+            }
+            public object this[string key] { get => _data[key]; set { _data[key] = value; Save(); } }
+
+            public ICollection<string> Keys => _data.Keys;
+
+            public ICollection<object> Values => _data.Values;
+
+            public int Count => _data.Count;
+
+            public bool IsReadOnly => false;
+
+            public void Add(string key, object value)
+            {
+                _data.Add(key, value); Save();
+            }
+
+            public void Add(KeyValuePair<string, object> item)
+            {
+                _data.Add(item.Key, item.Value); Save();
+            }
+
+            public void Clear()
+            {
+                _data.Clear(); Save();
+            }
+
+            public bool Contains(KeyValuePair<string, object> item) => _data.Contains(item);
+
+            public bool ContainsKey(string key) => _data.ContainsKey(key);
+
+            public void CopyTo(KeyValuePair<string, object>[] array, int arrayIndex) => throw new NotImplementedException(); // TODO
+
+            public IEnumerator<KeyValuePair<string, object>> GetEnumerator() => throw new NotImplementedException(); // TODO
+
+            public bool Remove(string key) => throw new NotImplementedException(); // TODO
+
+            public bool Remove(KeyValuePair<string, object> item) => throw new NotImplementedException(); // TODO
+
+            public bool TryGetValue(string key, [MaybeNullWhen(false)] out object value) => throw new NotImplementedException(); // TODO
+
+            IEnumerator IEnumerable.GetEnumerator() => throw new NotImplementedException(); // TODO
+        }
     }
 }

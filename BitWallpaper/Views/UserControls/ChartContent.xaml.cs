@@ -63,7 +63,7 @@ namespace BitWallpaper.Views.UserControls
         {
             await Task.Delay(10);
 
-            bool? uithread = (App.Current as App)?.CurrentDispatcherQueue?.HasThreadAccess;
+            bool? uithread = App.CurrentDispatcherQueue?.HasThreadAccess;
             if (uithread != null)
             {
                 if (uithread == true)
@@ -72,7 +72,7 @@ namespace BitWallpaper.Views.UserControls
                 }
                 else
                 {
-                    (App.Current as App)?.CurrentDispatcherQueue?.TryEnqueue(() =>
+                    App.CurrentDispatcherQueue?.TryEnqueue(() =>
                     {
                         DoScroll();
                     });

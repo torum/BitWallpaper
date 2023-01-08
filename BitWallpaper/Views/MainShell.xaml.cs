@@ -41,23 +41,25 @@ namespace BitWallpaper.Views
             (PairCodes.bat_jpy.ToString(), typeof(BatJpyPage)),
             ("settings", typeof(SettingsPage)),
         };
-
+        /*
         private string _envDataFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         private string _appDataFolder;
         private string _appConfigFilePath;
+        
 
         private static readonly ResourceLoader _resourceLoader = new();
-
+        */
         public MainShell(MainViewModel mainVM)
         {
             MainVM = mainVM;
-
+            /*
             var _appName = _resourceLoader.GetString("AppName");
             var _appDeveloper = "torum";
-
+            
             _appDataFolder = _envDataFolder + System.IO.Path.DirectorySeparatorChar + _appDeveloper + System.IO.Path.DirectorySeparatorChar + _appName;
             System.IO.Directory.CreateDirectory(_appDataFolder);
             _appConfigFilePath = _appDataFolder + System.IO.Path.DirectorySeparatorChar + _appName + ".config";
+            */
 
             #region == Load settings ==
 
@@ -65,9 +67,9 @@ namespace BitWallpaper.Views
             double width = 480;//(App.Current as App).MainWindow.GetAppWindow().Size.Width;
             bool navigationViewControl_IsPaneOpen = false;  
 
-            if (System.IO.File.Exists(_appConfigFilePath))
+            if (System.IO.File.Exists(App.AppConfigFilePath))
             {
-                XDocument xdoc = XDocument.Load(_appConfigFilePath);
+                XDocument xdoc = XDocument.Load(App.AppConfigFilePath);
 
                 //Debug.WriteLine(xdoc.ToString());
 
@@ -321,12 +323,13 @@ namespace BitWallpaper.Views
 
             //
             MainVM.NavigationViewControl_IsPaneOpen = navigationViewControl_IsPaneOpen;
-
+            /*
             if (((width > 100) && (height > 100)) && ((width < 2000) && (height < 2000)))
             {
                 // Be carefull!
                 (App.Current as App).MainWindow.CenterOnScreen(width, height);
             }
+            */
         }
 
         private void OnLoaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
@@ -506,12 +509,12 @@ namespace BitWallpaper.Views
 
             try
             {
-                doc.Save(_appConfigFilePath);
+                doc.Save(App.AppConfigFilePath);
             }
             //catch (System.IO.FileNotFoundException) { }
             catch (Exception ex)
             {
-                Debug.WriteLine("■■■■■ Error  設定ファイルの保存中: " + ex + " while opening : " + _appConfigFilePath);
+                Debug.WriteLine("■■■■■ Error  設定ファイルの保存中: " + ex + " while opening : " + App.AppConfigFilePath);
             }
 
             MainVM.CleanUp();

@@ -62,7 +62,7 @@
                     -->
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
                             <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
                             <TextBlock Text="{x:Bind MainVM.LtpBtcJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
                         </StackPanel>
@@ -77,7 +77,7 @@
                     -->
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
                             <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
                             <TextBlock Text="{x:Bind MainVM.LtpXrpJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
                         </StackPanel>
@@ -134,7 +134,7 @@
                         </PathIcon>-->
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
                             <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
                             <TextBlock Text="{x:Bind MainVM.LtpEthJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
                         </StackPanel>
@@ -152,7 +152,7 @@
                         -->
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
                             <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
                             <TextBlock Text="{x:Bind MainVM.LtpLtcJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
                         </StackPanel>
@@ -177,7 +177,7 @@
                     -->
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
                             <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
                             <TextBlock Text="{x:Bind MainVM.LtpBccJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
                         </StackPanel>
@@ -203,7 +203,7 @@
                         -->
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
                             <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
                             <TextBlock Text="{x:Bind MainVM.LtpMonaJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
                         </StackPanel>
@@ -218,7 +218,7 @@
                         -->
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
                             <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
                             <TextBlock Text="{x:Bind MainVM.LtpXlmJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
                         </StackPanel>
@@ -233,7 +233,7 @@
                         -->
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
                             <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
                             <TextBlock Text="{x:Bind MainVM.LtpQtumJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
                         </StackPanel>
@@ -248,7 +248,7 @@
                         -->
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
                             <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
                             <TextBlock Text="{x:Bind MainVM.LtpBatJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
                         </StackPanel>

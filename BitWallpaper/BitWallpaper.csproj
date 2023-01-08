@@ -18,8 +18,8 @@
 	  
 	  <PublishProfile>win10-$(Platform).pubxml</PublishProfile>
 	  <EnableMsixTooling>true</EnableMsixTooling>
-	  <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 	  -->
+	  <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 
 
 
@@ -31,7 +31,9 @@
       <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
       <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
 	  <PackageIcon>App_Icon.png</PackageIcon>
-	  <AssemblyVersion>2.0.3.0</AssemblyVersion>
+	  <AssemblyVersion>2.0.3.1</AssemblyVersion>
+	  <FileVersion>$(AssemblyVersion)</FileVersion>
+	  <Version>$(AssemblyVersion)</Version>
   </PropertyGroup>
 
 

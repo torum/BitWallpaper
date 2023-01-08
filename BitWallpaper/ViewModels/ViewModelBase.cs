@@ -18,7 +18,7 @@ public abstract class ViewModelBase : INotifyPropertyChanged, IDataErrorInfo
     {
         //this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        bool? uithread = (App.Current as App)?.CurrentDispatcherQueue?.HasThreadAccess;
+        bool? uithread = App.CurrentDispatcherQueue?.HasThreadAccess;
 
         if (uithread != null)
         {
@@ -28,7 +28,7 @@ public abstract class ViewModelBase : INotifyPropertyChanged, IDataErrorInfo
             }
             else
             {
-                (App.Current as App)?.CurrentDispatcherQueue?.TryEnqueue(() =>
+                App.CurrentDispatcherQueue?.TryEnqueue(() =>
                 {
                     DoNotifyPropertyChanged(propertyName);
                 });

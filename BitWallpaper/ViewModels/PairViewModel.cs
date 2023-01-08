@@ -144,14 +144,14 @@ public class PairViewModel : ViewModelBase
 
             if (IsSelectedActive && IsEnabled) // 
             {
-                (App.Current as App)?.CurrentDispatcherQueue?.TryEnqueue(() =>
+                App.CurrentDispatcherQueue?.TryEnqueue(() =>
                 {
                     Sections[0].Yi = (double)_ltp;
                     Sections[0].Yj = (double)_ltp;
                 });
                 
                 // a little hack to update Section...
-                (App.Current as App)?.CurrentDispatcherQueue?.TryEnqueue(() =>
+                App.CurrentDispatcherQueue?.TryEnqueue(() =>
                 {
                     if (Series[1].Values == null) return;
                     if (Series[1].Values is not ObservableCollection<FinancialPoint>) return;
@@ -2286,7 +2286,7 @@ public class PairViewModel : ViewModelBase
 
         if (trs != null)
         {
-            (Application.Current as App)?.CurrentDispatcherQueue?.TryEnqueue(() =>
+            App.CurrentDispatcherQueue?.TryEnqueue(() =>
             {
                 if (_transactions == null) return;
 
