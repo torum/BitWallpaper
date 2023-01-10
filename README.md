@@ -9,11 +9,15 @@ Displays cryptocurrency charts using BitBank's API. No registration required. (T
  
 ## Screenshots：
 
+Default with MicaSystemBackdrop  
 ![alt text](https://github.com/torum/BitWallpaper/blob/master/docs/Images/BitWallpaper-screenshot-V2-full.png?raw=true)
 
+Acrylic background with AcrylicSystemBackdrop
+![alt text](https://github.com/torum/BitWallpaper/blob/master/docs/Images/BitWallpaper-screenshot-V2-full-AcrylicSystemBackdrop.png?raw=true)
 
-Small display, compact
-
+Small display, compact mode  
 ![alt text](https://github.com/torum/BitWallpaper/blob/master/docs/Images/BitWallpaper-screenshot-V2-small.png?raw=true)
+
+
 
 
