@@ -4,36 +4,41 @@
     <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <RootNamespace>BitWallpaper</RootNamespace>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>x86;x64;ARM64</Platforms>
     <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
+	  <PublishProfile>Properties\PublishProfiles\win10-$(Platform).pubxml</PublishProfile>
     <UseWinUI>true</UseWinUI>
-	<ApplicationIcon>App_Icon.ico</ApplicationIcon>
 	  <!--
 	  
 	  <WindowsPackageType>None</WindowsPackageType>
 	 -->
 
 	  <!--
+
 	  
-	  <PublishProfile>win10-$(Platform).pubxml</PublishProfile>
-	  <EnableMsixTooling>true</EnableMsixTooling>
 	  -->
+
+    <EnableMsixTooling>true</EnableMsixTooling>
+
 	  <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 
 
-
 	  <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
-      <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
-      <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
-      <GenerateTestArtifacts>True</GenerateTestArtifacts>
-      <AppxBundle>Always</AppxBundle>
-      <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
-      <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-	  <PackageIcon>App_Icon.png</PackageIcon>
-	  <AssemblyVersion>2.0.3.1</AssemblyVersion>
+	  <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+	  <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
+	  <GenerateTestArtifacts>True</GenerateTestArtifacts>
+	  <AppxBundle>Always</AppxBundle>
+	  <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
+	  <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+	  <AssemblyVersion>2.0.4.1</AssemblyVersion>
 	  <FileVersion>$(AssemblyVersion)</FileVersion>
 	  <Version>$(AssemblyVersion)</Version>
+	  <ImplicitUsings>enable</ImplicitUsings>
+	  <ApplicationIcon>App_Icon.ico</ApplicationIcon>
+	  <ApplicationManifest>app.manifest</ApplicationManifest>
+	  <PackageIcon>App_Icon.png</PackageIcon>
+	  <IncludeSymbols>True</IncludeSymbols>
+	  <StartupObject>BitWallpaper.Program</StartupObject>
   </PropertyGroup>
 
 
@@ -74,10 +79,18 @@
 		<HasPackageAndPublishMenu>false</HasPackageAndPublishMenu>
 	</PropertyGroup>
 	<ItemGroup>
+	  <None Remove="Images\Square44x44Logo.scale-200.png" />
+	  <None Remove="Images\Square44x44Logo.targetsize-24_altform-unplated.png" />
 	  <None Remove="Views\ContentDialogContent.xaml" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Content Include="App_Icon.ico">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Images\Square44x44Logo.scale-200.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Images\Square44x44Logo.targetsize-24_altform-unplated.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>
@@ -308,4 +321,12 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+
+	<!-- https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/self-contained-deploy/deploy-self-contained-apps  -->
+	<Target Name="_RemoveFrameworkReferences" BeforeTargets="_ConvertItems;_CalculateInputsForGenerateCurrentProjectAppxManifest">
+		<ItemGroup>
+			<FrameworkSdkReference Remove="@(FrameworkSdkReference)" Condition="$([System.String]::Copy('%(FrameworkSdkReference.SDKName)').StartsWith('Microsoft.WindowsAppRuntime.'))" />
+		</ItemGroup>
+	</Target>
+	
 </Project>

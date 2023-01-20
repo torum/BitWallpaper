@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
 using BitWallpaper.Models;
+using System.Net.Http.Headers;
 
 namespace BitWallpaper.Models.APIClients;
 
@@ -15,6 +16,11 @@ public class PublicAPIClient : BaseClient
     public PublicAPIClient()
     {
         Client.BaseAddress = PublicAPIUri;
+
+        Client.DefaultRequestHeaders.Clear();
+        Client.DefaultRequestHeaders.ConnectionClose = false;
+        //Client.DefaultRequestHeaders.ConnectionClose = true;
+        Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
     }
 
     // Ticker取得メソッド

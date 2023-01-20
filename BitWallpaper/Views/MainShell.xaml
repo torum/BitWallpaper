@@ -7,6 +7,7 @@
     xmlns:helpers="using:BitWallpaper.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:viewmodels="using:BitWallpaper.ViewModels" 
+
     mc:Ignorable="d"
     Loaded="OnLoaded">
     <Grid>
@@ -44,7 +45,7 @@
             IsBackButtonVisible="Collapsed"
             IsSettingsVisible="True"
             PaneDisplayMode="Auto"
-            ExpandedModeThresholdWidth="1280"
+            ExpandedModeThresholdWidth="1007"
             OpenPaneLength ="180"
             IsPaneOpen="{x:Bind MainVM.NavigationViewControl_IsPaneOpen, Mode=TwoWay}"
             DisplayModeChanged="NavigationViewControl_DisplayModeChanged"

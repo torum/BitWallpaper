@@ -31,6 +31,7 @@ namespace BitWallpaper
             
             // Need to be here in the code bihind.
             this.ExtendsContentIntoTitleBar = true;
+
         }
     }
 }

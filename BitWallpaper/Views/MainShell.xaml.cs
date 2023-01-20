@@ -18,6 +18,7 @@ using Microsoft.Windows.ApplicationModel.Resources;
 using System.Xml;
 using System.Xml.Linq;
 using LiveChartsCore.SkiaSharpView.Painting;
+using System.IO;
 
 namespace BitWallpaper.Views
 {
@@ -319,7 +320,6 @@ namespace BitWallpaper.Views
             (App.Current as App).MainWindow.Activated += MainWindow_Activated;
             (App.Current as App).MainWindow.Closed += MainWindow_Closed;
             //AppTitleBarText.Text = "AppDisplayName".GetLocalized();
-
 
             //
             MainVM.NavigationViewControl_IsPaneOpen = navigationViewControl_IsPaneOpen;

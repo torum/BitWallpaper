@@ -62,7 +62,8 @@ namespace BitWallpaper
             {
                 InitializeComponent();
 
-                this.RequestedTheme = ApplicationTheme.Dark;
+                //this.RequestedTheme = ApplicationTheme.Dark;
+                //this.RequestedTheme = ApplicationTheme.Light;
 
                 // For testing.
                 //Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = "en-US";
@@ -128,8 +129,10 @@ namespace BitWallpaper
             }
             */
             //
-
-            WinUIEx.WindowManager.PersistenceStorage = new FilePersistence(Path.Combine(AppDataFolder, "WinUIExPersistence.json"));
+            if (!RuntimeHelper.IsMSIX)
+            {
+                WinUIEx.WindowManager.PersistenceStorage = new FilePersistence(Path.Combine(AppDataFolder, "WinUIExPersistence.json"));
+            }
 
             _window = new MainWindow();
             _viewModel = new MainViewModel();
@@ -138,6 +141,7 @@ namespace BitWallpaper
 
             // TODO: change theme in the setting.
             TitleBarHelper.UpdateTitleBar(ElementTheme.Default);
+
             /*
             var manager = WinUIEx.WindowManager.Get(_window);
             // https://stackoverflow.com/questions/74879865/invalidoperationexception-when-closing-a-windowex-window-in-winui-3
@@ -151,23 +155,18 @@ namespace BitWallpaper
 
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
             notificationManager.Init();
+            _viewModel.ShowBalloon += (sender, arg) => { ShowBalloon(arg); };
 
             MainWindow.Activate();
-
-
-            ViewModel.ShowBalloon += (sender, arg) => { ShowBalloon(arg); };
         }
 
         private void ShowBalloon(ShowBalloonEventArgs arg)
         {
 
             // https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/notifications/app-notifications/app-notifications-quickstart?tabs=cs
-            var appNotification = new AppNotificationBuilder()
-    .AddText(arg.Title)
-    .AddText(arg.Text)
-    .SetTimeStamp(new DateTime(2017, 04, 15, 19, 45, 00, DateTimeKind.Utc)).BuildNotification();
+            var appNotification = new AppNotificationBuilder().AddText(arg.Title).AddText(arg.Text).SetTimeStamp(new DateTime(2017, 04, 15, 19, 45, 00, DateTimeKind.Utc)).BuildNotification();
             
-        //.AddButton(new AppNotificationButton("OK")
+            //.AddButton(new AppNotificationButton("OK")
             //.AddArgument("action", "dissmiss"))
             //.SetTimeStamp(new DateTime(2017, 04, 15, 19, 45, 00, DateTimeKind.Utc));
 
@@ -204,9 +203,6 @@ namespace BitWallpaper
             // And call SetForegroundWindow... requires Microsoft.Windows.CsWin32 NuGet package and a NativeMethods.txt file with SetForegroundWindow method
             Windows.Win32.PInvoke.SetForegroundWindow(hwnd);
             */
-
-
-
         }
 
         private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
@@ -251,7 +247,6 @@ namespace BitWallpaper
             }
         }
 
-
         public void AppendErrorLog(string kindTxt, string errorTxt)
         {
             Errortxt.AppendLine(kindTxt + ": " + errorTxt);
@@ -285,6 +280,7 @@ namespace BitWallpaper
             }
         }
 
+        // for the WinUIEx, unpackaged.
         private class FilePersistence : IDictionary<string, object>
         {
             private readonly Dictionary<string, object> _data = new Dictionary<string, object>();

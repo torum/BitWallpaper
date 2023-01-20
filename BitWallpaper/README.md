@@ -12,8 +12,7 @@ Displays cryptocurrency charts using BitBank's API. No registration required. (T
 ## Change log
 
 * v2.0.3.1 (2023/1/8)  
- WinUIEx updated. Now using local persistence file (previous ver did not support unpackaged app). Now, the MainWindow remembers and restore its size and pos.   
- NavigationTabItem's text (LTP) is now RIGHT aligned.
+ WinUIEx updated. Now we can use local persistence file (previous ver did not support unpackaged app). Finally, the MainWindow remembers and restore its size and pos. NavigationTabItem's text (LTP) is now RIGHT aligned.
 * v2.0.3.0 (2023/1/1)   
  App Store re-uploaded. Some trouble with single instance procedure at start up. 
 
