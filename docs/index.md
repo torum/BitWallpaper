@@ -7,7 +7,7 @@ Displays cryptocurrency charts using BitBank's API. No registration required. (T
 [here](https://github.com/torum/BitDesk)).
 
 ## Download:
- [Download from Microsoft Store](https://www.microsoft.com/ja-jp/p/bitwallpaper/9ncc3ntg9dp3)
+ [Download from Microsoft Store](https://apps.microsoft.com/store/detail/bitwallpaper/9NCC3NTG9DP3)
  
 ### GitHub
 [https://github.com/torum/BitWallpaper](https://github.com/torum/BitWallpaper)
