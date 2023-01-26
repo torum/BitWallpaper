@@ -237,4 +237,49 @@
   <data name="Shell_Home" xml:space="preserve">
     <value>Home</value>
   </data>
+  <data name="Shell_AdaJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Cardano (ADA/JPY)</value>
+  </data>
+  <data name="Shell_AstrJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Astar (ASTR/JPY)</value>
+  </data>
+  <data name="Shell_AvaxJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Avalanche (AVAX/JPY)</value>
+  </data>
+  <data name="Shell_AxsJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Axie Infinity (AXS/JPY)</value>
+  </data>
+  <data name="Shell_BobaJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Boba Network (BOBA/JPY)</value>
+  </data>
+  <data name="Shell_DogeJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>DogeCoin (DOGE/JPY)</value>
+  </data>
+  <data name="Shell_DotJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Polkadot (DOT/JPY)</value>
+  </data>
+  <data name="Shell_EnjJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>EnjinCoin (ENJ/JPY)</value>
+  </data>
+  <data name="Shell_FlrJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Flare (FLR/JPY)</value>
+  </data>
+  <data name="Shell_LinkJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Chainlink (LINK/JPY)</value>
+  </data>
+  <data name="Shell_MaticJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Polygon (MATIC/JPY)</value>
+  </data>
+  <data name="Shell_MkrJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Maker (MKR/JPY)</value>
+  </data>
+  <data name="Shell_OmgJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>OMG (OMG/JPY)</value>
+  </data>
+  <data name="Shell_SandJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Sand (SAND/JPY)</value>
+  </data>
+  <data name="Shell_XymJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Symbol (XYM/JPY)</value>
+  </data>
 </root>

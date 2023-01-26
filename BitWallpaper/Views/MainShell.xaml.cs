@@ -40,6 +40,21 @@ namespace BitWallpaper.Views
             (PairCodes.xlm_jpy.ToString(), typeof(XlmJpyPage)),
             (PairCodes.qtum_jpy.ToString(), typeof(QtumJpyPage)),
             (PairCodes.bat_jpy.ToString(), typeof(BatJpyPage)),
+            (PairCodes.omg_jpy.ToString(), typeof(OmgJpyPage)),
+            (PairCodes.xym_jpy.ToString(), typeof(XymJpyPage)),
+            (PairCodes.link_jpy.ToString(), typeof(LinkJpyPage)),
+            (PairCodes.mkr_jpy.ToString(), typeof(MkrJpyPage)),
+            (PairCodes.boba_jpy.ToString(), typeof(BobaJpyPage)),
+            (PairCodes.enj_jpy.ToString(), typeof(EnjJpyPage)),
+            (PairCodes.matic_jpy.ToString(), typeof(MaticJpyPage)),
+            (PairCodes.dot_jpy.ToString(), typeof(DotJpyPage)),
+            (PairCodes.doge_jpy.ToString(), typeof(DogeJpyPage)),
+            (PairCodes.astr_jpy.ToString(), typeof(AstrJpyPage)),
+            (PairCodes.ada_jpy.ToString(), typeof(AdaJpyPage)),
+            (PairCodes.avax_jpy.ToString(), typeof(AvaxJpyPage)),
+            (PairCodes.axs_jpy.ToString(), typeof(AxsJpyPage)),
+            (PairCodes.flr_jpy.ToString(), typeof(FlrJpyPage)),
+            (PairCodes.sand_jpy.ToString(), typeof(SandJpyPage)),
             ("settings", typeof(SettingsPage)),
         };
         /*
@@ -58,7 +73,7 @@ namespace BitWallpaper.Views
             var _appDeveloper = "torum";
             
             _appDataFolder = _envDataFolder + System.IO.Path.DirectorySeparatorChar + _appDeveloper + System.IO.Path.DirectorySeparatorChar + _appName;
-            System.IO.Directory.CreateDirectory(_appDataFolder);
+            
             _appConfigFilePath = _appDataFolder + System.IO.Path.DirectorySeparatorChar + _appName + ".config";
             */
 
@@ -287,6 +302,66 @@ namespace BitWallpaper.Views
                                 else if (pair.PairCode == PairCodes.bat_jpy)
                                 {
                                     MainVM.IsOnBatJpy = pair.IsEnabled;
+                                }
+                                else if (pair.PairCode == PairCodes.omg_jpy)
+                                {
+                                    MainVM.IsOnOmgJpy = pair.IsEnabled;
+                                }
+                                else if (pair.PairCode == PairCodes.xym_jpy)
+                                {
+                                    MainVM.IsOnXymJpy = pair.IsEnabled;
+                                }
+                                else if (pair.PairCode == PairCodes.link_jpy)
+                                {
+                                    MainVM.IsOnLinkJpy = pair.IsEnabled;
+                                }
+                                else if (pair.PairCode == PairCodes.mkr_jpy)
+                                {
+                                    MainVM.IsOnMkrJpy = pair.IsEnabled;
+                                }
+                                else if (pair.PairCode == PairCodes.boba_jpy)
+                                {
+                                    MainVM.IsOnBobaJpy = pair.IsEnabled;
+                                }
+                                else if (pair.PairCode == PairCodes.enj_jpy)
+                                {
+                                    MainVM.IsOnEnjJpy = pair.IsEnabled;
+                                }
+                                else if (pair.PairCode == PairCodes.matic_jpy)
+                                {
+                                    MainVM.IsOnMaticJpy = pair.IsEnabled;
+                                }
+                                else if (pair.PairCode == PairCodes.dot_jpy)
+                                {
+                                    MainVM.IsOnDotJpy = pair.IsEnabled;
+                                }
+                                else if (pair.PairCode == PairCodes.doge_jpy)
+                                {
+                                    MainVM.IsOnDogeJpy = pair.IsEnabled;
+                                }
+                                else if (pair.PairCode == PairCodes.astr_jpy)
+                                {
+                                    MainVM.IsOnAstrJpy = pair.IsEnabled;
+                                }
+                                else if (pair.PairCode == PairCodes.ada_jpy)
+                                {
+                                    MainVM.IsOnAdaJpy = pair.IsEnabled;
+                                }
+                                else if (pair.PairCode == PairCodes.avax_jpy)
+                                {
+                                    MainVM.IsOnAvaxJpy = pair.IsEnabled;
+                                }
+                                else if (pair.PairCode == PairCodes.axs_jpy)
+                                {
+                                    MainVM.IsOnAxsJpy = pair.IsEnabled;
+                                }
+                                else if (pair.PairCode == PairCodes.flr_jpy)
+                                {
+                                    MainVM.IsOnFlrJpy = pair.IsEnabled;
+                                }
+                                else if (pair.PairCode == PairCodes.sand_jpy)
+                                {
+                                    MainVM.IsOnSandJpy = pair.IsEnabled;
                                 }
                             }
                         }
@@ -536,9 +611,12 @@ namespace BitWallpaper.Views
             */
         }
 
-        private void NavigationViewControl_Loaded(object sender, RoutedEventArgs e)
+        private async void NavigationViewControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if (NavigationViewControl.MenuItems.Count >0)
+
+            await Task.Delay(100);
+
+            if (NavigationViewControl.MenuItems.Count > 0)
             {
                 // Since we use ItemInvoked, we set selecteditem manually
                 NavigationViewControl.SelectedItem = NavigationViewControl.MenuItems.OfType<NavigationViewItem>().Where(x => x.Visibility == Visibility.Visible).FirstOrDefault();//.First();
@@ -641,6 +719,66 @@ namespace BitWallpaper.Views
                 {
                     vm = MainVM.Pairs.FirstOrDefault(x => x.PairCode == PairCodes.bat_jpy);
                 }
+                else if (_page == typeof(OmgJpyPage))
+                {
+                    vm = MainVM.Pairs.FirstOrDefault(x => x.PairCode == PairCodes.omg_jpy);
+                }
+                else if (_page == typeof(XymJpyPage))
+                {
+                    vm = MainVM.Pairs.FirstOrDefault(x => x.PairCode == PairCodes.xym_jpy);
+                }
+                else if (_page == typeof(LinkJpyPage))
+                {
+                    vm = MainVM.Pairs.FirstOrDefault(x => x.PairCode == PairCodes.link_jpy);
+                }
+                else if (_page == typeof(MkrJpyPage))
+                {
+                    vm = MainVM.Pairs.FirstOrDefault(x => x.PairCode == PairCodes.mkr_jpy);
+                }
+                else if (_page == typeof(BobaJpyPage))
+                {
+                    vm = MainVM.Pairs.FirstOrDefault(x => x.PairCode == PairCodes.boba_jpy);
+                }
+                else if (_page == typeof(EnjJpyPage))
+                {
+                    vm = MainVM.Pairs.FirstOrDefault(x => x.PairCode == PairCodes.enj_jpy);
+                }
+                else if (_page == typeof(MaticJpyPage))
+                {
+                    vm = MainVM.Pairs.FirstOrDefault(x => x.PairCode == PairCodes.matic_jpy);
+                }
+                else if (_page == typeof(DotJpyPage))
+                {
+                    vm = MainVM.Pairs.FirstOrDefault(x => x.PairCode == PairCodes.dot_jpy);
+                }
+                else if (_page == typeof(DogeJpyPage))
+                {
+                    vm = MainVM.Pairs.FirstOrDefault(x => x.PairCode == PairCodes.doge_jpy);
+                }
+                else if (_page == typeof(AstrJpyPage))
+                {
+                    vm = MainVM.Pairs.FirstOrDefault(x => x.PairCode == PairCodes.astr_jpy);
+                }
+                else if (_page == typeof(AdaJpyPage))
+                {
+                    vm = MainVM.Pairs.FirstOrDefault(x => x.PairCode == PairCodes.ada_jpy);
+                }
+                else if (_page == typeof(AvaxJpyPage))
+                {
+                    vm = MainVM.Pairs.FirstOrDefault(x => x.PairCode == PairCodes.avax_jpy);
+                }
+                else if (_page == typeof(AxsJpyPage))
+                {
+                    vm = MainVM.Pairs.FirstOrDefault(x => x.PairCode == PairCodes.axs_jpy);
+                }
+                else if (_page == typeof(FlrJpyPage))
+                {
+                    vm = MainVM.Pairs.FirstOrDefault(x => x.PairCode == PairCodes.flr_jpy);
+                }
+                else if (_page == typeof(SandJpyPage))
+                {
+                    vm = MainVM.Pairs.FirstOrDefault(x => x.PairCode == PairCodes.sand_jpy);
+                }
                 else
                 {
                     throw new NotImplementedException();
@@ -719,6 +857,66 @@ namespace BitWallpaper.Views
             else if (e.SourcePageType == typeof(BatJpyPage))
             {
                 _activePair = PairCodes.bat_jpy;
+            }
+            else if (e.SourcePageType == typeof(OmgJpyPage))
+            {
+                _activePair = PairCodes.omg_jpy;
+            }
+            else if (e.SourcePageType == typeof(XymJpyPage))
+            {
+                _activePair = PairCodes.xym_jpy;
+            }
+            else if (e.SourcePageType == typeof(LinkJpyPage))
+            {
+                _activePair = PairCodes.link_jpy;
+            }
+            else if (e.SourcePageType == typeof(MkrJpyPage))
+            {
+                _activePair = PairCodes.mkr_jpy;
+            }
+            else if (e.SourcePageType == typeof(BobaJpyPage))
+            {
+                _activePair = PairCodes.boba_jpy;
+            }
+            else if (e.SourcePageType == typeof(EnjJpyPage))
+            {
+                _activePair = PairCodes.enj_jpy;
+            }
+            else if (e.SourcePageType == typeof(MaticJpyPage))
+            {
+                _activePair = PairCodes.matic_jpy;
+            }
+            else if (e.SourcePageType == typeof(DotJpyPage))
+            {
+                _activePair = PairCodes.dot_jpy;
+            }
+            else if (e.SourcePageType == typeof(DogeJpyPage))
+            {
+                _activePair = PairCodes.doge_jpy;
+            }
+            else if (e.SourcePageType == typeof(AstrJpyPage))
+            {
+                _activePair = PairCodes.astr_jpy;
+            }
+            else if (e.SourcePageType == typeof(AdaJpyPage))
+            {
+                _activePair = PairCodes.ada_jpy;
+            }
+            else if (e.SourcePageType == typeof(AvaxJpyPage))
+            {
+                _activePair = PairCodes.avax_jpy;
+            }
+            else if (e.SourcePageType == typeof(AxsJpyPage))
+            {
+                _activePair = PairCodes.axs_jpy;
+            }
+            else if (e.SourcePageType == typeof(FlrJpyPage))
+            {
+                _activePair = PairCodes.flr_jpy;
+            }
+            else if (e.SourcePageType == typeof(SandJpyPage))
+            {
+                _activePair = PairCodes.sand_jpy;
             }
             else
             {

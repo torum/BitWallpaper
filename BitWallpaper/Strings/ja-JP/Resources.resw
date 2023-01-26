@@ -237,4 +237,49 @@
   <data name="Shell_Home" xml:space="preserve">
     <value>Home</value>
   </data>
+  <data name="Shell_AdaJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>カルダノ (ADA/JPY)</value>
+  </data>
+  <data name="Shell_AstrJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>アスター (ASTR/JPY)</value>
+  </data>
+  <data name="Shell_AvaxJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>アバランチ (AVAX/JPY)</value>
+  </data>
+  <data name="Shell_AxsJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>アクシーインフィニティ (AXS/JPY)</value>
+  </data>
+  <data name="Shell_BobaJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ボバネットワーク (BOBA/JPY)</value>
+  </data>
+  <data name="Shell_DogeJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ドージコイン (DOGE/JPY)</value>
+  </data>
+  <data name="Shell_DotJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ポルカドット (DOT/JPY)</value>
+  </data>
+  <data name="Shell_EnjJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>エンジンコイン (ENJ/JPY)</value>
+  </data>
+  <data name="Shell_FlrJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>フレア (FLR/JPY)</value>
+  </data>
+  <data name="Shell_LinkJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>チェーンリンク (LINK/JPY)</value>
+  </data>
+  <data name="Shell_MaticJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ポリゴン (MATIC/JPY)</value>
+  </data>
+  <data name="Shell_MkrJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>メイカー (MKR/JPY)</value>
+  </data>
+  <data name="Shell_OmgJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>オーエムジー (OMG/JPY)</value>
+  </data>
+  <data name="Shell_SandJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ザ・サンドボックス (SAND/JPY)</value>
+  </data>
+  <data name="Shell_XymJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>シンボル (XYM/JPY)</value>
+  </data>
 </root>

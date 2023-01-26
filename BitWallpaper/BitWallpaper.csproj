@@ -30,7 +30,7 @@
 	  <AppxBundle>Always</AppxBundle>
 	  <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
 	  <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-	  <AssemblyVersion>2.0.4.1</AssemblyVersion>
+	  <AssemblyVersion>2.0.5.0</AssemblyVersion>
 	  <FileVersion>$(AssemblyVersion)</FileVersion>
 	  <Version>$(AssemblyVersion)</Version>
 	  <ImplicitUsings>enable</ImplicitUsings>
@@ -39,7 +39,25 @@
 	  <PackageIcon>App_Icon.png</PackageIcon>
 	  <IncludeSymbols>True</IncludeSymbols>
 	  <StartupObject>BitWallpaper.Program</StartupObject>
+	  <Nullable>annotations</Nullable>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Remove="Assets\CryptLogos\ada.svg" />
+    <Content Remove="Assets\CryptLogos\astr.svg" />
+    <Content Remove="Assets\CryptLogos\avax.svg" />
+    <Content Remove="Assets\CryptLogos\axs.svg" />
+    <Content Remove="Assets\CryptLogos\boba.svg" />
+    <Content Remove="Assets\CryptLogos\doge.svg" />
+    <Content Remove="Assets\CryptLogos\dot.svg" />
+    <Content Remove="Assets\CryptLogos\enj.svg" />
+    <Content Remove="Assets\CryptLogos\flr.svg" />
+    <Content Remove="Assets\CryptLogos\link.svg" />
+    <Content Remove="Assets\CryptLogos\matic.svg" />
+    <Content Remove="Assets\CryptLogos\mkr.svg" />
+    <Content Remove="Assets\CryptLogos\omg.svg" />
+    <Content Remove="Assets\CryptLogos\sand.svg" />
+    <Content Remove="Assets\CryptLogos\xym.svg" />
+  </ItemGroup>
 
 
   <ItemGroup>
@@ -81,7 +99,22 @@
 	<ItemGroup>
 	  <None Remove="Images\Square44x44Logo.scale-200.png" />
 	  <None Remove="Images\Square44x44Logo.targetsize-24_altform-unplated.png" />
+	  <None Remove="Views\AdaJpyPage.xaml" />
+	  <None Remove="Views\AstrJpyPage.xaml" />
+	  <None Remove="Views\AvaxJpyPage.xaml" />
+	  <None Remove="Views\AxsJpyPage.xaml" />
+	  <None Remove="Views\BobaJpyPage.xaml" />
 	  <None Remove="Views\ContentDialogContent.xaml" />
+	  <None Remove="Views\DogeJpyPage.xaml" />
+	  <None Remove="Views\DotJpyPage.xaml" />
+	  <None Remove="Views\EnjJpyPage.xaml" />
+	  <None Remove="Views\FlrJpyPage.xaml" />
+	  <None Remove="Views\LinkJpyPage.xaml" />
+	  <None Remove="Views\MaticJpyPage.xaml" />
+	  <None Remove="Views\MkrJpyPage.xaml" />
+	  <None Remove="Views\OmgJpyPage.xaml" />
+	  <None Remove="Views\SandJpyPage.xaml" />
+	  <None Remove="Views\XymJpyPage.xaml" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Content Include="App_Icon.ico">
@@ -313,10 +346,114 @@
     <None Update="App_Icon.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Assets\CryptLogos\ada.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\CryptLogos\astr.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\CryptLogos\avax.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\CryptLogos\axs.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\CryptLogos\boba.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\CryptLogos\doge.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\CryptLogos\dot.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\CryptLogos\enj.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\CryptLogos\flr.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\CryptLogos\link.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\CryptLogos\matic.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\CryptLogos\mkr.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\CryptLogos\omg.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\CryptLogos\sand.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\CryptLogos\xym.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Icons\App_Icon.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+    <Page Update="Views\SandJpyPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\FlrJpyPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\AxsJpyPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\AvaxJpyPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\AdaJpyPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\AstrJpyPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\DogeJpyPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\DotJpyPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\MaticJpyPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\EnjJpyPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\BobaJpyPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\MkrJpyPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\LinkJpyPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\XymJpyPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\OmgJpyPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
     <Page Update="Views\ContentDialogContent.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

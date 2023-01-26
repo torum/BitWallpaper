@@ -21,6 +21,7 @@ public class PublicAPIClient : BaseClient
         Client.DefaultRequestHeaders.ConnectionClose = false;
         //Client.DefaultRequestHeaders.ConnectionClose = true;
         Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
     }
 
     // Ticker取得メソッド

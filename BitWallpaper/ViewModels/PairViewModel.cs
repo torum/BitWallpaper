@@ -8,23 +8,18 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.Painting.Effects;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Data;
 using SkiaSharp;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace BitWallpaper.ViewModels;
 
 public enum PairCodes
 {
-    btc_jpy, xrp_jpy, eth_jpy, ltc_jpy, bcc_jpy, mona_jpy, xlm_jpy, qtum_jpy, bat_jpy
+    btc_jpy, xrp_jpy, eth_jpy, ltc_jpy, bcc_jpy, mona_jpy, xlm_jpy, qtum_jpy, bat_jpy,
+    omg_jpy, xym_jpy, link_jpy, mkr_jpy, boba_jpy, enj_jpy, matic_jpy, dot_jpy, doge_jpy, astr_jpy, ada_jpy, avax_jpy, axs_jpy, flr_jpy, sand_jpy
 }
 
 public class PairViewModel : ViewModelBase
@@ -63,6 +58,21 @@ public class PairViewModel : ViewModelBase
                 {PairCodes.xlm_jpy, "XLM/JPY"},
                 {PairCodes.qtum_jpy, "QTUM/JPY"},
                 {PairCodes.bat_jpy, "BAT/JPY"},
+                {PairCodes.omg_jpy, "OMG/JPY"},
+                {PairCodes.xym_jpy, "XYM/JPY"},
+                {PairCodes.link_jpy, "LINK/JPY"},
+                {PairCodes.mkr_jpy, "MKR/JPY"},
+                {PairCodes.boba_jpy, "BOBA/JPY"},
+                {PairCodes.enj_jpy, "ENJ/JPY"},
+                {PairCodes.matic_jpy, "MATIC/JPY"},
+                {PairCodes.dot_jpy, "DOT/JPY"},
+                {PairCodes.doge_jpy, "DOGE/JPY"},
+                {PairCodes.astr_jpy, "ASTR/JPY"},
+                {PairCodes.ada_jpy, "ADA/JPY"},
+                {PairCodes.avax_jpy, "AVAX/JPY"},
+                {PairCodes.axs_jpy, "AXS/JPY"},
+                {PairCodes.flr_jpy, "FLR/JPY"},
+                {PairCodes.sand_jpy, "SAND/JPY"},
             };
 
 
@@ -83,6 +93,21 @@ public class PairViewModel : ViewModelBase
             {PairCodes.xlm_jpy, "XLM"},
             {PairCodes.qtum_jpy, "QTUM"},
             {PairCodes.bat_jpy, "BAT"},
+            {PairCodes.omg_jpy, "OMG"},
+            {PairCodes.xym_jpy, "XYM"},
+            {PairCodes.link_jpy, "LINK"},
+            {PairCodes.mkr_jpy, "MKR"},
+            {PairCodes.boba_jpy, "BOBA"},
+            {PairCodes.enj_jpy, "ENJ"},
+            {PairCodes.matic_jpy, "MATIC"},
+            {PairCodes.dot_jpy, "DOT"},
+            {PairCodes.doge_jpy, "DOGE"},
+            {PairCodes.astr_jpy, "ASTR"},
+            {PairCodes.ada_jpy, "ADA"},
+            {PairCodes.avax_jpy, "AVAX"},
+            {PairCodes.axs_jpy, "AXS"},
+            {PairCodes.flr_jpy, "FLR"},
+            {PairCodes.sand_jpy, "SAND"},
         };
 
     private decimal _ltp;
@@ -430,9 +455,8 @@ public class PairViewModel : ViewModelBase
 
     #endregion
 
-    #region == アラーム ==
+    #region == Alarm ==
 
-    // カスタム値 アラーム
     private decimal _alarmPlus;
     public decimal AlarmPlus
     {
@@ -620,9 +644,9 @@ public class PairViewModel : ViewModelBase
 
     #endregion
 
-    #region == 統計情報ィ ==
+    #region == Stat ==
 
-    // 起動時初期価格
+    // Initial price at startup.
     private decimal _basePrice = 0;
     public decimal BasePrice
     {
@@ -1088,7 +1112,7 @@ public class PairViewModel : ViewModelBase
 
     #endregion
 
-    #region == 板情報と歩み値 ==
+    #region == Depth and Transaction ==
 
     private ObservableCollection<Transaction> _transactions = new ObservableCollection<Transaction>();
     public ObservableCollection<Transaction> Transactions
@@ -1264,7 +1288,7 @@ public class PairViewModel : ViewModelBase
 
     #endregion
 
-    #region == チャート ==
+    #region == Charts ==
 
     public Section<LiveChartsCore.SkiaSharpView.Drawing.SkiaSharpDrawingContext>[] Sections { get; set; } =
     {
@@ -1584,7 +1608,7 @@ public class PairViewModel : ViewModelBase
         }
     }
 
-    #region == チャート ==
+    #region == Chart ==
 
     private void TickerTimerChart(object source, object e)
     {
@@ -1663,19 +1687,19 @@ public class PairViewModel : ViewModelBase
         // Need to be here. not static and all.
         if (_currencyFormstString.Equals("C3"))
         {
-            YAxes[1].Labeler = (value) => value.ToString("C3", new CultureInfo("ja-Jp"));
+            YAxes[1].Labeler = (value) => value.ToString("C3", new CultureInfo("ja-JP"));
         }
         else if (_currencyFormstString.Equals("C2"))
         {
-            YAxes[1].Labeler = (value) => value.ToString("C2", new CultureInfo("ja-Jp"));
+            YAxes[1].Labeler = (value) => value.ToString("C2", new CultureInfo("ja-JP"));
         }
         else if (_currencyFormstString.Equals("C1"))
         {
-            YAxes[1].Labeler = (value) => value.ToString("C1", new CultureInfo("ja-Jp"));
+            YAxes[1].Labeler = (value) => value.ToString("C1", new CultureInfo("ja-JP"));
         }
         else
         {
-            YAxes[1].Labeler = (value) => value.ToString("C", new CultureInfo("ja-Jp"));
+            YAxes[1].Labeler = (value) => value.ToString("C", new CultureInfo("ja-JP"));
         }
 
         //TODO: localize aware
@@ -2001,7 +2025,7 @@ public class PairViewModel : ViewModelBase
 
     #endregion
 
-    #region == 板情報 (Depth) ==
+    #region == Depth ==
 
     private void TickerTimerDepth(object source, object e)
     {
@@ -2241,7 +2265,7 @@ public class PairViewModel : ViewModelBase
 
     #endregion
 
-    #region == 歩み値 (Transaction) ==
+    #region == Transaction ==
 
     private void TickerTimerTransaction(object source, object e)
     {
@@ -2331,7 +2355,7 @@ public class PairViewModel : ViewModelBase
 
     #endregion
 
-    #region == コマンド ==
+    #region == Commands ==
 
     public RelayCommand TogglePaneVisibilityCommand { get; private set; }
     private bool TogglePaneVisibilityCommand_CanExecute()

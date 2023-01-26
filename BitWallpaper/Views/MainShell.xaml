@@ -256,6 +256,187 @@
                     </NavigationViewItem.Content>
                 </NavigationViewItem>
 
+                <NavigationViewItem x:Uid="Shell_OmgJpy" Tag="omg_jpy" Padding="3" Style="{StaticResource NavigationViewItemStyle1}" Visibility="{x:Bind MainVM.IsOnOmgJpy, Mode=OneWay}">
+                    <NavigationViewItem.Icon>
+                        <ImageIcon Source="ms-appx:///Assets/CryptLogos/omg.svg"/>
+                    </NavigationViewItem.Icon>
+                    <NavigationViewItem.Content>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
+                            <TextBlock Text="{x:Bind MainVM.LtpOmgJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
+                        </StackPanel>
+                    </NavigationViewItem.Content>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Uid="Shell_XymJpy" Tag="xym_jpy" Padding="3" Style="{StaticResource NavigationViewItemStyle1}" Visibility="{x:Bind MainVM.IsOnXymJpy, Mode=OneWay}">
+                    <NavigationViewItem.Icon>
+                        <ImageIcon Source="ms-appx:///Assets/CryptLogos/xym.svg"/>
+                    </NavigationViewItem.Icon>
+                    <NavigationViewItem.Content>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
+                            <TextBlock Text="{x:Bind MainVM.LtpXymJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
+                        </StackPanel>
+                    </NavigationViewItem.Content>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Uid="Shell_LinkJpy" Tag="link_jpy" Padding="3" Style="{StaticResource NavigationViewItemStyle1}" Visibility="{x:Bind MainVM.IsOnLinkJpy, Mode=OneWay}">
+                    <NavigationViewItem.Icon>
+                        <ImageIcon Source="ms-appx:///Assets/CryptLogos/link.svg"/>
+                    </NavigationViewItem.Icon>
+                    <NavigationViewItem.Content>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
+                            <TextBlock Text="{x:Bind MainVM.LtpLinkJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
+                        </StackPanel>
+                    </NavigationViewItem.Content>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Uid="Shell_MkrJpy" Tag="mkr_jpy" Padding="3" Style="{StaticResource NavigationViewItemStyle1}" Visibility="{x:Bind MainVM.IsOnMkrJpy, Mode=OneWay}">
+                    <NavigationViewItem.Icon>
+                        <ImageIcon Source="ms-appx:///Assets/CryptLogos/mkr.svg"/>
+                    </NavigationViewItem.Icon>
+                    <NavigationViewItem.Content>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
+                            <TextBlock Text="{x:Bind MainVM.LtpMkrJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
+                        </StackPanel>
+                    </NavigationViewItem.Content>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Uid="Shell_BobaJpy" Tag="boba_jpy" Padding="3" Style="{StaticResource NavigationViewItemStyle1}" Visibility="{x:Bind MainVM.IsOnBobaJpy, Mode=OneWay}">
+                    <NavigationViewItem.Icon>
+                        <ImageIcon Source="ms-appx:///Assets/CryptLogos/boba.svg"/>
+                    </NavigationViewItem.Icon>
+                    <NavigationViewItem.Content>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
+                            <TextBlock Text="{x:Bind MainVM.LtpBobaJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
+                        </StackPanel>
+                    </NavigationViewItem.Content>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Uid="Shell_EnjJpy" Tag="enj_jpy" Padding="3" Style="{StaticResource NavigationViewItemStyle1}" Visibility="{x:Bind MainVM.IsOnEnjJpy, Mode=OneWay}">
+                    <NavigationViewItem.Icon>
+                        <ImageIcon Source="ms-appx:///Assets/CryptLogos/enj.svg"/>
+                    </NavigationViewItem.Icon>
+                    <NavigationViewItem.Content>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
+                            <TextBlock Text="{x:Bind MainVM.LtpEnjJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
+                        </StackPanel>
+                    </NavigationViewItem.Content>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Uid="Shell_MaticJpy" Tag="matic_jpy" Padding="3" Style="{StaticResource NavigationViewItemStyle1}" Visibility="{x:Bind MainVM.IsOnMaticJpy, Mode=OneWay}">
+                    <NavigationViewItem.Icon>
+                        <ImageIcon Source="ms-appx:///Assets/CryptLogos/matic.svg"/>
+                    </NavigationViewItem.Icon>
+                    <NavigationViewItem.Content>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
+                            <TextBlock Text="{x:Bind MainVM.LtpMaticJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
+                        </StackPanel>
+                    </NavigationViewItem.Content>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Uid="Shell_DotJpy" Tag="dot_jpy" Padding="3" Style="{StaticResource NavigationViewItemStyle1}" Visibility="{x:Bind MainVM.IsOnDotJpy, Mode=OneWay}">
+                    <NavigationViewItem.Icon>
+                        <ImageIcon Source="ms-appx:///Assets/CryptLogos/dot.svg"/>
+                    </NavigationViewItem.Icon>
+                    <NavigationViewItem.Content>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
+                            <TextBlock Text="{x:Bind MainVM.LtpDotJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
+                        </StackPanel>
+                    </NavigationViewItem.Content>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Uid="Shell_DogeJpy" Tag="doge_jpy" Padding="3" Style="{StaticResource NavigationViewItemStyle1}" Visibility="{x:Bind MainVM.IsOnDogeJpy, Mode=OneWay}">
+                    <NavigationViewItem.Icon>
+                        <ImageIcon Source="ms-appx:///Assets/CryptLogos/doge.svg"/>
+                    </NavigationViewItem.Icon>
+                    <NavigationViewItem.Content>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
+                            <TextBlock Text="{x:Bind MainVM.LtpDogeJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
+                        </StackPanel>
+                    </NavigationViewItem.Content>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Uid="Shell_AstrJpy" Tag="astr_jpy" Padding="3" Style="{StaticResource NavigationViewItemStyle1}" Visibility="{x:Bind MainVM.IsOnAstrJpy, Mode=OneWay}">
+                    <NavigationViewItem.Icon>
+                        <ImageIcon Source="ms-appx:///Assets/CryptLogos/astr.svg"/>
+                    </NavigationViewItem.Icon>
+                    <NavigationViewItem.Content>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
+                            <TextBlock Text="{x:Bind MainVM.LtpAstrJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
+                        </StackPanel>
+                    </NavigationViewItem.Content>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Uid="Shell_AdaJpy" Tag="ada_jpy" Padding="3" Style="{StaticResource NavigationViewItemStyle1}" Visibility="{x:Bind MainVM.IsOnAdaJpy, Mode=OneWay}">
+                    <NavigationViewItem.Icon>
+                        <ImageIcon Source="ms-appx:///Assets/CryptLogos/ada.svg"/>
+                    </NavigationViewItem.Icon>
+                    <NavigationViewItem.Content>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
+                            <TextBlock Text="{x:Bind MainVM.LtpAdaJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
+                        </StackPanel>
+                    </NavigationViewItem.Content>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Uid="Shell_AvaxJpy" Tag="avax_jpy" Padding="3" Style="{StaticResource NavigationViewItemStyle1}" Visibility="{x:Bind MainVM.IsOnAvaxJpy, Mode=OneWay}">
+                    <NavigationViewItem.Icon>
+                        <ImageIcon Source="ms-appx:///Assets/CryptLogos/avax.svg"/>
+                    </NavigationViewItem.Icon>
+                    <NavigationViewItem.Content>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
+                            <TextBlock Text="{x:Bind MainVM.LtpAvaxJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
+                        </StackPanel>
+                    </NavigationViewItem.Content>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Uid="Shell_AxsJpy" Tag="axs_jpy" Padding="3" Style="{StaticResource NavigationViewItemStyle1}" Visibility="{x:Bind MainVM.IsOnAxsJpy, Mode=OneWay}">
+                    <NavigationViewItem.Icon>
+                        <ImageIcon Source="ms-appx:///Assets/CryptLogos/axs.svg"/>
+                    </NavigationViewItem.Icon>
+                    <NavigationViewItem.Content>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
+                            <TextBlock Text="{x:Bind MainVM.LtpAxsJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
+                        </StackPanel>
+                    </NavigationViewItem.Content>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Uid="Shell_FlrJpy" Tag="flr_jpy" Padding="3" Style="{StaticResource NavigationViewItemStyle1}" Visibility="{x:Bind MainVM.IsOnFlrJpy, Mode=OneWay}">
+                    <NavigationViewItem.Icon>
+                        <ImageIcon Source="ms-appx:///Assets/CryptLogos/flr.svg"/>
+                    </NavigationViewItem.Icon>
+                    <NavigationViewItem.Content>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
+                            <TextBlock Text="{x:Bind MainVM.LtpFlrJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
+                        </StackPanel>
+                    </NavigationViewItem.Content>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Uid="Shell_SandJpy" Tag="sand_jpy" Padding="3" Style="{StaticResource NavigationViewItemStyle1}" Visibility="{x:Bind MainVM.IsOnSandJpy, Mode=OneWay}">
+                    <NavigationViewItem.Icon>
+                        <ImageIcon Source="ms-appx:///Assets/CryptLogos/sand.svg"/>
+                    </NavigationViewItem.Icon>
+                    <NavigationViewItem.Content>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
+                            <TextBlock Text="{x:Bind MainVM.LtpSandJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
+                        </StackPanel>
+                    </NavigationViewItem.Content>
+                </NavigationViewItem>
+
+
             </NavigationView.MenuItems>
 
             <Grid>

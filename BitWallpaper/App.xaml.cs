@@ -1,26 +1,17 @@
 ﻿using BitWallpaper.Helpers;
-using Microsoft.UI.Xaml;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Text;
-using Microsoft.Windows.AppLifecycle;
-using System.ComponentModel;
-using BitWallpaper.Views;
-using Microsoft.UI.Xaml.Controls;
+using BitWallpaper.Models;
 using BitWallpaper.ViewModels;
-using System.Threading;
-using Microsoft.UI.Dispatching;
+using BitWallpaper.Views;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Markup;
-using System.Threading.Tasks;
+using Microsoft.Windows.ApplicationModel.Resources;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
-using Microsoft.Windows.ApplicationModel.Resources;
 using System.Collections;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Collections.Immutable;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using System.Text.Json.Nodes;
 
 namespace BitWallpaper
@@ -129,6 +120,9 @@ namespace BitWallpaper
             }
             */
             //
+
+            System.IO.Directory.CreateDirectory(App.AppDataFolder);
+
             if (!RuntimeHelper.IsMSIX)
             {
                 WinUIEx.WindowManager.PersistenceStorage = new FilePersistence(Path.Combine(AppDataFolder, "WinUIExPersistence.json"));

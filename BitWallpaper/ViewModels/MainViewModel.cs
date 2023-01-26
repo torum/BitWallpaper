@@ -2,24 +2,12 @@
 using BitWallpaper.Models;
 using BitWallpaper.Models.APIClients;
 using Microsoft.UI.Xaml;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using Windows.ApplicationModel;
-using Windows.System.Threading;
-using Windows.UI.Core;
 
 namespace BitWallpaper.ViewModels;
-public class ShowBalloonEventArgs : EventArgs
-{
-    public string Title { get; set; }
-    public string Text { get; set; }
-}
 
 public partial class MainViewModel : ViewModelBase
 {
@@ -47,7 +35,7 @@ public partial class MainViewModel : ViewModelBase
 
     #endregion
 
-    #region == Pairs （個別設定が必要） ==
+    #region == Pairs ==
 
     public Dictionary<string, PairCodes> GetPairs { get; set; } = new Dictionary<string, PairCodes>()
         {
@@ -64,6 +52,21 @@ public partial class MainViewModel : ViewModelBase
             {"xlm_jpy", PairCodes.xlm_jpy},
             {"qtum_jpy", PairCodes.qtum_jpy},
             {"bat_jpy", PairCodes.bat_jpy},
+            {"omg_jpy", PairCodes.omg_jpy},
+            {"xym_jpy", PairCodes.xym_jpy},
+            {"link_jpy", PairCodes.link_jpy},
+            {"mkr_jpy", PairCodes.mkr_jpy},
+            {"boba_jpy", PairCodes.boba_jpy},
+            {"enj_jpy", PairCodes.enj_jpy},
+            {"matic_jpy", PairCodes.matic_jpy},
+            {"dot_jpy", PairCodes.dot_jpy},
+            {"doge_jpy", PairCodes.doge_jpy},
+            {"astr_jpy", PairCodes.astr_jpy},
+            {"ada_jpy", PairCodes.ada_jpy},
+            {"avax_jpy", PairCodes.avax_jpy},
+            {"axs_jpy", PairCodes.axs_jpy},
+            {"flr_jpy", PairCodes.flr_jpy},
+            {"sand_jpy", PairCodes.sand_jpy},
         };
 
     private ObservableCollection<PairViewModel> _pairs = new() 
@@ -77,6 +80,21 @@ public partial class MainViewModel : ViewModelBase
         new PairViewModel(PairCodes.xlm_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
         new PairViewModel(PairCodes.qtum_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
         new PairViewModel(PairCodes.bat_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
+        new PairViewModel(PairCodes.omg_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
+        new PairViewModel(PairCodes.xym_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
+        new PairViewModel(PairCodes.link_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
+        new PairViewModel(PairCodes.mkr_jpy, 24, "{0:#,0}", "C", 100M, 1000M),
+        new PairViewModel(PairCodes.boba_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
+        new PairViewModel(PairCodes.enj_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
+        new PairViewModel(PairCodes.matic_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
+        new PairViewModel(PairCodes.dot_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
+        new PairViewModel(PairCodes.doge_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
+        new PairViewModel(PairCodes.astr_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
+        new PairViewModel(PairCodes.ada_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
+        new PairViewModel(PairCodes.avax_jpy, 24, "{0:#,0.000}", "C3", 100M, 1000M),
+        new PairViewModel(PairCodes.axs_jpy, 24, "{0:#,0.000}", "C3", 100M, 1000M),
+        new PairViewModel(PairCodes.flr_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
+        new PairViewModel(PairCodes.sand_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
     };
     public ObservableCollection<PairViewModel> Pairs
     {
@@ -121,7 +139,7 @@ public partial class MainViewModel : ViewModelBase
 
     #endregion
 
-    #region == Each Pairs（個別設定が必要） ==
+    #region == Each Pairs ==
 
     #region == LTP ==
 
@@ -250,6 +268,217 @@ public partial class MainViewModel : ViewModelBase
             NotifyPropertyChanged(nameof(LtpBatJpy));
         }
     }
+
+    private string _ltpOmgJpy = "";
+    public string LtpOmgJpy
+    {
+        get => _ltpOmgJpy;
+        set
+        {
+            if (_ltpOmgJpy == value)
+                return;
+
+            _ltpOmgJpy = value;
+            NotifyPropertyChanged(nameof(LtpOmgJpy));
+        }
+    }
+
+    private string _ltpXymJpy = "";
+    public string LtpXymJpy
+    {
+        get => _ltpXymJpy;
+        set
+        {
+            if (_ltpXymJpy == value)
+                return;
+
+            _ltpXymJpy = value;
+            NotifyPropertyChanged(nameof(LtpXymJpy));
+        }
+    }
+
+    private string _ltpLinkJpy = "";
+    public string LtpLinkJpy
+    {
+        get => _ltpLinkJpy;
+        set
+        {
+            if (_ltpLinkJpy == value)
+                return;
+
+            _ltpLinkJpy = value;
+            NotifyPropertyChanged(nameof(LtpLinkJpy));
+        }
+    }
+
+    private string _ltpMkrJpy = "";
+    public string LtpMkrJpy
+    {
+        get => _ltpMkrJpy;
+        set
+        {
+            if (_ltpMkrJpy == value)
+                return;
+
+            _ltpMkrJpy = value;
+            NotifyPropertyChanged(nameof(LtpMkrJpy));
+        }
+    }
+
+    private string _ltpBobaJpy = "";
+    public string LtpBobaJpy
+    {
+        get => _ltpBobaJpy;
+        set
+        {
+            if (_ltpBobaJpy == value)
+                return;
+
+            _ltpBobaJpy = value;
+            NotifyPropertyChanged(nameof(LtpBobaJpy));
+        }
+    }
+
+    private string _ltpEnjJpy = "";
+    public string LtpEnjJpy
+    {
+        get => _ltpEnjJpy;
+        set
+        {
+            if (_ltpEnjJpy == value)
+                return;
+
+            _ltpEnjJpy = value;
+            NotifyPropertyChanged(nameof(LtpEnjJpy));
+        }
+    }
+
+    private string _ltpMaticJpy = "";
+    public string LtpMaticJpy
+    {
+        get => _ltpMaticJpy;
+        set
+        {
+            if (_ltpMaticJpy == value)
+                return;
+
+            _ltpMaticJpy = value;
+            NotifyPropertyChanged(nameof(LtpMaticJpy));
+        }
+    }
+
+    private string _ltpDotJpy = "";
+    public string LtpDotJpy
+    {
+        get => _ltpDotJpy;
+        set
+        {
+            if (_ltpDotJpy == value)
+                return;
+
+            _ltpDotJpy = value;
+            NotifyPropertyChanged(nameof(LtpDotJpy));
+        }
+    }
+
+    private string _ltpDogeJpy = "";
+    public string LtpDogeJpy
+    {
+        get => _ltpDogeJpy;
+        set
+        {
+            if (_ltpDogeJpy == value)
+                return;
+
+            _ltpDogeJpy = value;
+            NotifyPropertyChanged(nameof(LtpDogeJpy));
+        }
+    }
+
+    private string _ltpAstrJpy = "";
+    public string LtpAstrJpy
+    {
+        get => _ltpAstrJpy;
+        set
+        {
+            if (_ltpAstrJpy == value)
+                return;
+
+            _ltpAstrJpy = value;
+            NotifyPropertyChanged(nameof(LtpAstrJpy));
+        }
+    }
+
+    private string _ltpAdaJpy = "";
+    public string LtpAdaJpy
+    {
+        get => _ltpAdaJpy;
+        set
+        {
+            if (_ltpAdaJpy == value)
+                return;
+
+            _ltpAdaJpy = value;
+            NotifyPropertyChanged(nameof(LtpAdaJpy));
+        }
+    }
+
+    private string _ltpAvaxJpy = "";
+    public string LtpAvaxJpy
+    {
+        get => _ltpAvaxJpy;
+        set
+        {
+            if (_ltpAvaxJpy == value)
+                return;
+
+            _ltpAvaxJpy = value;
+            NotifyPropertyChanged(nameof(LtpAvaxJpy));
+        }
+    }
+
+    private string _ltpAxsJpy = "";
+    public string LtpAxsJpy
+    {
+        get => _ltpAxsJpy;
+        set
+        {
+            if (_ltpAxsJpy == value)
+                return;
+
+            _ltpAxsJpy = value;
+            NotifyPropertyChanged(nameof(LtpAxsJpy));
+        }
+    }
+
+    private string _ltpFlrJpy = "";
+    public string LtpFlrJpy
+    {
+        get => _ltpFlrJpy;
+        set
+        {
+            if (_ltpFlrJpy == value)
+                return;
+
+            _ltpFlrJpy = value;
+            NotifyPropertyChanged(nameof(LtpFlrJpy));
+        }
+    }
+
+    private string _ltpSandJpy = "";
+    public string LtpSandJpy
+    {
+        get => _ltpSandJpy;
+        set
+        {
+            if (_ltpSandJpy == value)
+                return;
+
+            _ltpSandJpy = value;
+            NotifyPropertyChanged(nameof(LtpSandJpy));
+        }
+    }
+
 
     #endregion
 
@@ -408,6 +637,260 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
+    private bool _isOnOmgJpy = false;
+    public bool IsOnOmgJpy
+    {
+        get => _isOnOmgJpy;
+        set
+        {
+            if (_isOnOmgJpy == value)
+                return;
+
+            var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.omg_jpy);
+            hoge.IsEnabled = value;
+
+            _isOnOmgJpy = value;
+            NotifyPropertyChanged(nameof(IsOnOmgJpy));
+        }
+    }
+
+    private bool _isOnXymJpy = false;
+    public bool IsOnXymJpy
+    {
+        get => _isOnXymJpy;
+        set
+        {
+            if (_isOnXymJpy == value)
+                return;
+
+            var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.xym_jpy);
+            hoge.IsEnabled = value;
+
+            _isOnXymJpy = value;
+            NotifyPropertyChanged(nameof(IsOnXymJpy));
+        }
+    }
+
+    private bool _isOnLinkJpy = false;
+    public bool IsOnLinkJpy
+    {
+        get => _isOnLinkJpy;
+        set
+        {
+            if (_isOnLinkJpy == value)
+                return;
+
+            var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.link_jpy);
+            hoge.IsEnabled = value;
+
+            _isOnLinkJpy = value;
+            NotifyPropertyChanged(nameof(IsOnLinkJpy));
+        }
+    }
+
+    private bool _isOnMkrJpy = false;
+    public bool IsOnMkrJpy
+    {
+        get => _isOnMkrJpy;
+        set
+        {
+            if (_isOnMkrJpy == value)
+                return;
+
+            var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.mkr_jpy);
+            hoge.IsEnabled = value;
+
+            _isOnMkrJpy = value;
+            NotifyPropertyChanged(nameof(IsOnMkrJpy));
+        }
+    }
+
+    private bool _isOnBobaJpy = false;
+    public bool IsOnBobaJpy
+    {
+        get => _isOnBobaJpy;
+        set
+        {
+            if (_isOnBobaJpy == value)
+                return;
+
+            var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.boba_jpy);
+            hoge.IsEnabled = value;
+
+            _isOnBobaJpy = value;
+            NotifyPropertyChanged(nameof(IsOnBobaJpy));
+        }
+    }
+
+    private bool _isOnEnjJpy = false;
+    public bool IsOnEnjJpy
+    {
+        get => _isOnEnjJpy;
+        set
+        {
+            if (_isOnEnjJpy == value)
+                return;
+
+            var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.enj_jpy);
+            hoge.IsEnabled = value;
+
+            _isOnEnjJpy = value;
+            NotifyPropertyChanged(nameof(IsOnEnjJpy));
+        }
+    }
+
+    private bool _isOnMaticJpy = false;
+    public bool IsOnMaticJpy
+    {
+        get => _isOnMaticJpy;
+        set
+        {
+            if (_isOnMaticJpy == value)
+                return;
+
+            var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.matic_jpy);
+            hoge.IsEnabled = value;
+
+            _isOnMaticJpy = value;
+            NotifyPropertyChanged(nameof(IsOnMaticJpy));
+        }
+    }
+
+    private bool _isOnDotJpy = false;
+    public bool IsOnDotJpy
+    {
+        get => _isOnDotJpy;
+        set
+        {
+            if (_isOnDotJpy == value)
+                return;
+
+            var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.dot_jpy);
+            hoge.IsEnabled = value;
+
+            _isOnDotJpy = value;
+            NotifyPropertyChanged(nameof(IsOnDotJpy));
+        }
+    }
+
+    private bool _isOnDogeJpy = false;
+    public bool IsOnDogeJpy
+    {
+        get => _isOnDogeJpy;
+        set
+        {
+            if (_isOnDogeJpy == value)
+                return;
+
+            var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.doge_jpy);
+            hoge.IsEnabled = value;
+
+            _isOnDogeJpy = value;
+            NotifyPropertyChanged(nameof(IsOnDogeJpy));
+        }
+    }
+
+    private bool _isOnAstrJpy = false;
+    public bool IsOnAstrJpy
+    {
+        get => _isOnAstrJpy;
+        set
+        {
+            if (_isOnAstrJpy == value)
+                return;
+
+            var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.astr_jpy);
+            hoge.IsEnabled = value;
+
+            _isOnAstrJpy = value;
+            NotifyPropertyChanged(nameof(IsOnAstrJpy));
+        }
+    }
+
+    private bool _isOnAdaJpy = false;
+    public bool IsOnAdaJpy
+    {
+        get => _isOnAdaJpy;
+        set
+        {
+            if (_isOnAdaJpy == value)
+                return;
+
+            var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.ada_jpy);
+            hoge.IsEnabled = value;
+
+            _isOnAdaJpy = value;
+            NotifyPropertyChanged(nameof(IsOnAdaJpy));
+        }
+    }
+
+    private bool _isOnAvaxJpy = false;
+    public bool IsOnAvaxJpy
+    {
+        get => _isOnAvaxJpy;
+        set
+        {
+            if (_isOnAvaxJpy == value)
+                return;
+
+            var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.avax_jpy);
+            hoge.IsEnabled = value;
+
+            _isOnAvaxJpy = value;
+            NotifyPropertyChanged(nameof(IsOnAvaxJpy));
+        }
+    }
+
+    private bool _isOnAxsJpy = false;
+    public bool IsOnAxsJpy
+    {
+        get => _isOnAxsJpy;
+        set
+        {
+            if (_isOnAxsJpy == value)
+                return;
+
+            var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.axs_jpy);
+            hoge.IsEnabled = value;
+
+            _isOnAxsJpy = value;
+            NotifyPropertyChanged(nameof(IsOnAxsJpy));
+        }
+    }
+
+    private bool _isOnFlrJpy = false;
+    public bool IsOnFlrJpy
+    {
+        get => _isOnFlrJpy;
+        set
+        {
+            if (_isOnFlrJpy == value)
+                return;
+
+            var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.flr_jpy);
+            hoge.IsEnabled = value;
+
+            _isOnFlrJpy = value;
+            NotifyPropertyChanged(nameof(IsOnFlrJpy));
+        }
+    }
+
+    private bool _isOnSandJpy = false;
+    public bool IsOnSandJpy
+    {
+        get => _isOnSandJpy;
+        set
+        {
+            if (_isOnSandJpy == value)
+                return;
+
+            var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.sand_jpy);
+            hoge.IsEnabled = value;
+
+            _isOnSandJpy = value;
+            NotifyPropertyChanged(nameof(IsOnSandJpy));
+        }
+    }
 
     #endregion
 
@@ -568,7 +1051,6 @@ public partial class MainViewModel : ViewModelBase
 
                 if (tick != null)
                 {
-                    // TODO: （個別設定が必要）
                     if (hoge.PairCode == PairCodes.btc_jpy)
                     {
                         LtpBtcJpy = String.Format(hoge.LtpFormstString, tick.LTP);
@@ -604,6 +1086,70 @@ public partial class MainViewModel : ViewModelBase
                     else if (hoge.PairCode == PairCodes.bat_jpy)
                     {
                         LtpBatJpy = String.Format(hoge.LtpFormstString, tick.LTP);
+                    }
+                    else if (hoge.PairCode == PairCodes.omg_jpy)
+                    {
+                        LtpOmgJpy = String.Format(hoge.LtpFormstString, tick.LTP);
+                    }
+                    else if (hoge.PairCode == PairCodes.xym_jpy)
+                    {
+                        LtpXymJpy = String.Format(hoge.LtpFormstString, tick.LTP);
+                    }
+                    else if (hoge.PairCode == PairCodes.link_jpy)
+                    {
+                        LtpLinkJpy = String.Format(hoge.LtpFormstString, tick.LTP);
+                    }
+                    else if (hoge.PairCode == PairCodes.mkr_jpy)
+                    {
+                        LtpMkrJpy = String.Format(hoge.LtpFormstString, tick.LTP);
+                    }
+                    else if (hoge.PairCode == PairCodes.boba_jpy)
+                    {
+                        LtpBobaJpy = String.Format(hoge.LtpFormstString, tick.LTP);
+                    }
+                    else if (hoge.PairCode == PairCodes.enj_jpy)
+                    {
+                        LtpEnjJpy = String.Format(hoge.LtpFormstString, tick.LTP);
+                    }
+                    else if (hoge.PairCode == PairCodes.matic_jpy)
+                    {
+                        LtpMaticJpy = String.Format(hoge.LtpFormstString, tick.LTP);
+                    }
+                    else if (hoge.PairCode == PairCodes.dot_jpy)
+                    {
+                        LtpDotJpy = String.Format(hoge.LtpFormstString, tick.LTP);
+                    }
+                    else if (hoge.PairCode == PairCodes.doge_jpy)
+                    {
+                        LtpDogeJpy = String.Format(hoge.LtpFormstString, tick.LTP);
+                    }
+                    else if (hoge.PairCode == PairCodes.astr_jpy)
+                    {
+                        LtpAstrJpy = String.Format(hoge.LtpFormstString, tick.LTP);
+                    }
+                    else if (hoge.PairCode == PairCodes.ada_jpy)
+                    {
+                        LtpAdaJpy = String.Format(hoge.LtpFormstString, tick.LTP);
+                    }
+                    else if (hoge.PairCode == PairCodes.avax_jpy)
+                    {
+                        LtpAvaxJpy = String.Format(hoge.LtpFormstString, tick.LTP);
+                    }
+                    else if (hoge.PairCode == PairCodes.axs_jpy)
+                    {
+                        LtpAxsJpy = String.Format(hoge.LtpFormstString, tick.LTP);
+                    }
+                    else if (hoge.PairCode == PairCodes.flr_jpy)
+                    {
+                        LtpFlrJpy = String.Format(hoge.LtpFormstString, tick.LTP);
+                    }
+                    else if (hoge.PairCode == PairCodes.sand_jpy)
+                    {
+                        LtpSandJpy = String.Format(hoge.LtpFormstString, tick.LTP);
+                    }
+                    else
+                    {
+                        throw new NotImplementedException();
                     }
                     // TODO: more
 
