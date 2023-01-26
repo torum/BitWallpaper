@@ -11,11 +11,11 @@
   <Identity
     Name="60132torumyax.BitWallpaper"
     Publisher="CN=F3079A96-760D-4F53-9E00-374C09B6D4B1"
-    Version="2.0.4.1" />
+    Version="2.0.5.0" />
 
   <Properties>
     <DisplayName>BitWallpaper</DisplayName>
-    <PublisherDisplayName>Toru_</PublisherDisplayName>
+    <PublisherDisplayName>toru_m</PublisherDisplayName>
     <Logo>Images\StoreLogo.png</Logo>
   </Properties>
 
@@ -35,12 +35,12 @@
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
         DisplayName="BitWallpaper"
-        Description="BitWallpaper (Package)"
+        Description="BitWallpaper"
         BackgroundColor="transparent"
-        Square150x150Logo="Images\Square150x150Logo.png"  Square44x44Logo="Images\Square44x44Logo.png">
-        <uap:DefaultTile Wide310x150Logo="Images\Wide310x150Logo.png"  Square71x71Logo="Images\SmallTile.png" Square310x310Logo="Images\LargeTile.png">
-        </uap:DefaultTile >
-        <uap:LockScreen BadgeLogo="Images\BadgeLogo.png"  Notification="badge"/>
+        Square150x150Logo="Images\Square150x150Logo.png"
+		Square44x44Logo="Images\Square44x44Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Images\Wide310x150Logo.png" Square310x310Logo="Images\LargeTile.png" Square71x71Logo="Images\SmallTile.png"/>
+        <uap:SplashScreen Image="Images\SplashScreen.png"/>
       </uap:VisualElements>
 	  <Extensions>
 
