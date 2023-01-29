@@ -11,10 +11,10 @@ Pairs: BTC/JPY, XRP/JPY, ETH/JPY, LTC/JPY, MONA/JPY, BCC/JPY, XLM/JPY, QTUM/JPY,
 ## Download:
  [Download from Microsoft Store](https://apps.microsoft.com/store/detail/bitwallpaper/9NCC3NTG9DP3)
  
-### GitHub
+## GitHub
 [https://github.com/torum/BitWallpaper](https://github.com/torum/BitWallpaper)
 
-### Privacy olicy:
+## Privacy olicy:
 * This application does not collect nor send any information.
 * 本アプリケーションは、アプリケーション状態をローカルに保存し、チャート関係のデータを取得するだけで、個人情報を含む一切の情報を収集・保存及び送信することはありません。
 
