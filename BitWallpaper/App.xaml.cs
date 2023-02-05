@@ -93,10 +93,11 @@ namespace BitWallpaper
         /// Invoked when the application is launched.
         /// </summary>
         /// <param name="args">Details about the launch request and process.</param>
-        protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+        protected async override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             /*
              * https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/migrate-to-windows-app-sdk/guides/applifecycle
+            */
             // If this is the first instance launched, then register it as the "main" instance.
             // If this isn't the first instance launched, then "main" will already be registered,
             // so retrieve it.
@@ -118,8 +119,6 @@ namespace BitWallpaper
                 // Otherwise, register for activation redirection
                 Microsoft.Windows.AppLifecycle.AppInstance.GetCurrent().Activated += App_Activated;
             }
-            */
-            //
 
             System.IO.Directory.CreateDirectory(App.AppDataFolder);
 

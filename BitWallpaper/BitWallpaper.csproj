@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
+    <TargetFramework>net6.0-windows10.0.22621.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <RootNamespace>BitWallpaper</RootNamespace>
     <Platforms>x86;x64;ARM64</Platforms>
@@ -30,7 +30,7 @@
 	  <AppxBundle>Always</AppxBundle>
 	  <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
 	  <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-	  <AssemblyVersion>2.0.5.0</AssemblyVersion>
+	  <AssemblyVersion>2.0.6.0</AssemblyVersion>
 	  <FileVersion>$(AssemblyVersion)</FileVersion>
 	  <Version>$(AssemblyVersion)</Version>
 	  <ImplicitUsings>enable</ImplicitUsings>
@@ -40,68 +40,13 @@
 	  <IncludeSymbols>True</IncludeSymbols>
 	  <StartupObject>BitWallpaper.Program</StartupObject>
 	  <Nullable>annotations</Nullable>
+	  <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+	  <RepositoryUrl>https://github.com/torum/BitWallpaper</RepositoryUrl>
+	  <PackageProjectUrl>https://torum.github.io/BitWallpaper/</PackageProjectUrl>
+	  <Copyright>torum</Copyright>
+	  <Description>Cryptocurrency charting app</Description>
+	  <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
-  <ItemGroup>
-    <Content Remove="Assets\BadgeLogo.scale-100.png" />
-    <Content Remove="Assets\BadgeLogo.scale-125.png" />
-    <Content Remove="Assets\BadgeLogo.scale-150.png" />
-    <Content Remove="Assets\BadgeLogo.scale-200.png" />
-    <Content Remove="Assets\BadgeLogo.scale-400.png" />
-    <Content Remove="Assets\LargeTile.scale-100.png" />
-    <Content Remove="Assets\LargeTile.scale-125.png" />
-    <Content Remove="Assets\LargeTile.scale-150.png" />
-    <Content Remove="Assets\LargeTile.scale-200.png" />
-    <Content Remove="Assets\LargeTile.scale-400.png" />
-    <Content Remove="Assets\LockScreenLogo.scale-200.png" />
-    <Content Remove="Assets\SmallTile.scale-100.png" />
-    <Content Remove="Assets\SmallTile.scale-125.png" />
-    <Content Remove="Assets\SmallTile.scale-150.png" />
-    <Content Remove="Assets\SmallTile.scale-200.png" />
-    <Content Remove="Assets\SmallTile.scale-400.png" />
-    <Content Remove="Assets\SplashScreen.scale-100.png" />
-    <Content Remove="Assets\SplashScreen.scale-125.png" />
-    <Content Remove="Assets\SplashScreen.scale-150.png" />
-    <Content Remove="Assets\SplashScreen.scale-200.png" />
-    <Content Remove="Assets\SplashScreen.scale-400.png" />
-    <Content Remove="Assets\Square150x150Logo.scale-100.png" />
-    <Content Remove="Assets\Square150x150Logo.scale-125.png" />
-    <Content Remove="Assets\Square150x150Logo.scale-150.png" />
-    <Content Remove="Assets\Square150x150Logo.scale-200.png" />
-    <Content Remove="Assets\Square150x150Logo.scale-400.png" />
-    <Content Remove="Assets\Square44x44Logo.altform-lightunplated_targetsize-16.png" />
-    <Content Remove="Assets\Square44x44Logo.altform-lightunplated_targetsize-24.png" />
-    <Content Remove="Assets\Square44x44Logo.altform-lightunplated_targetsize-256.png" />
-    <Content Remove="Assets\Square44x44Logo.altform-lightunplated_targetsize-32.png" />
-    <Content Remove="Assets\Square44x44Logo.altform-lightunplated_targetsize-48.png" />
-    <Content Remove="Assets\Square44x44Logo.altform-unplated_targetsize-16.png" />
-    <Content Remove="Assets\Square44x44Logo.altform-unplated_targetsize-256.png" />
-    <Content Remove="Assets\Square44x44Logo.altform-unplated_targetsize-32.png" />
-    <Content Remove="Assets\Square44x44Logo.altform-unplated_targetsize-48.png" />
-    <Content Remove="Assets\Square44x44Logo.scale-100.png" />
-    <Content Remove="Assets\Square44x44Logo.scale-125.png" />
-    <Content Remove="Assets\Square44x44Logo.scale-150.png" />
-    <Content Remove="Assets\Square44x44Logo.scale-200.png" />
-    <Content Remove="Assets\Square44x44Logo.scale-400.png" />
-    <Content Remove="Assets\Square44x44Logo.targetsize-16.png" />
-    <Content Remove="Assets\Square44x44Logo.targetsize-24.png" />
-    <Content Remove="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-    <Content Remove="Assets\Square44x44Logo.targetsize-256.png" />
-    <Content Remove="Assets\Square44x44Logo.targetsize-32.png" />
-    <Content Remove="Assets\Square44x44Logo.targetsize-48.png" />
-    <Content Remove="Assets\StoreLogo.backup.png" />
-    <Content Remove="Assets\StoreLogo.png" />
-    <Content Remove="Assets\StoreLogo.scale-100.png" />
-    <Content Remove="Assets\StoreLogo.scale-125.png" />
-    <Content Remove="Assets\StoreLogo.scale-150.png" />
-    <Content Remove="Assets\StoreLogo.scale-200.png" />
-    <Content Remove="Assets\StoreLogo.scale-400.png" />
-    <Content Remove="Assets\Wide310x150Logo.scale-100.png" />
-    <Content Remove="Assets\Wide310x150Logo.scale-125.png" />
-    <Content Remove="Assets\Wide310x150Logo.scale-150.png" />
-    <Content Remove="Assets\Wide310x150Logo.scale-200.png" />
-    <Content Remove="Assets\Wide310x150Logo.scale-400.png" />
-  </ItemGroup>
-
 
   <ItemGroup>
     <None Update="appsettings.json">
@@ -139,157 +84,16 @@
 	<PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
 		<HasPackageAndPublishMenu>false</HasPackageAndPublishMenu>
 	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+	  <Optimize>False</Optimize>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+	  <Optimize>False</Optimize>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+	  <Optimize>False</Optimize>
+	</PropertyGroup>
 
-	<ItemGroup>
-	  <Content Include="App_Icon.ico">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\BadgeLogo.scale-100.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\BadgeLogo.scale-125.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\BadgeLogo.scale-150.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\BadgeLogo.scale-200.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\BadgeLogo.scale-400.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\LargeTile.scale-100.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\LargeTile.scale-125.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\LargeTile.scale-150.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\LargeTile.scale-200.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\LargeTile.scale-400.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\LockScreenLogo.scale-200.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\SmallTile.scale-100.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\SmallTile.scale-125.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\SmallTile.scale-150.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\SmallTile.scale-200.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\SmallTile.scale-400.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\SplashScreen.scale-100.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\SplashScreen.scale-125.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\SplashScreen.scale-150.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\SplashScreen.scale-200.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\SplashScreen.scale-400.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\Square150x150Logo.scale-100.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\Square150x150Logo.scale-125.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\Square150x150Logo.scale-150.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\Square150x150Logo.scale-200.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\Square150x150Logo.scale-400.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\Square44x44Logo.scale-100.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\Square44x44Logo.scale-125.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\Square44x44Logo.scale-150.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\Square44x44Logo.scale-200.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\Square44x44Logo.scale-400.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\Square44x44Logo.targetsize-16.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\Square44x44Logo.targetsize-24.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\Square44x44Logo.targetsize-24_altform-unplated.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\Square44x44Logo.targetsize-256.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\Square44x44Logo.targetsize-256_altform-unplated.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\Square44x44Logo.targetsize-32.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\Square44x44Logo.targetsize-48.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\StoreLogo.scale-100.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\StoreLogo.scale-125.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\StoreLogo.scale-150.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\StoreLogo.scale-200.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\StoreLogo.scale-400.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\Wide310x150Logo.scale-100.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\Wide310x150Logo.scale-125.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\Wide310x150Logo.scale-150.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\Wide310x150Logo.scale-200.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Images\Wide310x150Logo.scale-400.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	</ItemGroup>
-	
   <ItemGroup>
 	  <PackageReference Include="LiveChartsCore.SkiaSharpView.WinUI" Version="2.0.0-beta.701" />
 	  <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
@@ -301,40 +105,82 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Assets\BadgeLogo.scale-100.png">
+    <Content Update="Assets\BadgeLogo.scale-100.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\BadgeLogo.scale-125.png">
+    </Content>
+    <Content Update="Assets\BadgeLogo.scale-125.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\BadgeLogo.scale-150.png">
+    </Content>
+    <Content Update="Assets\BadgeLogo.scale-150.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\BadgeLogo.scale-200.png">
+    </Content>
+    <Content Update="Assets\BadgeLogo.scale-200.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\BadgeLogo.scale-400.png">
+    </Content>
+    <Content Update="Assets\BadgeLogo.scale-400.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
+    <Content Update="Assets\CryptLogos\ada.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\astr.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\avax.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\axs.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Update="Assets\CryptLogos\bat.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="Assets\CryptLogos\bcc.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Update="Assets\CryptLogos\boba.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Update="Assets\CryptLogos\btc.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\doge.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\dot.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\enj.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="Assets\CryptLogos\eth.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Update="Assets\CryptLogos\flr.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\link.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Update="Assets\CryptLogos\ltc.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\matic.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\mkr.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="Assets\CryptLogos\mona.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Update="Assets\CryptLogos\omg.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Update="Assets\CryptLogos\qtum.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\sand.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="Assets\CryptLogos\xlm.svg">
@@ -343,226 +189,171 @@
     <Content Update="Assets\CryptLogos\xrp.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Update="Assets\LargeTile.scale-100.png">
+    <Content Update="Assets\CryptLogos\xym.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\LargeTile.scale-125.png">
+    </Content>
+    <Content Update="Assets\LargeTile.scale-100.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\LargeTile.scale-150.png">
+    </Content>
+    <Content Update="Assets\LargeTile.scale-125.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\LargeTile.scale-200.png">
+    </Content>
+    <Content Update="Assets\LargeTile.scale-150.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\LargeTile.scale-400.png">
+    </Content>
+    <Content Update="Assets\LargeTile.scale-200.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\LockScreenLogo.scale-200.png">
+    </Content>
+    <Content Update="Assets\LargeTile.scale-400.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\SmallTile.scale-100.png">
+    </Content>
+    <Content Update="Assets\SmallTile.scale-100.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\SmallTile.scale-125.png">
+    </Content>
+    <Content Update="Assets\SmallTile.scale-125.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\SmallTile.scale-150.png">
+    </Content>
+    <Content Update="Assets\SmallTile.scale-150.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\SmallTile.scale-200.png">
+    </Content>
+    <Content Update="Assets\SmallTile.scale-200.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\SmallTile.scale-400.png">
+    </Content>
+    <Content Update="Assets\SmallTile.scale-400.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\SplashScreen.scale-100.png">
+    </Content>
+    <Content Update="Assets\SplashScreen.scale-100.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\SplashScreen.scale-125.png">
+    </Content>
+    <Content Update="Assets\SplashScreen.scale-125.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\SplashScreen.scale-150.png">
+    </Content>
+    <Content Update="Assets\SplashScreen.scale-150.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\SplashScreen.scale-200.png">
+    </Content>
+    <Content Update="Assets\SplashScreen.scale-200.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\SplashScreen.scale-400.png">
+    </Content>
+    <Content Update="Assets\SplashScreen.scale-400.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Square150x150Logo.scale-100.png">
+    </Content>
+    <Content Update="Assets\Square150x150Logo.scale-100.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Square150x150Logo.scale-125.png">
+    </Content>
+    <Content Update="Assets\Square150x150Logo.scale-125.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Square150x150Logo.scale-150.png">
+    </Content>
+    <Content Update="Assets\Square150x150Logo.scale-150.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Square150x150Logo.scale-200.png">
+    </Content>
+    <Content Update="Assets\Square150x150Logo.scale-200.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Square150x150Logo.scale-400.png">
+    </Content>
+    <Content Update="Assets\Square150x150Logo.scale-400.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Square44x44Logo.altform-lightunplated_targetsize-16.png">
+    </Content>
+    <Content Update="Assets\Square44x44Logo.altform-lightunplated_targetsize-16.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Square44x44Logo.altform-lightunplated_targetsize-24.png">
+    </Content>
+    <Content Update="Assets\Square44x44Logo.altform-lightunplated_targetsize-24.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Square44x44Logo.altform-lightunplated_targetsize-256.png">
+    </Content>
+    <Content Update="Assets\Square44x44Logo.altform-lightunplated_targetsize-256.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Square44x44Logo.altform-lightunplated_targetsize-32.png">
+    </Content>
+    <Content Update="Assets\Square44x44Logo.altform-lightunplated_targetsize-32.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Square44x44Logo.altform-lightunplated_targetsize-48.png">
+    </Content>
+    <Content Update="Assets\Square44x44Logo.altform-lightunplated_targetsize-48.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Square44x44Logo.altform-unplated_targetsize-16.png">
+    </Content>
+    <Content Update="Assets\Square44x44Logo.altform-unplated_targetsize-16.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Square44x44Logo.altform-unplated_targetsize-256.png">
+    </Content>
+    <Content Update="Assets\Square44x44Logo.altform-unplated_targetsize-24.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Square44x44Logo.altform-unplated_targetsize-32.png">
+    </Content>
+    <Content Update="Assets\Square44x44Logo.altform-unplated_targetsize-256.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Square44x44Logo.altform-unplated_targetsize-48.png">
+    </Content>
+    <Content Update="Assets\Square44x44Logo.altform-unplated_targetsize-32.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Square44x44Logo.scale-100.png">
+    </Content>
+    <Content Update="Assets\Square44x44Logo.altform-unplated_targetsize-48.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Square44x44Logo.scale-125.png">
+    </Content>
+    <Content Update="Assets\Square44x44Logo.scale-100.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Square44x44Logo.scale-150.png">
+    </Content>
+    <Content Update="Assets\Square44x44Logo.scale-125.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Square44x44Logo.scale-200.png">
+    </Content>
+    <Content Update="Assets\Square44x44Logo.scale-150.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Square44x44Logo.scale-400.png">
+    </Content>
+    <Content Update="Assets\Square44x44Logo.scale-200.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Square44x44Logo.targetsize-16.png">
+    </Content>
+    <Content Update="Assets\Square44x44Logo.scale-400.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Square44x44Logo.targetsize-24.png">
+    </Content>
+    <Content Update="Assets\Square44x44Logo.targetsize-16.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
+    </Content>
+    <Content Update="Assets\Square44x44Logo.targetsize-24.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Square44x44Logo.targetsize-256.png">
+    </Content>
+    <Content Update="Assets\Square44x44Logo.targetsize-256.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Square44x44Logo.targetsize-32.png">
+    </Content>
+    <Content Update="Assets\Square44x44Logo.targetsize-32.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Square44x44Logo.targetsize-48.png">
+    </Content>
+    <Content Update="Assets\Square44x44Logo.targetsize-48.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\StoreLogo.backup.png">
+    </Content>
+    <Content Update="Assets\StoreLogo.scale-100.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\StoreLogo.png">
+    </Content>
+    <Content Update="Assets\StoreLogo.scale-125.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\StoreLogo.scale-100.png">
+    </Content>
+    <Content Update="Assets\StoreLogo.scale-150.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\StoreLogo.scale-125.png">
+    </Content>
+    <Content Update="Assets\StoreLogo.scale-200.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\StoreLogo.scale-150.png">
+    </Content>
+    <Content Update="Assets\StoreLogo.scale-400.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\StoreLogo.scale-200.png">
+    </Content>
+    <Content Update="Assets\Wide310x150Logo.scale-100.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\StoreLogo.scale-400.png">
+    </Content>
+    <Content Update="Assets\Wide310x150Logo.scale-125.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Wide310x150Logo.scale-100.png">
+    </Content>
+    <Content Update="Assets\Wide310x150Logo.scale-150.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Wide310x150Logo.scale-125.png">
+    </Content>
+    <Content Update="Assets\Wide310x150Logo.scale-200.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Wide310x150Logo.scale-150.png">
+    </Content>
+    <Content Update="Assets\Wide310x150Logo.scale-400.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Wide310x150Logo.scale-200.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\Wide310x150Logo.scale-400.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
     <None Update="App_Icon.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Assets\CryptLogos\ada.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\CryptLogos\astr.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\CryptLogos\avax.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\CryptLogos\axs.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\CryptLogos\boba.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\CryptLogos\doge.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\CryptLogos\dot.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\CryptLogos\enj.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\CryptLogos\flr.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\CryptLogos\link.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\CryptLogos\matic.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\CryptLogos\mkr.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\CryptLogos\omg.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\CryptLogos\sand.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\CryptLogos\xym.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+
     <None Update="Icons\App_Icon.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-    <None Update="Images\StoreLogo.backup%281%29.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="Images\StoreLogo.backup.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
+
     <Page Update="Views\SandJpyPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
