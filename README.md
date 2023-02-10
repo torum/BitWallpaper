@@ -1,6 +1,6 @@
 # BitWallpaper
 
-## Cryptocurrency charting app.
+## Cryptocurrency charting app
 Displays cryptocurrency charts using [BitBank](https://bitbank.cc/)'s [public API](https://github.com/bitbankinc/bitbank-api-docs). No registration required. 
 
 Pairs: BTC/JPY, XRP/JPY, ETH/JPY, LTC/JPY, MONA/JPY, BCC/JPY, XLM/JPY, QTUM/JPY, BAT/JPY, OMG/JPY, XYM/JPY, LINK/JPY, MKR/JPY, BOBA/JPY, ENJ/JPY, MATIC/JPY, DOT/JPY, DOGE/JPY, ASTR/JPY, ADA/JPY, AVAX/JPY, AXS/JPY, FLR/JPY, SAND/JPY.
