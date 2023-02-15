@@ -282,4 +282,7 @@
   <data name="Shell_XymJpy.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Symbol (XYM/JPY)</value>
   </data>
+  <data name="Settings_About_ThirdPartyComponents.Text" xml:space="preserve">
+    <value>Third Party Components</value>
+  </data>
 </root>
