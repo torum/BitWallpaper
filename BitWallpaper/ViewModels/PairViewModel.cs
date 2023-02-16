@@ -323,7 +323,7 @@ public class PairViewModel : ViewModelBase
     {
         get
         {
-            return _tickTimeStamp.ToLocalTime().ToString("G", System.Globalization.CultureInfo.CurrentCulture);//"yyyy/MM/dd HH:mm:ss"
+            return _tickTimeStamp.ToLocalTime().ToString("G", System.Globalization.CultureInfo.CurrentUICulture);//"yyyy/MM/dd HH:mm:ss"
         }
     }
 
