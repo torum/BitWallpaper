@@ -664,7 +664,7 @@ namespace BitWallpaper.Views
 
             // Any other way?
             var settings = (Microsoft.UI.Xaml.Controls.NavigationViewItem)NavigationViewControl.SettingsItem;
-            settings.Content = "Setting".GetLocalized();
+            settings.Content = "";//"Setting".GetLocalized();
         }
 
         private void NavigationViewControl_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
