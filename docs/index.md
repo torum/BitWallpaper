@@ -15,7 +15,7 @@ Pairs: BTC/JPY, XRP/JPY, ETH/JPY, LTC/JPY, MONA/JPY, BCC/JPY, XLM/JPY, QTUM/JPY,
 [https://github.com/torum/BitWallpaper](https://github.com/torum/BitWallpaper)
 
 ## Privacy olicy:
-* This application does not collect nor send any information.
+* This application does not collect nor send any personal information.
 * 本アプリケーションは、アプリケーション状態をローカルに保存し、チャート関係のデータを取得するだけで、個人情報を含む一切の情報を収集・保存及び送信することはありません。
 
 ## Screenshots:
