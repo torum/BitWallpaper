@@ -511,7 +511,7 @@
                         </TabView.TabItems>
                     </TabView>
 
-                    <TabView Grid.Row="2" TabWidthMode="Equal" IsAddTabButtonVisible="False" Background="Transparent">
+                    <TabView Grid.Row="2" TabWidthMode="Equal" IsAddTabButtonVisible="False" Background="Transparent" VerticalAlignment="Stretch">
                         <TabView.TabItems>
 
                             <TabViewItem x:Uid="TabHeader_Orders" IsClosable="False" Opacity="0.7" Background="Transparent">
