@@ -511,14 +511,15 @@
                         </TabView.TabItems>
                     </TabView>
 
-                    <TabView Grid.Row="2" TabWidthMode="Equal" IsAddTabButtonVisible="False" Background="Transparent" VerticalAlignment="Stretch">
+                    <TabView Grid.Row="2" TabWidthMode="Equal" IsAddTabButtonVisible="False" Background="Transparent">
+                        <!--  VerticalAlignment="Stretch" removed so that SizeChagen gets invoked. -->
                         <TabView.TabItems>
 
                             <TabViewItem x:Uid="TabHeader_Orders" IsClosable="False" Opacity="0.7" Background="Transparent">
 
                                 <Border BorderBrush="{ThemeResource ApplicationPageBackgroundThemeBrush}" BorderThickness="0.5,0,0,0">
-                                    <ListBox x:Name="DepthListBox" ItemTemplateSelector="{StaticResource ExplorerItemTemplateSelector}" ItemsSource="{x:Bind Path=PairVM.Depth, Mode=OneWay}" SizeChanged="ListBoxDepth_SizeChanged" Background="Transparent" Margin="0,0,0,6" Padding="0,6,0,12" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
-
+                                    <ListBox x:Name="DepthListBox" ItemTemplateSelector="{StaticResource ExplorerItemTemplateSelector}" ItemsSource="{x:Bind Path=PairVM.Depth, Mode=OneWay}" SizeChanged="ListBoxDepth_SizeChanged" Background="Transparent" Margin="0,0,0,6" Padding="0,6,0,12" HorizontalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                        <!--  VerticalAlignment="Stretch" removed so that SizeChagen gets invoked. -->
                                         <ListBox.ItemContainerStyle>
                                             <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItemStyle}">
                                                 <Setter Property="Padding" Value="3,3,3,3"/>
@@ -655,7 +656,7 @@
                             <TabViewItem x:Uid="TabHeader_History" IsClosable="False" Opacity="0.7" Background="Transparent">
 
                                 <Border BorderBrush="{ThemeResource ApplicationPageBackgroundThemeBrush}" BorderThickness="0.5,0,0,0">
-                                    <ListBox ItemsSource="{x:Bind Path=PairVM.Transactions, Mode=OneWay}" Background="Transparent" Margin="0,0,0,6" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                                    <ListBox ItemsSource="{x:Bind Path=PairVM.Transactions, Mode=OneWay}" Background="Transparent" Margin="0,0,0,6" HorizontalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible">
                                         <ListBox.ItemContainerStyle>
                                             <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItemStyle}">
                                                 <Setter Property="Padding" Value="3"/>
