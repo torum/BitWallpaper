@@ -152,6 +152,7 @@ namespace BitWallpaper
             */
 
             var manager = WinUIEx.WindowManager.Get(_window);
+
             // SystemBackdrop
             if (Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())
             {

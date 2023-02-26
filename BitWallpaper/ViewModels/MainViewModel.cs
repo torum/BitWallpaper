@@ -1644,7 +1644,8 @@ public partial class MainViewModel : ViewModelBase
 
             if (backdrop == "Mica")
             {
-                if (Microsoft.UI.Composition.SystemBackdrops.MicaController.IsSupported())
+                // Win10 says not supported but works. So if Acrylic is supported, we assume it's ok.
+                if (Microsoft.UI.Composition.SystemBackdrops.MicaController.IsSupported() || Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())
                 {
                     manager.Backdrop = new WinUIEx.MicaSystemBackdrop();
                     if (RuntimeHelper.IsMSIX)
