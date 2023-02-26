@@ -11,7 +11,9 @@
     MinHeight="300"
     PersistenceId="MainWindowPersistanceId"
     xmlns:views="using:BitWallpaper.Views">
+    <!-- 
     <windowex:WindowEx.Backdrop>
         <windowex:MicaSystemBackdrop/>
     </windowex:WindowEx.Backdrop>
+    -->
 </windowex:WindowEx>

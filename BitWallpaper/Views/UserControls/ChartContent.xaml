@@ -2,6 +2,7 @@
     x:Class="BitWallpaper.Views.UserControls.ChartContent"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     xmlns:local="using:BitWallpaper.Views.UserControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -25,7 +26,8 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
-                <TextBlock Grid.Column="1" x:Name="DepthPrice" FontWeight="ExtraBold" FontSize="13" Opacity="0.8" Foreground="{ThemeResource ListBoxItemSelectedForegroundThemeBrush}" Text="{x:Bind Path=DepthPriceFormatted, Mode=OneWay}" Margin="0 0 3 0" Padding="3 1 3 1" HorizontalAlignment="Right">
+                <!-- ListBoxItemSelectedForegroundThemeBrush -->
+                <TextBlock Grid.Column="1" x:Name="DepthPrice" FontWeight="ExtraBold" FontSize="13" Opacity="0.8" Foreground="{ThemeResource LtpColorBrush}" Text="{x:Bind Path=DepthPriceFormatted, Mode=OneWay}" Margin="0 0 3 0" Padding="3 1 3 1" HorizontalAlignment="Right">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
                         </Style>
@@ -114,8 +116,8 @@
                 <Grid Margin="12,0,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="0"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="7.5*"/>
+                        <RowDefinition Height="2.5*"/>
                     </Grid.RowDefinitions>
 
                     <Grid Grid.Row="0"></Grid>
@@ -511,25 +513,34 @@
                         </TabView.TabItems>
                     </TabView>
 
-                    <TabView Grid.Row="2" TabWidthMode="Equal" IsAddTabButtonVisible="False" Background="Transparent">
+                    <TabView Grid.Row="2" TabWidthMode="Equal" IsAddTabButtonVisible="False" Background="Transparent" Visibility="Collapsed">
                         <!--  VerticalAlignment="Stretch" removed so that SizeChagen gets invoked. -->
                         <TabView.TabItems>
 
                             <TabViewItem x:Uid="TabHeader_Orders" IsClosable="False" Opacity="0.7" Background="Transparent">
 
-                                <Border BorderBrush="{ThemeResource ApplicationPageBackgroundThemeBrush}" BorderThickness="0.5,0,0,0">
-                                    <ListBox x:Name="DepthListBox" ItemTemplateSelector="{StaticResource ExplorerItemTemplateSelector}" ItemsSource="{x:Bind Path=PairVM.Depth, Mode=OneWay}" SizeChanged="ListBoxDepth_SizeChanged" Background="Transparent" Margin="0,0,0,6" Padding="0,6,0,12" HorizontalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
-                                        <!--  VerticalAlignment="Stretch" removed so that SizeChagen gets invoked. -->
-                                        <ListBox.ItemContainerStyle>
-                                            <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItemStyle}">
-                                                <Setter Property="Padding" Value="3,3,3,3"/>
-                                                <Setter Property="Height" Value="25"/>
-                                                <Setter Property="IsEnabled" Value="False" />
-                                            </Style>
-                                        </ListBox.ItemContainerStyle>
-                                        <!--<ListBox.ItemTemplate>
+                            </TabViewItem>
+
+                            <TabViewItem x:Uid="TabHeader_History" IsClosable="False" Opacity="0.7" Background="Transparent">
+
+                            </TabViewItem>
+
+                        </TabView.TabItems>
+                    </TabView>
+
+                    <Border Grid.Row="1" BorderBrush="{ThemeResource ApplicationPageBackgroundThemeBrush}" BorderThickness="0,0,0,0" Margin="0,12,0,0">
+                        <ListBox x:Name="DepthListBox" ItemTemplateSelector="{StaticResource ExplorerItemTemplateSelector}" ItemsSource="{x:Bind Path=PairVM.Depth, Mode=OneWay}" SizeChanged="ListBoxDepth_SizeChanged" IsDoubleTapEnabled="True" DoubleTapped="DepthListBox_DoubleTapped" Background="Transparent" Margin="0,0,0,6" Padding="0,6,0,12" HorizontalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <!--  VerticalAlignment="Stretch" removed so that SizeChagen gets invoked. -->
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItemStyle}">
+                                    <Setter Property="Padding" Value="3,3,3,3"/>
+                                    <Setter Property="Height" Value="25"/>
+                                    <Setter Property="IsEnabled" Value="False" />
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <!--<ListBox.ItemTemplate>
                                             <DataTemplate x:DataType="model:Depth">-->
-                                                <!--
+                            <!--
                                             <DataTemplate.Triggers>
                                                 <DataTrigger Binding="{Binding IsLTP}" Value="true">
                                                     <Setter Property="TextBlock.FontWeight" TargetName="DepthPrice" Value="Bold"/>
@@ -556,7 +567,7 @@
                                                 </DataTrigger>
                                             </DataTemplate.Triggers>
                                             -->
-<!--
+                            <!--
                                                 <Grid Margin="0" HorizontalAlignment="Stretch">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="80" />
@@ -588,8 +599,8 @@
 
                                         </ListBox.ItemTemplate>
 -->
-                                    </ListBox>
-                                    <!--
+                        </ListBox>
+                        <!--
                                 <ListBox x:Name="DepthListBox" Margin="3 6 3 6" Padding="0 0 3 0" ItemsSource="{Binding Depths}" Style="{StaticResource DepthListBoxStyle}" AlternationCount="2" Background="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Visible" SizeChanged="DepthListBox_SizeChanged" MouseDoubleClick="DepthListBox_MouseDoubleClick">
                                     <ListBox.ContextMenu>
                                         <ContextMenu>
@@ -649,57 +660,48 @@
                                     </ListBox.ItemTemplate>
                                 </ListBox>
 -->
-                                </Border>
-                            
-                            </TabViewItem>
+                    </Border>
 
-                            <TabViewItem x:Uid="TabHeader_History" IsClosable="False" Opacity="0.7" Background="Transparent">
+                    <Border Grid.Row="2" BorderBrush="{ThemeResource ApplicationPageBackgroundThemeBrush}" BorderThickness="0,0,0,0">
+                        <ListBox ItemsSource="{x:Bind Path=PairVM.Transactions, Mode=OneWay}" Background="Transparent" Margin="0,0,0,12" HorizontalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItemStyle}">
+                                    <Setter Property="Padding" Value="3"/>
+                                    <Setter Property="Height" Value="25"/>
+                                    <Setter Property="IsEnabled" Value="False" />
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate x:DataType="model:Transaction">
+                                    <Grid Margin="0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="80" />
+                                            <ColumnDefinition Width="90" />
+                                            <ColumnDefinition Width="80" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" x:Name="TransExecutedAt" Text="{x:Bind ExecutedAtFormatted, Mode=OneWay}" Margin="0" Padding="0 0 0 0" HorizontalAlignment="Right">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
+                                                </Style>
+                                            </TextBlock.Style></TextBlock>
+                                        <TextBlock Grid.Column="1" x:Name="TransPrice" Text="{x:Bind PriceFormatted, Mode=OneWay}" Margin="3 0 3 0" Padding="3 0 3 0"  HorizontalAlignment="Right">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
+                                                </Style>
+                                            </TextBlock.Style></TextBlock>
+                                        <TextBlock Grid.Column="2" x:Name="TransAmount" Text="{x:Bind Amount, Mode=OneWay}" Margin="0" Padding="0 0 0 0" HorizontalAlignment="Right">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
+                                                </Style>
+                                            </TextBlock.Style></TextBlock>
 
-                                <Border BorderBrush="{ThemeResource ApplicationPageBackgroundThemeBrush}" BorderThickness="0.5,0,0,0">
-                                    <ListBox ItemsSource="{x:Bind Path=PairVM.Transactions, Mode=OneWay}" Background="Transparent" Margin="0,0,0,6" HorizontalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible">
-                                        <ListBox.ItemContainerStyle>
-                                            <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItemStyle}">
-                                                <Setter Property="Padding" Value="3"/>
-                                                <Setter Property="Height" Value="25"/>
-                                                <Setter Property="IsEnabled" Value="False" />
-                                            </Style>
-                                        </ListBox.ItemContainerStyle>
-                                        <ListBox.ItemTemplate>
-                                            <DataTemplate x:DataType="model:Transaction">
-                                                <Grid Margin="0">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="80" />
-                                                        <ColumnDefinition Width="90" />
-                                                        <ColumnDefinition Width="80" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <TextBlock Grid.Column="0" x:Name="TransExecutedAt" Text="{x:Bind ExecutedAtFormatted, Mode=OneWay}" Margin="0" Padding="3 0 3 0" HorizontalAlignment="Right">
-                                                        <TextBlock.Style>
-                                                            <Style TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
-                                                            </Style>
-                                                        </TextBlock.Style></TextBlock>
-                                                    <TextBlock Grid.Column="1" x:Name="TransPrice" Text="{x:Bind PriceFormatted, Mode=OneWay}" Margin="0" Padding="3 0 3 0"  HorizontalAlignment="Right">
-                                                        <TextBlock.Style>
-                                                            <Style TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
-                                                            </Style>
-                                                        </TextBlock.Style></TextBlock>
-                                                    <TextBlock Grid.Column="2" x:Name="TransAmount" Text="{x:Bind Amount, Mode=OneWay}" Margin="0" Padding="3 0 3 0" HorizontalAlignment="Right">
-                                                        <TextBlock.Style>
-                                                            <Style TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
-                                                            </Style>
-                                                        </TextBlock.Style></TextBlock>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
 
-                                                </Grid>
-                                            </DataTemplate>
-                                        </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Border>
 
-                                    </ListBox>
-                                </Border>
-
-                            </TabViewItem>
-
-                        </TabView.TabItems>
-                    </TabView>
-                    
                 </Grid>
             </SplitView.Pane>
             

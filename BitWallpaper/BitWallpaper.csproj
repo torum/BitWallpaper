@@ -22,7 +22,8 @@
 
 	  <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 
-
+	  <NeutralLanguage>en-US</NeutralLanguage>
+	  <DefaultLanguage>en-US</DefaultLanguage>
 	  <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
 	  <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
 	  <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
@@ -30,7 +31,7 @@
 	  <AppxBundle>Always</AppxBundle>
 	  <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
 	  <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-	  <AssemblyVersion>2.0.6.0</AssemblyVersion>
+	  <AssemblyVersion>2.0.7.0</AssemblyVersion>
 	  <FileVersion>$(AssemblyVersion)</FileVersion>
 	  <Version>$(AssemblyVersion)</Version>
 	  <ImplicitUsings>enable</ImplicitUsings>
@@ -47,6 +48,9 @@
 	  <Description>Cryptocurrency charting app</Description>
 	  <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Styles\Colors.xaml" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Update="appsettings.json">
@@ -97,7 +101,7 @@
   <ItemGroup>
 	  <PackageReference Include="LiveChartsCore.SkiaSharpView.WinUI" Version="2.0.0-beta.701" />
 	  <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
-	  <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230118.102">
+	  <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230217.4">
 	  </PackageReference>
     <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
     <PackageReference Include="WinUIEx" Version="2.1.0" />
@@ -353,6 +357,10 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+
+    <Page Update="Styles\Colors.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
 
     <Page Update="Views\SandJpyPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>

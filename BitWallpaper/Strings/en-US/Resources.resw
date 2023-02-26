@@ -285,4 +285,13 @@
   <data name="Settings_About_ThirdPartyComponents.Text" xml:space="preserve">
     <value>Third Party Components</value>
   </data>
+  <data name="Settings_SystemBackdrop.Text" xml:space="preserve">
+    <value>Visual effect</value>
+  </data>
+  <data name="Settings_SystemBackdrop_Acrylic.Content" xml:space="preserve">
+    <value>Acrylic</value>
+  </data>
+  <data name="Settings_SystemBackdrop_Mica.Content" xml:space="preserve">
+    <value>Mica</value>
+  </data>
 </root>

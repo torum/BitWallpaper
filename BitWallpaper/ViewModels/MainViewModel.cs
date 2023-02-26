@@ -1,17 +1,78 @@
 ﻿using BitWallpaper.Helpers;
+using BitWallpaper.Helpers.UICommand1;
 using BitWallpaper.Models;
 using BitWallpaper.Models.APIClients;
+using LiveChartsCore.Themes;
 using Microsoft.UI.Xaml;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Reflection;
+using System.Windows.Input;
 using Windows.ApplicationModel;
+using Windows.Storage;
 
 namespace BitWallpaper.ViewModels;
 
 public partial class MainViewModel : ViewModelBase
 {
+
     #region == Application general ==
+
+    private SystemBackdropOption _material = SystemBackdropOption.Mica;
+    public SystemBackdropOption Material
+    {
+        get => _material;
+        set
+        {
+            if (_material == value)
+                return;
+
+            _material = value;
+            NotifyPropertyChanged(nameof(Material));
+        }
+    }
+
+    private bool _isAcrylicSupported;
+    public bool IsAcrylicSupported
+    {
+        get => _isAcrylicSupported;
+        set
+        {
+            if (_isAcrylicSupported == value)
+                return;
+
+            _isAcrylicSupported = value;
+            NotifyPropertyChanged(nameof(IsAcrylicSupported));
+        }
+    }
+
+    private bool _isSystemBackdropSupported = true;
+    public bool IsSystemBackdropSupported
+    {
+        get => _isSystemBackdropSupported;
+        set
+        {
+            if (_isSystemBackdropSupported == value)
+                return;
+
+            _isSystemBackdropSupported = value;
+            NotifyPropertyChanged(nameof(IsSystemBackdropSupported));
+        }
+    }
+
+    private ElementTheme _elementTheme = ElementTheme.Default;
+    public ElementTheme ElementTheme
+    {
+        get => _elementTheme;
+        set
+        {
+            if (_elementTheme == value)
+                return;
+
+            _elementTheme = value;
+            NotifyPropertyChanged(nameof(ElementTheme));
+        }
+    }
 
     public string VersionText {
         get
@@ -31,6 +92,15 @@ public partial class MainViewModel : ViewModelBase
 
             return $"{"AppDisplayName/Text".GetLocalized()} - {version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
         }
+    }
+    public ICommand SwitchThemeCommand
+    {
+        get; private set;
+    }
+
+    public ICommand SwitchSystemBackdropCommand
+    {
+        get; private set;
     }
 
     #endregion
@@ -972,6 +1042,39 @@ public partial class MainViewModel : ViewModelBase
         _dispatcherTimerTickAllPairs.Interval = new TimeSpan(0, 0, 2);
         _dispatcherTimerTickAllPairs.Start();
 
+        var manager = WinUIEx.WindowManager.Get(App.MainWindow);
+        if (manager.Backdrop is WinUIEx.AcrylicSystemBackdrop)
+        {
+            Material = SystemBackdropOption.Acrylic;
+        }
+        else if (manager.Backdrop is WinUIEx.MicaSystemBackdrop)
+        {
+            Material = SystemBackdropOption.Mica;
+        }
+
+        if (Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())
+        {
+            IsAcrylicSupported = true;
+        }
+        else
+        {
+            IsAcrylicSupported = false;
+
+            if (Microsoft.UI.Composition.SystemBackdrops.MicaController.IsSupported())
+            {
+                //
+            }
+            else
+            {
+                IsSystemBackdropSupported = false;
+            }
+        }
+
+        SwitchThemeCommand = new GenericRelayCommand<ElementTheme>(param => OnSwitchTheme(param), param => CanSwitchThemeExecute());
+        SwitchSystemBackdropCommand = new GenericRelayCommand<string>(param => OnSwitchSystemBackdrop(param), param => CanSwitchSystemBackdropExecute());
+
+        //ChangeCandleTypeCommand = new GenericRelayCommand<CandleTypes>(param => ChangeCandleTypeCommand_Execute(param), param => ChangeCandleTypeCommand_CanExecute());
+
     }
 
     public void SetSelectedPairFromCode(PairCodes pairCode)
@@ -1502,6 +1605,68 @@ public partial class MainViewModel : ViewModelBase
         }
 
     }
+    
+    private bool CanSwitchThemeExecute()
+    {
+        return true;
+    }
 
+    private void OnSwitchTheme(ElementTheme theme)
+    {
+        if (ElementTheme != theme)
+        {
+            ElementTheme = theme;
+            //await _themeSelectorService.SetThemeAsync(theme);
+            if (App.MainWindow.Content is FrameworkElement rootElement)
+            {
+                rootElement.RequestedTheme = ElementTheme;
+
+                TitleBarHelper.UpdateTitleBar(ElementTheme);
+
+                if (RuntimeHelper.IsMSIX)
+                {
+                    ApplicationData.Current.LocalSettings.Values[App.ThemeSettingsKey] = theme.ToString();
+                }
+            }
+        }
+    }
+
+    private bool CanSwitchSystemBackdropExecute()
+    {
+        return true;
+    }
+
+    private void OnSwitchSystemBackdrop(string? backdrop)
+    {
+        if (backdrop != null)
+        {
+            var manager = WinUIEx.WindowManager.Get(App.MainWindow);
+
+            if (backdrop == "Mica")
+            {
+                if (Microsoft.UI.Composition.SystemBackdrops.MicaController.IsSupported())
+                {
+                    manager.Backdrop = new WinUIEx.MicaSystemBackdrop();
+                    if (RuntimeHelper.IsMSIX)
+                    {
+                        ApplicationData.Current.LocalSettings.Values[App.BackdropSettingsKey] = SystemBackdropOption.Mica.ToString();
+                    }
+                    Material = SystemBackdropOption.Mica;
+                }
+            }
+            else if (backdrop == "Acrylic")
+            {
+                if (Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())
+                {
+                    manager.Backdrop = new WinUIEx.AcrylicSystemBackdrop();
+                    if (RuntimeHelper.IsMSIX)
+                    {
+                        ApplicationData.Current.LocalSettings.Values[App.BackdropSettingsKey] = SystemBackdropOption.Acrylic.ToString();
+                    }
+                    Material = SystemBackdropOption.Acrylic;
+                }
+            }
+        }
+    }
 }
 

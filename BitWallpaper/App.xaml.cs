@@ -2,6 +2,7 @@
 using BitWallpaper.Models;
 using BitWallpaper.ViewModels;
 using BitWallpaper.Views;
+using LiveChartsCore.Themes;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.Windows.ApplicationModel.Resources;
@@ -13,13 +14,15 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.Json.Nodes;
+using Windows.Storage;
+using WinUIEx;
 
 namespace BitWallpaper
 {
     public partial class App : Application
     {
-        private Window _window;
-        public Window MainWindow => _window;
+        private static WindowEx _window;
+        public static WindowEx MainWindow => _window;
 
         private MainViewModel _viewModel;
         public MainViewModel ViewModel => _viewModel;
@@ -46,6 +49,10 @@ namespace BitWallpaper
         private readonly StringBuilder Errortxt = new();
 
         private readonly BitWallpaper.Helpers.NotificationManager notificationManager = new BitWallpaper.Helpers.NotificationManager();
+
+        public const string BackdropSettingsKey = "AppSystemBackdropOption";
+        public const string ThemeSettingsKey = "AppBackgroundRequestedTheme";
+
 
         public App()
         {
@@ -133,10 +140,9 @@ namespace BitWallpaper
             _window.Content = _shell;
 
             // TODO: change theme in the setting.
-            TitleBarHelper.UpdateTitleBar(ElementTheme.Default);
+            //TitleBarHelper.UpdateTitleBar(ElementTheme.Default);
 
             /*
-            var manager = WinUIEx.WindowManager.Get(_window);
             // https://stackoverflow.com/questions/74879865/invalidoperationexception-when-closing-a-windowex-window-in-winui-3
             //manager.PersistenceId = "MainWindowPersistanceId";
             manager.MinWidth = 640;
@@ -144,7 +150,80 @@ namespace BitWallpaper
             //manager.Backdrop = new WinUIEx.AcrylicSystemBackdrop();
             manager.Backdrop = new WinUIEx.MicaSystemBackdrop();
             */
-            //
+
+            var manager = WinUIEx.WindowManager.Get(_window);
+            // SystemBackdrop
+            if (Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())
+            {
+                //manager.Backdrop = new WinUIEx.AcrylicSystemBackdrop();
+                if (RuntimeHelper.IsMSIX)
+                {
+                    // Load preference from localsetting.
+                    if (ApplicationData.Current.LocalSettings.Values.TryGetValue(BackdropSettingsKey, out var obj))
+                    {
+                        var s = (string)obj;
+                        if (s == SystemBackdropOption.Acrylic.ToString())
+                        {
+                            manager.Backdrop = new WinUIEx.AcrylicSystemBackdrop();
+                            _viewModel.Material = SystemBackdropOption.Acrylic;
+                        }
+                        else if (s == SystemBackdropOption.Mica.ToString())
+                        {
+                            manager.Backdrop = new WinUIEx.MicaSystemBackdrop();
+                            _viewModel.Material = SystemBackdropOption.Mica;
+                        }
+                        else
+                        {
+                            manager.Backdrop = new WinUIEx.AcrylicSystemBackdrop();
+                            _viewModel.Material = SystemBackdropOption.Acrylic;
+                        }
+                    }
+                    else
+                    {
+                        // default acrylic.
+                        manager.Backdrop = new WinUIEx.AcrylicSystemBackdrop();
+                        _viewModel.Material = SystemBackdropOption.Acrylic;
+                    }
+                }
+                else
+                {
+                    // just for me.
+                    manager.Backdrop = new WinUIEx.AcrylicSystemBackdrop();
+                    _viewModel.Material = SystemBackdropOption.Acrylic;
+                }
+
+                _viewModel.IsAcrylicSupported = true;
+            }
+            else if (Microsoft.UI.Composition.SystemBackdrops.MicaController.IsSupported())
+            {
+                manager.Backdrop = new WinUIEx.MicaSystemBackdrop();
+                _viewModel.Material = SystemBackdropOption.Mica;
+            }
+            else
+            {
+                // Memo: Without Backdrop, theme setting's theme is not gonna have any effect( "system default" will be used). So the setting is disabled.
+            }
+            //manager.Backdrop = new WinUIEx.MicaSystemBackdrop();
+
+            _viewModel.ElementTheme = ElementTheme.Default;
+            if (RuntimeHelper.IsMSIX)
+            {
+                if (ApplicationData.Current.LocalSettings.Values.TryGetValue(ThemeSettingsKey, out var obj))
+                {
+                    var themeName = (string)obj;
+                    if (Enum.TryParse(themeName, out ElementTheme cacheTheme))
+                    {
+                        if (App.MainWindow.Content is FrameworkElement rootElement)
+                        {
+                            rootElement.RequestedTheme = cacheTheme;
+
+                            TitleBarHelper.UpdateTitleBar(cacheTheme);
+
+                            _viewModel.ElementTheme = cacheTheme;
+                        }
+                    }
+                }
+            }
 
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
             notificationManager.Init();

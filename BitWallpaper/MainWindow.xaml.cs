@@ -29,6 +29,7 @@ namespace BitWallpaper
             //Content = null;
             Title = "AppDisplayName/Text".GetLocalized();
             
+
             // Need to be here in the code bihind.
             this.ExtendsContentIntoTitleBar = true;
 

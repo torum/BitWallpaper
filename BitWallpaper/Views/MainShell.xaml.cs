@@ -1,3 +1,4 @@
+using BitWallpaper.Helpers;
 using BitWallpaper.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -5,20 +6,10 @@ using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using Windows.Storage;
-using BitWallpaper.Helpers;
-using WinUIEx;
-using Microsoft.UI;
-using Microsoft.UI.Windowing;
-using Microsoft.Windows.ApplicationModel.Resources;
 using System.Xml;
 using System.Xml.Linq;
-using LiveChartsCore.SkiaSharpView.Painting;
-using System.IO;
+using WinUIEx;
 
 namespace BitWallpaper.Views
 {
@@ -90,7 +81,7 @@ namespace BitWallpaper.Views
                 //Debug.WriteLine(xdoc.ToString());
 
                 // Main window
-                if ((App.Current as App).MainWindow != null)
+                if (App.MainWindow != null)
                 {
                     // Main Window element
                     var mainWindow = xdoc.Root.Element("MainWindow");
@@ -397,9 +388,9 @@ namespace BitWallpaper.Views
 
 
             //(App.Current as App).MainWindow.ExtendsContentIntoTitleBar = true;
-            (App.Current as App).MainWindow.SetTitleBar(AppTitleBar);
-            (App.Current as App).MainWindow.Activated += MainWindow_Activated;
-            (App.Current as App).MainWindow.Closed += MainWindow_Closed;
+            App.MainWindow.SetTitleBar(AppTitleBar);
+            App.MainWindow.Activated += MainWindow_Activated;
+            App.MainWindow.Closed += MainWindow_Closed;
             //AppTitleBarText.Text = "AppDisplayName".GetLocalized();
 
             //
@@ -415,7 +406,7 @@ namespace BitWallpaper.Views
 
         private void OnLoaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
-            //TitleBarHelper.UpdateTitleBar(ElementTheme.Default);
+            TitleBarHelper.UpdateTitleBar(ElementTheme.Default);
 
             //KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.Left, VirtualKeyModifiers.Menu));
             //KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.GoBack));
@@ -447,7 +438,7 @@ namespace BitWallpaper.Views
             XmlAttribute attrs;
 
             // Main window
-            if ((App.Current as App).MainWindow != null)
+            if (App.MainWindow != null)
             {
                 // Main Window element
                 XmlElement mainWindow = doc.CreateElement(string.Empty, "MainWindow", string.Empty);
@@ -464,7 +455,7 @@ namespace BitWallpaper.Views
                     attrs.Value = (sender as Window).Width.ToString();
                 }
                 */
-                attrs.Value = (App.Current as App).MainWindow.GetAppWindow().Size.Width.ToString();
+                attrs.Value = App.MainWindow.GetAppWindow().Size.Width.ToString();
                 mainWindow.SetAttributeNode(attrs);
 
                 attrs = doc.CreateAttribute("height");
@@ -478,7 +469,7 @@ namespace BitWallpaper.Views
                     attrs.Value = (sender as Window).Height.ToString();
                 }
                 */
-                attrs.Value = (App.Current as App).MainWindow.GetAppWindow().Size.Height.ToString();
+                attrs.Value = App.MainWindow.GetAppWindow().Size.Height.ToString();
                 mainWindow.SetAttributeNode(attrs);
 
                 /*

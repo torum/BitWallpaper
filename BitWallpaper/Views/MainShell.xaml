@@ -32,7 +32,8 @@
                        VerticalAlignment="Center"
                        TextWrapping="NoWrap"
                        Style="{StaticResource CaptionTextBlockStyle}"
-                       Margin="34,0,0,0"/>
+                       Margin="34,0,0,0"
+                       Foreground="{ThemeResource LtpColorBrush}" Opacity="0.7"/>
 
             <!--
               Height="{Binding ElementName=NavigationViewControl, Path=CompactPaneLength}"

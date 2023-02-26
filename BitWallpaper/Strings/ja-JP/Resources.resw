@@ -142,16 +142,16 @@
     <value>Personalization</value>
   </data>
   <data name="Settings_Theme.Text" xml:space="preserve">
-    <value>Theme</value>
+    <value>テーマ</value>
   </data>
   <data name="Settings_Theme_Dark.Content" xml:space="preserve">
-    <value>Dark</value>
+    <value>ダーク</value>
   </data>
   <data name="Settings_Theme_Default.Content" xml:space="preserve">
-    <value>Default</value>
+    <value>システム既定</value>
   </data>
   <data name="Settings_Theme_Light.Content" xml:space="preserve">
-    <value>Light</value>
+    <value>ライト</value>
   </data>
   <data name="AppCommand_DisplayInfoPanel.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>情報パネルの表示切替</value>
@@ -284,5 +284,17 @@
   </data>
   <data name="Settings_About_ThirdPartyComponents.Text" xml:space="preserve">
     <value>サードパーティー製ライブラリ</value>
+  </data>
+  <data name="Settings_SystemBackdrop.Text" xml:space="preserve">
+    <value>ビジュアル効果</value>
+  </data>
+  <data name="Settings_SystemBackdrop_Acrylic.Content" xml:space="preserve">
+    <value>Acrylic</value>
+  </data>
+  <data name="Settings_SystemBackdrop_Mica.Content" xml:space="preserve">
+    <value>Mica</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value />
   </data>
 </root>

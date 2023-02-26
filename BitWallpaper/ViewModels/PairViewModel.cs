@@ -1311,7 +1311,7 @@ public class PairViewModel : ViewModelBase
         new Axis()
         {
             LabelsRotation = -15,
-            //LabelsPaint = new SolidColorPaint(SKColors.Wheat),
+            LabelsPaint = new SolidColorPaint(SKColors.Gray),
             Labeler = value => new DateTime((long) value).ToString("MM/dd"), //TODO: localize aware
             UnitWidth = TimeSpan.FromHours(0.5).Ticks,
             MinStep = TimeSpan.FromDays(1).Ticks,
@@ -1339,7 +1339,7 @@ public class PairViewModel : ViewModelBase
         new Axis()
             {
                 LabelsRotation = 0,
-                //LabelsPaint = new SolidColorPaint(SKColors.Wheat),
+                LabelsPaint = new SolidColorPaint(SKColors.Gray),
                 Position = LiveChartsCore.Measure.AxisPosition.End,
                 SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray)
                             {
@@ -1510,6 +1510,9 @@ public class PairViewModel : ViewModelBase
     #endregion
 
     private DateTime lastChartLoadedDateTime= DateTime.MinValue;
+
+    public delegate void DepthCenterEventHandler();
+    public event DepthCenterEventHandler? DepthScrollCenter;
 
     // 
     public PairViewModel(PairCodes p, double fontSize, string ltpFormstString, string currencyFormstString, decimal grouping100, decimal grouping1000)
@@ -2088,6 +2091,12 @@ public class PairViewModel : ViewModelBase
                 //if (i == (half-1)) dd.IsLTP = true;
                 _depth.Add(dd);
             }
+
+            // scroll center
+            App.CurrentDispatcherQueue?.TryEnqueue(() =>
+            {
+                DepthScrollCenter?.Invoke();
+            });
         }
         else
         {

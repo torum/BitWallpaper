@@ -26,7 +26,7 @@ internal class TitleBarHelper
 
     public static void UpdateTitleBar(ElementTheme theme)
     {
-        if (((Application.Current as App)?.MainWindow as MainWindow).ExtendsContentIntoTitleBar)
+        if ((App.MainWindow as MainWindow).ExtendsContentIntoTitleBar)
         {
             if (theme != ElementTheme.Default)
             {
@@ -76,7 +76,7 @@ internal class TitleBarHelper
             Application.Current.Resources["WindowCaptionBackground"] = new SolidColorBrush(Colors.Transparent);
             Application.Current.Resources["WindowCaptionBackgroundDisabled"] = new SolidColorBrush(Colors.Transparent);
 
-            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(((Application.Current as App)?.MainWindow as MainWindow));
+            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle((App.MainWindow as MainWindow));
             if (hwnd == GetActiveWindow())
             {
                 SendMessage(hwnd, WMACTIVATE, WAINACTIVE, IntPtr.Zero);

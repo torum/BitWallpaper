@@ -4,9 +4,7 @@ using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Automation.Provider;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Markup;
-using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
 
 namespace BitWallpaper.Views.UserControls
 {
@@ -49,7 +47,16 @@ namespace BitWallpaper.Views.UserControls
 
         private void ValueChanged()
         {
-            //
+            if (PairVM == null)
+                return;
+
+            PairVM.DepthScrollCenter += () => OnDepthScrollCenter();
+
+        }
+
+        private void OnDepthScrollCenter()
+        {
+            Task.Run(() => SetDepthListboxScrollPosition());
         }
 
         private void ListBoxDepth_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -146,6 +153,11 @@ namespace BitWallpaper.Views.UserControls
                 PairVM.AlarmMinus = (dialog as ContentDialogContent).LowPrice;
             }
             
+        }
+
+        private void DepthListBox_DoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
+        {
+            SetDepthListboxScrollPosition();
         }
     }
 }
