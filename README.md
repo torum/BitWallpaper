@@ -12,10 +12,10 @@ Pairs: BTC/JPY, XRP/JPY, ETH/JPY, LTC/JPY, MONA/JPY, BCC/JPY, XLM/JPY, QTUM/JPY,
  
 ## Screenshots
 
-Dark Theme with Mica 
+Dark Theme with Mica  
 ![alt text](https://github.com/torum/BitWallpaper/blob/master/docs/Images/BitWallpaper-screenshot-V2-full.png?raw=true)
 
-Dark Theme with Acrylic
+Dark Theme with Acrylic 
 ![alt text](https://github.com/torum/BitWallpaper/blob/master/docs/Images/BitWallpaper-screenshot-V2-full-AcrylicSystemBackdrop.png?raw=true)
 
 Small display, compact mode  
