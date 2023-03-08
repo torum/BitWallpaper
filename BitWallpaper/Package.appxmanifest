@@ -11,7 +11,7 @@
   <Identity
     Name="60132torumyax.BitWallpaper"
     Publisher="CN=F3079A96-760D-4F53-9E00-374C09B6D4B1"
-    Version="2.0.5.0" />
+    Version="2.0.8.0" />
 
   <Properties>
     <DisplayName>BitWallpaper</DisplayName>
@@ -24,6 +24,7 @@
   </Dependencies>
 
   <Resources>
+	  <Resource Language="x-generate"/>
 	  <Resource Language="en-US"/>
 	  <Resource Language="ja-JP"/>
   </Resources>

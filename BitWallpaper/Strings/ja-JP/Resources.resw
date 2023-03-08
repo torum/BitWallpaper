@@ -294,7 +294,4 @@
   <data name="Settings_SystemBackdrop_Mica.Content" xml:space="preserve">
     <value>Mica</value>
   </data>
-  <data name="String1" xml:space="preserve">
-    <value />
-  </data>
 </root>

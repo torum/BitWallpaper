@@ -1386,7 +1386,7 @@ public partial class MainViewModel : ViewModelBase
                             hoge.HighLowInfoTextColorFlag = true;
                             hoge.HighLowInfoText = hoge.PairString + "Alarm";
 
-                            ShowBalloonEventArgs ag = new ShowBalloonEventArgs
+                            ShowBalloonEventArgs ag = new()
                             {
                                 Title = hoge.PairString + " High Price Alarm",
                                 Text = hoge.AlarmPlusString
@@ -1407,7 +1407,7 @@ public partial class MainViewModel : ViewModelBase
                             hoge.HighLowInfoTextColorFlag = false;
                             hoge.HighLowInfoText = hoge.PairString + "Alarm";
 
-                            ShowBalloonEventArgs ag = new ShowBalloonEventArgs
+                            ShowBalloonEventArgs ag = new()
                             {
                                 Title = hoge.PairString + " Low Price Alarm",
                                 Text = hoge.AlarmMinusString
@@ -1605,8 +1605,8 @@ public partial class MainViewModel : ViewModelBase
         }
 
     }
-    
-    private bool CanSwitchThemeExecute()
+
+    private static bool CanSwitchThemeExecute()
     {
         return true;
     }
@@ -1631,7 +1631,7 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
-    private bool CanSwitchSystemBackdropExecute()
+    private static bool CanSwitchSystemBackdropExecute()
     {
         return true;
     }

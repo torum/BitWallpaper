@@ -33,13 +33,12 @@ namespace BitWallpaper
         private static readonly Microsoft.UI.Dispatching.DispatcherQueue _currentDispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
         public static Microsoft.UI.Dispatching.DispatcherQueue CurrentDispatcherQueue => _currentDispatcherQueue;
 
+        //private static readonly ResourceLoader _resourceLoader = new();
         private static readonly string _appName = "BitWallpaper";//_resourceLoader.GetString("AppName");
         private static readonly string _appDeveloper = "torum";
         private static readonly string _envDataFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         public static string AppDataFolder { get; } = _envDataFolder + System.IO.Path.DirectorySeparatorChar + _appDeveloper + System.IO.Path.DirectorySeparatorChar + _appName;
         public static string AppConfigFilePath { get; } = AppDataFolder + System.IO.Path.DirectorySeparatorChar + _appName + ".config";
-
-        private static readonly ResourceLoader _resourceLoader = new();
 
         //private static SynchronizationContext _theSynchronizationContext = SynchronizationContext.Current;
         //public SynchronizationContext TheSynchronizationContext { get => _theSynchronizationContext; }
@@ -48,7 +47,7 @@ namespace BitWallpaper
         public string LogFilePath = System.Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + System.IO.Path.DirectorySeparatorChar + "BitWallpaper_errors.txt";
         private readonly StringBuilder Errortxt = new();
 
-        private readonly BitWallpaper.Helpers.NotificationManager notificationManager = new BitWallpaper.Helpers.NotificationManager();
+        private readonly BitWallpaper.Helpers.NotificationManager notificationManager = new();
 
         public const string BackdropSettingsKey = "AppSystemBackdropOption";
         public const string ThemeSettingsKey = "AppBackgroundRequestedTheme";
@@ -233,7 +232,7 @@ namespace BitWallpaper
             MainWindow.Activate();
         }
 
-        private void ShowBalloon(ShowBalloonEventArgs arg)
+        private static void ShowBalloon(ShowBalloonEventArgs arg)
         {
 
             // https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/notifications/app-notifications/app-notifications-quickstart?tabs=cs
@@ -356,7 +355,7 @@ namespace BitWallpaper
         // for the WinUIEx, unpackaged.
         private class FilePersistence : IDictionary<string, object>
         {
-            private readonly Dictionary<string, object> _data = new Dictionary<string, object>();
+            private readonly Dictionary<string, object> _data = new();
             private readonly string _file;
 
             public FilePersistence(string filename)
@@ -378,7 +377,7 @@ namespace BitWallpaper
             }
             private void Save()
             {
-                JsonObject jo = new JsonObject();
+                JsonObject jo = new();
                 foreach (var item in _data)
                 {
                     if (item.Value is string s) // In this case we only need string support. TODO: Support other types

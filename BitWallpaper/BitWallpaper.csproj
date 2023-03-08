@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows10.0.22621.0</TargetFramework>
+    <TargetFramework>net7.0-windows10.0.22621.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <RootNamespace>BitWallpaper</RootNamespace>
     <Platforms>x86;x64;ARM64</Platforms>
@@ -22,7 +22,7 @@
 
 	  <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 
-	  <NeutralLanguage>en-US</NeutralLanguage>
+	  <NeutralLanguage>en</NeutralLanguage>
 	  <DefaultLanguage>en-US</DefaultLanguage>
 	  <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
 	  <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
@@ -31,22 +31,21 @@
 	  <AppxBundle>Always</AppxBundle>
 	  <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
 	  <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-	  <AssemblyVersion>2.0.7.0</AssemblyVersion>
+	  <AssemblyVersion>2.0.8.0</AssemblyVersion>
 	  <FileVersion>$(AssemblyVersion)</FileVersion>
 	  <Version>$(AssemblyVersion)</Version>
 	  <ImplicitUsings>enable</ImplicitUsings>
 	  <ApplicationIcon>App_Icon.ico</ApplicationIcon>
 	  <ApplicationManifest>app.manifest</ApplicationManifest>
 	  <PackageIcon>App_Icon.png</PackageIcon>
-	  <IncludeSymbols>True</IncludeSymbols>
+	  <IncludeSymbols>False</IncludeSymbols>
 	  <StartupObject>BitWallpaper.Program</StartupObject>
 	  <Nullable>annotations</Nullable>
-	  <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
 	  <RepositoryUrl>https://github.com/torum/BitWallpaper</RepositoryUrl>
 	  <PackageProjectUrl>https://torum.github.io/BitWallpaper/</PackageProjectUrl>
 	  <Copyright>torum</Copyright>
 	  <Description>Cryptocurrency charting app</Description>
-	  <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	  <SymbolPackageFormat>symbols.nupkg</SymbolPackageFormat>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Styles\Colors.xaml" />
