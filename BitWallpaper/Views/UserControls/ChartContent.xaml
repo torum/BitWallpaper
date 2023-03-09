@@ -104,9 +104,9 @@
 
         <!--  IsPaneOpen="{x:Bind Path=PairVM.IsPaneVisible, Mode=TwoWay}" -->
 
-        <SplitView x:Name="SplitViewControl" CornerRadius="8,0,0,0" BorderThickness="1,0,0,0" BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}" PaneBackground="{ThemeResource LayerFillColorAltBrush}" IsPaneOpen="{x:Bind Path=PairVM.IsPaneVisible, Mode=TwoWay}" PanePlacement="Right" OpenPaneLength="280" CompactPaneLength="0" DisplayMode="CompactInline">
+        <SplitView x:Name="SplitViewControl" Margin="0,0,0,0" CornerRadius="0,0,0,0" BorderThickness="1,0,0,0" BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}" PaneBackground="{ThemeResource LayerFillColorAltBrush}" IsPaneOpen="{x:Bind Path=PairVM.IsPaneVisible, Mode=TwoWay}" PanePlacement="Right" OpenPaneLength="280" CompactPaneLength="0" DisplayMode="CompactInline">
             <SplitView.Pane>
-                <Grid Margin="12,0,0,0">
+                <Grid Margin="12,6,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="0"/>
                         <RowDefinition Height="8*"/>
@@ -521,8 +521,8 @@
                         </TabView.TabItems>
                     </TabView>
 
-                    <Border Grid.Row="1" BorderThickness="0,0,0,0" Margin="0,12,0,0">
-                        <ListBox x:Name="DepthListBox" ItemTemplateSelector="{StaticResource ExplorerItemTemplateSelector}" ItemsSource="{x:Bind Path=PairVM.Depth, Mode=OneWay}" SizeChanged="ListBoxDepth_SizeChanged" IsDoubleTapEnabled="True" DoubleTapped="DepthListBox_DoubleTapped" Background="Transparent" Margin="0,0,0,6" Padding="0,6,0,12" HorizontalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <Border Grid.Row="1" BorderThickness="0,0,0,0" Margin="0,0,0,0">
+                        <ListBox x:Name="DepthListBox" ItemTemplateSelector="{StaticResource ExplorerItemTemplateSelector}" ItemsSource="{x:Bind Path=PairVM.Depth, Mode=OneWay}" SizeChanged="ListBoxDepth_SizeChanged" IsDoubleTapEnabled="True" DoubleTapped="DepthListBox_DoubleTapped" Background="Transparent" Margin="0,0,0,6" Padding="0,12,0,12" HorizontalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
                             <!--  VerticalAlignment="Stretch" removed so that SizeChagen gets invoked. -->
                             <ListBox.ItemContainerStyle>
                                 <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItemStyle}">
@@ -775,7 +775,7 @@
                             </AppBarButton.Icon>
                         </AppBarButton>
 
-                        <AppBarButton x:Name="PanelOpenClose" Icon="ClosePane" Label="show" IsCompact="False" x:Uid="AppCommand_DisplayInfoPanel" Command="{x:Bind PairVM.TogglePaneVisibilityCommand}" VerticalAlignment="Bottom" Margin="0" Padding="0" Opacity="0.4">
+                        <AppBarButton x:Name="PanelOpenClose" Icon="ClosePane" Label="show" IsCompact="False" x:Uid="AppCommand_DisplayInfoPanel" Command="{x:Bind PairVM.TogglePaneVisibilityCommand}" VerticalAlignment="Bottom" Margin="0,0,4,0" Padding="0" Opacity="0.4">
                             <AppBarButton.KeyboardAccelerators>
                                 <KeyboardAccelerator Modifiers="Control" Key="I" />
                             </AppBarButton.KeyboardAccelerators>
