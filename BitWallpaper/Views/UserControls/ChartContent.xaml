@@ -12,7 +12,7 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         
-        <DataTemplate x:Key="FolderTemplate" x:DataType="model:Depth">
+        <DataTemplate x:Key="LtpTemplate" x:DataType="model:Depth">
             <Grid Margin="0" HorizontalAlignment="Stretch">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="80" />
@@ -35,7 +35,7 @@
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="FileTemplate" x:DataType="model:Depth">
+        <DataTemplate x:Key="BidOrAskTemplate" x:DataType="model:Depth">
             <Grid Margin="0" HorizontalAlignment="Stretch">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="80" />
@@ -64,7 +64,7 @@
             </Grid>
         </DataTemplate>
 
-        <model:ExplorerItemTemplateSelector x:Key="ExplorerItemTemplateSelector" FolderTemplate="{StaticResource FolderTemplate}" FileTemplate="{StaticResource FileTemplate}" />
+        <model:DepthListItemTemplateSelector x:Key="DepthListItemTemplateSelector" LtpTemplate="{StaticResource LtpTemplate}" BidOrAskTemplate="{StaticResource BidOrAskTemplate}" />
 
     </UserControl.Resources>
     <Grid>
@@ -102,9 +102,9 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <!--  IsPaneOpen="{x:Bind Path=PairVM.IsPaneVisible, Mode=TwoWay}" -->
+        <!--  IsPaneOpen="{x:Bind Path=PairVM.IsPaneVisible, Mode=TwoWay}"  PaneBackground="{ThemeResource LayerFillColorAltBrush}" -->
 
-        <SplitView x:Name="SplitViewControl" Margin="0,0,0,0" CornerRadius="0,0,0,0" BorderThickness="1,0,0,0" BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}" PaneBackground="{ThemeResource LayerFillColorAltBrush}" IsPaneOpen="{x:Bind Path=PairVM.IsPaneVisible, Mode=TwoWay}" PanePlacement="Right" OpenPaneLength="280" CompactPaneLength="0" DisplayMode="CompactInline">
+        <SplitView x:Name="SplitViewControl" Margin="0,0,0,0" CornerRadius="0,0,0,0" BorderThickness="1,0,0,0" BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}" PaneBackground="Transparent" IsPaneOpen="{x:Bind Path=PairVM.IsPaneVisible, Mode=TwoWay}" PanePlacement="Right" OpenPaneLength="280" CompactPaneLength="0" DisplayMode="CompactInline">
             <SplitView.Pane>
                 <Grid Margin="12,6,0,0">
                     <Grid.RowDefinitions>
@@ -522,7 +522,7 @@
                     </TabView>
 
                     <Border Grid.Row="1" BorderThickness="0,0,0,0" Margin="0,0,0,0">
-                        <ListBox x:Name="DepthListBox" ItemTemplateSelector="{StaticResource ExplorerItemTemplateSelector}" ItemsSource="{x:Bind Path=PairVM.Depth, Mode=OneWay}" SizeChanged="ListBoxDepth_SizeChanged" IsDoubleTapEnabled="True" DoubleTapped="DepthListBox_DoubleTapped" Background="Transparent" Margin="0,0,0,6" Padding="0,12,0,12" HorizontalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <ListBox x:Name="DepthListBox" ItemTemplateSelector="{StaticResource DepthListItemTemplateSelector}" ItemsSource="{x:Bind Path=PairVM.Depth, Mode=OneWay}" SizeChanged="ListBoxDepth_SizeChanged" IsDoubleTapEnabled="True" DoubleTapped="DepthListBox_DoubleTapped" Background="Transparent" Margin="0,0,0,6" Padding="0,12,0,12" HorizontalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
                             <!--  VerticalAlignment="Stretch" removed so that SizeChagen gets invoked. -->
                             <ListBox.ItemContainerStyle>
                                 <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItemStyle}">

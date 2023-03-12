@@ -8,9 +8,9 @@ namespace BitWallpaper.Views
 {
     public sealed partial class AxsJpyPage : Page
     {
-        private PairViewModel _viewModel;
+        private PairViewModel? _viewModel;
 
-        public PairViewModel ViewModel
+        public PairViewModel? ViewModel
         {
             get=> _viewModel;
         }

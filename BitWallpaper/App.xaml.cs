@@ -21,14 +21,14 @@ namespace BitWallpaper
 {
     public partial class App : Application
     {
-        private static WindowEx _window;
-        public static WindowEx MainWindow => _window;
+        private static WindowEx? _window;
+        public static WindowEx? MainWindow => _window;
 
-        private MainViewModel _viewModel;
-        public MainViewModel ViewModel => _viewModel;
+        private MainViewModel? _viewModel;
+        public MainViewModel? ViewModel => _viewModel;
 
-        private MainShell _shell;
-        public MainShell Shell => _shell;
+        private MainShell? _shell;
+        public MainShell? Shell => _shell;
 
         private static readonly Microsoft.UI.Dispatching.DispatcherQueue _currentDispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
         public static Microsoft.UI.Dispatching.DispatcherQueue CurrentDispatcherQueue => _currentDispatcherQueue;
@@ -213,7 +213,7 @@ namespace BitWallpaper
                     var themeName = (string)obj;
                     if (Enum.TryParse(themeName, out ElementTheme cacheTheme))
                     {
-                        if (App.MainWindow.Content is FrameworkElement rootElement)
+                        if (App.MainWindow?.Content is FrameworkElement rootElement)
                         {
                             rootElement.RequestedTheme = cacheTheme;
 
@@ -229,7 +229,7 @@ namespace BitWallpaper
             notificationManager.Init();
             _viewModel.ShowBalloon += (sender, arg) => { ShowBalloon(arg); };
 
-            MainWindow.Activate();
+            MainWindow?.Activate();
         }
 
         private static void ShowBalloon(ShowBalloonEventArgs arg)
@@ -246,17 +246,17 @@ namespace BitWallpaper
             AppNotificationManager.Default.Show(appNotification);
         }
 
-        protected void OnProcessExit(object sender, EventArgs e)
+        protected void OnProcessExit(object? sender, EventArgs e)
         {
             notificationManager.Unregister();
         }
 
         // Activated from other instance.
-        private void App_Activated(object sender, Microsoft.Windows.AppLifecycle.AppActivationArguments e)
+        private void App_Activated(object? sender, Microsoft.Windows.AppLifecycle.AppActivationArguments e)
         {
             CurrentDispatcherQueue?.TryEnqueue(() =>
             {
-                _window.Activate(); 
+                _window?.Activate(); 
                 //_window.BringToFront();
 
                 // TODO: need .BringToForeground()
@@ -290,13 +290,21 @@ namespace BitWallpaper
                 SaveErrorLog();
             }catch(Exception) { }
         }
-        private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+        private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
         {
             var exception = e.Exception.InnerException as Exception;
-
-            Debug.WriteLine("TaskScheduler_UnobservedTaskException: " + exception.Message);
-            AppendErrorLog("TaskScheduler_UnobservedTaskException", exception.Message);
-            SaveErrorLog();
+            if (exception is not null)
+            {
+                Debug.WriteLine("TaskScheduler_UnobservedTaskException: " + exception.Message);
+                AppendErrorLog("TaskScheduler_UnobservedTaskException", exception.Message);
+                SaveErrorLog();
+            }
+            else
+            {
+                Debug.WriteLine("TaskScheduler_UnobservedTaskException");
+                AppendErrorLog("TaskScheduler_UnobservedTaskException", "");
+                SaveErrorLog();
+            }
 
             e.SetObserved();
         }
@@ -313,8 +321,8 @@ namespace BitWallpaper
             }
             else
             {
-                Debug.WriteLine("CurrentDomain_UnhandledException: " + exception.Message);
-                AppendErrorLog("CurrentDomain_UnhandledException", exception.Message);
+                Debug.WriteLine("CurrentDomain_UnhandledException");
+                AppendErrorLog("CurrentDomain_UnhandledException", "");
                 SaveErrorLog();
             }
         }
@@ -352,7 +360,8 @@ namespace BitWallpaper
             }
         }
 
-        // for the WinUIEx, unpackaged.
+        #region == FilePersistence for WinUIEx ==
+
         private class FilePersistence : IDictionary<string, object>
         {
             private readonly Dictionary<string, object> _data = new();
@@ -365,11 +374,15 @@ namespace BitWallpaper
                 {
                     if (File.Exists(filename))
                     {
-                        var jo = System.Text.Json.Nodes.JsonObject.Parse(File.ReadAllText(filename)) as JsonObject;
-                        foreach (var node in jo)
+                        if (JsonNode.Parse(File.ReadAllText(filename)) is JsonObject jo)
                         {
-                            if (node.Value is JsonValue jvalue && jvalue.TryGetValue<string>(out string value))
-                                _data[node.Key] = value;
+                            foreach (var node in jo)
+                            {
+                                if (node.Value is JsonValue jvalue && jvalue.TryGetValue<string>(out var value))
+                                {
+                                    _data[node.Key] = value;
+                                }
+                            }
                         }
                     }
                 }
@@ -377,11 +390,13 @@ namespace BitWallpaper
             }
             private void Save()
             {
-                JsonObject jo = new();
+                var jo = new JsonObject();
                 foreach (var item in _data)
                 {
                     if (item.Value is string s) // In this case we only need string support. TODO: Support other types
+                    {
                         jo.Add(item.Key, s);
+                    }
                 }
                 File.WriteAllText(_file, jo.ToJsonString());
             }
@@ -414,17 +429,19 @@ namespace BitWallpaper
 
             public bool ContainsKey(string key) => _data.ContainsKey(key);
 
-            public void CopyTo(KeyValuePair<string, object>[] array, int arrayIndex) => throw new NotImplementedException(); // TODO
+            public void CopyTo(KeyValuePair<string, object>[] array, int arrayIndex) => throw new NotImplementedException();
 
-            public IEnumerator<KeyValuePair<string, object>> GetEnumerator() => throw new NotImplementedException(); // TODO
+            public IEnumerator<KeyValuePair<string, object>> GetEnumerator() => throw new NotImplementedException();
 
-            public bool Remove(string key) => throw new NotImplementedException(); // TODO
+            public bool Remove(string key) => throw new NotImplementedException();
 
-            public bool Remove(KeyValuePair<string, object> item) => throw new NotImplementedException(); // TODO
+            public bool Remove(KeyValuePair<string, object> item) => throw new NotImplementedException();
 
-            public bool TryGetValue(string key, [MaybeNullWhen(false)] out object value) => throw new NotImplementedException(); // TODO
+            public bool TryGetValue(string key, [MaybeNullWhen(false)] out object value) => throw new NotImplementedException();
 
-            IEnumerator IEnumerable.GetEnumerator() => throw new NotImplementedException(); // TODO
+            IEnumerator IEnumerable.GetEnumerator() => throw new NotImplementedException();
         }
+
+        #endregion
     }
 }

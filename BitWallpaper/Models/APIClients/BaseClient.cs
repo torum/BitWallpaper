@@ -9,8 +9,8 @@ namespace BitWallpaper.Models.APIClients;
 
 public abstract class BaseClient : IDisposable
 {
-    private static object _locker = new object();
-    private static volatile HttpClient _client;
+    private static readonly object _locker = new();
+    private static volatile HttpClient? _client;
 
     protected static HttpClient Client
     {
@@ -20,10 +20,7 @@ public abstract class BaseClient : IDisposable
             {
                 lock (_locker)
                 {
-                    if (_client == null)
-                    {
-                        _client = new HttpClient();
-                    }
+                    _client ??= new HttpClient();
                 }
             }
 
@@ -41,10 +38,7 @@ public abstract class BaseClient : IDisposable
     {
         if (disposing)
         {
-            if (_client != null)
-            {
-                _client.Dispose();
-            }
+            _client?.Dispose();
 
             _client = null;
         }

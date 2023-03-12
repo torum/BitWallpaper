@@ -45,7 +45,7 @@ public class Transaction : ViewModelBase
         }
     }
 
-    private string _side;
+    private string _side = "";
     public string Side
     {
         get

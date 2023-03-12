@@ -26,7 +26,7 @@ public class PairViewModel : ViewModelBase
 {
     #region == Main properties ==
 
-    private PairCodes _p;
+    private readonly PairCodes _p;
     public PairCodes PairCode
     {
         get
@@ -123,8 +123,8 @@ public class PairViewModel : ViewModelBase
 
             _ltp = value;
 
-            NotifyPropertyChanged("Ltp");
-            NotifyPropertyChanged("LtpString");
+            NotifyPropertyChanged(nameof(Ltp));
+            NotifyPropertyChanged(nameof(LtpString));
             /*
             if (_ltp > BasePrice)
             {
@@ -179,11 +179,13 @@ public class PairViewModel : ViewModelBase
                 App.CurrentDispatcherQueue?.TryEnqueue(() =>
                 {
                     if (Series[1].Values == null) return;
-                    if (Series[1].Values is not ObservableCollection<FinancialPoint>) return;
-                    if ((Series[1].Values as ObservableCollection<FinancialPoint>).Count < 1) return;
+                    if (Series[1].Values is ObservableCollection<FinancialPoint> oc)
+                    {
+                        if (oc.Count < 1) return;
 
-                    (Series[1].Values as ObservableCollection<FinancialPoint>)[0].Close =
-                        (Series[1].Values as ObservableCollection<FinancialPoint>)[0].Close = (double)_ltp;
+                        oc[0].Close =
+                            oc[0].Close = (double)_ltp;
+                    }
                 });
             }
         }
@@ -221,7 +223,7 @@ public class PairViewModel : ViewModelBase
         }
     }
 
-    private string _currencyFormstString = "C";
+    private readonly string _currencyFormstString = "C";
 
     private bool _ltpUpFlag;
     public bool LtpUpFlag
@@ -236,11 +238,11 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _ltpUpFlag = value;
-            NotifyPropertyChanged("LtpUpFlag");
+            NotifyPropertyChanged(nameof(LtpUpFlag));
         }
     }
 
-    private double _ltpFontSize = 28;
+    private readonly double _ltpFontSize = 28;
     public double LtpFontSize
     {
         get
@@ -262,8 +264,8 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _bid = value;
-            NotifyPropertyChanged("Bid");
-            NotifyPropertyChanged("BidString");
+            NotifyPropertyChanged(nameof(Bid));
+            NotifyPropertyChanged(nameof(BidString));
 
         }
     }
@@ -288,8 +290,8 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _ask = value;
-            NotifyPropertyChanged("Ask");
-            NotifyPropertyChanged("AskString");
+            NotifyPropertyChanged(nameof(Ask));
+            NotifyPropertyChanged(nameof(AskString));
 
         }
     }
@@ -314,8 +316,8 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _tickTimeStamp = value;
-            NotifyPropertyChanged("TickTimeStamp");
-            NotifyPropertyChanged("TickTimeStampString");
+            NotifyPropertyChanged(nameof(TickTimeStamp));
+            NotifyPropertyChanged(nameof(TickTimeStampString));
 
         }
     }
@@ -327,7 +329,7 @@ public class PairViewModel : ViewModelBase
         }
     }
 
-    private ObservableCollection<TickHistory> _tickHistory = new ObservableCollection<TickHistory>();
+    private readonly ObservableCollection<TickHistory> _tickHistory = new();
     public ObservableCollection<TickHistory> TickHistories
     {
         get
@@ -476,9 +478,9 @@ public class PairViewModel : ViewModelBase
             }
 
             _alarmPlus = value;
-            NotifyPropertyChanged("AlarmPlus");
-            NotifyPropertyChanged("AlarmPlusString");
-            NotifyPropertyChanged("AlarmLabel");
+            NotifyPropertyChanged(nameof(AlarmPlus));
+            NotifyPropertyChanged(nameof(AlarmPlusString));
+            NotifyPropertyChanged(nameof(AlarmLabel));
         }
     }
     public string AlarmPlusString
@@ -508,9 +510,9 @@ public class PairViewModel : ViewModelBase
             }
 
             _alarmMinus = value;
-            NotifyPropertyChanged("AlarmMinus");
-            NotifyPropertyChanged("AlarmMinusString");
-            NotifyPropertyChanged("AlarmLabel");
+            NotifyPropertyChanged(nameof(AlarmMinus));
+            NotifyPropertyChanged(nameof(AlarmMinusString));
+            NotifyPropertyChanged(nameof(AlarmLabel));
         }
     }
     public string AlarmMinusString
@@ -537,7 +539,7 @@ public class PairViewModel : ViewModelBase
     }
 
     // 起動後　最安値　最高値　アラーム情報表示
-    private string _highLowInfoText;
+    private string _highLowInfoText = "";
     public string HighLowInfoText
     {
         get
@@ -550,7 +552,7 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _highLowInfoText = value;
-            NotifyPropertyChanged("HighLowInfoText");
+            NotifyPropertyChanged(nameof(HighLowInfoText));
         }
     }
 
@@ -567,7 +569,7 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _highLowInfoTextColorFlag = value;
-            NotifyPropertyChanged("HighLowInfoTextColorFlag");
+            NotifyPropertyChanged(nameof(HighLowInfoTextColorFlag));
         }
     }
 
@@ -586,7 +588,7 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _playSoundLowest = value;
-            NotifyPropertyChanged("PlaySoundLowest");
+            NotifyPropertyChanged(nameof(PlaySoundLowest));
         }
     }
 
@@ -603,7 +605,7 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _playSoundHighest = value;
-            NotifyPropertyChanged("PlaySoundHighest");
+            NotifyPropertyChanged(nameof(PlaySoundHighest));
         }
     }
 
@@ -621,7 +623,7 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _playSoundLowest24h = value;
-            NotifyPropertyChanged("PlaySoundLowest24h");
+            NotifyPropertyChanged(nameof(PlaySoundLowest24h));
         }
     }
 
@@ -638,7 +640,7 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _playSoundHighest24h = value;
-            NotifyPropertyChanged("PlaySoundHighest24h");
+            NotifyPropertyChanged(nameof(PlaySoundHighest24h));
         }
     }
 
@@ -661,9 +663,9 @@ public class PairViewModel : ViewModelBase
 
             _basePrice = value;
 
-            NotifyPropertyChanged("BasePrice");
-            NotifyPropertyChanged("BasePriceIcon");
-            NotifyPropertyChanged("BasePriceString");
+            NotifyPropertyChanged(nameof(BasePrice));
+            NotifyPropertyChanged(nameof(BasePriceIcon));
+            NotifyPropertyChanged(nameof(BasePriceString));
 
         }
     }
@@ -708,7 +710,7 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _basePriceUpFlag = value;
-            NotifyPropertyChanged("BasePriceUpFlag");
+            NotifyPropertyChanged(nameof(BasePriceUpFlag));
         }
     }
 
@@ -726,10 +728,10 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _averagePrice = value;
-            NotifyPropertyChanged("AveragePrice");
-            NotifyPropertyChanged("AveragePriceIcon");
+            NotifyPropertyChanged(nameof(AveragePrice));
+            NotifyPropertyChanged(nameof(AveragePriceIcon));
             //this.NotifyPropertyChanged("AveragePriceIconColor");
-            NotifyPropertyChanged("AveragePriceString");
+            NotifyPropertyChanged(nameof(AveragePriceString));
         }
     }
 
@@ -773,7 +775,7 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _averagePriceUpFlag = value;
-            NotifyPropertyChanged("AveragePriceUpFlag");
+            NotifyPropertyChanged(nameof(AveragePriceUpFlag));
         }
     }
 
@@ -825,7 +827,7 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _middleLast24PriceUpFlag = value;
-            NotifyPropertyChanged("MiddleLast24PriceUpFlag");
+            NotifyPropertyChanged(nameof(MiddleLast24PriceUpFlag));
         }
     }
 
@@ -877,7 +879,7 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _middleInitPriceUpFlag = value;
-            NotifyPropertyChanged("MiddleInitPriceUpFlag");
+            NotifyPropertyChanged(nameof(MiddleInitPriceUpFlag));
         }
     }
 
@@ -895,11 +897,11 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _highestIn24Price = value;
-            NotifyPropertyChanged("HighestIn24Price");
-            NotifyPropertyChanged("High24String");
+            NotifyPropertyChanged(nameof(HighestIn24Price));
+            NotifyPropertyChanged(nameof(High24String));
 
-            NotifyPropertyChanged("MiddleLast24Price");
-            NotifyPropertyChanged("MiddleLast24PriceString");
+            NotifyPropertyChanged(nameof(MiddleLast24Price));
+            NotifyPropertyChanged(nameof(MiddleLast24PriceString));
 
             //if (MinMode) return;
             // チャートの最高値をセット
@@ -931,8 +933,8 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _highestIn24PriceAlart = value;
-            NotifyPropertyChanged("HighestIn24PriceAlart");
-            NotifyPropertyChanged("PriceAlart");
+            NotifyPropertyChanged(nameof(HighestIn24PriceAlart));
+            NotifyPropertyChanged(nameof(PriceAlart));
         }
     }
 
@@ -950,11 +952,11 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _lowestIn24Price = value;
-            NotifyPropertyChanged("LowestIn24Price");
-            NotifyPropertyChanged("Low24String");
+            NotifyPropertyChanged(nameof(LowestIn24Price));
+            NotifyPropertyChanged(nameof(Low24String));
 
-            NotifyPropertyChanged("MiddleLast24Price");
-            NotifyPropertyChanged("MiddleLast24PriceString");
+            NotifyPropertyChanged(nameof(MiddleLast24Price));
+            NotifyPropertyChanged(nameof(MiddleLast24PriceString));
 
             //if (MinMode) return;
             // チャートの最低値をセット
@@ -985,8 +987,8 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _lowestIn24PriceAlart = value;
-            NotifyPropertyChanged("LowestIn24PriceAlart");
-            NotifyPropertyChanged("PriceAlart");
+            NotifyPropertyChanged(nameof(LowestIn24PriceAlart));
+            NotifyPropertyChanged(nameof(PriceAlart));
         }
     }
 
@@ -1004,12 +1006,12 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _highestPrice = value;
-            NotifyPropertyChanged("HighestPrice");
-            NotifyPropertyChanged("HighestPriceString");
+            NotifyPropertyChanged(nameof(HighestPrice));
+            NotifyPropertyChanged(nameof(HighestPriceString));
 
-            NotifyPropertyChanged("MiddleInitPrice");
-            NotifyPropertyChanged("MiddleInitPriceString");
-            NotifyPropertyChanged("MiddleInitPriceIcon");
+            NotifyPropertyChanged(nameof(MiddleInitPrice));
+            NotifyPropertyChanged(nameof(MiddleInitPriceString));
+            NotifyPropertyChanged(nameof(MiddleInitPriceIcon));
 
             //if (MinMode) return;
             //(ChartSeries[1].Values[0] as ObservableValue).Value = (double)_highestPrice;
@@ -1037,8 +1039,8 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _highestPriceAlart = value;
-            NotifyPropertyChanged("HighestPriceAlart");
-            NotifyPropertyChanged("PriceAlart");
+            NotifyPropertyChanged(nameof(HighestPriceAlart));
+            NotifyPropertyChanged(nameof(PriceAlart));
         }
     }
 
@@ -1056,12 +1058,12 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _lowestPrice = value;
-            NotifyPropertyChanged("LowestPrice");
-            NotifyPropertyChanged("LowestPriceString");
+            NotifyPropertyChanged(nameof(LowestPrice));
+            NotifyPropertyChanged(nameof(LowestPriceString));
 
-            NotifyPropertyChanged("MiddleInitPrice");
-            NotifyPropertyChanged("MiddleInitPriceString");
-            NotifyPropertyChanged("MiddleInitPriceIcon");
+            NotifyPropertyChanged(nameof(MiddleInitPrice));
+            NotifyPropertyChanged(nameof(MiddleInitPriceString));
+            NotifyPropertyChanged(nameof(MiddleInitPriceIcon));
 
             //if (MinMode) return;
             // (ChartSeries[2].Values[0] as ObservableValue).Value = (double)_lowestPrice;
@@ -1089,8 +1091,8 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _lowestPriceAlart = value;
-            NotifyPropertyChanged("LowestPriceAlart");
-            NotifyPropertyChanged("PriceAlart");
+            NotifyPropertyChanged(nameof(LowestPriceAlart));
+            NotifyPropertyChanged(nameof(PriceAlart));
         }
     }
 
@@ -1114,7 +1116,7 @@ public class PairViewModel : ViewModelBase
 
     #region == Depth and Transaction ==
 
-    private ObservableCollection<Transaction> _transactions = new ObservableCollection<Transaction>();
+    private ObservableCollection<Transaction> _transactions = new();
     public ObservableCollection<Transaction> Transactions
     {
         get { return _transactions; }
@@ -1128,7 +1130,7 @@ public class PairViewModel : ViewModelBase
         }
     }
 
-    private ObservableCollection<Depth> _depth = new ObservableCollection<Depth>();
+    private ObservableCollection<Depth> _depth = new();
     public ObservableCollection<Depth> Depth
     {
         get { return _depth; }
@@ -1156,7 +1158,7 @@ public class PairViewModel : ViewModelBase
 
             _isDeepthGroupingChanged = value;
 
-            NotifyPropertyChanged("IsDepthGroupingChanged");
+            NotifyPropertyChanged(nameof(IsDepthGroupingChanged));
         }
     }
 
@@ -1194,7 +1196,7 @@ public class PairViewModel : ViewModelBase
                 IsDepthGroupingOff = true;
             }
 
-            NotifyPropertyChanged("DepthGrouping");
+            NotifyPropertyChanged(nameof(DepthGrouping));
 
         }
     }
@@ -1212,7 +1214,7 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _isDepthGroupingOff = value;
-            NotifyPropertyChanged("IsDepthGroupingOff");
+            NotifyPropertyChanged(nameof(IsDepthGroupingOff));
         }
     }
 
@@ -1229,7 +1231,7 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _depthGrouping100 = value;
-            NotifyPropertyChanged("DepthGrouping100");
+            NotifyPropertyChanged(nameof(DepthGrouping100));
 
         }
     }
@@ -1247,7 +1249,7 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _isDepthGrouping100 = value;
-            NotifyPropertyChanged("IsDepthGrouping100");
+            NotifyPropertyChanged(nameof(IsDepthGrouping100));
         }
     }
 
@@ -1264,7 +1266,7 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _depthGrouping1000 = value;
-            NotifyPropertyChanged("DepthGrouping1000");
+            NotifyPropertyChanged(nameof(DepthGrouping1000));
 
         }
     }
@@ -1282,7 +1284,7 @@ public class PairViewModel : ViewModelBase
                 return;
 
             _isDepthGrouping1000 = value;
-            NotifyPropertyChanged("IsDepthGrouping1000");
+            NotifyPropertyChanged(nameof(IsDepthGrouping1000));
         }
     }
 
@@ -1391,7 +1393,7 @@ public class PairViewModel : ViewModelBase
         }
     }
 
-    TimeSpan chartUpdateInterval = new TimeSpan(1, 0, 0);
+    TimeSpan chartUpdateInterval = new(1, 0, 0);
 
     private CandleTypes _selectedCandleType = CandleTypes.OneHour;
     public CandleTypes SelectedCandleType
@@ -1530,7 +1532,7 @@ public class PairViewModel : ViewModelBase
         //TogglePaneVisibilityCommand = new RelayCommand(new Action(TogglePaneVisibility), CanExecuteTogglePaneVisibilityCommand);
         TogglePaneVisibilityCommand = new RelayCommand(TogglePaneVisibilityCommand_Execute, TogglePaneVisibilityCommand_CanExecute);
         ChangeCandleTypeCommand = new GenericRelayCommand<CandleTypes>(param => ChangeCandleTypeCommand_Execute(param), param => ChangeCandleTypeCommand_CanExecute());
-        TogglePairVisibilityCommand = new GenericRelayCommand<PairCodes>(param => TogglePairVisibilityCommand_Execute(param), param => TogglePairVisibilityCommand_CanExecute());
+        //TogglePairVisibilityCommand = new GenericRelayCommand<PairCodes>(param => TogglePairVisibilityCommand_Execute(param), param => TogglePairVisibilityCommand_CanExecute());
 
         #endregion
 
@@ -1613,7 +1615,7 @@ public class PairViewModel : ViewModelBase
 
     #region == Chart ==
 
-    private void TickerTimerChart(object source, object e)
+    private void TickerTimerChart(object? source, object e)
     {
         UpdateChart();
     }
@@ -1670,7 +1672,7 @@ public class PairViewModel : ViewModelBase
     private async void LoadChart(CandleTypes ct)
     {        
         // gets new data.
-        List<Ohlcv> res = await GetCandlesticks(this.PairCode, ct);
+        List<Ohlcv>? res = await GetCandlesticks(this.PairCode, ct);
 
         if (res == null) return;
 
@@ -1804,9 +1806,9 @@ public class PairViewModel : ViewModelBase
         lastChartLoadedDateTime = DateTime.Now;
     }
 
-    private async Task<List<Ohlcv>> GetCandlesticks(PairCodes pair, CandleTypes ct)
+    private async Task<List<Ohlcv>?> GetCandlesticks(PairCodes pair, CandleTypes ct)
     {
-        List<Ohlcv> OhlcvList =  new List<Ohlcv>();
+        List<Ohlcv>? OhlcvList =  new();
 
         //Debug.WriteLine("チャートデータを取得中.... " + pair.ToString());
 
@@ -1870,7 +1872,7 @@ public class PairViewModel : ViewModelBase
             daysOrYearsCountToGetData = 10;
         }
 
-        int i = 0;
+        int i;
 
         for (i = 0; i < daysOrYearsCountToGetData;)
         {
@@ -1901,7 +1903,7 @@ public class PairViewModel : ViewModelBase
                     dateTarget = dtToday.AddDays(-i);
                 }
 
-                List<Ohlcv> responseOhlcvList = await GetCandlestick(pair, ct, dateTarget);
+                List<Ohlcv>? responseOhlcvList = await GetCandlestick(pair, ct, dateTarget);
 
                 if (responseOhlcvList != null)
                 {
@@ -1909,8 +1911,7 @@ public class PairViewModel : ViewModelBase
 
                     foreach (var r in responseOhlcvList)
                     {
-                        if (OhlcvList == null)
-                            OhlcvList = new List<Ohlcv>();
+                        OhlcvList ??= new List<Ohlcv>();
                         OhlcvList.Add(r);
                     }
                 }
@@ -1930,7 +1931,7 @@ public class PairViewModel : ViewModelBase
         return OhlcvList;
     }
 
-    private async Task<List<Ohlcv>> GetCandlestick(PairCodes pair, CandleTypes ct, DateTime dtTarget)
+    private async Task<List<Ohlcv>?> GetCandlestick(PairCodes pair, CandleTypes ct, DateTime dtTarget)
     {
         string ctString;
         string dtString;
@@ -1996,7 +1997,7 @@ public class PairViewModel : ViewModelBase
             //return null;
         }
 
-        CandlestickResult csr = await _pubCandlestickApi.GetCandlestick(pair.ToString(), ctString, dtString);
+        CandlestickResult? csr = await PublicAPIClient.GetCandlestick(pair.ToString(), ctString, dtString);
 
         if (!IsEnabled) return null;
 
@@ -2030,7 +2031,7 @@ public class PairViewModel : ViewModelBase
 
     #region == Depth ==
 
-    private void TickerTimerDepth(object source, object e)
+    private void TickerTimerDepth(object? source, object e)
     {
         UpdateDepth();
     }
@@ -2084,10 +2085,12 @@ public class PairViewModel : ViewModelBase
             //_depth.Clear();
             for (int i = 0; i < listCount; i++)
             {
-                Depth dd = new Depth(_ltpFormstString);
-                dd.DepthPrice = i;
-                dd.DepthBid = 0;
-                dd.DepthAsk = 0;
+                Depth dd = new(_ltpFormstString)
+                {
+                    DepthPrice = i,
+                    DepthBid = 0,
+                    DepthAsk = 0
+                };
                 //if (i == (half-1)) dd.IsLTP = true;
                 _depth.Add(dd);
             }
@@ -2118,7 +2121,7 @@ public class PairViewModel : ViewModelBase
         _depth[half].DepthPrice = Ltp;
         _depth[half].IsLTP = true;
 
-        DepthResult dpr = await _pubDepthApi?.GetDepth(pair.ToString());
+        DepthResult? dpr = await PublicAPIClient.GetDepth(pair.ToString());
 
         if (!IsEnabled) return false;
 
@@ -2157,7 +2160,7 @@ public class PairViewModel : ViewModelBase
                         // 100円単位でまとめる
                         if (Math.Ceiling(dp.DepthPrice / unit) == c2)
                         {
-                            t = t + dp.DepthAsk;
+                            t += dp.DepthAsk;
                         }
                         else
                         {
@@ -2223,7 +2226,7 @@ public class PairViewModel : ViewModelBase
                         // 100円単位でまとめる
                         if (Math.Ceiling(dp.DepthPrice / unit) == c)
                         {
-                            t = t + dp.DepthBid;
+                            t += dp.DepthBid;
                         }
                         else
                         {
@@ -2276,7 +2279,7 @@ public class PairViewModel : ViewModelBase
 
     #region == Transaction ==
 
-    private void TickerTimerTransaction(object source, object e)
+    private void TickerTimerTransaction(object? source, object e)
     {
         UpdateTransactions();
     }
@@ -2313,7 +2316,7 @@ public class PairViewModel : ViewModelBase
 
     private async Task<bool> GetTransactions(PairCodes pair)
     {
-        TransactionsResult trs = await _pubTransactionsApi?.GetTransactions(pair.ToString());
+        TransactionsResult? trs = await PublicAPIClient.GetTransactions(pair.ToString());
 
         if (!IsEnabled) return false;
 
@@ -2328,7 +2331,7 @@ public class PairViewModel : ViewModelBase
                     // 60 で初期化
                     for (int i = 0; i < 60; i++)
                     {
-                        Transaction dd = new Transaction(_ltpFormstString);
+                        Transaction dd = new(_ltpFormstString);
 
                         _transactions.Add(dd);
                     }
@@ -2378,24 +2381,13 @@ public class PairViewModel : ViewModelBase
     }
 
     public ICommand ChangeCandleTypeCommand { get; set; }
-    public bool ChangeCandleTypeCommand_CanExecute()
+    public static bool ChangeCandleTypeCommand_CanExecute()
     {
         return true;
     }
     public void ChangeCandleTypeCommand_Execute(CandleTypes candleType)
     {
         ChangeCandleType(candleType);
-    }
-
-    public ICommand TogglePairVisibilityCommand { get; private set; }
-    private bool TogglePairVisibilityCommand_CanExecute()
-    {
-        return true;
-    }
-
-    public void TogglePairVisibilityCommand_Execute(PairCodes pairCode)
-    {
-
     }
 
     #endregion

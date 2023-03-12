@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows10.0.22621.0</TargetFramework>
+    <TargetFramework>net6.0-windows10.0.22621.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <RootNamespace>BitWallpaper</RootNamespace>
     <Platforms>x86;x64;ARM64</Platforms>
@@ -31,7 +31,7 @@
 	  <AppxBundle>Always</AppxBundle>
 	  <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
 	  <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-	  <AssemblyVersion>2.0.8.0</AssemblyVersion>
+	  <AssemblyVersion>2.0.9.0</AssemblyVersion>
 	  <FileVersion>$(AssemblyVersion)</FileVersion>
 	  <Version>$(AssemblyVersion)</Version>
 	  <ImplicitUsings>enable</ImplicitUsings>
@@ -40,7 +40,7 @@
 	  <PackageIcon>App_Icon.png</PackageIcon>
 	  <IncludeSymbols>False</IncludeSymbols>
 	  <StartupObject>BitWallpaper.Program</StartupObject>
-	  <Nullable>annotations</Nullable>
+	  <Nullable>enable</Nullable>
 	  <RepositoryUrl>https://github.com/torum/BitWallpaper</RepositoryUrl>
 	  <PackageProjectUrl>https://torum.github.io/BitWallpaper/</PackageProjectUrl>
 	  <Copyright>torum</Copyright>

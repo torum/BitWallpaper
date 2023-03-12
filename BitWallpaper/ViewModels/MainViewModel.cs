@@ -178,8 +178,8 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
-    private PairViewModel _selectedPair;
-    public PairViewModel SelectedPair
+    private PairViewModel? _selectedPair;
+    public PairViewModel? SelectedPair
     {
         get => _selectedPair;
         set
@@ -564,7 +564,10 @@ public partial class MainViewModel : ViewModelBase
                 return;
 
             var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.btc_jpy);
-            hoge.IsEnabled = value;
+            if (hoge is not null)
+            {
+                hoge.IsEnabled = value;
+            }
 
             _isOnBtcJpy = value;
             NotifyPropertyChanged(nameof(IsOnBtcJpy));
@@ -581,7 +584,10 @@ public partial class MainViewModel : ViewModelBase
                 return;
 
             var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.xrp_jpy);
-            hoge.IsEnabled = value;
+            if (hoge is not null)
+            {
+                hoge.IsEnabled = value;
+            }
 
             _isOnXrpJpy = value;
             NotifyPropertyChanged(nameof(IsOnXrpJpy));
@@ -598,7 +604,10 @@ public partial class MainViewModel : ViewModelBase
                 return;
 
             var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.eth_jpy);
-            hoge.IsEnabled = value;
+            if (hoge is not null)
+            {
+                hoge.IsEnabled = value;
+            }
 
             _isOnEthJpy = value;
             NotifyPropertyChanged(nameof(IsOnEthJpy));
@@ -615,7 +624,10 @@ public partial class MainViewModel : ViewModelBase
                 return;
 
             var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.ltc_jpy);
-            hoge.IsEnabled = value;
+            if (hoge is not null)
+            {
+                hoge.IsEnabled = value;
+            }
 
             _isOnLtcJpy = value;
             NotifyPropertyChanged(nameof(IsOnLtcJpy));
@@ -632,7 +644,10 @@ public partial class MainViewModel : ViewModelBase
                 return;
 
             var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.bcc_jpy);
-            hoge.IsEnabled = value;
+            if (hoge is not null)
+            {
+                hoge.IsEnabled = value;
+            }
 
             _isOnBccJpy = value;
             NotifyPropertyChanged(nameof(IsOnBccJpy));
@@ -649,7 +664,10 @@ public partial class MainViewModel : ViewModelBase
                 return;
 
             var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.mona_jpy);
-            hoge.IsEnabled = value;
+            if (hoge is not null)
+            {
+                hoge.IsEnabled = value;
+            }
 
             _isOnMonaJpy = value;
             NotifyPropertyChanged(nameof(IsOnMonaJpy));
@@ -666,7 +684,10 @@ public partial class MainViewModel : ViewModelBase
                 return;
 
             var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.xlm_jpy);
-            hoge.IsEnabled = value;
+            if (hoge is not null)
+            {
+                hoge.IsEnabled = value;
+            }
 
             _isOnXlmJpy = value;
             NotifyPropertyChanged(nameof(IsOnXlmJpy));
@@ -683,7 +704,10 @@ public partial class MainViewModel : ViewModelBase
                 return;
 
             var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.qtum_jpy);
-            hoge.IsEnabled = value;
+            if (hoge is not null)
+            {
+                hoge.IsEnabled = value;
+            }
 
             _isOnQtumJpy = value;
             NotifyPropertyChanged(nameof(IsOnQtumJpy));
@@ -700,7 +724,10 @@ public partial class MainViewModel : ViewModelBase
                 return;
 
             var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.bat_jpy);
-            hoge.IsEnabled = value;
+            if (hoge is not null)
+            {
+                hoge.IsEnabled = value;
+            }
 
             _isOnBatJpy = value;
             NotifyPropertyChanged(nameof(IsOnBatJpy));
@@ -717,7 +744,10 @@ public partial class MainViewModel : ViewModelBase
                 return;
 
             var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.omg_jpy);
-            hoge.IsEnabled = value;
+            if (hoge is not null)
+            {
+                hoge.IsEnabled = value;
+            }
 
             _isOnOmgJpy = value;
             NotifyPropertyChanged(nameof(IsOnOmgJpy));
@@ -734,7 +764,10 @@ public partial class MainViewModel : ViewModelBase
                 return;
 
             var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.xym_jpy);
-            hoge.IsEnabled = value;
+            if (hoge is not null)
+            {
+                hoge.IsEnabled = value;
+            }
 
             _isOnXymJpy = value;
             NotifyPropertyChanged(nameof(IsOnXymJpy));
@@ -751,7 +784,10 @@ public partial class MainViewModel : ViewModelBase
                 return;
 
             var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.link_jpy);
-            hoge.IsEnabled = value;
+            if (hoge is not null)
+            {
+                hoge.IsEnabled = value;
+            }
 
             _isOnLinkJpy = value;
             NotifyPropertyChanged(nameof(IsOnLinkJpy));
@@ -768,7 +804,10 @@ public partial class MainViewModel : ViewModelBase
                 return;
 
             var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.mkr_jpy);
-            hoge.IsEnabled = value;
+            if (hoge is not null)
+            {
+                hoge.IsEnabled = value;
+            }
 
             _isOnMkrJpy = value;
             NotifyPropertyChanged(nameof(IsOnMkrJpy));
@@ -785,7 +824,10 @@ public partial class MainViewModel : ViewModelBase
                 return;
 
             var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.boba_jpy);
-            hoge.IsEnabled = value;
+            if (hoge is not null)
+            {
+                hoge.IsEnabled = value;
+            }
 
             _isOnBobaJpy = value;
             NotifyPropertyChanged(nameof(IsOnBobaJpy));
@@ -802,7 +844,10 @@ public partial class MainViewModel : ViewModelBase
                 return;
 
             var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.enj_jpy);
-            hoge.IsEnabled = value;
+            if (hoge is not null)
+            {
+                hoge.IsEnabled = value;
+            }
 
             _isOnEnjJpy = value;
             NotifyPropertyChanged(nameof(IsOnEnjJpy));
@@ -819,7 +864,10 @@ public partial class MainViewModel : ViewModelBase
                 return;
 
             var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.matic_jpy);
-            hoge.IsEnabled = value;
+            if (hoge is not null)
+            {
+                hoge.IsEnabled = value;
+            }
 
             _isOnMaticJpy = value;
             NotifyPropertyChanged(nameof(IsOnMaticJpy));
@@ -836,7 +884,10 @@ public partial class MainViewModel : ViewModelBase
                 return;
 
             var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.dot_jpy);
-            hoge.IsEnabled = value;
+            if (hoge is not null)
+            {
+                hoge.IsEnabled = value;
+            }
 
             _isOnDotJpy = value;
             NotifyPropertyChanged(nameof(IsOnDotJpy));
@@ -853,7 +904,10 @@ public partial class MainViewModel : ViewModelBase
                 return;
 
             var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.doge_jpy);
-            hoge.IsEnabled = value;
+            if (hoge is not null)
+            {
+                hoge.IsEnabled = value;
+            }
 
             _isOnDogeJpy = value;
             NotifyPropertyChanged(nameof(IsOnDogeJpy));
@@ -870,7 +924,10 @@ public partial class MainViewModel : ViewModelBase
                 return;
 
             var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.astr_jpy);
-            hoge.IsEnabled = value;
+            if (hoge is not null)
+            {
+                hoge.IsEnabled = value;
+            }
 
             _isOnAstrJpy = value;
             NotifyPropertyChanged(nameof(IsOnAstrJpy));
@@ -887,7 +944,10 @@ public partial class MainViewModel : ViewModelBase
                 return;
 
             var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.ada_jpy);
-            hoge.IsEnabled = value;
+            if (hoge is not null)
+            {
+                hoge.IsEnabled = value;
+            }
 
             _isOnAdaJpy = value;
             NotifyPropertyChanged(nameof(IsOnAdaJpy));
@@ -904,7 +964,10 @@ public partial class MainViewModel : ViewModelBase
                 return;
 
             var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.avax_jpy);
-            hoge.IsEnabled = value;
+            if (hoge is not null)
+            {
+                hoge.IsEnabled = value;
+            }
 
             _isOnAvaxJpy = value;
             NotifyPropertyChanged(nameof(IsOnAvaxJpy));
@@ -921,7 +984,10 @@ public partial class MainViewModel : ViewModelBase
                 return;
 
             var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.axs_jpy);
-            hoge.IsEnabled = value;
+            if (hoge is not null)
+            {
+                hoge.IsEnabled = value;
+            }
 
             _isOnAxsJpy = value;
             NotifyPropertyChanged(nameof(IsOnAxsJpy));
@@ -938,7 +1004,10 @@ public partial class MainViewModel : ViewModelBase
                 return;
 
             var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.flr_jpy);
-            hoge.IsEnabled = value;
+            if (hoge is not null)
+            {
+                hoge.IsEnabled = value;
+            }
 
             _isOnFlrJpy = value;
             NotifyPropertyChanged(nameof(IsOnFlrJpy));
@@ -955,7 +1024,10 @@ public partial class MainViewModel : ViewModelBase
                 return;
 
             var hoge = Pairs.FirstOrDefault(x => x.PairCode == PairCodes.sand_jpy);
-            hoge.IsEnabled = value;
+            if (hoge is not null)
+            {
+                hoge.IsEnabled = value;
+            }
 
             _isOnSandJpy = value;
             NotifyPropertyChanged(nameof(IsOnSandJpy));
@@ -1031,7 +1103,7 @@ public partial class MainViewModel : ViewModelBase
     readonly DispatcherTimer _dispatcherTimerTickAllPairs = new();
 
     // Event
-    public event EventHandler<ShowBalloonEventArgs> ShowBalloon;
+    public event EventHandler<ShowBalloonEventArgs>? ShowBalloon;
 
     public MainViewModel()
     {
@@ -1042,31 +1114,34 @@ public partial class MainViewModel : ViewModelBase
         _dispatcherTimerTickAllPairs.Interval = new TimeSpan(0, 0, 2);
         _dispatcherTimerTickAllPairs.Start();
 
-        var manager = WinUIEx.WindowManager.Get(App.MainWindow);
-        if (manager.Backdrop is WinUIEx.AcrylicSystemBackdrop)
+        if (App.MainWindow is not null)
         {
-            Material = SystemBackdropOption.Acrylic;
-        }
-        else if (manager.Backdrop is WinUIEx.MicaSystemBackdrop)
-        {
-            Material = SystemBackdropOption.Mica;
-        }
-
-        if (Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())
-        {
-            IsAcrylicSupported = true;
-        }
-        else
-        {
-            IsAcrylicSupported = false;
-
-            if (Microsoft.UI.Composition.SystemBackdrops.MicaController.IsSupported())
+            var manager = WinUIEx.WindowManager.Get(App.MainWindow);
+            if (manager.Backdrop is WinUIEx.AcrylicSystemBackdrop)
             {
-                //
+                Material = SystemBackdropOption.Acrylic;
+            }
+            else if (manager.Backdrop is WinUIEx.MicaSystemBackdrop)
+            {
+                Material = SystemBackdropOption.Mica;
+            }
+
+            if (Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())
+            {
+                IsAcrylicSupported = true;
             }
             else
             {
-                IsSystemBackdropSupported = false;
+                IsAcrylicSupported = false;
+
+                if (Microsoft.UI.Composition.SystemBackdrops.MicaController.IsSupported())
+                {
+                    //
+                }
+                else
+                {
+                    IsSystemBackdropSupported = false;
+                }
             }
         }
 
@@ -1074,7 +1149,6 @@ public partial class MainViewModel : ViewModelBase
         SwitchSystemBackdropCommand = new GenericRelayCommand<string>(param => OnSwitchSystemBackdrop(param), param => CanSwitchSystemBackdropExecute());
 
         //ChangeCandleTypeCommand = new GenericRelayCommand<CandleTypes>(param => ChangeCandleTypeCommand_Execute(param), param => ChangeCandleTypeCommand_CanExecute());
-
     }
 
     public void SetSelectedPairFromCode(PairCodes pairCode)
@@ -1109,7 +1183,7 @@ public partial class MainViewModel : ViewModelBase
             _selectedPair.InitializeAndStart();
         });
         */
-        _selectedPair.InitializeAndLoad();
+        _selectedPair?.InitializeAndLoad();
     }
 
     public void CleanUp()
@@ -1126,7 +1200,7 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
-    private void TickerTimerAllPairs(object source, object e)
+    private void TickerTimerAllPairs(object? source, object e)
     {
         try
         {
@@ -1146,11 +1220,13 @@ public partial class MainViewModel : ViewModelBase
         foreach (var hoge in Pairs)
         {
             if (!hoge.IsEnabled)
+            {
                 continue;
+            }
 
             try
             {
-                Ticker tick = await _pubTickerApi?.GetTicker(hoge.PairCode.ToString());
+                Ticker? tick = await PublicAPIClient.GetTicker(hoge.PairCode.ToString());
 
                 if (tick != null)
                 {
@@ -1617,7 +1693,7 @@ public partial class MainViewModel : ViewModelBase
         {
             ElementTheme = theme;
             //await _themeSelectorService.SetThemeAsync(theme);
-            if (App.MainWindow.Content is FrameworkElement rootElement)
+            if (App.MainWindow?.Content is FrameworkElement rootElement)
             {
                 rootElement.RequestedTheme = ElementTheme;
 
@@ -1640,31 +1716,34 @@ public partial class MainViewModel : ViewModelBase
     {
         if (backdrop != null)
         {
-            var manager = WinUIEx.WindowManager.Get(App.MainWindow);
+            if (App.MainWindow is not null)
+            {
+                var manager = WinUIEx.WindowManager.Get(App.MainWindow);
 
-            if (backdrop == "Mica")
-            {
-                // Win10 says not supported but works. So if Acrylic is supported, we assume it's ok.
-                if (Microsoft.UI.Composition.SystemBackdrops.MicaController.IsSupported() || Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())
+                if (backdrop == "Mica")
                 {
-                    manager.Backdrop = new WinUIEx.MicaSystemBackdrop();
-                    if (RuntimeHelper.IsMSIX)
+                    // Win10 says not supported but works. So if Acrylic is supported, we assume it's ok.
+                    if (Microsoft.UI.Composition.SystemBackdrops.MicaController.IsSupported() || Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())
                     {
-                        ApplicationData.Current.LocalSettings.Values[App.BackdropSettingsKey] = SystemBackdropOption.Mica.ToString();
+                        manager.Backdrop = new WinUIEx.MicaSystemBackdrop();
+                        if (RuntimeHelper.IsMSIX)
+                        {
+                            ApplicationData.Current.LocalSettings.Values[App.BackdropSettingsKey] = SystemBackdropOption.Mica.ToString();
+                        }
+                        Material = SystemBackdropOption.Mica;
                     }
-                    Material = SystemBackdropOption.Mica;
                 }
-            }
-            else if (backdrop == "Acrylic")
-            {
-                if (Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())
+                else if (backdrop == "Acrylic")
                 {
-                    manager.Backdrop = new WinUIEx.AcrylicSystemBackdrop();
-                    if (RuntimeHelper.IsMSIX)
+                    if (Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())
                     {
-                        ApplicationData.Current.LocalSettings.Values[App.BackdropSettingsKey] = SystemBackdropOption.Acrylic.ToString();
+                        manager.Backdrop = new WinUIEx.AcrylicSystemBackdrop();
+                        if (RuntimeHelper.IsMSIX)
+                        {
+                            ApplicationData.Current.LocalSettings.Values[App.BackdropSettingsKey] = SystemBackdropOption.Acrylic.ToString();
+                        }
+                        Material = SystemBackdropOption.Acrylic;
                     }
-                    Material = SystemBackdropOption.Acrylic;
                 }
             }
         }

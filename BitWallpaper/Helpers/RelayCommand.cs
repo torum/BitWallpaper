@@ -28,20 +28,16 @@ namespace BitWallpaper.Helpers
                 this.CanExecuteFunc = canExecuteFunc;
             }
 
-            public event EventHandler CanExecuteChanged;
+            public event EventHandler? CanExecuteChanged;
             public void RaiseCanExecuteChanged()
             {
-                var handler = CanExecuteChanged;
-                if (handler != null)
-                {
-                    handler(this, EventArgs.Empty);
-                }
+                CanExecuteChanged?.Invoke(this, EventArgs.Empty);
             }
 
 
             public Predicate<T> CanExecuteFunc { get; private set; }
 
-            public bool CanExecute(object parameter)
+            public bool CanExecute(object? parameter)
             {
                 if (parameter != null)
                 {
@@ -54,18 +50,21 @@ namespace BitWallpaper.Helpers
                 }
             }
 
-            public void Execute(object parameter)
+            public void Execute(object? parameter)
             {
-                this.execute((T)parameter);
+                if (parameter is not null)
+                {
+                    this.execute((T)parameter);
+                }
             }
         }
 
         public class RelayCommand : ICommand
         {
-            private Action methodToExecute;
-            private Func<bool> canExecuteEvaluator;
+            private readonly Action methodToExecute;
+            private readonly Func<bool>? canExecuteEvaluator;
 
-            public RelayCommand(Action methodToExecute, Func<bool> canExecuteEvaluator)
+            public RelayCommand(Action methodToExecute, Func<bool>? canExecuteEvaluator)
             {
                 this.methodToExecute = methodToExecute;
                 this.canExecuteEvaluator = canExecuteEvaluator;
@@ -83,17 +82,13 @@ namespace BitWallpaper.Helpers
                 remove { CommandManager.RequerySuggested -= value; }
             }
             */
-            public event EventHandler CanExecuteChanged;
+            public event EventHandler? CanExecuteChanged;
             public void RaiseCanExecuteChanged()
             {
-                var handler = CanExecuteChanged;
-                if (handler != null)
-                {
-                    handler(this, EventArgs.Empty);
-                }
+                CanExecuteChanged?.Invoke(this, EventArgs.Empty);
             }
 
-            public bool CanExecute(object parameter)
+            public bool CanExecute(object? parameter)
             {
                 if (this.canExecuteEvaluator == null)
                 {
@@ -106,7 +101,7 @@ namespace BitWallpaper.Helpers
                 }
             }
 
-            public void Execute(object parameter)
+            public void Execute(object? parameter)
             {
                 this.methodToExecute.Invoke();
             }

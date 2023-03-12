@@ -81,7 +81,7 @@ namespace BitWallpaper.Views
                 //Debug.WriteLine(xdoc.ToString());
 
                 // Main window
-                if (App.MainWindow != null)
+                if (App.MainWindow != null && xdoc.Root != null)
                 {
                     // Main Window element
                     var mainWindow = xdoc.Root.Element("MainWindow");
@@ -131,242 +131,247 @@ namespace BitWallpaper.Views
                         }
                         */
 
-                    }
-
-                    var xNavView = mainWindow.Element("NavigationViewControl");
-                    if (xNavView != null)
-                    {
-                        if (xNavView.Attribute("IsPaneOpen") != null)
+                        var xNavView = mainWindow.Element("NavigationViewControl");
+                        if (xNavView != null)
                         {
-                            var xvalue = xNavView.Attribute("IsPaneOpen").Value;
-                            if (!string.IsNullOrEmpty(xvalue))
+                            if (xNavView.Attribute("IsPaneOpen") != null)
                             {
-                                if (xvalue == "True")
-                                    navigationViewControl_IsPaneOpen = true;
-                                else
-                                    navigationViewControl_IsPaneOpen = false;
+                                var xvalue = xNavView.Attribute("IsPaneOpen")?.Value;
+                                if (!string.IsNullOrEmpty(xvalue))
+                                {
+                                    if (xvalue == "True")
+                                        navigationViewControl_IsPaneOpen = true;
+                                    else
+                                        navigationViewControl_IsPaneOpen = false;
+                                }
                             }
                         }
                     }
-                }
 
-                // Options
-                var opts = xdoc.Root.Element("Opts");
-                if (opts != null)
-                {
-                    var xvalue = opts.Attribute("IsChartTooltipVisible");
-                    if (xvalue != null)
+                    // Options
+                    var opts = xdoc.Root.Element("Opts");
+                    if (opts != null)
                     {
-                        if (!string.IsNullOrEmpty(xvalue.Value))
-                        {
-                            if (xvalue.Value == "True")
-                                MainVM.IsChartTooltipVisible = true;
-                            else
-
-                                MainVM.IsChartTooltipVisible = false;
-                        }
-                    }
-
-                    xvalue = opts.Attribute("IsDebugSaveLog");
-                    if (xvalue != null)
-                    {
-                        if (!string.IsNullOrEmpty(xvalue.Value))
-                        {
-                            if (xvalue.Value == "True")
-                                MainVM.IsDebugSaveLog = true;
-                            else
-
-                                MainVM.IsDebugSaveLog = false;
-                        }
-                    }
-                }
-
-                // Pairs
-                var xPairs = xdoc.Root.Element("Pairs");
-                if (xPairs != null)
-                {
-                    var pairList = xPairs.Elements("Pair");
-
-                    foreach (var hoge in pairList)
-                    {
-                        var xvalue = hoge.Attribute("PairCode");
+                        var xvalue = opts.Attribute("IsChartTooltipVisible");
                         if (xvalue != null)
                         {
                             if (!string.IsNullOrEmpty(xvalue.Value))
                             {
-                                try
+                                if (xvalue.Value == "True")
+                                    MainVM.IsChartTooltipVisible = true;
+                                else
+
+                                    MainVM.IsChartTooltipVisible = false;
+                            }
+                        }
+
+                        xvalue = opts.Attribute("IsDebugSaveLog");
+                        if (xvalue != null)
+                        {
+                            if (!string.IsNullOrEmpty(xvalue.Value))
+                            {
+                                if (xvalue.Value == "True")
+                                    MainVM.IsDebugSaveLog = true;
+                                else
+
+                                    MainVM.IsDebugSaveLog = false;
+                            }
+                        }
+                    }
+
+                    // Pairs
+                    var xPairs = xdoc.Root.Element("Pairs");
+                    if (xPairs != null)
+                    {
+                        var pairList = xPairs.Elements("Pair");
+
+                        foreach (var hoge in pairList)
+                        {
+                            var xvalue = hoge.Attribute("PairCode");
+                            if (xvalue != null)
+                            {
+                                if (!string.IsNullOrEmpty(xvalue.Value))
                                 {
-                                    //
-                                    PairCodes pc = MainVM.GetPairs[xvalue.Value];
-
-                                    var pair = MainVM.Pairs.FirstOrDefault(x => x.PairCode == pc);
-
-                                    // TODO:
-                                    pair.IsChartTooltipVisible = MainVM.IsChartTooltipVisible;
-
-                                    var attrv = hoge.Attribute("IsEnabled");
-                                    if (attrv != null)
+                                    try
                                     {
-                                        if (!string.IsNullOrEmpty(attrv.Value))
+                                        PairCodes pc = MainVM.GetPairs[xvalue.Value];
+
+                                        var pair = MainVM.Pairs.FirstOrDefault(x => x.PairCode == pc);
+                                        if (pair is not null)
                                         {
-                                            if (attrv.Value == "True")
-                                                pair.IsEnabled = true;
-                                            else
-                                                pair.IsEnabled = false;
+                                            // TODO:
+                                            pair.IsChartTooltipVisible = MainVM.IsChartTooltipVisible;
+
+                                            var attrv = hoge.Attribute("IsEnabled");
+                                            if (attrv != null)
+                                            {
+                                                if (!string.IsNullOrEmpty(attrv.Value))
+                                                {
+                                                    if (attrv.Value == "True")
+                                                        pair.IsEnabled = true;
+                                                    else
+                                                        pair.IsEnabled = false;
+                                                }
+                                            }
+
+                                            attrv = hoge.Attribute("IsPaneVisible");
+                                            if (attrv != null)
+                                            {
+                                                if (!string.IsNullOrEmpty(attrv.Value))
+                                                {
+                                                    if (attrv.Value == "True")
+                                                        pair.IsPaneVisible = true;
+                                                    else
+                                                        pair.IsPaneVisible = false;
+                                                }
+                                            }
+
+                                            attrv = hoge.Attribute("CandleType");
+                                            if (attrv != null)
+                                            {
+                                                if (!string.IsNullOrEmpty(attrv.Value))
+                                                {
+                                                    var candleTypeString = attrv.Value;
+
+                                                    if (candleTypeString == "OneMin")
+                                                        pair.SelectedCandleType = Models.CandleTypes.OneMin;
+                                                    else if (candleTypeString == "FiveMin")
+                                                        pair.SelectedCandleType = Models.CandleTypes.FiveMin;
+                                                    else if (candleTypeString == "FifteenMin")
+                                                        pair.SelectedCandleType = Models.CandleTypes.FifteenMin;
+                                                    else if (candleTypeString == "ThirtyMin")
+                                                        pair.SelectedCandleType = Models.CandleTypes.ThirtyMin;
+                                                    else if (candleTypeString == "OneHour")
+                                                        pair.SelectedCandleType = Models.CandleTypes.OneHour;
+                                                    else if (candleTypeString == "FourHour")
+                                                        pair.SelectedCandleType = Models.CandleTypes.FourHour;
+                                                    else if (candleTypeString == "EightHour")
+                                                        pair.SelectedCandleType = Models.CandleTypes.EightHour;
+                                                    else if (candleTypeString == "TwelveHour")
+                                                        pair.SelectedCandleType = Models.CandleTypes.TwelveHour;
+                                                    else if (candleTypeString == "OneDay")
+                                                        pair.SelectedCandleType = Models.CandleTypes.OneDay;
+                                                    else if (candleTypeString == "OneWeek")
+                                                        pair.SelectedCandleType = Models.CandleTypes.OneWeek;
+                                                    else if (candleTypeString == "OneMonth")
+                                                        pair.SelectedCandleType = Models.CandleTypes.OneMonth;
+
+                                                }
+                                            }
+
+                                            // TODO: 個別設定が必要
+                                            if (pair.PairCode == PairCodes.btc_jpy)
+                                            {
+                                                MainVM.IsOnBtcJpy = pair.IsEnabled;
+                                            }
+                                            else if (pair.PairCode == PairCodes.xrp_jpy)
+                                            {
+                                                MainVM.IsOnXrpJpy = pair.IsEnabled;
+                                            }
+                                            else if (pair.PairCode == PairCodes.eth_jpy)
+                                            {
+                                                MainVM.IsOnEthJpy = pair.IsEnabled;
+                                            }
+                                            else if (pair.PairCode == PairCodes.ltc_jpy)
+                                            {
+                                                MainVM.IsOnLtcJpy = pair.IsEnabled;
+                                            }
+                                            else if (pair.PairCode == PairCodes.bcc_jpy)
+                                            {
+                                                MainVM.IsOnBccJpy = pair.IsEnabled;
+                                            }
+                                            else if (pair.PairCode == PairCodes.mona_jpy)
+                                            {
+                                                MainVM.IsOnMonaJpy = pair.IsEnabled;
+                                            }
+                                            else if (pair.PairCode == PairCodes.xlm_jpy)
+                                            {
+                                                MainVM.IsOnXlmJpy = pair.IsEnabled;
+                                            }
+                                            else if (pair.PairCode == PairCodes.qtum_jpy)
+                                            {
+                                                MainVM.IsOnQtumJpy = pair.IsEnabled;
+                                            }
+                                            else if (pair.PairCode == PairCodes.bat_jpy)
+                                            {
+                                                MainVM.IsOnBatJpy = pair.IsEnabled;
+                                            }
+                                            else if (pair.PairCode == PairCodes.omg_jpy)
+                                            {
+                                                MainVM.IsOnOmgJpy = pair.IsEnabled;
+                                            }
+                                            else if (pair.PairCode == PairCodes.xym_jpy)
+                                            {
+                                                MainVM.IsOnXymJpy = pair.IsEnabled;
+                                            }
+                                            else if (pair.PairCode == PairCodes.link_jpy)
+                                            {
+                                                MainVM.IsOnLinkJpy = pair.IsEnabled;
+                                            }
+                                            else if (pair.PairCode == PairCodes.mkr_jpy)
+                                            {
+                                                MainVM.IsOnMkrJpy = pair.IsEnabled;
+                                            }
+                                            else if (pair.PairCode == PairCodes.boba_jpy)
+                                            {
+                                                MainVM.IsOnBobaJpy = pair.IsEnabled;
+                                            }
+                                            else if (pair.PairCode == PairCodes.enj_jpy)
+                                            {
+                                                MainVM.IsOnEnjJpy = pair.IsEnabled;
+                                            }
+                                            else if (pair.PairCode == PairCodes.matic_jpy)
+                                            {
+                                                MainVM.IsOnMaticJpy = pair.IsEnabled;
+                                            }
+                                            else if (pair.PairCode == PairCodes.dot_jpy)
+                                            {
+                                                MainVM.IsOnDotJpy = pair.IsEnabled;
+                                            }
+                                            else if (pair.PairCode == PairCodes.doge_jpy)
+                                            {
+                                                MainVM.IsOnDogeJpy = pair.IsEnabled;
+                                            }
+                                            else if (pair.PairCode == PairCodes.astr_jpy)
+                                            {
+                                                MainVM.IsOnAstrJpy = pair.IsEnabled;
+                                            }
+                                            else if (pair.PairCode == PairCodes.ada_jpy)
+                                            {
+                                                MainVM.IsOnAdaJpy = pair.IsEnabled;
+                                            }
+                                            else if (pair.PairCode == PairCodes.avax_jpy)
+                                            {
+                                                MainVM.IsOnAvaxJpy = pair.IsEnabled;
+                                            }
+                                            else if (pair.PairCode == PairCodes.axs_jpy)
+                                            {
+                                                MainVM.IsOnAxsJpy = pair.IsEnabled;
+                                            }
+                                            else if (pair.PairCode == PairCodes.flr_jpy)
+                                            {
+                                                MainVM.IsOnFlrJpy = pair.IsEnabled;
+                                            }
+                                            else if (pair.PairCode == PairCodes.sand_jpy)
+                                            {
+                                                MainVM.IsOnSandJpy = pair.IsEnabled;
+                                            }
                                         }
-                                    }
 
-                                    attrv = hoge.Attribute("IsPaneVisible");
-                                    if (attrv != null)
-                                    {
-                                        if (!string.IsNullOrEmpty(attrv.Value))
-                                        {
-                                            if (attrv.Value == "True")
-                                                pair.IsPaneVisible = true;
-                                            else
-                                                pair.IsPaneVisible = false;
-                                        }
                                     }
-
-                                    attrv = hoge.Attribute("CandleType");
-                                    if (attrv != null)
-                                    {
-                                        if (!string.IsNullOrEmpty(attrv.Value))
-                                        {
-                                            var candleTypeString = attrv.Value;
-
-                                            if (candleTypeString == "OneMin")
-                                                pair.SelectedCandleType = Models.CandleTypes.OneMin;
-                                            else if (candleTypeString == "FiveMin")
-                                                pair.SelectedCandleType = Models.CandleTypes.FiveMin;
-                                            else if (candleTypeString == "FifteenMin")
-                                                pair.SelectedCandleType = Models.CandleTypes.FifteenMin;
-                                            else if (candleTypeString == "ThirtyMin")
-                                                pair.SelectedCandleType = Models.CandleTypes.ThirtyMin;
-                                            else if (candleTypeString == "OneHour")
-                                                pair.SelectedCandleType = Models.CandleTypes.OneHour;
-                                            else if (candleTypeString == "FourHour")
-                                                pair.SelectedCandleType = Models.CandleTypes.FourHour;
-                                            else if (candleTypeString == "EightHour")
-                                                pair.SelectedCandleType = Models.CandleTypes.EightHour;
-                                            else if (candleTypeString == "TwelveHour")
-                                                pair.SelectedCandleType = Models.CandleTypes.TwelveHour;
-                                            else if (candleTypeString == "OneDay")
-                                                pair.SelectedCandleType = Models.CandleTypes.OneDay;
-                                            else if (candleTypeString == "OneWeek")
-                                                pair.SelectedCandleType = Models.CandleTypes.OneWeek;
-                                            else if (candleTypeString == "OneMonth")
-                                                pair.SelectedCandleType = Models.CandleTypes.OneMonth;
-
-                                        }
-                                    }
-
-                                    // TODO: 個別設定が必要
-                                    if (pair.PairCode == PairCodes.btc_jpy)
-                                    {
-                                        MainVM.IsOnBtcJpy = pair.IsEnabled;
-                                    }
-                                    else if (pair.PairCode == PairCodes.xrp_jpy)
-                                    {
-                                        MainVM.IsOnXrpJpy = pair.IsEnabled;
-                                    }
-                                    else if (pair.PairCode == PairCodes.eth_jpy)
-                                    {
-                                        MainVM.IsOnEthJpy = pair.IsEnabled;
-                                    }
-                                    else if (pair.PairCode == PairCodes.ltc_jpy)
-                                    {
-                                        MainVM.IsOnLtcJpy = pair.IsEnabled;
-                                    }
-                                    else if (pair.PairCode == PairCodes.bcc_jpy)
-                                    {
-                                        MainVM.IsOnBccJpy = pair.IsEnabled;
-                                    }
-                                    else if (pair.PairCode == PairCodes.mona_jpy)
-                                    {
-                                        MainVM.IsOnMonaJpy = pair.IsEnabled;
-                                    }
-                                    else if (pair.PairCode == PairCodes.xlm_jpy)
-                                    {
-                                        MainVM.IsOnXlmJpy = pair.IsEnabled;
-                                    }
-                                    else if (pair.PairCode == PairCodes.qtum_jpy)
-                                    {
-                                        MainVM.IsOnQtumJpy = pair.IsEnabled;
-                                    }
-                                    else if (pair.PairCode == PairCodes.bat_jpy)
-                                    {
-                                        MainVM.IsOnBatJpy = pair.IsEnabled;
-                                    }
-                                    else if (pair.PairCode == PairCodes.omg_jpy)
-                                    {
-                                        MainVM.IsOnOmgJpy = pair.IsEnabled;
-                                    }
-                                    else if (pair.PairCode == PairCodes.xym_jpy)
-                                    {
-                                        MainVM.IsOnXymJpy = pair.IsEnabled;
-                                    }
-                                    else if (pair.PairCode == PairCodes.link_jpy)
-                                    {
-                                        MainVM.IsOnLinkJpy = pair.IsEnabled;
-                                    }
-                                    else if (pair.PairCode == PairCodes.mkr_jpy)
-                                    {
-                                        MainVM.IsOnMkrJpy = pair.IsEnabled;
-                                    }
-                                    else if (pair.PairCode == PairCodes.boba_jpy)
-                                    {
-                                        MainVM.IsOnBobaJpy = pair.IsEnabled;
-                                    }
-                                    else if (pair.PairCode == PairCodes.enj_jpy)
-                                    {
-                                        MainVM.IsOnEnjJpy = pair.IsEnabled;
-                                    }
-                                    else if (pair.PairCode == PairCodes.matic_jpy)
-                                    {
-                                        MainVM.IsOnMaticJpy = pair.IsEnabled;
-                                    }
-                                    else if (pair.PairCode == PairCodes.dot_jpy)
-                                    {
-                                        MainVM.IsOnDotJpy = pair.IsEnabled;
-                                    }
-                                    else if (pair.PairCode == PairCodes.doge_jpy)
-                                    {
-                                        MainVM.IsOnDogeJpy = pair.IsEnabled;
-                                    }
-                                    else if (pair.PairCode == PairCodes.astr_jpy)
-                                    {
-                                        MainVM.IsOnAstrJpy = pair.IsEnabled;
-                                    }
-                                    else if (pair.PairCode == PairCodes.ada_jpy)
-                                    {
-                                        MainVM.IsOnAdaJpy = pair.IsEnabled;
-                                    }
-                                    else if (pair.PairCode == PairCodes.avax_jpy)
-                                    {
-                                        MainVM.IsOnAvaxJpy = pair.IsEnabled;
-                                    }
-                                    else if (pair.PairCode == PairCodes.axs_jpy)
-                                    {
-                                        MainVM.IsOnAxsJpy = pair.IsEnabled;
-                                    }
-                                    else if (pair.PairCode == PairCodes.flr_jpy)
-                                    {
-                                        MainVM.IsOnFlrJpy = pair.IsEnabled;
-                                    }
-                                    else if (pair.PairCode == PairCodes.sand_jpy)
-                                    {
-                                        MainVM.IsOnSandJpy = pair.IsEnabled;
-                                    }
+                                    catch { }
                                 }
-                                catch { }
                             }
                         }
                     }
                 }
             }
 
-            (App.Current as App).IsSaveErrorLog = MainVM.IsDebugSaveLog;
+            App? app = App.Current as App;
+            if (app is not null)
+            {
+                app.IsSaveErrorLog = MainVM.IsDebugSaveLog;
+            }
 
             #endregion
 
@@ -386,12 +391,14 @@ namespace BitWallpaper.Views
 
             //AppTitleBarText.Text = "AppDisplayName".GetLocalized();
 
-
-            //(App.Current as App).MainWindow.ExtendsContentIntoTitleBar = true;
-            App.MainWindow.SetTitleBar(AppTitleBar);
-            App.MainWindow.Activated += MainWindow_Activated;
-            App.MainWindow.Closed += MainWindow_Closed;
-            //AppTitleBarText.Text = "AppDisplayName".GetLocalized();
+            if (App.MainWindow is not null)
+            {
+                //(App.Current as App).MainWindow.ExtendsContentIntoTitleBar = true;
+                App.MainWindow.SetTitleBar(AppTitleBar);
+                App.MainWindow.Activated += MainWindow_Activated;
+                App.MainWindow.Closed += MainWindow_Closed;
+                //AppTitleBarText.Text = "AppDisplayName".GetLocalized();
+            }
 
             //
             MainVM.NavigationViewControl_IsPaneOpen = navigationViewControl_IsPaneOpen;
@@ -424,7 +431,7 @@ namespace BitWallpaper.Views
         private void MainWindow_Closed(object sender, WindowEventArgs args)
         {
             // 設定ファイル用のXMLオブジェクト
-            XmlDocument doc = new XmlDocument();
+            XmlDocument doc = new();
             XmlDeclaration xmlDeclaration = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
             doc.InsertBefore(xmlDeclaration, doc.DocumentElement);
 
@@ -592,7 +599,9 @@ namespace BitWallpaper.Views
             MainVM.CleanUp();
 
             // error logs.
-            (App.Current as App).SaveErrorLogIfAny();
+            
+            App? app = App.Current as App;
+            app?.SaveErrorLogIfAny();
         }
 
         private void NavigationViewControl_DisplayModeChanged(NavigationView sender, NavigationViewDisplayModeChangedEventArgs args)
@@ -637,7 +646,7 @@ namespace BitWallpaper.Views
                     var item = _pages.FirstOrDefault(p => p.Tag.Equals(pairViewModel.PairCode.ToString()));
                     var _page = item.Page;
 
-                    if ((NavigationViewControl.SelectedItem as NavigationViewItem).Tag.ToString() == pairViewModel.PairCode.ToString())
+                    if (((NavigationViewItem)NavigationViewControl.SelectedItem).Tag.ToString() == pairViewModel.PairCode.ToString())
                     {
                         NavigationFrame.Navigate(_page, pairViewModel, new Microsoft.UI.Xaml.Media.Animation.EntranceNavigationTransitionInfo());
                     }
@@ -679,7 +688,7 @@ namespace BitWallpaper.Views
                     return;
 
                 // Pass pairviewmodel when navigate to each pair page.
-                PairViewModel vm;
+                PairViewModel? vm;
                 if (_page == typeof(BtcJpyPage))
                 {
                     vm = MainVM.Pairs.FirstOrDefault(x => x.PairCode == PairCodes.btc_jpy);
@@ -816,7 +825,7 @@ namespace BitWallpaper.Views
                 return;
             }
 
-            PairCodes _activePair = PairCodes.btc_jpy;
+            PairCodes _activePair;
 
             // （個別設定が必要）
             if (e.SourcePageType == typeof(BtcJpyPage))
@@ -928,7 +937,7 @@ namespace BitWallpaper.Views
         {
             Debug.WriteLine("NavigationFrame_NavigationFailed: " + e.Exception.Message + " - " + e.Exception.StackTrace);
 
-            (App.Current as App).AppendErrorLog("NavigationFrame_NavigationFailed", e.Exception.Message + ", StackTrace: " + e.Exception.StackTrace);
+            (App.Current as App)?.AppendErrorLog("NavigationFrame_NavigationFailed", e.Exception.Message + ", StackTrace: " + e.Exception.StackTrace);
 
             e.Handled = true;
         }

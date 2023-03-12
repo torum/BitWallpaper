@@ -9,11 +9,11 @@ namespace BitWallpaper.Models;
 
 public class JsonErrorData
 {
-    public int code
+    public int Code
     {
         get; set;
     }
-    public string ja
+    public string? Ja
     {
         get; set;
     }
@@ -21,11 +21,11 @@ public class JsonErrorData
 
 public class JsonErrorObject
 {
-    public int success
+    public int Success
     {
         get; set;
     }
-    public JsonErrorData data
+    public JsonErrorData? Data
     {
         get; set;
     }
@@ -40,7 +40,7 @@ public partial class JsonDepthObject
     }
 
     [JsonProperty("data")]
-    public JsonDepthData Data
+    public JsonDepthData? Data
     {
         get; set;
     }
@@ -49,13 +49,13 @@ public partial class JsonDepthObject
 public partial class JsonDepthData
 {
     [JsonProperty("asks")]
-    public List<List<string>> Asks
+    public List<List<string>>? Asks
     {
         get; set;
     }
 
     [JsonProperty("bids")]
-    public List<List<string>> Bids
+    public List<List<string>>? Bids
     {
         get; set;
     }
@@ -72,31 +72,31 @@ public partial class JsonDepthData
 // Ticker
 public class JsonTickerData
 {
-    public string sell
+    public string? Sell
     {
         get; set;
     }
-    public string buy
+    public string? Buy
     {
         get; set;
     }
-    public string high
+    public string? High
     {
         get; set;
     }
-    public string low
+    public string? Low
     {
         get; set;
     }
-    public string last
+    public string? Last
     {
         get; set;
     }
-    public string vol
+    public string? Vol
     {
         get; set;
     }
-    public long timestamp
+    public long Timestamp
     {
         get; set;
     }
@@ -104,11 +104,11 @@ public class JsonTickerData
 
 public class JsonTickerObject
 {
-    public int success
+    public int Success
     {
         get; set;
     }
-    public JsonTickerData data
+    public JsonTickerData? Data
     {
         get; set;
     }
@@ -124,7 +124,7 @@ public partial class JsonTransactions
     }
 
     [JsonProperty("data")]
-    public JsonData Data
+    public JsonData? Data
     {
         get; set;
     }
@@ -133,7 +133,7 @@ public partial class JsonTransactions
 public partial class JsonData
 {
     [JsonProperty("transactions")]
-    public List<JsonTransaction> Transactions
+    public List<JsonTransaction>? Transactions
     {
         get; set;
     }
@@ -148,19 +148,19 @@ public partial class JsonTransaction
     }
 
     [JsonProperty("side")]
-    public string Side
+    public string? Side
     {
         get; set;
     }
 
     [JsonProperty("price")]
-    public string Price
+    public string? Price
     {
         get; set;
     }
 
     [JsonProperty("amount")]
-    public string Amount
+    public string? Amount
     {
         get; set;
     }
@@ -183,7 +183,7 @@ public partial class JsonCandlestick
     }
 
     [JsonProperty("data")]
-    public JsonCandlestickData Data
+    public JsonCandlestickData? Data
     {
         get; set;
     }
@@ -192,7 +192,7 @@ public partial class JsonCandlestick
 public partial class JsonCandlestickData
 {
     [JsonProperty("candlestick")]
-    public List<JsonCandlestickElement> Candlestick
+    public List<JsonCandlestickElement>? Candlestick
     {
         get; set;
     }
@@ -207,13 +207,13 @@ public partial class JsonCandlestickData
 public partial class JsonCandlestickElement
 {
     [JsonProperty("type")]
-    public string Type
+    public string? Type
     {
         get; set;
     }
 
     [JsonProperty("ohlcv")]
-    public List<List<JsonOhlcv>> Ohlcv
+    public List<List<JsonOhlcv>>? Ohlcv
     {
         get; set;
     }
@@ -221,11 +221,11 @@ public partial class JsonCandlestickElement
 
 public partial struct JsonOhlcv
 {
-    public long? Long;
+    public long Long;
     public string String;
 
-    public static implicit operator JsonOhlcv(long Long) => new JsonOhlcv { Long = Long };
-    public static implicit operator JsonOhlcv(string String) => new JsonOhlcv { String = String };
+    public static implicit operator JsonOhlcv(long Long) => new() { Long = Long };
+    public static implicit operator JsonOhlcv(string String) => new() { String = String };
 }
 
 

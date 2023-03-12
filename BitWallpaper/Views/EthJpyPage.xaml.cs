@@ -8,9 +8,9 @@ namespace BitWallpaper.Views
 {
     public sealed partial class EthJpyPage : Page
     {
-        private PairViewModel _viewModel;
+        private PairViewModel? _viewModel;
 
-        public PairViewModel ViewModel
+        public PairViewModel? ViewModel
         {
             get=> _viewModel;
         }
@@ -36,9 +36,9 @@ namespace BitWallpaper.Views
         {
             //base.OnNavigatedTo(e);
 
-            if (e.Parameter is PairViewModel)
+            if (e.Parameter is PairViewModel pvm)
             {
-                _viewModel = (PairViewModel)e.Parameter;
+                _viewModel = pvm;
             }
 
             base.OnNavigatedTo(e);

@@ -20,8 +20,8 @@ public class Depth : ViewModelBase
                 return;
 
             _priceFormat = value;
-            NotifyPropertyChanged("PriceFormat");
-            NotifyPropertyChanged("DepthPriceFormatted");
+            NotifyPropertyChanged(nameof(PriceFormat));
+            NotifyPropertyChanged(nameof(DepthPriceFormatted));
         }
     }
 
@@ -38,8 +38,8 @@ public class Depth : ViewModelBase
                 return;
 
             _depthBid = value;
-            NotifyPropertyChanged("DepthBid");
-            NotifyPropertyChanged("DepthBidFormatted");
+            NotifyPropertyChanged(nameof(DepthBid));
+            NotifyPropertyChanged(nameof(DepthBidFormatted));
         }
     }
     public string DepthBidFormatted
@@ -70,8 +70,8 @@ public class Depth : ViewModelBase
                 return;
 
             _depthPrice = value;
-            NotifyPropertyChanged("DepthPrice");
-            NotifyPropertyChanged("DepthPriceFormatted");
+            NotifyPropertyChanged(nameof(DepthPrice));
+            NotifyPropertyChanged(nameof(DepthPriceFormatted));
         }
     }
     public string DepthPriceFormatted
@@ -92,8 +92,8 @@ public class Depth : ViewModelBase
                 return;
 
             _depthAsk = value;
-            NotifyPropertyChanged("DepthAsk");
-            NotifyPropertyChanged("DepthAskFormatted");
+            NotifyPropertyChanged(nameof(DepthAsk));
+            NotifyPropertyChanged(nameof(DepthAskFormatted));
         }
     }
     public string DepthAskFormatted
@@ -124,7 +124,7 @@ public class Depth : ViewModelBase
                 return;
 
             _isLTP = value;
-            NotifyPropertyChanged("IsLTP");
+            NotifyPropertyChanged(nameof(IsLTP));
 
         }
     }
@@ -143,7 +143,7 @@ public class Depth : ViewModelBase
 
             _isAskBest = value;
 
-            NotifyPropertyChanged("IsAskBest");
+            NotifyPropertyChanged(nameof(IsAskBest));
         }
     }
     private bool _isBidBest;
@@ -159,7 +159,7 @@ public class Depth : ViewModelBase
                 return;
 
             _isBidBest = value;
-            NotifyPropertyChanged("IsBidBest");
+            NotifyPropertyChanged(nameof(IsBidBest));
 
         }
     }
@@ -174,23 +174,23 @@ public class Depth : ViewModelBase
     }
 }
 
-public class ExplorerItemTemplateSelector : DataTemplateSelector
+public class DepthListItemTemplateSelector : DataTemplateSelector
 {
-    public DataTemplate FolderTemplate { get; set; }
-    public DataTemplate FileTemplate { get; set; }
+    public DataTemplate? LtpTemplate { get; set; }
+    public DataTemplate? BidOrAskTemplate { get; set; }
     protected override DataTemplate SelectTemplateCore(object item)
     {
         return base.SelectTemplateCore(item, null);
     }
 
-    protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
+    protected override DataTemplate? SelectTemplateCore(object item, DependencyObject container)
     {
         /*
         var explorerItem = (ExplorerItem)item;
         return explorerItem.Type == ExplorerItem.ExplorerItemType.Folder ? FolderTemplate : FileTemplate;
         */
         var explorerItem = (Depth)item;
-        return explorerItem.IsLTP ? FolderTemplate : FileTemplate;
+        return explorerItem.IsLTP ? LtpTemplate : BidOrAskTemplate;
 
         //return base.SelectTemplateCore(item, null); 
     }

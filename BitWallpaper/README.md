@@ -20,7 +20,7 @@ Displays cryptocurrency charts using BitBank's API. No registration required. (T
 
 ### Things that currently working on
 
-- [ ] 
+- [ ] "nullable"
 
 
 ### Planning

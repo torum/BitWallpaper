@@ -128,13 +128,17 @@ namespace BitWallpaper.Views.UserControls
         {
             if (PairVM == null) return;
 
-            ContentDialog dialog = new ContentDialogContent();
+            ContentDialogContent dialog = new();
 
             if (PairVM.AlarmPlus > 0)
-                (dialog as ContentDialogContent).HighPrice = PairVM.AlarmPlus;
+            {
+                dialog.HighPrice = PairVM.AlarmPlus;
+            }
 
             if (PairVM.AlarmMinus > 0)
-                (dialog as ContentDialogContent).LowPrice = PairVM.AlarmMinus;
+            {
+                dialog.LowPrice = PairVM.AlarmMinus;
+            }
 
             // XamlRoot must be set in the case of a ContentDialog running in a Desktop app
             dialog.XamlRoot = this.XamlRoot;
@@ -149,8 +153,8 @@ namespace BitWallpaper.Views.UserControls
 
             if (result == ContentDialogResult.Primary)
             {
-                PairVM.AlarmPlus = (dialog as ContentDialogContent).HighPrice;
-                PairVM.AlarmMinus = (dialog as ContentDialogContent).LowPrice;
+                PairVM.AlarmPlus = dialog.HighPrice;
+                PairVM.AlarmMinus = dialog.LowPrice;
             }
             
         }

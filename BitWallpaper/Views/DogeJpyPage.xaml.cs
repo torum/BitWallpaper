@@ -8,9 +8,9 @@ namespace BitWallpaper.Views
 {
     public sealed partial class DogeJpyPage : Page
     {
-        private PairViewModel _viewModel;
+        private PairViewModel? _viewModel;
 
-        public PairViewModel ViewModel
+        public PairViewModel? ViewModel
         {
             get=> _viewModel;
         }

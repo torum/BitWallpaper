@@ -8,9 +8,9 @@ namespace BitWallpaper.Views
 {
     public sealed partial class SettingsPage : Page
     {
-        private MainViewModel _viewModel;
+        private MainViewModel? _viewModel;
 
-        public MainViewModel ViewModel
+        public MainViewModel? ViewModel
         {
             get => _viewModel;
         }
@@ -36,9 +36,9 @@ namespace BitWallpaper.Views
         {
             //base.OnNavigatedTo(e);
 
-            if (e.Parameter is MainViewModel)
+            if (e.Parameter is MainViewModel mvm)
             {
-                _viewModel = (MainViewModel)e.Parameter;
+                _viewModel = mvm;
             }
 
             base.OnNavigatedTo(e);

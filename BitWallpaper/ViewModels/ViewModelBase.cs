@@ -5,11 +5,9 @@ namespace BitWallpaper.ViewModels;
 
 public abstract class ViewModelBase : INotifyPropertyChanged, IDataErrorInfo
 {
-    public ViewModelBase() { }
-
     #region == INotifyPropertyChanged ==
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     protected void NotifyPropertyChanged(string propertyName)
     {
@@ -49,7 +47,7 @@ public abstract class ViewModelBase : INotifyPropertyChanged, IDataErrorInfo
         {
             Debug.WriteLine($"Exception at NotifyPropertyChanged ({propertyName}): " + ex.Message);
 
-            (App.Current as App).AppendErrorLog($"Exception at NotifyPropertyChanged ({propertyName}): ", ex.Message);
+            (App.Current as App)?.AppendErrorLog($"Exception at NotifyPropertyChanged ({propertyName}): ", ex.Message);
         }
     }
 
@@ -57,15 +55,9 @@ public abstract class ViewModelBase : INotifyPropertyChanged, IDataErrorInfo
 
     #region == IDataErrorInfo ==
 
-    private Dictionary<string, string> _ErrorMessages = new Dictionary<string, string>();
+    private readonly Dictionary<string, string> _ErrorMessages = new();
 
-    string IDataErrorInfo.Error
-    {
-        get
-        {
-            return (_ErrorMessages.Count > 0) ? "Has Error" : null;
-        }
-    }
+    string IDataErrorInfo.Error => (_ErrorMessages.Count > 0) ? "Has Error" : "";
 
     string IDataErrorInfo.this[string columnName]
     {
