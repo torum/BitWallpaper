@@ -5,7 +5,8 @@ Displays cryptocurrency charts using [BitBank](https://bitbank.cc/)'s [public AP
 
 Pairs: BTC/JPY, XRP/JPY, ETH/JPY, LTC/JPY, MONA/JPY, BCC/JPY, XLM/JPY, QTUM/JPY, BAT/JPY, OMG/JPY, XYM/JPY, LINK/JPY, MKR/JPY, BOBA/JPY, ENJ/JPY, MATIC/JPY, DOT/JPY, DOGE/JPY, ASTR/JPY, ADA/JPY, AVAX/JPY, AXS/JPY, FLR/JPY, SAND/JPY.
 
-(The trading app called BitDesk is over [here](https://github.com/torum/BitDesk)).
+## Source Code has moved to a new repo: [BitApp](https://github.com/torum/BitApps)
+ Source code is now located at [BitApp](https://github.com/torum/BitApps) repo. This repo is mainly for management of [release](https://github.com/torum/BitWallpaper/releases), [webpage](https://torum.github.io/BitWallpaper/) and maybe issue management.
 
 ## Download
  Download and install via [Microsoft Store](https://apps.microsoft.com/store/detail/bitwallpaper/9NCC3NTG9DP3)
@@ -21,22 +22,6 @@ Dark Theme with Acrylic
 Small display, compact mode  
 ![alt text](https://github.com/torum/BitWallpaper/blob/master/docs/Images/BitWallpaper-screenshot-V2-small.png?raw=true)
 
-## Contributing
-Feel free to open issues and send PRs. 
 
-## Technologies & Frameworks
-* [.NET 6](https://github.com/dotnet/runtime)  
-* [WinUI3 (WindowsAppSDK)](https://github.com/microsoft/WindowsAppSDK)  
-* [LiveCharts2](https://github.com/beto-rodriguez/LiveCharts2)  
-* [WinUIEx](https://github.com/dotMorten/WinUIEx)
-* [Json.NET](https://github.com/JamesNK/Newtonsoft.Json)
 
-## Getting Started
 
-### Requirements
-* Windows 10.0.19041.0 or higher
-
-### Building
-1. Visual Studio 2022 with support for .NET Desktop App UI development (and optionally .NET Universal App development)
-2. Clone this repository
-3. Open solution in Visual Studio and run
