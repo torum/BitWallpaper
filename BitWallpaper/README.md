@@ -1,1 +1,1 @@
-# source code removed and moved to https://github.com/torum/BitApps
+source code has moved to https://github.com/torum/BitApps
