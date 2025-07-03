@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "BitWallpaper (Unpackaged)": {
+      "commandName": "Project",
+      "nativeDebugging": false
+    },
+    "BitWallpaper (Packaged)": {
+      "commandName": "MsixPackage"
+    }
+  }
+}

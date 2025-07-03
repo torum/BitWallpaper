@@ -1,0 +1,63 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup Label="Globals">
+	  <WebView2EnableCsWinRTProjection>True</WebView2EnableCsWinRTProjection>
+	</PropertyGroup>
+	<PropertyGroup>
+    <TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
+	<!-- <WindowsSdkPackageVersion>10.0.26100.38</WindowsSdkPackageVersion> -->
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+		<RootNamespace>BitApps.Core</RootNamespace>
+    <Platforms>x86;x64;ARM64</Platforms>
+		<ImplicitUsings>enable</ImplicitUsings>
+    <RuntimeIdentifiers Condition="$([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')) &gt;= 8">win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <RuntimeIdentifiers Condition="$([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')) &lt; 8">win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
+<!--
+		<SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+		<WindowsSdkPackageVersion>10.0.22621.38</WindowsSdkPackageVersion>
+-->
+
+		<Nullable>enable</Nullable>
+
+		<SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+
+		<PlatformTarget>AnyCPU</PlatformTarget>
+
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+	  <DebugType>embedded</DebugType>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+	  <DebugType>embedded</DebugType>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+	  <DebugType>embedded</DebugType>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+	  <DebugType>embedded</DebugType>
+	  <Optimize>False</Optimize>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+	  <DebugType>embedded</DebugType>
+	  <Optimize>False</Optimize>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+	  <DebugType>embedded</DebugType>
+	  <Optimize>False</Optimize>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Folder Include="Contracts\Services\" />
+		<Folder Include="Services\" />
+	</ItemGroup>
+
+	<ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250606001" />
+    <Manifest Include="$(ApplicationManifest)" />
+
+
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.3" />
+	</ItemGroup>
+</Project>
