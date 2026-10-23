@@ -22,6 +22,7 @@ public partial class MainViewModel : ObservableObject
     private readonly bool _isLiveChartsOn = true;
 
     private readonly Lock _lock = new Lock();
+    private static readonly SemaphoreSlim _asyncLock = new SemaphoreSlim(1, 1);
 
     private readonly IBitbankStreamService _bitbankStreamService;
     private readonly IConfigurationService _configurationService;
@@ -1269,65 +1270,71 @@ public partial class MainViewModel : ObservableObject
             Debug.WriteLine($"SetSelectedPairFromCodeAsync() called for {pairCode} at {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
         }
 
-        _dispatcherService.TryEnqueue(() =>
+        await _asyncLock.WaitAsync();
+
+        try
         {
-            try
+            var pairVM = EnabledPairs.FirstOrDefault(x => x.PairCode == pairCode);
+
+            // little hack.
+            _selectedPair = pairVM;
+
+            if (_selectedPair is not null)
             {
-                lock (_lock)
+                foreach (var hoge in Pairs)
                 {
-                    var pairVM = EnabledPairs.FirstOrDefault(x => x.PairCode == pairCode);
-
-                    // little hack.
-                    _selectedPair = pairVM;
-
-                    if (_selectedPair is not null)
+                    if (hoge.PairCode == _selectedPair.PairCode)
                     {
-                        foreach (var hoge in Pairs)
-                        {
-                            if (hoge.PairCode == _selectedPair.PairCode)
-                            {
-                                hoge.IsSelectedActive = true;
-                            }
-                            else
-                            {
-                                hoge.IsSelectedActive = false;
-                            }
-                        }
-
-                        OnPropertyChanged(nameof(SelectedPair));
-
-                        //SelectedPair = pairVM;
-
-                        if (_isLiveChartsOn)
-                            //await _selectedPair.InitializeAndLoadAsync();
-                            _ = RunSafeAsync(() => _selectedPair.InitializeAndLoadAsync(), nameof(_selectedPair.InitializeAndLoadAsync));
+                        hoge.IsSelectedActive = true;
                     }
                     else
                     {
-                        Debug.WriteLine($"No PairViewModel found for {pairCode} at {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+                        hoge.IsSelectedActive = false;
                     }
                 }
 
+                OnPropertyChanged(nameof(SelectedPair));
+
+                //SelectedPair = pairVM;
+
+                if (_isLiveChartsOn)
+                    await _selectedPair.InitializeAndLoadAsync();
+                //_ = RunSafeAsync(() => _selectedPair.InitializeAndLoadAsync(), nameof(_selectedPair.InitializeAndLoadAsync));
             }
-            catch (Exception ex)
+            else
             {
-                Debug.WriteLine($"Error in SetSelectedPairFromCodeAsync: {ex}");
+                Debug.WriteLine($"No PairViewModel found for {pairCode} at {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
             }
-        });
+
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error in SetSelectedPairFromCodeAsync: {ex}");
+        }
+        finally
+        {
+            _asyncLock.Release();
+        }
     }
 
     public async Task SetSelectedAllPairsFromCodeAsync()
     {
-        lock (_lock)
+        await _asyncLock.WaitAsync();
+
+        try
         {
             foreach (var pairVM in EnabledPairs)
             {
                 pairVM.IsSelectedActive = true;
 
                 if (_isLiveChartsOn)
-                    //await pairVM.InitializeAndLoadAsync();
-                    _ = RunSafeAsync(() => pairVM.InitializeAndLoadAsync(), nameof(pairVM.InitializeAndLoadAsync));
+                    await pairVM.InitializeAndLoadAsync();
+                //_ = RunSafeAsync(() => pairVM.InitializeAndLoadAsync(), nameof(pairVM.InitializeAndLoadAsync));
             }
+        }
+        finally
+        {
+            _asyncLock.Release();
         }
     }
 

@@ -1707,193 +1707,186 @@ public partial class PairViewModel : ObservableObject
 
     private async Task LoadChartAsync(CandleTypes ct)
     {
-        _dispatcherService.TryEnqueue(async () =>
+        try
         {
-            try
+            if (Sections[0] is RectangularSection secn)
             {
-                if (Sections[0] is RectangularSection secn)
-                {
-                    secn.Yi = (double)_ltp;
-                    secn.Yj = (double)_ltp;
-                }
-
-                if (!IsEnabled)
-                {
-                    return;
-                }
-
-                Debug.WriteLine($"LoadChartAsync() called for {PairCode} at {DateTime.Now:yyyy-MM-dd HH:mm:ss} with candle type {ct}");
-
-                // gets new data.
-                var res = await GetCandlesticksAsync(PairCode, ct);
-
-                if (res == null)
-                {
-                    Debug.WriteLine($"LoadChartAsync() failed to get candlestick data for {PairCode} at {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
-                    return;
-                }
-
-                if (res.Count > 0)
-                {
-                    Debug.WriteLine($"LoadChartAsync() successfully retrieved {res.Count} candlestick data points for {PairCode} at {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
-                    DoLoadChart(res, ct);
-                }
+                secn.Yi = (double)_ltp;
+                secn.Yj = (double)_ltp;
             }
-            catch (Exception ex)
+
+            if (!IsEnabled)
             {
-                Debug.WriteLine($"LoadChartAsync() exception for {PairCode}: {ex}");
+                return;
             }
-        });
+
+            Debug.WriteLine($"LoadChartAsync() called for {PairCode} at {DateTime.Now:yyyy-MM-dd HH:mm:ss} with candle type {ct}");
+
+            // gets new data.
+            var res = await GetCandlesticksAsync(PairCode, ct);
+
+            if (res == null)
+            {
+                Debug.WriteLine($"LoadChartAsync() failed to get candlestick data for {PairCode} at {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+                return;
+            }
+
+            if (res.Count > 0)
+            {
+                Debug.WriteLine($"LoadChartAsync() successfully retrieved {res.Count} candlestick data points for {PairCode} at {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+                DoLoadChart(res, ct);
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"LoadChartAsync() exception for {PairCode}: {ex}");
+        }
     }
 
     private void DoLoadChart(List<Ohlcv> list, CandleTypes ct)
     {
-        _dispatcherService.TryEnqueue(() =>
+        try
         {
-            try
+            // Need to be here. not static and all.
+            if (_currencyFormstString.Equals("C3"))
             {
-                // Need to be here. not static and all.
-                if (_currencyFormstString.Equals("C3"))
-                {
-                    YAxes[1].Labeler = (value) => value.ToString("C3", new CultureInfo("ja-JP"));
-                }
-                else if (_currencyFormstString.Equals("C2"))
-                {
-                    YAxes[1].Labeler = (value) => value.ToString("C2", new CultureInfo("ja-JP"));
-                }
-                else if (_currencyFormstString.Equals("C1"))
-                {
-                    YAxes[1].Labeler = (value) => value.ToString("C1", new CultureInfo("ja-JP"));
-                }
-                else
-                {
-                    YAxes[1].Labeler = (value) => value.ToString("C", new CultureInfo("ja-JP"));
-                }
-
-                //TODO: localize aware
-                // キャンドルタイプにあわせてチャートXAxes[0]表示tweak
-                if (ct == CandleTypes.OneMin)
-                {
-                    XAxes[0].Labeler = value => new DateTime((long)value).ToString("H:mm");
-                    XAxes[0].UnitWidth = TimeSpan.FromMinutes(0.4).Ticks;
-                    //XAxes[0].MinStep = TimeSpan.FromMinutes(10).Ticks;
-                    XAxes[0].MinLimit = DateTime.Now.Ticks - TimeSpan.FromMinutes(60).Ticks;
-                    XAxes[0].MaxLimit = null;
-                }
-                else if (ct == CandleTypes.FiveMin)
-                {
-                    XAxes[0].Labeler = value => new DateTime((long)value).ToString("H:mm");
-                    XAxes[0].UnitWidth = TimeSpan.FromMinutes(2.5).Ticks;
-                    //XAxes[0].MinStep = TimeSpan.FromMinutes(10).Ticks;
-                    XAxes[0].MinLimit = DateTime.Now.Ticks - TimeSpan.FromMinutes(300).Ticks;
-                    XAxes[0].MaxLimit = null;
-                }
-                else if (ct == CandleTypes.FifteenMin)
-                {
-                    XAxes[0].Labeler = value => new DateTime((long)value).ToString("M/d H:mm");
-                    XAxes[0].UnitWidth = TimeSpan.FromMinutes(7).Ticks;
-                    //XAxes[0].MinStep = TimeSpan.FromMinutes(15).Ticks;
-                    XAxes[0].MinLimit = DateTime.Now.Ticks - TimeSpan.FromMinutes(750).Ticks;
-                    XAxes[0].MaxLimit = null;
-                }
-                else if (ct == CandleTypes.ThirtyMin)
-                {
-                    XAxes[0].Labeler = value => new DateTime((long)value).ToString("M/d H:mm");
-                    XAxes[0].UnitWidth = TimeSpan.FromMinutes(15).Ticks;
-                    //XAxes[0].MinStep = TimeSpan.FromMinutes(30).Ticks;
-                    XAxes[0].MinLimit = DateTime.Now.Ticks - TimeSpan.FromMinutes(1500).Ticks;
-                    XAxes[0].MaxLimit = null;
-                }
-                else if (ct == CandleTypes.OneHour)
-                {
-                    XAxes[0].Labeler = value => new DateTime((long)value).ToString("M/d H:mm");
-                    //XAxes[0].Labeler = value => new DateTime((long)value).ToString("yyyy MMM dd");
-                    XAxes[0].UnitWidth = TimeSpan.FromHours(0.5).Ticks;
-                    XAxes[0].MinStep = 0;
-                    XAxes[0].MinStep = TimeSpan.FromDays(0.4).Ticks;
-                    XAxes[0].MinLimit = DateTime.Now.Ticks - TimeSpan.FromDays(3).Ticks;
-                    XAxes[0].MaxLimit = null;
-                }
-                else if (ct == CandleTypes.FourHour)
-                {
-                    XAxes[0].Labeler = value => new DateTime((long)value).ToString("M/d HH");
-                    XAxes[0].UnitWidth = TimeSpan.FromHours(2).Ticks;
-                    //XAxes[0].MinStep = TimeSpan.FromHours(4).Ticks;
-                    XAxes[0].MinLimit = DateTime.Now.Ticks - TimeSpan.FromDays(6).Ticks;
-                    XAxes[0].MaxLimit = null;
-                }
-                else if (ct == CandleTypes.EightHour)
-                {
-                    XAxes[0].Labeler = value => new DateTime((long)value).ToString("M/d HH");
-                    XAxes[0].UnitWidth = TimeSpan.FromHours(4).Ticks;
-                    //XAxes[0].MinStep = TimeSpan.FromHours(8).Ticks;
-                    XAxes[0].MinLimit = DateTime.Now.Ticks - TimeSpan.FromDays(12).Ticks;
-                    XAxes[0].MaxLimit = null;
-                }
-                else if (ct == CandleTypes.TwelveHour)
-                {
-                    XAxes[0].Labeler = value => new DateTime((long)value).ToString("yyyy M/d");
-                    XAxes[0].UnitWidth = TimeSpan.FromHours(6).Ticks;
-                    //XAxes[0].MinStep = TimeSpan.FromDays(0.5).Ticks;
-                    XAxes[0].MinLimit = DateTime.Now.Ticks - TimeSpan.FromDays(24).Ticks;
-                    XAxes[0].MaxLimit = null;
-                }
-                else if (ct == CandleTypes.OneDay)
-                {
-                    XAxes[0].Labeler = value => new DateTime((long)value).ToString("yyyy M/d");
-                    XAxes[0].UnitWidth = TimeSpan.FromDays(0.4).Ticks;
-                    //XAxes[0].MinStep = TimeSpan.FromDays(1).Ticks;
-                    XAxes[0].MinLimit = DateTime.Now.Ticks - TimeSpan.FromDays(90).Ticks;
-                    XAxes[0].MaxLimit = null;
-                }
-                else if (ct == CandleTypes.OneWeek)
-                {
-                    XAxes[0].Labeler = value => new DateTime((long)value).ToString("yyyy M/d");
-                    XAxes[0].UnitWidth = TimeSpan.FromDays(2).Ticks;
-                    //XAxes[0].MinStep = TimeSpan.FromDays(1).Ticks;
-                    XAxes[0].MinLimit = DateTime.Now.Ticks - TimeSpan.FromDays(300).Ticks;
-                    XAxes[0].MaxLimit = null;
-                }
-                else if (ct == CandleTypes.OneMonth)
-                {
-                    XAxes[0].Labeler = value => new DateTime((long)value).ToString("yyyy/M");
-                    XAxes[0].UnitWidth = TimeSpan.FromDays(21).Ticks;
-                    //XAxes[0].MinStep = TimeSpan.FromDays(30).Ticks;
-                    XAxes[0].MinLimit = DateTime.Now.Ticks - TimeSpan.FromDays(360 * 3).Ticks;
-                    XAxes[0].MaxLimit = null;
-                }
-
-                var ohlcs = new ObservableCollection<FinancialPoint>();
-                var vols = new ObservableCollection<DateTimePoint>();
-
-                list.Sort((a, b) => a.TimeStamp.CompareTo(b.TimeStamp));
-                _chartTimes.Clear();
-
-                foreach (var hoge in list)
-                {
-                    _chartTimes.Add(hoge.TimeStamp);
-
-                    vols.Add(new DateTimePoint(hoge.TimeStamp, (double)hoge.Volume));
-
-                    ohlcs.Add(new FinancialPoint(hoge.TimeStamp, (double)hoge.High, (double)hoge.Open, (double)hoge.Close, (double)hoge.Low));
-
-                    Debug.WriteLine($"GetCandlestick: {hoge.TimeStamp:yyyy-MM-dd HH:mm:ss} Open: {hoge.Open}, High: {hoge.High}, Low: {hoge.Low}, Close: {hoge.Close}, Volume: {hoge.Volume}");
-                }
-
-                Series[0].Values = vols;
-                Series[1].Values = ohlcs;
-
-                IsChartInitAndLoaded = true;
-
-                lastChartLoadedDateTime = DateTime.Now;
-
+                YAxes[1].Labeler = (value) => value.ToString("C3", new CultureInfo("ja-JP"));
             }
-            catch (Exception ex)
+            else if (_currencyFormstString.Equals("C2"))
             {
-                Debug.WriteLine($"DoLoadChartAsync() exception for {PairCode}: {ex}");
+                YAxes[1].Labeler = (value) => value.ToString("C2", new CultureInfo("ja-JP"));
             }
-        });
+            else if (_currencyFormstString.Equals("C1"))
+            {
+                YAxes[1].Labeler = (value) => value.ToString("C1", new CultureInfo("ja-JP"));
+            }
+            else
+            {
+                YAxes[1].Labeler = (value) => value.ToString("C", new CultureInfo("ja-JP"));
+            }
 
+            //TODO: localize aware
+            // キャンドルタイプにあわせてチャートXAxes[0]表示tweak
+            if (ct == CandleTypes.OneMin)
+            {
+                XAxes[0].Labeler = value => new DateTime((long)value).ToString("H:mm");
+                XAxes[0].UnitWidth = TimeSpan.FromMinutes(0.4).Ticks;
+                //XAxes[0].MinStep = TimeSpan.FromMinutes(10).Ticks;
+                XAxes[0].MinLimit = DateTime.Now.Ticks - TimeSpan.FromMinutes(60).Ticks;
+                XAxes[0].MaxLimit = null;
+            }
+            else if (ct == CandleTypes.FiveMin)
+            {
+                XAxes[0].Labeler = value => new DateTime((long)value).ToString("H:mm");
+                XAxes[0].UnitWidth = TimeSpan.FromMinutes(2.5).Ticks;
+                //XAxes[0].MinStep = TimeSpan.FromMinutes(10).Ticks;
+                XAxes[0].MinLimit = DateTime.Now.Ticks - TimeSpan.FromMinutes(300).Ticks;
+                XAxes[0].MaxLimit = null;
+            }
+            else if (ct == CandleTypes.FifteenMin)
+            {
+                XAxes[0].Labeler = value => new DateTime((long)value).ToString("M/d H:mm");
+                XAxes[0].UnitWidth = TimeSpan.FromMinutes(7).Ticks;
+                //XAxes[0].MinStep = TimeSpan.FromMinutes(15).Ticks;
+                XAxes[0].MinLimit = DateTime.Now.Ticks - TimeSpan.FromMinutes(750).Ticks;
+                XAxes[0].MaxLimit = null;
+            }
+            else if (ct == CandleTypes.ThirtyMin)
+            {
+                XAxes[0].Labeler = value => new DateTime((long)value).ToString("M/d H:mm");
+                XAxes[0].UnitWidth = TimeSpan.FromMinutes(15).Ticks;
+                //XAxes[0].MinStep = TimeSpan.FromMinutes(30).Ticks;
+                XAxes[0].MinLimit = DateTime.Now.Ticks - TimeSpan.FromMinutes(1500).Ticks;
+                XAxes[0].MaxLimit = null;
+            }
+            else if (ct == CandleTypes.OneHour)
+            {
+                XAxes[0].Labeler = value => new DateTime((long)value).ToString("M/d H:mm");
+                //XAxes[0].Labeler = value => new DateTime((long)value).ToString("yyyy MMM dd");
+                XAxes[0].UnitWidth = TimeSpan.FromHours(0.5).Ticks;
+                XAxes[0].MinStep = 0;
+                XAxes[0].MinStep = TimeSpan.FromDays(0.4).Ticks;
+                XAxes[0].MinLimit = DateTime.Now.Ticks - TimeSpan.FromDays(3).Ticks;
+                XAxes[0].MaxLimit = null;
+            }
+            else if (ct == CandleTypes.FourHour)
+            {
+                XAxes[0].Labeler = value => new DateTime((long)value).ToString("M/d HH");
+                XAxes[0].UnitWidth = TimeSpan.FromHours(2).Ticks;
+                //XAxes[0].MinStep = TimeSpan.FromHours(4).Ticks;
+                XAxes[0].MinLimit = DateTime.Now.Ticks - TimeSpan.FromDays(6).Ticks;
+                XAxes[0].MaxLimit = null;
+            }
+            else if (ct == CandleTypes.EightHour)
+            {
+                XAxes[0].Labeler = value => new DateTime((long)value).ToString("M/d HH");
+                XAxes[0].UnitWidth = TimeSpan.FromHours(4).Ticks;
+                //XAxes[0].MinStep = TimeSpan.FromHours(8).Ticks;
+                XAxes[0].MinLimit = DateTime.Now.Ticks - TimeSpan.FromDays(12).Ticks;
+                XAxes[0].MaxLimit = null;
+            }
+            else if (ct == CandleTypes.TwelveHour)
+            {
+                XAxes[0].Labeler = value => new DateTime((long)value).ToString("yyyy M/d");
+                XAxes[0].UnitWidth = TimeSpan.FromHours(6).Ticks;
+                //XAxes[0].MinStep = TimeSpan.FromDays(0.5).Ticks;
+                XAxes[0].MinLimit = DateTime.Now.Ticks - TimeSpan.FromDays(24).Ticks;
+                XAxes[0].MaxLimit = null;
+            }
+            else if (ct == CandleTypes.OneDay)
+            {
+                XAxes[0].Labeler = value => new DateTime((long)value).ToString("yyyy M/d");
+                XAxes[0].UnitWidth = TimeSpan.FromDays(0.4).Ticks;
+                //XAxes[0].MinStep = TimeSpan.FromDays(1).Ticks;
+                XAxes[0].MinLimit = DateTime.Now.Ticks - TimeSpan.FromDays(90).Ticks;
+                XAxes[0].MaxLimit = null;
+            }
+            else if (ct == CandleTypes.OneWeek)
+            {
+                XAxes[0].Labeler = value => new DateTime((long)value).ToString("yyyy M/d");
+                XAxes[0].UnitWidth = TimeSpan.FromDays(2).Ticks;
+                //XAxes[0].MinStep = TimeSpan.FromDays(1).Ticks;
+                XAxes[0].MinLimit = DateTime.Now.Ticks - TimeSpan.FromDays(300).Ticks;
+                XAxes[0].MaxLimit = null;
+            }
+            else if (ct == CandleTypes.OneMonth)
+            {
+                XAxes[0].Labeler = value => new DateTime((long)value).ToString("yyyy/M");
+                XAxes[0].UnitWidth = TimeSpan.FromDays(21).Ticks;
+                //XAxes[0].MinStep = TimeSpan.FromDays(30).Ticks;
+                XAxes[0].MinLimit = DateTime.Now.Ticks - TimeSpan.FromDays(360 * 3).Ticks;
+                XAxes[0].MaxLimit = null;
+            }
+
+            var ohlcs = new ObservableCollection<FinancialPoint>();
+            var vols = new ObservableCollection<DateTimePoint>();
+
+            list.Sort((a, b) => a.TimeStamp.CompareTo(b.TimeStamp));
+            _chartTimes.Clear();
+
+            foreach (var hoge in list)
+            {
+                _chartTimes.Add(hoge.TimeStamp);
+
+                vols.Add(new DateTimePoint(hoge.TimeStamp, (double)hoge.Volume));
+
+                ohlcs.Add(new FinancialPoint(hoge.TimeStamp, (double)hoge.High, (double)hoge.Open, (double)hoge.Close, (double)hoge.Low));
+
+                Debug.WriteLine($"GetCandlestick: {hoge.TimeStamp:yyyy-MM-dd HH:mm:ss} Open: {hoge.Open}, High: {hoge.High}, Low: {hoge.Low}, Close: {hoge.Close}, Volume: {hoge.Volume}");
+            }
+
+            Series[0].Values = vols;
+            Series[1].Values = ohlcs;
+
+            IsChartInitAndLoaded = true;
+
+            lastChartLoadedDateTime = DateTime.Now;
+
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"DoLoadChartAsync() exception for {PairCode}: {ex}");
+        }
     }
 
     private async Task<List<Ohlcv>?> GetCandlesticksAsync(PairCodes pair, CandleTypes ct)

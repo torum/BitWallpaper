@@ -43,6 +43,7 @@ public sealed partial class ShellPage : Page
     ];
 
     private readonly INavigationService _navigationService;
+    private static readonly SemaphoreSlim _asyncLock = new SemaphoreSlim(1, 1);
 
     public ShellPage(INavigationService navigationService)
     {
@@ -152,7 +153,7 @@ public sealed partial class ShellPage : Page
         */
     }
 
-    private void NavigationViewControl_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
+    private async void NavigationViewControl_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
     {
         if (args.IsSettingsInvoked == true)
         {
@@ -168,6 +169,8 @@ public sealed partial class ShellPage : Page
                 return;
             }
 
+            await _asyncLock.WaitAsync();
+
             try
             {
                 var tag = args.InvokedItemContainer.Tag.ToString();
@@ -180,25 +183,28 @@ public sealed partial class ShellPage : Page
 
                 if (tag.Equals("gridview", StringComparison.OrdinalIgnoreCase) == true)
                 {
-                    if (_navigationService.NavigateTo("gridview", ViewModel, SlideNavigationTransitionEffect.FromBottom)) //new Microsoft.UI.Xaml.Media.Animation.EntranceNavigationTransitionInfo()
+                    if (NavigationFrame.Navigate(typeof(GridViewPage)))
+                    //if (_navigationService.NavigateTo("gridview", ViewModel, SlideNavigationTransitionEffect.FromBottom)) //new Microsoft.UI.Xaml.Media.Animation.EntranceNavigationTransitionInfo()
                     {
                         // Set all to Active Pair in ViewModel and Start all.
-                        //await ViewModel.SetSelectedAllPairsFromCodeAsync();
-                        _ = RunSafeAsync(() => ViewModel.SetSelectedAllPairsFromCodeAsync(), nameof(ViewModel.SetSelectedAllPairsFromCodeAsync));
+                        await ViewModel.SetSelectedAllPairsFromCodeAsync();
+                        //_ = RunSafeAsync(() => ViewModel.SetSelectedAllPairsFromCodeAsync(), nameof(ViewModel.SetSelectedAllPairsFromCodeAsync));
                     }
                 }
                 else
                 {
                     var pairvm = ViewModel.Pairs.FirstOrDefault(x => x.PairCode.ToString().Equals(tag, StringComparison.OrdinalIgnoreCase));
+                    var item = _pages.FirstOrDefault(p => p.Tag.Equals(pairvm?.PairCode.ToString()));
 
-                    if (_navigationService.NavigateTo(args.InvokedItemContainer, pairvm, SlideNavigationTransitionEffect.FromBottom)) //new Microsoft.UI.Xaml.Media.Animation.EntranceNavigationTransitionInfo()
+                    if (NavigationFrame.Navigate(item.Page, pairvm))
+                    //if (_navigationService.NavigateTo(args.InvokedItemContainer, pairvm, SlideNavigationTransitionEffect.FromBottom)) //new Microsoft.UI.Xaml.Media.Animation.EntranceNavigationTransitionInfo()
                     {
                         var _activePair = Enum.TryParse<PairCodes>(tag.ToString(), out var parsedPair);
-                        if (_activePair)
+                        if (_activePair)//typeof(GridViewPage)
                         {
                             // Set Active Pair in ViewModel and Start.
-                            //await ViewModel.SetSelectedPairFromCodeAsync(parsedPair);
-                            _ = RunSafeAsync(() => ViewModel.SetSelectedPairFromCodeAsync(parsedPair), nameof(ViewModel.SetSelectedPairFromCodeAsync));
+                            await ViewModel.SetSelectedPairFromCodeAsync(parsedPair);
+                            //_ = RunSafeAsync(() => ViewModel.SetSelectedPairFromCodeAsync(parsedPair), nameof(ViewModel.SetSelectedPairFromCodeAsync));
                         }
                         else
                         {
@@ -211,6 +217,10 @@ public sealed partial class ShellPage : Page
             {
                 Debug.WriteLine($"NavigationViewControl_ItemInvoked: Exception occurred - {ex}");
                 (App.Current as App)?.AppendErrorLog("NavigationViewControl_ItemInvoked", ex.ToString());
+            }
+            finally
+            {
+                _asyncLock.Release();
             }
         }
         else
