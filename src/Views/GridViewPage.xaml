@@ -11,28 +11,32 @@
     NavigationCacheMode="Required"
     mc:Ignorable="d">
 
-    <Grid>
-        <ItemsView ItemsSource="{x:Bind ViewModel.EnabledPairs, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <ItemsView.Layout>
-                <LinedFlowLayout ItemsStretch="Fill" LineHeight="300" LineSpacing="5" MinItemSpacing="2"/>
-            </ItemsView.Layout>
-            <ItemsView.ItemTemplate>
+    <Grid x:Name="ContentArea">
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled">
+
+        </ScrollViewer>
+        <ItemsRepeater x:Name="MyItemsRepeater" ItemsSource="{x:Bind ViewModel.EnabledPairs, Mode=OneWay}" ScrollViewer.HorizontalScrollMode="Disabled" ScrollViewer.VerticalScrollMode="Disabled" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <ItemsRepeater.Layout>
+                <UniformGridLayout x:Name="MyUniformGrid" MaximumRowsOrColumns="{x:Bind ViewModel.UniformGridColumns, Mode=OneWay}" Orientation="Horizontal" ItemsStretch="Fill" MinRowSpacing="10" MinColumnSpacing="10"/>
+            </ItemsRepeater.Layout>
+            <ItemsRepeater.ItemTemplate>
                 <DataTemplate x:DataType="vm:PairViewModel">
-                    <ItemContainer Height="300" Width="300" HorizontalAlignment="Stretch">
-                        <Grid>
-                            <TextBlock Text="{x:Bind PairCode}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,5,0,0" FontSize="16" FontWeight="Bold"/>
-                            <lvc:CartesianChart x:Name="LiveChart" Margin="0,0,0,0" Background="Transparent"
+                    <Grid>
+                        <TextBlock Text="{x:Bind PairCode}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,5,0,0" FontSize="16" FontWeight="Bold"/>
+                        <lvc:CartesianChart x:Name="LiveChart" Margin="0,0,0,0" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                     XAxes="{x:Bind XAxes, Mode=OneWay}" 
                                     YAxes="{x:Bind YAxes, Mode=OneWay}" 
                                     Series="{x:Bind Series, Mode=OneWay}" 
                                         Sections="{x:Bind Sections, Mode=OneWay}"
                                     TooltipPosition="{x:Bind IsChartTooltipVisibleTemp, Mode=OneWay}"
                                     ZoomMode="X">
-                            </lvc:CartesianChart>
-                        </Grid>
-                    </ItemContainer>
+                        </lvc:CartesianChart>
+                        <!--
+                        <local:ChartContent PairVM="{x:Bind}" Padding="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="100" MinWidth="100"/>
+                        -->
+                    </Grid>
                 </DataTemplate>
-            </ItemsView.ItemTemplate>
-        </ItemsView>
+            </ItemsRepeater.ItemTemplate>
+        </ItemsRepeater>
     </Grid>
 </Page>
