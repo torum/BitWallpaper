@@ -54,8 +54,6 @@ public sealed partial class ShellPage : Page
 
         _navigationService.Initialize(NavigationFrame, _pages.ToDictionary(p => p.Tag, p => p.Page));
 
-        _ = RunSafeAsync(ViewModel.InitializeAndStartAsync, nameof(ViewModel.InitializeAndStartAsync));
-
         this.Loaded += ShellPage_Loaded;
     }
 
@@ -68,7 +66,7 @@ public sealed partial class ShellPage : Page
         try
         {
             //_ = RunSafeAsync(ViewModel.InitializeAndStartAsync, nameof(ViewModel.InitializeAndStartAsync));
-            //await ViewModel.InitializeAndStartAsync();
+            await ViewModel.InitializeAndStartAsync();
 
             var pairViewModel = ViewModel.EnabledPairs.FirstOrDefault();
 
@@ -263,34 +261,5 @@ public sealed partial class ShellPage : Page
         (App.Current as App)?.AppendErrorLog("NavigationFrame_NavigationFailed", e.Exception.Message + ", StackTrace: " + e.Exception.StackTrace);
 
         e.Handled = true;
-    }
-
-
-    private async Task RunSafeAsync(Func<Task> work, string name, bool continueOnCapturedContext = false)
-    {
-        try
-        {
-            if (continueOnCapturedContext)
-            {
-                await work().ConfigureAwait(false);
-            }
-            else
-            {
-                await work();// no ConfigureAwait(false): continuations stay on the UI thread
-            }
-        }
-        //catch (OperationCanceledException) when (_cts.IsCancellationRequested) { }
-        catch (Exception ex)
-        {
-            //_logger.LogError(ex, "Exception @{Name}", name);
-            Debug.WriteLine($"Exception @{name}: {ex.Message}{Environment.NewLine}StackTrace: {ex.StackTrace}");
-            /*
-            _dispatcherService.TryEnqueue(() =>
-            {
-                (Application.Current as App)?.AppendErrorLog($"Exception @{name}", $"{ex.Message}{Environment.NewLine}StackTrace: {ex.StackTrace}");
-                (Application.Current as App)?.SaveErrorLog();
-            });
-            */
-        }
     }
 }

@@ -50,9 +50,9 @@ public partial class PairViewModel : ObservableObject
         IsChartTooltipVisible = false;
 
         // Chart update timer
-        //_dispatcherTimerChart.Tick += OnTimerChart;
+        _dispatcherTimerChart.Tick += OnTimerChart;
         _dispatcherTimerChart.Interval = chartUpdateInterval;  // Temp testing. new(0, 5, 0);
-        //_dispatcherTimerChart.Start(); // Testing without updating the chart.. using ticker as we go.
+        _dispatcherTimerChart.Start(); // Testing without updating the chart.. using ticker as we go.
 
     }
 
@@ -1735,6 +1735,7 @@ public partial class PairViewModel : ObservableObject
             {
                 Debug.WriteLine($"LoadChartAsync() successfully retrieved {res.Count} candlestick data points for {PairCode} at {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
                 DoLoadChart(res, ct);
+                Debug.WriteLine($"LoadChartAsync() completed loading chart for {PairCode} at {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
             }
         }
         catch (Exception ex)
@@ -1872,7 +1873,7 @@ public partial class PairViewModel : ObservableObject
 
                 ohlcs.Add(new FinancialPoint(hoge.TimeStamp, (double)hoge.High, (double)hoge.Open, (double)hoge.Close, (double)hoge.Low));
 
-                Debug.WriteLine($"GetCandlestick: {hoge.TimeStamp:yyyy-MM-dd HH:mm:ss} Open: {hoge.Open}, High: {hoge.High}, Low: {hoge.Low}, Close: {hoge.Close}, Volume: {hoge.Volume}");
+                //Debug.WriteLine($"GetCandlestick: {hoge.TimeStamp:yyyy-MM-dd HH:mm:ss} Open: {hoge.Open}, High: {hoge.High}, Low: {hoge.Low}, Close: {hoge.Close}, Volume: {hoge.Volume}");
             }
 
             Series[0].Values = vols;
@@ -2169,7 +2170,6 @@ public partial class PairViewModel : ObservableObject
 
     private async void OnTimerChart(object? source, object e)
     {
-        /*
         _dispatcherService.TryEnqueue(async () =>
         {
             try
@@ -2181,7 +2181,6 @@ public partial class PairViewModel : ObservableObject
                 Debug.WriteLine($"OnTimerChart() exception for {PairCode}: {ex}");
             }
         });
-        */
     }
 
     private async Task UpdateChartAsync()

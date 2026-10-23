@@ -21,7 +21,6 @@ public partial class MainViewModel : ObservableObject
     private readonly bool _isWebSocketOn = true;
     private readonly bool _isLiveChartsOn = true;
 
-    private readonly Lock _lock = new Lock();
     private static readonly SemaphoreSlim _asyncLock = new SemaphoreSlim(1, 1);
 
     private readonly IBitbankStreamService _bitbankStreamService;
@@ -73,7 +72,7 @@ public partial class MainViewModel : ObservableObject
 
         // For developing purposes, we can set this to true to avoid starting the ticker service and charts loading.
         _isWebSocketOn = false;
-        _isLiveChartsOn = true;
+        _isLiveChartsOn = false;
 
 #if DEBUG
         IsSaveLog = true;
@@ -1253,10 +1252,17 @@ public partial class MainViewModel : ObservableObject
 
     public async Task InitializeAndStartAsync()
     {
-        _bitbankStreamService.Initialize(Pairs.Where(x => x.IsEnabled).Select(x => x.PairCode).ToList());
+        try
+        {
+            _bitbankStreamService.Initialize(Pairs.Where(x => x.IsEnabled).Select(x => x.PairCode).ToList());
 
-        if (_isWebSocketOn)
-            await _bitbankStreamService.StartAsync();
+            if (_isWebSocketOn)
+                await _bitbankStreamService.StartAsync();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error in InitializeAndStartAsync: {ex}");
+        }
     }
 
     public async Task SetSelectedPairFromCodeAsync(PairCodes pairCode)
@@ -1361,13 +1367,20 @@ public partial class MainViewModel : ObservableObject
 
     private async void OnIsEnabledChanged(object? sender, IsEnabledState e)
     {
-        if (e.IsEnabled)
+        try
         {
-            await _bitbankStreamService.JoinRoomAsync(e.PairCode);
+            if (e.IsEnabled)
+            {
+                await _bitbankStreamService.JoinRoomAsync(e.PairCode);
+            }
+            else
+            {
+                await _bitbankStreamService.LeaveRoomAsync(e.PairCode);
+            }
         }
-        else
+        catch (Exception ex)
         {
-            await _bitbankStreamService.LeaveRoomAsync(e.PairCode);
+            Debug.WriteLine($"Error in OnIsEnabledChanged: {ex}");
         }
     }
 
@@ -1480,7 +1493,6 @@ public partial class MainViewModel : ObservableObject
                         throw new NotImplementedException();
                 }
             });
-
         }
         else
         {
@@ -1506,31 +1518,4 @@ public partial class MainViewModel : ObservableObject
 
     #endregion
 
-    private async Task RunSafeAsync(Func<Task> work, string name, bool continueOnCapturedContext = false)
-    {
-        try
-        {
-            if (continueOnCapturedContext)
-            {
-                await work().ConfigureAwait(false);
-            }
-            else
-            {
-                await work();// no ConfigureAwait(false): continuations stay on the UI thread
-            }
-        }
-        //catch (OperationCanceledException) when (_cts.IsCancellationRequested) { }
-        catch (Exception ex)
-        {
-            //_logger.LogError(ex, "Exception @{Name}", name);
-            Debug.WriteLine($"Exception @{name}: {ex.Message}{Environment.NewLine}StackTrace: {ex.StackTrace}");
-            /*
-            _dispatcherService.TryEnqueue(() =>
-            {
-                (Application.Current as App)?.AppendErrorLog($"Exception @{name}", $"{ex.Message}{Environment.NewLine}StackTrace: {ex.StackTrace}");
-                (Application.Current as App)?.SaveErrorLog();
-            });
-            */
-        }
-    }
 }

@@ -5,7 +5,7 @@
     },
     "BitWallpaper (Unpackaged)": {
       "commandName": "Project",
-      "debugEngines": "native"
+      "debugEngines": "managed"
     }
   }
 }
