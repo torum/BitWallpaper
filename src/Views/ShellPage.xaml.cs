@@ -111,7 +111,7 @@ public sealed partial class ShellPage : Page
     {
         // Perform any initialization logic here
 
-        //window.SetTitleBar(AppTitleBar);
+        window.SetTitleBar(AppTitleBar);
     }
 
 

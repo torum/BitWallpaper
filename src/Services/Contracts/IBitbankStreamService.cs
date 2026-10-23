@@ -1,7 +1,4 @@
 ﻿using BitWallpaper.Models;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace BitWallpaper.Services.Contracts;
 
@@ -16,6 +13,6 @@ public interface IBitbankStreamService
 
     bool IsConnected { get; }
 
-    Task LeaveRoomAsync(PairCodes pairCode);
-    Task JoinRoomAsync(PairCodes pairCode);
+    Task LeaveTickerRoomAsync(PairCodes pairCode);
+    Task JoinTickerRoomAsync(PairCodes pairCode);
 }

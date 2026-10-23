@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace BitWallpaper.Models;
-
 
 [JsonSerializable(typeof(CandlestickOhlcv))]
 [JsonSerializable(typeof(List<CandlestickOhlcv>))]
@@ -111,49 +104,6 @@ public class CandlestickOhlcv
     }
 }
 
-
-/*
-public class CandlestickOhlcv
-{
-    [JsonPropertyName("0")]
-    public string? Open
-    {
-        get; set;
-    }
-
-    [JsonPropertyName("1")]
-    public string? High
-    {
-        get; set;
-    }
-
-    [JsonPropertyName("2")]
-    public string? Low
-    {
-        get; set;
-    }
-
-    [JsonPropertyName("3")]
-    public string? Close
-    {
-        get; set;
-    }
-
-    [JsonPropertyName("4")]
-    public string? Volume
-    {
-        get; set;
-    }
-
-    [JsonPropertyName("5")]
-    public long? Timestamp
-    {
-        get; set;
-    }
-}
-
-*/
-
 public class JsonCandlestickElement
 {
     [JsonPropertyName("type")]
@@ -200,36 +150,6 @@ public partial class JsonCandlestick
 }
 
 /*
-public partial class JsonCandlestickElement
-{
-    //[JsonProperty("type")]
-    public string? Type
-    {
-        get; set;
-    }
-
-    //[JsonProperty("ohlcv")]
-    public List<List<JsonOhlcv>>? Ohlcv
-    {
-        get; set;
-    }
-}
-*/
-
-/*
-public partial struct JsonOhlcv
-{
-    public long Long;
-    public string String;
-
-    public static implicit operator JsonOhlcv(long Long) => new() { Long = Long };
-    public static implicit operator JsonOhlcv(string String) => new() { String = String };
-}
-*/
-
-/*
-
-
 {
   "success": 1,
   "data": {
@@ -259,6 +179,4 @@ public partial struct JsonOhlcv
     "timestamp": 1757721592557
   }
 }
-
-
 */

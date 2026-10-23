@@ -19,7 +19,7 @@ public class BitbankHttpSearvice : IBitbankHttpSearvice
         _client.BaseAddress = _publicApiEndpoint;
     }
 
-    public async Task<CandlestickResult?> GetCandlestick(string pair, string CandleType, string YYYYMMDDD)
+    public async Task<CandlestickResult?> GetCandlestickAsync(string pair, string CandleType, string YYYYMMDDD)
     {
         if (_client is null)
         {
@@ -238,7 +238,7 @@ public class BitbankHttpSearvice : IBitbankHttpSearvice
             _ => throw new ArgumentOutOfRangeException(nameof(ct), ct, null)
         };
         string yyyymmdd = DateTime.UtcNow.ToString("yyyyMMdd");
-        return GetCandlestick(pairString, candleTypeString, yyyymmdd).ContinueWith(task =>
+        return GetCandlestickAsync(pairString, candleTypeString, yyyymmdd).ContinueWith(task =>
         {
             if (task.Result != null && task.Result.IsSuccess)
             {
@@ -249,5 +249,264 @@ public class BitbankHttpSearvice : IBitbankHttpSearvice
                 return null;
             }
         });
+    }
+
+    public async Task<DepthResult?> GetDepthAsync(string pair)
+    {
+        if (_client is null)
+        {
+            return null;
+        }
+
+        if (_client.BaseAddress is null)
+        {
+            return null;
+        }
+
+        Uri _endpoint = new(_client.BaseAddress.ToString() + pair + "/depth");
+
+        //System.Diagnostics.Debug.WriteLine("GettingDepth..." + _endpoint.ToString());
+
+        var request = new HttpRequestMessage
+        {
+            Method = HttpMethod.Get,
+            RequestUri = _endpoint,
+        };
+
+        try
+        {
+            var response = await _client.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                //System.Diagnostics.Debug.WriteLine("GetTicker: " + s);
+
+                //var deserialized = JsonConvert.DeserializeObject<JsonDepthObject>(json);
+                var deserialized = JsonSerializer.Deserialize(json, DepthJsonSerializerContext.Default.JsonDepthObject);
+
+                if (deserialized == null)
+                {
+                    return null;
+                }
+
+                if (deserialized.Success > 0)
+                {
+                    if (deserialized.Data is not null)
+                    {
+                        DepthResult dpr = new();
+
+                        if (deserialized.Data.Bids is not null)
+                        {
+                            foreach (var dp in deserialized.Data.Bids)
+                            {
+                                if (dp.Count > 1)
+                                {
+                                    Depth dd = new()
+                                    {
+                                        DepthPrice = decimal.Parse(dp[0]),
+                                        DepthBid = decimal.Parse(dp[1]),
+                                        DepthAsk = 0
+                                    };
+                                    dpr.DepthBidList.Add(dd);
+                                }
+                            }
+                        }
+
+                        if (deserialized.Data.Asks is not null)
+                        {
+                            foreach (var dp in deserialized.Data.Asks)
+                            {
+                                if (dp.Count > 1)
+                                {
+                                    Depth dd = new()
+                                    {
+                                        DepthPrice = decimal.Parse(dp[0]),
+                                        DepthBid = 0,
+                                        DepthAsk = decimal.Parse(dp[1])
+                                    };
+                                    dpr.DepthAskList.Add(dd);
+                                }
+                            }
+                        }
+
+                        dpr.ErrorCode = 0;
+                        dpr.IsSuccess = true;
+
+                        return dpr;
+                    }
+                    else
+                    {
+                        Debug.WriteLine("GetDepth: API error. Data is null.");
+                        return null;
+                    }
+                }
+                else
+                {
+                    //var jsonResult = JsonConvert.DeserializeObject<JsonErrorObject>(json);
+                    var jsonResult = JsonSerializer.Deserialize(json, ErrorJsonSerializerContext.Default.JsonErrorObject);
+
+                    if (jsonResult?.Data is not null)
+                    {
+                        Debug.WriteLine("GetDepth: API error code - " + jsonResult.Data.Code.ToString());
+                    }
+                    else
+                    {
+                        Debug.WriteLine("GetDepth: API error. (No error code given.)");
+                    }
+                    return null;
+                }
+            }
+            else
+            {
+                Debug.WriteLine("GetDepth: HTTP Error " + response.StatusCode.ToString());
+                return null;
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            if (ex.InnerException is not null)
+            {
+                Debug.WriteLine("GetDepth: HttpRequestException - " + ex.Message + " + InnerException: " + ex.InnerException.Message);
+            }
+            else
+            {
+                Debug.WriteLine("GetDepth: HttpRequestException - " + ex.Message);
+            }
+
+            return null;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("GetDepth: Exception - " + ex.Message);
+            return null;
+        }
+    }
+
+    public async Task<TransactionsResult?> GetTransactionsAsync(string pair)
+    {
+        if (_client is null)
+        {
+            return null;
+        }
+
+        if (_client.BaseAddress is null)
+        {
+            return null;
+        }
+
+        Uri _endpoint = new((_client.BaseAddress).ToString() + pair + "/transactions");
+
+        //System.Diagnostics.Debug.WriteLine("GettingDepth..." + _endpoint.ToString());
+
+        var request = new HttpRequestMessage
+        {
+            Method = HttpMethod.Get,
+            RequestUri = _endpoint,
+        };
+
+        try
+        {
+            var response = await _client.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                //System.Diagnostics.Debug.WriteLine("GetTicker: " + s);
+
+                //var deserialized = JsonConvert.DeserializeObject<JsonTransactions>(json);
+                var deserialized = JsonSerializer.Deserialize(json, TransactionsJsonSerializerContext.Default.JsonTransactions);
+
+                if (deserialized?.Success > 0)
+                {
+                    if (deserialized.Data?.Transactions is not null)
+                    {
+                        TransactionsResult trs = new();
+
+                        foreach (var tr in deserialized.Data.Transactions)
+                        {
+                            Transaction dd = new()
+                            {
+                                TransactionId = tr.TransactionId
+                            };
+                            if (tr.Side is not null)
+                            {
+                                dd.Side = tr.Side;
+                            }
+                            if (!string.IsNullOrEmpty(tr.Price))
+                            {
+                                dd.Price = decimal.Parse(tr.Price);
+                            }
+
+                            if (!string.IsNullOrEmpty(tr.Amount))
+                            {
+                                dd.Amount = decimal.Parse(tr.Amount);
+                            }
+
+                            dd.ExecutedAt = (new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).AddMilliseconds(tr.ExecutedAt).ToLocalTime();
+
+                            trs.Trans.Add(dd);
+
+                            //Debug.WriteLine(tr.ExecutedAt);
+                        }
+
+                        trs.ErrorCode = 0;
+                        trs.IsSuccess = true;
+
+                        return trs;
+                    }
+                    else
+                    {
+                        Debug.WriteLine("GetTransactions: API error: deserialized.Data?.Transactions is null.");
+
+                        // TODO
+                        return null;
+                    }
+                }
+                else
+                {
+                    //var jsonResult = JsonConvert.DeserializeObject<JsonErrorObject>(json);
+                    var jsonResult = JsonSerializer.Deserialize(json, ErrorJsonSerializerContext.Default.JsonErrorObject);
+
+                    if (jsonResult?.Data is not null)
+                    {
+                        Debug.WriteLine("GetTransactions: API error code - " + jsonResult.Data.Code.ToString());
+                    }
+                    else
+                    {
+                        Debug.WriteLine("GetTransactions: API error. No error code given.");
+                    }
+
+                    // TODO
+                    return null;
+                }
+            }
+            else
+            {
+                Debug.WriteLine("GetTransactions: HTTP Error " + response.StatusCode.ToString());
+
+                //TODO
+                return null;
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            if (ex.InnerException is not null)
+            {
+                Debug.WriteLine("GetTransactions: HttpRequestException - " + ex.Message + " + InnerException: " + ex.InnerException.Message);
+            }
+            else
+            {
+                Debug.WriteLine("GetTransactions: HttpRequestException - " + ex.Message);
+            }
+
+            //TODO
+            return null;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("GetTransactions: Exception - " + ex.Message);
+            return null;
+        }
     }
 }

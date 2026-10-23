@@ -1,22 +1,14 @@
 ﻿using BitWallpaper.Models;
 using BitWallpaper.Services.Contracts;
-using BitWallpaper.ViewModels;
 using SocketIOClient;
 using SocketIOClient.Common;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace BitWallpaper.Services;
 
 public class BitbankStreamService : IBitbankStreamService
 {
     private SocketIOClient.SocketIO? _client;
-    private string[] _rooms = new[] { "ticker_btc_jpy", "ticker_eth_jpy", "ticker_xrp_jpy" };
+    private string[] _tickerRooms = new[] { "ticker_btc_jpy", "ticker_eth_jpy", "ticker_xrp_jpy" };
 
     private bool _isInitialized;
     private bool _isConnected;
@@ -35,11 +27,17 @@ public class BitbankStreamService : IBitbankStreamService
     public void Initialize(List<PairCodes> pairCodes)
     {
         _isInitialized = true;
-        _rooms = pairCodes.Select(pc => $"ticker_{pc.ToString().ToLower()}").ToArray();
+        _tickerRooms = pairCodes.Select(pc => $"ticker_{pc.ToString().ToLower()}").ToArray();
     }
 
     public async Task StartAsync()
     {
+        if (!_isInitialized)
+        {
+            Debug.WriteLine("--> BitbankStreamService is not initialized. Call Initialize() before StartAsync().");
+            return;
+        }
+
         // Bitbank Socket.IO endpoint (Engine.IO v4)
         var uri = new Uri("wss://stream.bitbank.cc");
         var options = new SocketIOOptions
@@ -113,20 +111,20 @@ public class BitbankStreamService : IBitbankStreamService
         if (_client == null) return;
         _isConnected = true;
 
-        Debug.WriteLine("--> Successfully connected to Bitbank Stream. Subscribing now..." + string.Join(", ", _rooms));
+        Debug.WriteLine("--> Successfully connected to Bitbank Stream. Subscribing now..." + string.Join(", ", _tickerRooms));
 
         //var rooms = new[] { "ticker_btc_jpy", "ticker_eth_jpy", "ticker_xrp_jpy" };
 
-        if (_rooms.Length == 0) return;
+        if (_tickerRooms.Length == 0) return;
 
-        foreach (var room in _rooms)
+        foreach (var room in _tickerRooms)
         {
             var roomArray = new[] { room };
             await _client.EmitAsync("join-room", roomArray);
         }
     }
 
-    public async Task LeaveRoomAsync(PairCodes pairCode)
+    public async Task LeaveTickerRoomAsync(PairCodes pairCode)
     {
         if (_client == null || !_isConnected) return;
 
@@ -136,7 +134,7 @@ public class BitbankStreamService : IBitbankStreamService
 
         if (string.IsNullOrWhiteSpace(room)) return;
 
-        if (!_rooms.Contains(room, StringComparer.OrdinalIgnoreCase)) return;
+        if (!_tickerRooms.Contains(room, StringComparer.OrdinalIgnoreCase)) return;
 
         Debug.WriteLine("--> Leaving Bitbank Stream rooms...");
 
@@ -148,15 +146,15 @@ public class BitbankStreamService : IBitbankStreamService
 
         lock (_lock)
         {
-            List<string> roomList = [.. _rooms];
+            List<string> roomList = [.. _tickerRooms];
             roomList.Remove(room);
-            _rooms = [.. roomList];
+            _tickerRooms = [.. roomList];
 
         }
         Debug.WriteLine($"--> Left room: {room}");
     }
 
-    public async Task JoinRoomAsync(PairCodes pairCode)
+    public async Task JoinTickerRoomAsync(PairCodes pairCode)
     {
         if (_client == null || !_isConnected) return;
         
@@ -164,7 +162,7 @@ public class BitbankStreamService : IBitbankStreamService
 
         if (string.IsNullOrWhiteSpace(pairCode.ToString())) return;
 
-        if (_rooms.Contains($"ticker_{pairCode.ToString().ToLower()}", StringComparer.OrdinalIgnoreCase)) return;
+        if (_tickerRooms.Contains($"ticker_{pairCode.ToString().ToLower()}", StringComparer.OrdinalIgnoreCase)) return;
 
         Debug.WriteLine("--> Joining Bitbank Stream rooms...");
 
@@ -176,9 +174,9 @@ public class BitbankStreamService : IBitbankStreamService
 
         lock (_lock)
         {
-            List<string> roomList = [.. _rooms];
+            List<string> roomList = [.. _tickerRooms];
             roomList.Add($"ticker_{pairCode.ToString().ToLower()}");
-            _rooms = [.. roomList];
+            _tickerRooms = [.. roomList];
         }
 
         Debug.WriteLine($"--> Joined room: {pairCode}");

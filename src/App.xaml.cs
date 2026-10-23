@@ -13,7 +13,7 @@ namespace BitWallpaper;
 
 public partial class App : Application
 {
-    public const string AppName = "BitWallpaper";
+    public const string AppName = "BitWallpaper2";
     private const string AppDeveloper = "torum";
     private static readonly string _envDataFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
     public static string AppDataFolder { get; private set; } = System.IO.Path.Combine(System.IO.Path.Combine(_envDataFolder, AppDeveloper), AppName);

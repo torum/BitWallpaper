@@ -9,11 +9,28 @@
     mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="42"/>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <NavigationView Grid.Row="0"
+        <!-- App dummy titlebar -->
+        <Grid Grid.Row="0" Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="48"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0">
+                <!-- NavigationView.PaneToggleButton: None draggable area(48px). Exclude from TitleBar -->
+                <Button x:Name="DummyButton" Height="36" Width="40" Margin="3,6,0,0" Visibility="Collapsed"/>
+            </Grid>
+            <Grid x:Name="AppTitleBar" Grid.Column="1" Background="Transparent">
+                <!-- Application TitleBar: SetTitleBar in code behinde -->
+                <TextBlock x:Name="AppTitleDummyTextBlock" Text="" Margin="0,0,0,0" Opacity="0.9" Visibility="Collapsed"/>
+            </Grid>
+        </Grid>
+
+        <NavigationView Grid.Row="0" Grid.RowSpan="2"
             x:Name="NavigationViewControl"
             Canvas.ZIndex="0"
             IsTitleBarAutoPaddingEnabled="True"
@@ -21,7 +38,7 @@
             IsSettingsVisible="True"
             PaneDisplayMode="Auto"
             ExpandedModeThresholdWidth="1007"
-            OpenPaneLength ="180"
+            OpenPaneLength ="280"
             IsPaneOpen="{x:Bind ViewModel.IsNavigationViewMenuOpen, Mode=TwoWay}"
             ItemInvoked="NavigationViewControl_ItemInvoked"
             Loaded="NavigationViewControl_Loaded">
@@ -31,13 +48,16 @@
                 <NavigationViewItem x:Uid="Shell_BtcJpy" Tag="btc_jpy" Padding="3" Style="{StaticResource NavigationViewItemStyle1}" Visibility="{x:Bind ViewModel.IsOnBtcJpy, Mode=OneWay}">
                     <NavigationViewItem.Icon>
                         <ImageIcon Source="ms-appx:///Assets/CryptLogos/btc.svg"/>
-
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
-                            <TextBlock Text="{x:Bind ViewModel.LtpBtcJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.LtpBtcJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.LtpBtcJpyPercentChange, Mode=OneWay}" FontWeight="Normal" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                        </Grid>
                     </NavigationViewItem.Content>
                 </NavigationViewItem>
 
@@ -333,10 +353,10 @@
 
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="32"/>
+                    <RowDefinition Height="0"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Border x:Name="ContentBorder" Grid.Row="0" Background="Transparent"/>
+                <Border Grid.Row="0"/>
                 <Frame x:Name="NavigationFrame" Grid.Row="1" Navigated="NavigationFrame_Navigated" NavigationFailed="NavigationFrame_NavigationFailed"/>
             </Grid>
 
