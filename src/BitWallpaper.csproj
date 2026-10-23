@@ -1,0 +1,125 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <RootNamespace>BitWallpaper</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Platforms>x86;x64;ARM64</Platforms>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-$([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture.ToString().ToLowerInvariant())</RuntimeIdentifier>
+    <PublishProfile Condition="Exists('Properties\PublishProfiles\win-$(Platform).pubxml')">win-$(Platform).pubxml</PublishProfile>
+    <UseWinUI>true</UseWinUI>
+    <WinUISDKReferences>false</WinUISDKReferences>
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+	  <WindowsPackageType>None</WindowsPackageType>
+	  <EnableMsixTooling>false</EnableMsixTooling>
+	  <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+	  <!--
+	  <PublishAot>true</PublishAot>
+
+	  <AppxPackageIncludePrivateSymbols>true</AppxPackageIncludePrivateSymbols>
+	  <NativeDebugSymbols>true</NativeDebugSymbols>
+	  <StripSymbols>false</StripSymbols>
+	  <DebugType>full</DebugType>
+	  -->
+
+	  <IsAotCompatible>true</IsAotCompatible>
+	  <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
+	  <TrimmerSingleWarn>false</TrimmerSingleWarn>
+	  <Optimize>true</Optimize>
+
+	  <CsWinRTAotWarningLevel>3</CsWinRTAotWarningLevel>
+
+	  <!-- Code quality
+	  <AnalysisLevel>latest-recommended</AnalysisLevel> -->
+	  <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	  
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <Manifest Include="$(ApplicationManifest)" />
+  </ItemGroup>
+
+  <!--
+    Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
+    Tools extension to be activated for this project even if the Windows App SDK Nuget
+    package has not yet been restored.
+  -->
+  <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+    <ProjectCapability Include="Msix" />
+  </ItemGroup>
+
+  <!--
+    Microsoft.Windows.SDK.BuildTools.WinApp adds first-class support for
+    `dotnet run` on packaged WinUI apps: it hooks the .NET CLI Run target to
+    register a debug identity via the winapp CLI and launch the app with
+    package identity (AUMID).
+    Set <EnableWinAppRunSupport>false</EnableWinAppRunSupport> in a
+    <PropertyGroup> above to opt out.
+  -->
+  <ItemGroup>
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.13" />
+	  <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.13" />
+	  
+	  <!--
+	  <PackageReference Include="Microsoft.WindowsAppSDK.Foundation" Version="2.3.12" />
+	  <PackageReference Include="Microsoft.WindowsAppSDK.InteractiveExperiences" Version="2.1.9" />
+	  <PackageReference Include="Microsoft.WindowsAppSDK.Runtime" Version="2.5.1" />
+	  <PackageReference Include="Microsoft.WindowsAppSDK.WinUI" Version="2.3.9" />
+	  -->
+	  <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.5.1" />
+
+	  <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.1" />
+	  <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.3.1" />
+	  <PackageReference Include="Microsoft.Windows.SDK.BuildTools.MSIX" Version="1.7.260930100">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	  <PackageReference Include="LiveChartsCore.SkiaSharpView.WinUI" Version="2.0.5" />
+	  <PackageReference Include="SocketIOClient" Version="4.0.5" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="System.Diagnostics" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Assets\BitWallpaper.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <!--
+    Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution
+    Explorer "Package and Publish" context menu entry to be enabled for this project even if
+    the Windows App SDK Nuget package has not yet been restored.
+  -->
+  <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+    <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
+  </PropertyGroup>
+
+  <!-- Publish Properties -->
+  <PropertyGroup>
+    <PublishReadyToRun Condition="'$(Configuration)' == 'Debug'">False</PublishReadyToRun>
+    <PublishReadyToRun Condition="'$(Configuration)' != 'Debug'">True</PublishReadyToRun>
+    <PublishTrimmed Condition="'$(Configuration)' == 'Debug'">False</PublishTrimmed>
+    <PublishTrimmed Condition="'$(Configuration)' != 'Debug'">True</PublishTrimmed>
+    <ApplicationIcon>Assets\BitWallpaper.ico</ApplicationIcon>
+  </PropertyGroup>
+</Project>
