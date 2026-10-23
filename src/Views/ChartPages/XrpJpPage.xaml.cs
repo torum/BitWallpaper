@@ -17,19 +17,22 @@ public sealed partial class XrpJpyPage : Page
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
-        //base.OnNavigatedTo(e);
-
         if (e.Parameter is PairViewModel pvm)
         {
             ViewModel = pvm;
 
+            ViewModel.IsSelectedActive = true;
+
             Bindings.Update();
-        }
-        else
-        {
-            Debug.WriteLine($"XrpJpyPage.OnNavigatedTo: Parameter is not of type PairViewModel. Actual type: {e.Parameter?.GetType().FullName ?? "null"}");
         }
 
         base.OnNavigatedTo(e);
+    }
+
+    protected override void OnNavigatedFrom(NavigationEventArgs e)
+    {
+        ViewModel?.IsSelectedActive = false;
+
+        base.OnNavigatedFrom(e);
     }
 }

@@ -1274,32 +1274,13 @@ public partial class MainViewModel : ObservableObject
 
         try
         {
-            var pairVM = EnabledPairs.FirstOrDefault(x => x.PairCode == pairCode);
+            SelectedPair = EnabledPairs.FirstOrDefault(x => x.PairCode == pairCode);
 
-            // little hack.
-            _selectedPair = pairVM;
-
-            if (_selectedPair is not null)
+            if (SelectedPair is not null)
             {
-                foreach (var hoge in Pairs)
-                {
-                    if (hoge.PairCode == _selectedPair.PairCode)
-                    {
-                        hoge.IsSelectedActive = true;
-                    }
-                    else
-                    {
-                        hoge.IsSelectedActive = false;
-                    }
-                }
-
-                OnPropertyChanged(nameof(SelectedPair));
-
-                //SelectedPair = pairVM;
-
                 if (_isLiveChartsOn)
-                    await _selectedPair.InitializeAndLoadAsync();
-                //_ = RunSafeAsync(() => _selectedPair.InitializeAndLoadAsync(), nameof(_selectedPair.InitializeAndLoadAsync));
+                    await SelectedPair.InitializeAndLoadAsync();
+                //_ = RunSafeAsync(() => SelectedPair.InitializeAndLoadAsync(), nameof(SelectedPair.InitializeAndLoadAsync));
             }
             else
             {

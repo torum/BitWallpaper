@@ -20,13 +20,22 @@ public sealed partial class EnjJpyPage : Page
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
-        //base.OnNavigatedTo(e);
-
-        if (e.Parameter is PairViewModel model)
+        if (e.Parameter is PairViewModel pvm)
         {
-            ViewModel = model;
+            ViewModel = pvm;
+
+            ViewModel.IsSelectedActive = true;
+
+            Bindings.Update();
         }
 
         base.OnNavigatedTo(e);
+    }
+
+    protected override void OnNavigatedFrom(NavigationEventArgs e)
+    {
+        ViewModel?.IsSelectedActive = false;
+
+        base.OnNavigatedFrom(e);
     }
 }
