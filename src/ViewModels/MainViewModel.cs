@@ -64,10 +64,10 @@ public partial class MainViewModel : ObservableObject, IDisposable
         IsOnOmgJpy = config.IsOnOmgJpy;
         IsOnXymJpy = config.IsOnXymJpy;
         IsOnLinkJpy = config.IsOnLinkJpy;
-        IsOnMkrJpy = config.IsOnMkrJpy;
+        IsOnMkrJpy = false;//config.IsOnMkrJpy; // to sky_jpy SKY/JPY
         IsOnBobaJpy = config.IsOnBobaJpy;
-        IsOnEnjJpy = config.IsOnEnjJpy;
-        IsOnMaticJpy = config.IsOnMaticJpy;
+        IsOnEnjJpy = false;//config.IsOnEnjJpy; // no longer supported
+        IsOnMaticJpy = false;//config.IsOnMaticJpy; // to pol_jpy POL/JPY
         IsOnDotJpy = config.IsOnDotJpy;
         IsOnDogeJpy = config.IsOnDogeJpy;
         IsOnAstrJpy = config.IsOnAstrJpy;
@@ -253,39 +253,6 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     #region == Pairs ==
 
-    // TODO: No longer neeed?
-    public Dictionary<string, PairCodes> GetPairs { get; set; } = new Dictionary<string, PairCodes>()
-        {
-            {"btc_jpy", PairCodes.btc_jpy},
-            {"xrp_jpy", PairCodes.xrp_jpy},
-            //{"eth_btc", Pairs.eth_btc},
-            {"eth_jpy", PairCodes.eth_jpy},
-            //{"ltc_btc", Pairs.ltc_btc},
-            {"ltc_jpy", PairCodes.ltc_jpy},
-            {"mona_jpy", PairCodes.mona_jpy},
-            //{"mona_btc", Pairs.mona_btc},
-            {"bcc_jpy", PairCodes.bcc_jpy},
-            //{"bcc_btc", Pairs.bcc_btc},
-            {"xlm_jpy", PairCodes.xlm_jpy},
-            {"qtum_jpy", PairCodes.qtum_jpy},
-            {"bat_jpy", PairCodes.bat_jpy},
-            {"omg_jpy", PairCodes.omg_jpy},
-            {"xym_jpy", PairCodes.xym_jpy},
-            {"link_jpy", PairCodes.link_jpy},
-            {"mkr_jpy", PairCodes.mkr_jpy},
-            {"boba_jpy", PairCodes.boba_jpy},
-            {"enj_jpy", PairCodes.enj_jpy},
-            {"matic_jpy", PairCodes.matic_jpy},
-            {"dot_jpy", PairCodes.dot_jpy},
-            {"doge_jpy", PairCodes.doge_jpy},
-            {"astr_jpy", PairCodes.astr_jpy},
-            {"ada_jpy", PairCodes.ada_jpy},
-            {"avax_jpy", PairCodes.avax_jpy},
-            {"axs_jpy", PairCodes.axs_jpy},
-            {"flr_jpy", PairCodes.flr_jpy},
-            {"sand_jpy", PairCodes.sand_jpy},
-        };
-
     public ObservableCollection<PairViewModel> Pairs { get; } = [
         new PairViewModel(PairCodes.btc_jpy, 24, "{0:#,0}", "C", 100M, 1000M),
         new PairViewModel(PairCodes.xrp_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
@@ -299,10 +266,10 @@ public partial class MainViewModel : ObservableObject, IDisposable
         new PairViewModel(PairCodes.omg_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
         new PairViewModel(PairCodes.xym_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
         new PairViewModel(PairCodes.link_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
-        new PairViewModel(PairCodes.mkr_jpy, 24, "{0:#,0}", "C", 100M, 1000M),
+        //new PairViewModel(PairCodes.mkr_jpy, 24, "{0:#,0}", "C", 100M, 1000M),  // to sky_jpy SKY/JPY
         new PairViewModel(PairCodes.boba_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
-        new PairViewModel(PairCodes.enj_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
-        new PairViewModel(PairCodes.matic_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
+        //new PairViewModel(PairCodes.enj_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M), // no longer supported
+        //new PairViewModel(PairCodes.matic_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M), // to pol_jpy POL/JPY
         new PairViewModel(PairCodes.dot_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
         new PairViewModel(PairCodes.doge_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),
         new PairViewModel(PairCodes.astr_jpy, 24, "{0:#,0.000}", "C3", 0.1M, 0.01M),

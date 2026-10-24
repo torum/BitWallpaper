@@ -129,7 +129,7 @@
                         <ToggleSwitch Margin="24,0,0,0" IsOn="{x:Bind ViewModel.IsOnLinkJpy, Mode=TwoWay}"/>
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Margin="24,12,0,0">
+                    <StackPanel Orientation="Horizontal" Margin="24,12,0,0" Visibility="Collapsed">
                         <ImageIcon Source="ms-appx:///Assets/CryptLogos/mkr.svg" Width="30"/>
                         <ToggleSwitch Margin="24,0,0,0" IsOn="{x:Bind ViewModel.IsOnMkrJpy, Mode=TwoWay}"/>
                     </StackPanel>
@@ -139,12 +139,12 @@
                         <ToggleSwitch Margin="24,0,0,0" IsOn="{x:Bind ViewModel.IsOnBobaJpy, Mode=TwoWay}"/>
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Margin="24,12,0,0">
+                    <StackPanel Orientation="Horizontal" Margin="24,12,0,0" Visibility="Collapsed">
                         <ImageIcon Source="ms-appx:///Assets/CryptLogos/enj.svg" Width="30"/>
                         <ToggleSwitch Margin="24,0,0,0" IsOn="{x:Bind ViewModel.IsOnEnjJpy, Mode=TwoWay}"/>
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Margin="24,12,0,0">
+                    <StackPanel Orientation="Horizontal" Margin="24,12,0,0" Visibility="Collapsed">
                         <ImageIcon Source="ms-appx:///Assets/CryptLogos/matic.svg" Width="30"/>
                         <ToggleSwitch Margin="24,0,0,0" IsOn="{x:Bind ViewModel.IsOnMaticJpy, Mode=TwoWay}"/>
                     </StackPanel>
