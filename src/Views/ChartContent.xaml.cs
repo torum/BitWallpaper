@@ -1,5 +1,7 @@
 using BitWallpaper.ViewModels;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation.Peers;
+using Microsoft.UI.Xaml.Automation.Provider;
 using Microsoft.UI.Xaml.Controls;
 
 namespace BitWallpaper.Views;
@@ -40,27 +42,24 @@ public sealed partial class ChartContent : UserControl
 
         this.DataContext = PairVM;
 
-
-        //PairVM.DepthScrollCenter += () => OnDepthScrollCenter();
-
+        PairVM.DepthScrollCenter += OnDepthScrollCenter;
     }
 
-    private void OnDepthScrollCenter()
+    private void OnDepthScrollCenter(object? sender, bool e)
     {
         //Task.Run(() => SetDepthListboxScrollPosition());
+        SetDepthListboxScrollPosition();
     }
 
     private void ListBoxDepth_SizeChanged(object sender, SizeChangedEventArgs e)
     {
         //Task.Run(() => SetDepthListboxScrollPosition());
-        //SetDepthListboxScrollPosition();
-        //DoScroll();
+        SetDepthListboxScrollPosition();
     }
 
     private async void SetDepthListboxScrollPosition()
     {
-        /*
-        await Task.Delay(10);
+        await Task.Delay(300);
 
         var uithread = App.DispatcherQueue?.HasThreadAccess;
         if (uithread != null)
@@ -77,46 +76,40 @@ public sealed partial class ChartContent : UserControl
                 });
             }
         }
-        */
     }
 
     private void DoScroll()
     {
-        /*
-        if (this.DepthListBox.Items.Count > 0)
+        if (this.DepthListBox.Items.Count <= 0)
         {
-            try
-            {
-                // ListBoxからAutomationPeerを取得
-                var peer = ItemsControlAutomationPeer.CreatePeerForElement(this.DepthListBox);
-                // GetPatternでIScrollProviderを取得
-
-                if (peer.GetPattern(Microsoft.UI.Xaml.Automation.Peers.PatternInterface.Scroll) is IScrollProvider scrollProvider)
-                {
-                    if (scrollProvider.VerticallyScrollable)
-                    {
-                        try
-                        {
-                            // パーセントで位置を指定してスクロール
-                            scrollProvider.SetScrollPercent(
-                                // 水平スクロールは今の位置
-                                scrollProvider.HorizontalScrollPercent,
-                                // 垂直方向50%
-                                50.0);
-                        }
-                        catch
-                        {
-                            Debug.WriteLine("■■■■■ SetDepthListboxScrollPosition scrollProvider null Error");
-                        }
-                    }
-                }
-            }
-            catch
-            {
-                Debug.WriteLine("■■■■■ SetDepthListboxScrollPosition SetScrollPercent Error");
-            }
+            return;
         }
-        */
+
+        try
+        {
+            // ListBoxからAutomationPeerを取得
+            var peer = ItemsControlAutomationPeer.CreatePeerForElement(this.DepthListBox);
+            // GetPatternでIScrollProviderを取得
+
+            if (peer.GetPattern(Microsoft.UI.Xaml.Automation.Peers.PatternInterface.Scroll) is not IScrollProvider scrollProvider)
+            {
+                return;
+            }
+            if (!scrollProvider.VerticallyScrollable)
+            {
+                return;
+            }
+            // パーセントで位置を指定してスクロール
+            scrollProvider.SetScrollPercent(
+                // 水平スクロールは今の位置
+                scrollProvider.HorizontalScrollPercent,
+                // 垂直方向50%
+                50.0);
+        }
+        catch
+        {
+            Debug.WriteLine("■■■■■ SetDepthListboxScrollPosition SetScrollPercent Error");
+        }
     }
 
     private async void AppBarButton_Click(object sender, RoutedEventArgs e)

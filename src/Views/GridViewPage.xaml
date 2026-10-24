@@ -23,7 +23,7 @@
                         <Border Opacity="0.9" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="32,8,8,8" Padding="8,4" CornerRadius="4" Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1">
 
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{x:Bind PairString}" HorizontalAlignment="Center" VerticalAlignment="Top" FontWeight="{StaticResource MediumFontSize}" Style="{StaticResource BaseTextBlockStyle}"/>
+                                <TextBlock Text="{x:Bind PairString}" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="{StaticResource MediumFontSize}" Style="{StaticResource BaseTextBlockStyle}"/>
                                 <TextBlock Text="{x:Bind LtpString, Mode=OneWay}" Margin="6,0,0,0" FontSize="{StaticResource MediumFontSize}" Style="{StaticResource BaseTextBlockStyle}"/>
                                 <TextBlock Text="{x:Bind PercentChange, Mode=OneWay}" Margin="6,0,0,0" FontSize="{StaticResource MediumFontSize}" Style="{StaticResource BaseTextBlockStyle}"/>
                             </StackPanel>

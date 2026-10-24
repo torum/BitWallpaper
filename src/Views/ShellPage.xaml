@@ -66,10 +66,14 @@
                         <ImageIcon Source="ms-appx:///Assets/CryptLogos/xrp.svg"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
-                            <TextBlock Text="{x:Bind ViewModel.LtpXrpJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.LtpXrpJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.LtpXrpJpyPercentChange, Mode=OneWay}" FontWeight="Normal" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                        </Grid>
                     </NavigationViewItem.Content>
                 </NavigationViewItem>
 
@@ -78,10 +82,14 @@
                         <ImageIcon Source="ms-appx:///Assets/CryptLogos/eth.svg"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
-                            <TextBlock Text="{x:Bind ViewModel.LtpEthJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.LtpEthJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.LtpEthJpyPercentChange, Mode=OneWay}" FontWeight="Normal" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                        </Grid>
                     </NavigationViewItem.Content>
                 </NavigationViewItem>
 
@@ -90,10 +98,14 @@
                         <ImageIcon Source="ms-appx:///Assets/CryptLogos/ltc.svg"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
-                            <TextBlock Text="{x:Bind ViewModel.LtpLtcJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.LtpLtcJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.LtpLtcJpyPercentChange, Mode=OneWay}" FontWeight="Normal" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                        </Grid>
                     </NavigationViewItem.Content>
                 </NavigationViewItem>
 
@@ -102,10 +114,14 @@
                         <ImageIcon Source="ms-appx:///Assets/CryptLogos/bcc.svg"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
-                            <TextBlock Text="{x:Bind ViewModel.LtpBccJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.LtpBccJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.LtpBccJpyPercentChange, Mode=OneWay}" FontWeight="Normal" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                        </Grid>
                     </NavigationViewItem.Content>
                 </NavigationViewItem>
 
@@ -114,10 +130,14 @@
                         <ImageIcon Source="ms-appx:///Assets/CryptLogos/mona.svg"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
-                            <TextBlock Text="{x:Bind ViewModel.LtpMonaJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.LtpMonaJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.LtpMonaJpyPercentChange, Mode=OneWay}" FontWeight="Normal" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                        </Grid>
                     </NavigationViewItem.Content>
                 </NavigationViewItem>
 
@@ -126,10 +146,14 @@
                         <ImageIcon Source="ms-appx:///Assets/CryptLogos/xlm.svg"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
-                            <TextBlock Text="{x:Bind ViewModel.LtpXlmJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.LtpXlmJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.LtpXlmJpyPercentChange, Mode=OneWay}" FontWeight="Normal" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                        </Grid>
                     </NavigationViewItem.Content>
                 </NavigationViewItem>
 
@@ -138,10 +162,14 @@
                         <ImageIcon Source="ms-appx:///Assets/CryptLogos/qtum.svg"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
-                            <TextBlock Text="{x:Bind ViewModel.LtpQtumJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.LtpQtumJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.LtpQtumJpyPercentChange, Mode=OneWay}" FontWeight="Normal" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                        </Grid>
                     </NavigationViewItem.Content>
                 </NavigationViewItem>
 
@@ -150,10 +178,14 @@
                         <ImageIcon Source="ms-appx:///Assets/CryptLogos/bat.svg"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
-                            <TextBlock Text="{x:Bind ViewModel.LtpBatJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.LtpBatJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.LtpBatJpyPercentChange, Mode=OneWay}" FontWeight="Normal" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                        </Grid>
                     </NavigationViewItem.Content>
                 </NavigationViewItem>
 
@@ -162,10 +194,14 @@
                         <ImageIcon Source="ms-appx:///Assets/CryptLogos/omg.svg"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
-                            <TextBlock Text="{x:Bind ViewModel.LtpOmgJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.LtpOmgJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.LtpOmgJpyPercentChange, Mode=OneWay}" FontWeight="Normal" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                        </Grid>
                     </NavigationViewItem.Content>
                 </NavigationViewItem>
 
@@ -174,10 +210,14 @@
                         <ImageIcon Source="ms-appx:///Assets/CryptLogos/xym.svg"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
-                            <TextBlock Text="{x:Bind ViewModel.LtpXymJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.LtpXymJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.LtpXymJpyPercentChange, Mode=OneWay}" FontWeight="Normal" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                        </Grid>
                     </NavigationViewItem.Content>
                 </NavigationViewItem>
 
@@ -186,10 +226,14 @@
                         <ImageIcon Source="ms-appx:///Assets/CryptLogos/link.svg"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
-                            <TextBlock Text="{x:Bind ViewModel.LtpLinkJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.LtpLinkJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.LtpLinkJpyPercentChange, Mode=OneWay}" FontWeight="Normal" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                        </Grid>
                     </NavigationViewItem.Content>
                 </NavigationViewItem>
 
@@ -198,10 +242,14 @@
                         <ImageIcon Source="ms-appx:///Assets/CryptLogos/mkr.svg"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
-                            <TextBlock Text="{x:Bind ViewModel.LtpMkrJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.LtpMkrJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.LtpMkrJpyPercentChange, Mode=OneWay}" FontWeight="Normal" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                        </Grid>
                     </NavigationViewItem.Content>
                 </NavigationViewItem>
 
@@ -210,10 +258,14 @@
                         <ImageIcon Source="ms-appx:///Assets/CryptLogos/boba.svg"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
-                            <TextBlock Text="{x:Bind ViewModel.LtpBobaJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.LtpBobaJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.LtpBobaJpyPercentChange, Mode=OneWay}" FontWeight="Normal" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                        </Grid>
                     </NavigationViewItem.Content>
                 </NavigationViewItem>
 
@@ -222,10 +274,14 @@
                         <ImageIcon Source="ms-appx:///Assets/CryptLogos/enj.svg"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
-                            <TextBlock Text="{x:Bind ViewModel.LtpEnjJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.LtpEnjJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.LtpEnjJpyPercentChange, Mode=OneWay}" FontWeight="Normal" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                        </Grid>
                     </NavigationViewItem.Content>
                 </NavigationViewItem>
 
@@ -234,10 +290,14 @@
                         <ImageIcon Source="ms-appx:///Assets/CryptLogos/matic.svg"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
-                            <TextBlock Text="{x:Bind ViewModel.LtpMaticJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.LtpMaticJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.LtpMaticJpyPercentChange, Mode=OneWay}" FontWeight="Normal" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                        </Grid>
                     </NavigationViewItem.Content>
                 </NavigationViewItem>
 
@@ -246,10 +306,14 @@
                         <ImageIcon Source="ms-appx:///Assets/CryptLogos/dot.svg"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
-                            <TextBlock Text="{x:Bind ViewModel.LtpDotJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.LtpDotJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.LtpDotJpyPercentChange, Mode=OneWay}" FontWeight="Normal" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                        </Grid>
                     </NavigationViewItem.Content>
                 </NavigationViewItem>
 
@@ -258,10 +322,14 @@
                         <ImageIcon Source="ms-appx:///Assets/CryptLogos/doge.svg"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
-                            <TextBlock Text="{x:Bind ViewModel.LtpDogeJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.LtpDogeJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.LtpDogeJpyPercentChange, Mode=OneWay}" FontWeight="Normal" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                        </Grid>
                     </NavigationViewItem.Content>
                 </NavigationViewItem>
 
@@ -270,10 +338,14 @@
                         <ImageIcon Source="ms-appx:///Assets/CryptLogos/astr.svg"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
-                            <TextBlock Text="{x:Bind ViewModel.LtpAstrJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.LtpAstrJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.LtpAstrJpyPercentChange, Mode=OneWay}" FontWeight="Normal" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                        </Grid>
                     </NavigationViewItem.Content>
                 </NavigationViewItem>
 
@@ -282,10 +354,14 @@
                         <ImageIcon Source="ms-appx:///Assets/CryptLogos/ada.svg"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
-                            <TextBlock Text="{x:Bind ViewModel.LtpAdaJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.LtpAdaJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.LtpAdaJpyPercentChange, Mode=OneWay}" FontWeight="Normal" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                        </Grid>
                     </NavigationViewItem.Content>
                 </NavigationViewItem>
 
@@ -294,10 +370,14 @@
                         <ImageIcon Source="ms-appx:///Assets/CryptLogos/avax.svg"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
-                            <TextBlock Text="{x:Bind ViewModel.LtpAvaxJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.LtpAvaxJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.LtpAvaxJpyPercentChange, Mode=OneWay}" FontWeight="Normal" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                        </Grid>
                     </NavigationViewItem.Content>
                 </NavigationViewItem>
 
@@ -306,10 +386,14 @@
                         <ImageIcon Source="ms-appx:///Assets/CryptLogos/axs.svg"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
-                            <TextBlock Text="{x:Bind ViewModel.LtpAxsJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.LtpAxsJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.LtpAxsJpyPercentChange, Mode=OneWay}" FontWeight="Normal" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                        </Grid>
                     </NavigationViewItem.Content>
                 </NavigationViewItem>
 
@@ -318,10 +402,14 @@
                         <ImageIcon Source="ms-appx:///Assets/CryptLogos/flr.svg"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
-                            <TextBlock Text="{x:Bind ViewModel.LtpFlrJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.LtpFlrJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.LtpFlrJpyPercentChange, Mode=OneWay}" FontWeight="Normal" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                        </Grid>
                     </NavigationViewItem.Content>
                 </NavigationViewItem>
 
@@ -330,10 +418,14 @@
                         <ImageIcon Source="ms-appx:///Assets/CryptLogos/sand.svg"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="￥" FontSize="{StaticResource LargeFontSize}" FontWeight="Bold" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"/>
-                            <TextBlock Text="{x:Bind ViewModel.LtpSandJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" VerticalAlignment="Center" Margin="0"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.LtpSandJpy, Mode=OneWay}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.LtpSandJpyPercentChange, Mode=OneWay}" FontWeight="Normal" FontSize="{StaticResource LargeFontSize}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0"/>
+                        </Grid>
                     </NavigationViewItem.Content>
                 </NavigationViewItem>
             </NavigationView.MenuItems>

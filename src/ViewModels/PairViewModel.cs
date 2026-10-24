@@ -14,26 +14,27 @@ using Microsoft.UI.Xaml;
 using SkiaSharp;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Runtime.Intrinsics.Arm;
 
 namespace BitWallpaper.ViewModels;
 
 public partial class PairViewModel : ObservableObject
 {
     private DateTime lastChartLoadedDateTime = DateTime.MinValue;
-
-    public delegate void DepthCenterEventHandler();
-    //public event DepthCenterEventHandler? DepthScrollCenter;
+    public event EventHandler<bool>? DepthScrollCenter;
     private bool _isChartLoading;
     private readonly List<DateTime> _chartTimes = [];
     private bool _isChartRefreshRunning;
     private readonly DispatcherTimer _dispatcherTimerChart = new();
 
     private readonly IBitbankHttpSearvice _bitbankHttpSearvice;
+    private readonly IBitbankStreamService _bitbankStreamService;
     private readonly IDispatcherService _dispatcherService;
 
     public PairViewModel(PairCodes p, double fontSize, string ltpFormstString, string currencyFormstString, decimal grouping100, decimal grouping1000)
     {
         _bitbankHttpSearvice = App.GetService<IBitbankHttpSearvice>();
+        _bitbankStreamService = App.GetService<IBitbankStreamService>();    
         _dispatcherService = App.GetService<IDispatcherService>();
 
         _p = p;
@@ -53,6 +54,8 @@ public partial class PairViewModel : ObservableObject
         _dispatcherTimerChart.Tick += OnTimerChart;
         _dispatcherTimerChart.Interval = chartUpdateInterval;  // Temp testing. new(0, 5, 0);
         _dispatcherTimerChart.Start(); // Testing without updating the chart.. using ticker as we go.
+
+        //_bitbankStreamService
 
     }
 
@@ -346,6 +349,15 @@ public partial class PairViewModel : ObservableObject
 
             _isSelectedActive = value;
             OnPropertyChanged(nameof(IsSelectedActive));
+
+            if (_isSelectedActive)
+            {
+                _bitbankStreamService.JoinDepthRoomAsync(_p);
+            }
+            else
+            {
+                _bitbankStreamService.LeaveDepthRoomAsync(_p);
+            }
         }
     }
 
@@ -365,25 +377,25 @@ public partial class PairViewModel : ObservableObject
         }
     }
 
-    #endregion
-
-    #region == Options ==
-
-    private bool _isPaneVisible = true;
-    public bool IsPaneVisible
+    private bool _isPaneOpen = true;
+    public bool IsPaneOpen
     {
-        get => _isPaneVisible;
+        get => _isPaneOpen;
         set
         {
-            if (_isPaneVisible == value)
+            if (_isPaneOpen == value)
             {
                 return;
             }
 
-            _isPaneVisible = value;
-            OnPropertyChanged(nameof(IsPaneVisible));
+            _isPaneOpen = value;
+            OnPropertyChanged(nameof(IsPaneOpen));
         }
     }
+
+    #endregion
+
+    #region == Options ==
 
     private bool _isChartTooltipVisible = false;
     public bool IsChartTooltipVisible
@@ -1515,14 +1527,9 @@ public partial class PairViewModel : ObservableObject
         //Sections[0].Yj = (double)_ltp;
     }
 
+    // Called from MainViewModel.
     public async Task UpdateTickerDataAsync(BitbankTickerData data)
     {
-        if (!IsChartInitAndLoaded)
-        {
-            //Debug.WriteLine($"UpdateTickerData() skipped for {data.TickerPair} at {DateTimeOffset.FromUnixTimeMilliseconds(data.Timestamp).LocalDateTime:yyyy-MM-dd HH:mm:ss} because chart is not initialized and loaded.");
-            return;
-        }
-
         if (!IsEnabled)
         {
             //Debug.WriteLine($"UpdateTickerData() skipped for {data.TickerPair} at {DateTimeOffset.FromUnixTimeMilliseconds(data.Timestamp).LocalDateTime:yyyy-MM-dd HH:mm:ss} because IsEnabled is false.");
@@ -1577,18 +1584,94 @@ public partial class PairViewModel : ObservableObject
                 LowestIn24Price = data.Low;
                 TickTimeStamp = DateTimeOffset.FromUnixTimeMilliseconds(data.Timestamp).LocalDateTime;
 
+                if (!IsChartInitAndLoaded)
+                {
+                    //Debug.WriteLine($"UpdateTickerData() skipped for {data.TickerPair} at {DateTimeOffset.FromUnixTimeMilliseconds(data.Timestamp).LocalDateTime:yyyy-MM-dd HH:mm:ss} because chart is not initialized and loaded.");
+                    return;
+                }
+
                 if (Sections[0] is RectangularSection section)
                 {
                     section.Yi = (double)data.Last;
                     section.Yj = (double)data.Last;
                 }
 
-                DateTime timeStamp = DateTimeOffset.FromUnixTimeMilliseconds(data.Timestamp).LocalDateTime;
-                UpdateCandleUsingTickerData(timeStamp, data); ;
+                //DateTime timeStamp = DateTimeOffset.FromUnixTimeMilliseconds(data.Timestamp).LocalDateTime;
+                UpdateCandleUsingTickerData(TickTimeStamp, data); ;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"UpdateTickerDataAsync() exception for {PairCode}: {ex}");
+            }
+        });
+    }
+
+    // Called from MainViewModel.
+    public async Task UpdateDepthDataAsync(BitbankDepthData data)
+    {
+        if (!IsSelectedActive || !IsPaneOpen || !IsEnabled)
+        {
+            Debug.WriteLine($"UpdateDepthDataAsync() skipped for {PairCode} because IsSelectedActive={IsSelectedActive}, IsPaneOpen={IsPaneOpen}, IsEnabled={IsEnabled}");
+        }
+
+        if (data.DepthPair != PairCode)
+        {
+            return;
+        }
+
+        if (_depth == null)
+        {
+            return;
+        }
+
+        _dispatcherService.TryEnqueue(() =>
+        {
+            try
+            {
+                DepthResult dpr = new();
+
+                if (data.Bids is not null)
+                {
+                    foreach (var dp in data.Bids)
+                    {
+                        if (dp is not null)
+                        {
+                            Depth dd = new()
+                            {
+                                DepthPrice = dp.Price,//decimal.Parse(dp[0]),
+                                DepthBid = dp.Amount,//decimal.Parse(dp[1]),
+                                DepthAsk = 0
+                            };
+                            dpr.DepthBidList.Add(dd);
+                        }
+                    }
+                }
+
+                if (data.Asks is not null)
+                {
+                    foreach (var dp in data.Asks)
+                    {
+                        if (dp is not null)
+                        {
+                            Depth dd = new()
+                            {
+                                DepthPrice = dp.Price,//decimal.Parse(dp[0]),
+                                DepthBid = 0,
+                                DepthAsk = dp.Amount//decimal.Parse(dp[1])
+                            };
+                            dpr.DepthAskList.Add(dd);
+                        }
+                    }
+                }
+                
+                dpr.ErrorCode = 0;
+                dpr.IsSuccess = true;
+
+                UpdateDepth(dpr);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"UpdateDepthDataAsync() exception for {PairCode}: {ex}");
             }
         });
     }
@@ -2286,59 +2369,17 @@ public partial class PairViewModel : ObservableObject
         return time;
     }
 
-
     #endregion
 
     #region == Depth ==
 
-    private void TickerTimerDepth(object? source, object e)
+    private void UpdateDepth(DepthResult dpr)
     {
-        if (!IsEnabled)
+        if (!IsSelectedActive || !IsPaneOpen || !IsEnabled)
         {
-            return;
+            Debug.WriteLine($"UpdateDepth() skipped for {PairCode} because IsSelectedActive={IsSelectedActive}, IsPaneOpen={IsPaneOpen}, IsEnabled={IsEnabled}");
         }
 
-        if (!IsSelectedActive)
-        {
-            return;
-        }
-
-        UpdateDepth();
-    }
-
-    private async void UpdateDepth()
-    {
-        // timer ver
-        if (IsSelectedActive && IsPaneVisible && IsEnabled)
-        {
-            await GetDepth(PairCode);
-        }
-        /*
-while (true)
-{
-   if ((IsSelectedActive == false) || (IsPaneVisible == false) || (IsEnabled == false))
-   {
-       await Task.Delay(1000);
-       continue;
-   }
-
-   try
-   {
-       await GetDepth(PairCode);
-   }
-   catch (Exception e)
-   {
-       Debug.WriteLine("■■■■■ UpdateDepth Exception: " + e);
-   }
-
-   await Task.Delay(1500);
-}
-*/
-    }
-
-    private async Task<bool> GetDepth(PairCodes pair)
-    {
-        /*
         // まとめグルーピング単位 
         var unit = DepthGrouping;
 
@@ -2348,18 +2389,18 @@ while (true)
 
         if (_depth == null)
         {
-            return false;
+            return;
         }
 
         // 初期化
         if ((_depth.Count == 0) || (_depth.Count < listCount))
         {
-            //_depth.Clear();
-            for (var i = 0; i < listCount; i++)
+            _depth.Clear();
+            for (var x = 0; x < listCount; x++)
             {
                 Depth dd = new(_ltpFormstString)
                 {
-                    DepthPrice = i,
+                    DepthPrice = x,
                     DepthBid = 0,
                     DepthAsk = 0
                 };
@@ -2368,9 +2409,9 @@ while (true)
             }
 
             // scroll center
-            App.CurrentDispatcherQueue?.TryEnqueue(() =>
+            _dispatcherService?.TryEnqueue(() =>
             {
-                DepthScrollCenter?.Invoke();
+                DepthScrollCenter?.Invoke(this, true);
             });
         }
         else
@@ -2378,11 +2419,11 @@ while (true)
             if (IsDepthGroupingChanged)
             {
                 //グルーピング単位が変わったので、一旦クリアする。
-                for (var i = 0; i < _depth.Count - 1; i++)
+                for (var v = 0; v < _depth.Count - 1; v++)
                 {
-                    _depth[i].DepthPrice = 0;
-                    _depth[i].DepthBid = 0;
-                    _depth[i].DepthAsk = 0;
+                    _depth[v].DepthPrice = 0;
+                    _depth[v].DepthBid = 0;
+                    _depth[v].DepthAsk = 0;
                 }
 
                 IsDepthGroupingChanged = false;
@@ -2393,168 +2434,171 @@ while (true)
         _depth[half].DepthPrice = Ltp;
         _depth[half].IsLTP = true;
 
-        var dpr = await PublicAPIClient.GetDepth(pair.ToString());
-
         if (!IsEnabled)
         {
-            return false;
+            return;
         }
 
-        if (dpr != null)
+        if (_depth == null)
         {
-            if (_depth == null)
+            return;
+        }
+
+        if (_depth.Count == 0)
+        {
+            return;
+        }
+
+        var i = 1;
+
+        // 100円単位でまとめる
+        // まとめた時の価格
+        decimal c2 = 0;
+        // 100単位ごとにまとめたAsk数量を保持
+        decimal t = 0;
+        // 先送りするAsk
+        decimal d = 0;
+        // 先送りする価格
+        decimal e = 0;
+
+        // ask をループ
+        foreach (var dp in dpr.DepthAskList)
+        {
+            if (i > listCount)
             {
-                return false;
+                break;
             }
 
-            if (_depth.Count != 0)
+            if (i > half)
             {
-                var i = 1;
-
-                // 100円単位でまとめる
-                // まとめた時の価格
-                decimal c2 = 0;
-                // 100単位ごとにまとめたAsk数量を保持
-                decimal t = 0;
-                // 先送りするAsk
-                decimal d = 0;
-                // 先送りする価格
-                decimal e = 0;
-
-                // ask をループ
-                foreach (var dp in dpr.DepthAskList)
-                {
-                    // まとめ表示On
-                    if (unit > 0)
-                    {
-
-                        if (c2 == 0)
-                        {
-                            c2 = Math.Ceiling(dp.DepthPrice / unit);
-                        }
-
-                        // 100円単位でまとめる
-                        if (Math.Ceiling(dp.DepthPrice / unit) == c2)
-                        {
-                            t += dp.DepthAsk;
-                        }
-                        else
-                        {
-                            //Debug.WriteLine(System.Math.Ceiling(dp.DepthPrice / unit).ToString() + " " + System.Math.Ceiling(c / unit).ToString());
-
-                            // 一時保存
-                            e = dp.DepthPrice;
-                            dp.DepthPrice = c2 * unit;
-
-                            // 一時保存
-                            d = dp.DepthAsk;
-                            dp.DepthAsk = t;
-
-                            _depth[half - i].DepthAsk = dp.DepthAsk;
-                            _depth[half - i].DepthBid = dp.DepthBid;
-                            _depth[half - i].DepthPrice = dp.DepthPrice;
-                            _depth[half - i].PriceFormat = _ltpFormstString;
-
-                            // 今回のAskは先送り
-                            t = d;
-                            // 今回のPriceが基準になる
-                            c2 = Math.Ceiling(e / unit);
-
-                            i++;
-                        }
-
-                    }
-                    else
-                    {
-                        //dp.PriceFormat = this._ltpFormstString;
-                        //_depth[half - i] = dp;
-                        _depth[half - i].DepthPrice = dp.DepthPrice;
-                        _depth[half - i].DepthBid = dp.DepthBid;
-                        _depth[half - i].DepthAsk = dp.DepthAsk;
-                        _depth[half - i].PriceFormat = _ltpFormstString;
-
-                        i++;
-                    }
-                }
-
-                _depth[half - 1].IsAskBest = true;
-
-                i = half + 1;
-
-                // 100円単位でまとめる
-                // まとめた時の価格
-                decimal c = 0;
-                // 100単位ごとにまとめた数量を保持
-                t = 0;
-                // 先送りするBid
-                d = 0;
-                // 先送りする価格
-                e = 0;
-
-                // bid をループ
-                foreach (var dp in dpr.DepthBidList)
-                {
-                    if (unit > 0)
-                    {
-
-                        if (c == 0)
-                        {
-                            c = Math.Ceiling(dp.DepthPrice / unit);
-                        }
-
-                        // 100円単位でまとめる
-                        if (Math.Ceiling(dp.DepthPrice / unit) == c)
-                        {
-                            t += dp.DepthBid;
-                        }
-                        else
-                        {
-                            // 一時保存
-                            e = dp.DepthPrice;
-                            dp.DepthPrice = c * unit;
-
-                            // 一時保存
-                            d = dp.DepthBid;
-                            dp.DepthBid = t;
-
-                            // 追加
-                            _depth[i].DepthAsk = dp.DepthAsk;
-                            _depth[i].DepthBid = dp.DepthBid;
-                            _depth[i].DepthPrice = dp.DepthPrice;
-
-                            // 今回のBidは先送り
-                            t = d;
-                            // 今回のPriceが基準になる
-                            c = Math.Ceiling(e / unit);
-
-                            i++;
-                        }
-                    }
-                    else
-                    {
-                        //dp.PriceFormat = this._ltpFormstString;
-                        //_depth[i] = dp;
-
-                        _depth[i].DepthPrice = dp.DepthPrice;
-                        _depth[i].DepthBid = dp.DepthBid;
-                        _depth[i].DepthAsk = dp.DepthAsk;
-                        _depth[i].PriceFormat = _ltpFormstString;
-                        i++;
-                    }
-                }
-
-                _depth[half + 1].IsBidBest = true;
+                break;
             }
 
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-        */
+            // まとめ表示On
+            if (unit > 0)
+            {
+                if (c2 == 0)
+                {
+                    c2 = Math.Ceiling(dp.DepthPrice / unit);
+                }
 
-        return true;
+                // 100円単位でまとめる
+                if (Math.Ceiling(dp.DepthPrice / unit) == c2)
+                {
+                    t += dp.DepthAsk;
+                }
+                else
+                {
+                    //Debug.WriteLine(System.Math.Ceiling(dp.DepthPrice / unit).ToString() + " " + System.Math.Ceiling(c / unit).ToString());
+
+                    // 一時保存
+                    e = dp.DepthPrice;
+                    dp.DepthPrice = c2 * unit;
+
+                    // 一時保存
+                    d = dp.DepthAsk;
+                    dp.DepthAsk = t;
+
+                    _depth[half - i].DepthAsk = dp.DepthAsk;
+                    _depth[half - i].DepthBid = dp.DepthBid;
+                    _depth[half - i].DepthPrice = dp.DepthPrice;
+                    _depth[half - i].PriceFormat = _ltpFormstString;
+
+                    // 今回のAskは先送り
+                    t = d;
+                    // 今回のPriceが基準になる
+                    c2 = Math.Ceiling(e / unit);
+
+                    i++;
+                }
+
+            }
+            else
+            {
+                //dp.PriceFormat = this._ltpFormstString;
+                //_depth[half - i] = dp;
+                _depth[half - i].DepthPrice = dp.DepthPrice;
+                _depth[half - i].DepthBid = dp.DepthBid;
+                _depth[half - i].DepthAsk = dp.DepthAsk;
+                _depth[half - i].PriceFormat = _ltpFormstString;
+                
+                i++;
+            }
+        }
+
+        _depth[half - 1].IsAskBest = true;
+
+        i = half + 1;
+
+        // 100円単位でまとめる
+        // まとめた時の価格
+        decimal c = 0;
+        // 100単位ごとにまとめた数量を保持
+        t = 0;
+        // 先送りするBid
+        d = 0;
+        // 先送りする価格
+        e = 0;
+
+        // bid をループ
+        foreach (var dp in dpr.DepthBidList)
+        {
+            if (i >= listCount)
+            {
+                break;
+            }
+
+            if (unit > 0)
+            {
+                if (c == 0)
+                {
+                    c = Math.Ceiling(dp.DepthPrice / unit);
+                }
+
+                // 100円単位でまとめる
+                if (Math.Ceiling(dp.DepthPrice / unit) == c)
+                {
+                    t += dp.DepthBid;
+                }
+                else
+                {
+                    // 一時保存
+                    e = dp.DepthPrice;
+                    dp.DepthPrice = c * unit;
+
+                    // 一時保存
+                    d = dp.DepthBid;
+                    dp.DepthBid = t;
+
+                    // 追加
+                    _depth[i].DepthAsk = dp.DepthAsk;
+                    _depth[i].DepthBid = dp.DepthBid;
+                    _depth[i].DepthPrice = dp.DepthPrice;
+
+                    // 今回のBidは先送り
+                    t = d;
+                    // 今回のPriceが基準になる
+                    c = Math.Ceiling(e / unit);
+
+                    i++;
+                }
+            }
+            else
+            {
+                //dp.PriceFormat = this._ltpFormstString;
+                //_depth[i] = dp;
+
+                _depth[i].DepthPrice = dp.DepthPrice;
+                _depth[i].DepthBid = dp.DepthBid;
+                _depth[i].DepthAsk = dp.DepthAsk;
+                _depth[i].PriceFormat = _ltpFormstString;
+
+                i++;
+            }
+        }
+
+        _depth[half + 1].IsBidBest = true;
+
     }
 
     #endregion
@@ -2592,7 +2636,7 @@ while (true)
     [RelayCommand]
     private void TogglePaneVisibility()
     {
-        IsPaneVisible = !IsPaneVisible;
+        IsPaneOpen = !IsPaneOpen;
     }
 
     [RelayCommand]

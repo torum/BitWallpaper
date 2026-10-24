@@ -68,10 +68,11 @@ public partial class MainViewModel : ObservableObject
 
         IsEnabledChanged += OnIsEnabledChanged;
 
-        _bitbankStreamService.TickerUpdated += OnTickerService_TickerUpdated;
+        _bitbankStreamService.TickerUpdated += OnBitbankStreamService_TickerUpdated;
+        _bitbankStreamService.DepthUpdated += OnBitbankStreamService_DepthUpdated;
 
         // For developing purposes, we can set this to true to avoid starting the ticker service and charts loading.
-        _isWebSocketOn = false;
+        _isWebSocketOn = true;
         _isLiveChartsOn = false;
 
 #if DEBUG
@@ -958,6 +959,379 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
+    private string _ltpXrpJpyPercentChange = "";
+    public string LtpXrpJpyPercentChange
+    {
+        get => _ltpXrpJpyPercentChange;
+        set
+        {
+            if (_ltpXrpJpyPercentChange == value)
+            {
+                return;
+            }
+
+            _ltpXrpJpyPercentChange = value;
+            OnPropertyChanged(nameof(LtpXrpJpyPercentChange));
+        }
+    }
+
+    private string _ltpEthJpyPercentChange = "";
+    public string LtpEthJpyPercentChange
+    {
+        get => _ltpEthJpyPercentChange;
+        set
+        {
+            if (_ltpEthJpyPercentChange == value)
+            {
+                return;
+            }
+
+            _ltpEthJpyPercentChange = value;
+            OnPropertyChanged(nameof(LtpEthJpyPercentChange));
+        }
+    }
+
+    private string _ltpLtcJpyPercentChange = "";
+    public string LtpLtcJpyPercentChange
+    {
+        get => _ltpLtcJpyPercentChange;
+        set
+        {
+            if (_ltpLtcJpyPercentChange == value)
+            {
+                return;
+            }
+
+            _ltpLtcJpyPercentChange = value;
+            OnPropertyChanged(nameof(LtpLtcJpyPercentChange));
+        }
+    }
+
+    private string _ltpBccJpyPercentChange = "";
+    public string LtpBccJpyPercentChange
+    {
+        get => _ltpBccJpyPercentChange;
+        set
+        {
+            if (_ltpBccJpyPercentChange == value)
+            {
+                return;
+            }
+
+            _ltpBccJpyPercentChange = value;
+            OnPropertyChanged(nameof(LtpBccJpyPercentChange));
+        }
+    }
+
+
+    private string _ltpMonaJpyPercentChange = "";
+    public string LtpMonaJpyPercentChange
+    {
+        get => _ltpMonaJpyPercentChange;
+        set
+        {
+            if (_ltpMonaJpyPercentChange == value)
+            {
+                return;
+            }
+
+            _ltpMonaJpyPercentChange = value;
+            OnPropertyChanged(nameof(LtpMonaJpyPercentChange));
+        }
+    }
+
+    private string _ltpXlmJpyPercentChange = "";
+    public string LtpXlmJpyPercentChange
+    {
+        get => _ltpXlmJpyPercentChange;
+        set
+        {
+            if (_ltpXlmJpyPercentChange == value)
+            {
+                return;
+            }
+
+            _ltpXlmJpyPercentChange = value;
+            OnPropertyChanged(nameof(LtpXlmJpyPercentChange));
+        }
+    }
+
+    private string _ltpQtumJpyPercentChange = "";
+    public string LtpQtumJpyPercentChange
+    {
+        get => _ltpQtumJpyPercentChange;
+        set
+        {
+            if (_ltpQtumJpyPercentChange == value)
+            {
+                return;
+            }
+
+            _ltpQtumJpyPercentChange = value;
+            OnPropertyChanged(nameof(LtpQtumJpyPercentChange));
+        }
+    }
+
+    private string _ltpBatJpyPercentChange = "";
+    public string LtpBatJpyPercentChange
+    {
+        get => _ltpBatJpyPercentChange;
+        set
+        {
+            if (_ltpBatJpyPercentChange == value)
+            {
+                return;
+            }
+
+            _ltpBatJpyPercentChange = value;
+            OnPropertyChanged(nameof(LtpBatJpyPercentChange));
+        }
+    }
+
+    private string _ltpOmgJpyPercentChange = "";
+    public string LtpOmgJpyPercentChange
+    {
+        get => _ltpOmgJpyPercentChange;
+        set
+        {
+            if (_ltpOmgJpyPercentChange == value)
+            {
+                return;
+            }
+
+            _ltpOmgJpyPercentChange = value;
+            OnPropertyChanged(nameof(LtpOmgJpyPercentChange));
+        }
+    }
+
+    private string _ltpXymJpyPercentChange = "";
+    public string LtpXymJpyPercentChange
+    {
+        get => _ltpXymJpyPercentChange;
+        set
+        {
+            if (_ltpXymJpyPercentChange == value)
+            {
+                return;
+            }
+
+            _ltpXymJpyPercentChange = value;
+            OnPropertyChanged(nameof(LtpXymJpyPercentChange));
+        }
+    }
+
+    private string _ltpLinkJpyPercentChange = "";
+    public string LtpLinkJpyPercentChange
+    {
+        get => _ltpLinkJpyPercentChange;
+        set
+        {
+            if (_ltpLinkJpyPercentChange == value)
+            {
+                return;
+            }
+
+            _ltpLinkJpyPercentChange = value;
+            OnPropertyChanged(nameof(LtpLinkJpyPercentChange));
+        }
+    }
+
+    private string _ltpMkrJpyPercentChange = "";
+    public string LtpMkrJpyPercentChange
+    {
+        get => _ltpMkrJpyPercentChange;
+        set
+        {
+            if (_ltpMkrJpyPercentChange == value)
+            {
+                return;
+            }
+
+            _ltpMkrJpyPercentChange = value;
+            OnPropertyChanged(nameof(LtpMkrJpyPercentChange));
+        }
+    }
+
+
+    private string _ltpBobaJpyPercentChange = "";
+    public string LtpBobaJpyPercentChange
+    {
+        get => _ltpBobaJpyPercentChange;
+        set
+        {
+            if (_ltpBobaJpyPercentChange == value)
+            {
+                return;
+            }
+
+            _ltpBobaJpyPercentChange = value;
+            OnPropertyChanged(nameof(LtpBobaJpyPercentChange));
+        }
+    }
+
+    private string _ltpEnjJpyPercentChange = "";
+    public string LtpEnjJpyPercentChange
+    {
+        get => _ltpEnjJpyPercentChange;
+        set
+        {
+            if (_ltpEnjJpyPercentChange == value)
+            {
+                return;
+            }
+
+            _ltpEnjJpyPercentChange = value;
+            OnPropertyChanged(nameof(LtpEnjJpyPercentChange));
+        }
+    }
+
+
+    private string _ltpMaticJpyPercentChange = "";
+    public string LtpMaticJpyPercentChange
+    {
+        get => _ltpMaticJpyPercentChange;
+        set
+        {
+            if (_ltpMaticJpyPercentChange == value)
+            {
+                return;
+            }
+
+            _ltpMaticJpyPercentChange = value;
+            OnPropertyChanged(nameof(LtpMaticJpyPercentChange));
+        }
+    }
+
+    private string _ltpDotJpyPercentChange = "";
+    public string LtpDotJpyPercentChange
+    {
+        get => _ltpDotJpyPercentChange;
+        set
+        {
+            if (_ltpDotJpyPercentChange == value)
+            {
+                return;
+            }
+
+            _ltpDotJpyPercentChange = value;
+            OnPropertyChanged(nameof(LtpDotJpyPercentChange));
+        }
+    }
+
+    private string _ltpDogeJpyPercentChange = "";
+    public string LtpDogeJpyPercentChange
+    {
+        get => _ltpDogeJpyPercentChange;
+        set
+        {
+            if (_ltpDogeJpyPercentChange == value)
+            {
+                return;
+            }
+
+            _ltpDogeJpyPercentChange = value;
+            OnPropertyChanged(nameof(LtpDogeJpyPercentChange));
+        }
+    }
+
+    private string _ltpAstrJpyPercentChange = "";
+    public string LtpAstrJpyPercentChange
+    {
+        get => _ltpAstrJpyPercentChange;
+        set
+        {
+            if (_ltpAstrJpyPercentChange == value)
+            {
+                return;
+            }
+
+            _ltpAstrJpyPercentChange = value;
+            OnPropertyChanged(nameof(LtpAstrJpyPercentChange));
+        }
+    }
+
+    private string _ltpAdaJpyPercentChange = "";
+    public string LtpAdaJpyPercentChange
+    {
+        get => _ltpAdaJpyPercentChange;
+        set
+        {
+            if (_ltpAdaJpyPercentChange == value)
+            {
+                return;
+            }
+
+            _ltpAdaJpyPercentChange = value;
+            OnPropertyChanged(nameof(LtpAdaJpyPercentChange));
+        }
+    }
+
+
+    private string _ltpAvaxJpyPercentChange = "";
+    public string LtpAvaxJpyPercentChange
+    {
+        get => _ltpAvaxJpyPercentChange;
+        set
+        {
+            if (_ltpAvaxJpyPercentChange == value)
+            {
+                return;
+            }
+
+            _ltpAvaxJpyPercentChange = value;
+            OnPropertyChanged(nameof(LtpAvaxJpyPercentChange));
+        }
+    }
+
+
+    private string _ltpAxsJpyPercentChange = "";
+    public string LtpAxsJpyPercentChange
+    {
+        get => _ltpAxsJpyPercentChange;
+        set
+        {
+            if (_ltpAxsJpyPercentChange == value)
+            {
+                return;
+            }
+
+            _ltpAxsJpyPercentChange = value;
+            OnPropertyChanged(nameof(LtpAxsJpyPercentChange));
+        }
+    }
+
+    private string _ltpFlrJpyPercentChange = "";
+    public string LtpFlrJpyPercentChange
+    {
+        get => _ltpFlrJpyPercentChange;
+        set
+        {
+            if (_ltpFlrJpyPercentChange == value)
+            {
+                return;
+            }
+
+            _ltpFlrJpyPercentChange = value;
+            OnPropertyChanged(nameof(LtpFlrJpyPercentChange));
+        }
+    }
+
+    private string _ltpSandJpyPercentChange = "";
+    public string LtpSandJpyPercentChange
+    {
+        get => _ltpSandJpyPercentChange;
+        set
+        {
+            if (_ltpSandJpyPercentChange == value)
+            {
+                return;
+            }
+
+            _ltpSandJpyPercentChange = value;
+            OnPropertyChanged(nameof(LtpSandJpyPercentChange));
+        }
+    }
+
     #endregion
 
     #region == LTP ==
@@ -1490,7 +1864,7 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    private async void OnTickerService_TickerUpdated(object? sender, BitbankTickerData data)
+    private async void OnBitbankStreamService_TickerUpdated(object? sender, BitbankTickerData data)
     {
         /*
         PairCodes pair = data.TickerPair;
@@ -1532,72 +1906,95 @@ public partial class MainViewModel : ObservableObject
                         break;
                     case PairCodes.xrp_jpy:
                         LtpXrpJpy = string.Format(pairViewModel.LtpFormstString, data.Last);
+                        LtpXrpJpyPercentChange = string.Format("{0:+0.00;-0.00;0.00}%", percentChange);
                         break;
                     case PairCodes.eth_jpy:
                         LtpEthJpy = string.Format(pairViewModel.LtpFormstString, data.Last);
+                        LtpEthJpyPercentChange = string.Format("{0:+0.00;-0.00;0.00}%", percentChange);
                         break;
                     case PairCodes.ltc_jpy:
                         LtpLtcJpy = string.Format(pairViewModel.LtpFormstString, data.Last);
+                        LtpLtcJpyPercentChange = string.Format("{0:+0.00;-0.00;0.00}%", percentChange);
                         break;
                     case PairCodes.mona_jpy:
                         LtpMonaJpy = string.Format(pairViewModel.LtpFormstString, data.Last);
+                        LtpMonaJpyPercentChange = string.Format("{0:+0.00;-0.00;0.00}%", percentChange);
                         break;
                     case PairCodes.bcc_jpy:
                         LtpBccJpy = string.Format(pairViewModel.LtpFormstString, data.Last);
+                        LtpBccJpyPercentChange = string.Format("{0:+0.00;-0.00;0.00}%", percentChange);
                         break;
                     case PairCodes.xlm_jpy:
                         LtpXlmJpy = string.Format(pairViewModel.LtpFormstString, data.Last);
+                        LtpXlmJpyPercentChange = string.Format("{0:+0.00;-0.00;0.00}%", percentChange);
                         break;
                     case PairCodes.qtum_jpy:
                         LtpQtumJpy = string.Format(pairViewModel.LtpFormstString, data.Last);
+                        LtpQtumJpyPercentChange = string.Format("{0:+0.00;-0.00;0.00}%", percentChange);
                         break;
                     case PairCodes.bat_jpy:
                         LtpBatJpy = string.Format(pairViewModel.LtpFormstString, data.Last);
+                        LtpBatJpyPercentChange = string.Format("{0:+0.00;-0.00;0.00}%", percentChange);
                         break;
                     case PairCodes.omg_jpy:
                         LtpOmgJpy = string.Format(pairViewModel.LtpFormstString, data.Last);
+                        LtpOmgJpyPercentChange = string.Format("{0:+0.00;-0.00;0.00}%", percentChange);
                         break;
                     case PairCodes.xym_jpy:
                         LtpXymJpy = string.Format(pairViewModel.LtpFormstString, data.Last);
+                        LtpXymJpyPercentChange = string.Format("{0:+0.00;-0.00;0.00}%", percentChange);
                         break;
                     case PairCodes.link_jpy:
                         LtpLinkJpy = string.Format(pairViewModel.LtpFormstString, data.Last);
+                        LtpLinkJpyPercentChange = string.Format("{0:+0.00;-0.00;0.00}%", percentChange);
                         break;
                     case PairCodes.mkr_jpy:
                         LtpMkrJpy = string.Format(pairViewModel.LtpFormstString, data.Last);
+                        LtpMkrJpyPercentChange = string.Format("{0:+0.00;-0.00;0.00}%", percentChange);
                         break;
                     case PairCodes.boba_jpy:
                         LtpBobaJpy = string.Format(pairViewModel.LtpFormstString, data.Last);
+                        LtpBobaJpyPercentChange = string.Format("{0:+0.00;-0.00;0.00}%", percentChange);
                         break;
                     case PairCodes.enj_jpy:
                         LtpEnjJpy = string.Format(pairViewModel.LtpFormstString, data.Last);
+                        LtpEnjJpyPercentChange = string.Format("{0:+0.00;-0.00;0.00}%", percentChange);
                         break;
                     case PairCodes.matic_jpy:
                         LtpMaticJpy = string.Format(pairViewModel.LtpFormstString, data.Last);
+                        LtpMaticJpyPercentChange = string.Format("{0:+0.00;-0.00;0.00}%", percentChange);
                         break;
                     case PairCodes.dot_jpy:
                         LtpDotJpy = string.Format(pairViewModel.LtpFormstString, data.Last);
+                        LtpDotJpyPercentChange = string.Format("{0:+0.00;-0.00;0.00}%", percentChange);
                         break;
                     case PairCodes.doge_jpy:
                         LtpDogeJpy = string.Format(pairViewModel.LtpFormstString, data.Last);
+                        LtpDogeJpyPercentChange = string.Format("{0:+0.00;-0.00;0.00}%", percentChange);
                         break;
                     case PairCodes.astr_jpy:
                         LtpAstrJpy = string.Format(pairViewModel.LtpFormstString, data.Last);
+                        LtpAstrJpyPercentChange = string.Format("{0:+0.00;-0.00;0.00}%", percentChange);
                         break;
                     case PairCodes.ada_jpy:
                         LtpAdaJpy = string.Format(pairViewModel.LtpFormstString, data.Last);
+                        LtpAdaJpyPercentChange = string.Format("{0:+0.00;-0.00;0.00}%", percentChange);
                         break;
                     case PairCodes.avax_jpy:
                         LtpAvaxJpy = string.Format(pairViewModel.LtpFormstString, data.Last);
+                        LtpAvaxJpyPercentChange = string.Format("{0:+0.00;-0.00;0.00}%", percentChange);
                         break;
                     case PairCodes.axs_jpy:
                         LtpAxsJpy = string.Format(pairViewModel.LtpFormstString, data.Last);
+                        LtpAxsJpyPercentChange = string.Format("{0:+0.00;-0.00;0.00}%", percentChange);
                         break;
                     case PairCodes.flr_jpy:
                         LtpFlrJpy = string.Format(pairViewModel.LtpFormstString, data.Last);
+                        LtpFlrJpyPercentChange = string.Format("{0:+0.00;-0.00;0.00}%", percentChange);
                         break;
                     case PairCodes.sand_jpy:
                         LtpSandJpy = string.Format(pairViewModel.LtpFormstString, data.Last);
+                        LtpSandJpyPercentChange = string.Format("{0:+0.00;-0.00;0.00}%", percentChange);
                         break;
                     default:
                         throw new NotImplementedException();
@@ -1607,6 +2004,24 @@ public partial class MainViewModel : ObservableObject
         else
         {
             Debug.WriteLine($"No PairViewModel found for {data.TickerPair} at {DateTimeOffset.FromUnixTimeMilliseconds(data.Timestamp).LocalDateTime:yyyy-MM-dd HH:mm:ss}");
+        }
+    }
+
+    private async void OnBitbankStreamService_DepthUpdated(object? sender, BitbankDepthData data)
+    {
+        var pairViewModel = Pairs.FirstOrDefault(p => p.PairCode == data.DepthPair);
+        if (pairViewModel is not null)
+        {
+            if (pairViewModel.IsEnabled == false)
+            {
+                return;
+            }
+
+            await pairViewModel.UpdateDepthDataAsync(data);
+        }
+        else
+        {
+            Debug.WriteLine($"No PairViewModel found for {data.DepthPair} at {DateTimeOffset.FromUnixTimeMilliseconds(data.Timestamp).LocalDateTime:yyyy-MM-dd HH:mm:ss}");
         }
     }
 

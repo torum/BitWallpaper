@@ -5,6 +5,7 @@ namespace BitWallpaper.Services.Contracts;
 public interface IBitbankStreamService
 {
     event EventHandler<BitbankTickerData>? TickerUpdated;
+    event EventHandler<BitbankDepthData>? DepthUpdated;
 
     void Initialize(List<PairCodes> pairCodes);
 
@@ -15,4 +16,6 @@ public interface IBitbankStreamService
 
     Task LeaveTickerRoomAsync(PairCodes pairCode);
     Task JoinTickerRoomAsync(PairCodes pairCode);
+    Task LeaveDepthRoomAsync(PairCodes pairCode);
+    Task JoinDepthRoomAsync(PairCodes pairCode);
 }

@@ -70,9 +70,9 @@
     </UserControl.Resources>
     <Grid>
 
-        <SplitView x:Name="SplitViewControl" Margin="0,0,0,0" CornerRadius="0,0,0,0" BorderThickness="0,0,0,0" BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}" PaneBackground="Transparent" IsPaneOpen="{x:Bind Path=PairVM.IsPaneVisible, Mode=TwoWay}" PanePlacement="Right" OpenPaneLength="280" CompactPaneLength="0" DisplayMode="CompactInline">
+        <SplitView x:Name="SplitViewControl" Margin="0,0,0,0" CornerRadius="0,0,0,0" BorderThickness="0,0,0,0" BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}" PaneBackground="Transparent" IsPaneOpen="{x:Bind Path=PairVM.IsPaneOpen, Mode=TwoWay}" PanePlacement="Right" OpenPaneLength="280" CompactPaneLength="0" DisplayMode="CompactInline">
             <SplitView.Pane>
-                <Grid Margin="12,6,0,0">
+                <Grid Margin="12,32,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="0"/>
                         <RowDefinition Height="*"/>
@@ -226,25 +226,29 @@
             <VisualStateGroup>
                 <VisualState>
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="640" />
+                        <AdaptiveTrigger MinWindowWidth="2000" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="SplitViewControl.IsPaneOpen" Value="False"/>
+                        <!--
+                        <Setter Target="SplitViewControl.IsPaneOpen" Value="True"/>
+                        -->
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState>
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="0" />
+                        <AdaptiveTrigger MinWindowWidth="1" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
+                        <!--
                         <Setter Target="SplitViewControl.IsPaneOpen" Value="False"/>
+                        -->
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
             <VisualStateGroup>
                 <VisualState>
                     <VisualState.StateTriggers>
-                        <StateTrigger IsActive="{x:Bind Path=PairVM.IsPaneVisible, Mode=TwoWay}" />
+                        <StateTrigger IsActive="{x:Bind Path=PairVM.IsPaneOpen, Mode=TwoWay}" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="PanelOpenClose.Icon" Value="ClosePane" />
