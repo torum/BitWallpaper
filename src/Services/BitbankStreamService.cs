@@ -3,8 +3,18 @@ using BitWallpaper.Services.Contracts;
 using SocketIOClient;
 using SocketIOClient.Common;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace BitWallpaper.Services;
+
+[JsonSerializable(typeof(BitbankTickerRoot))]
+[JsonSerializable(typeof(BitbankDepthRoot))]
+//[JsonSerializable(typeof(BitbankTransactionsRoot))] 
+[JsonSerializable(typeof(JsonElement?))]
+[JsonSerializable(typeof(string))] // Primitive types if needed
+[JsonSerializable(typeof(object[]))] // This tells the AOT source generator how to handle outgoing event payloads.
+[JsonSerializable(typeof(PairCodes))]
+internal partial class BitbankJsonContext : JsonSerializerContext {}
 
 public class BitbankStreamService : IBitbankStreamService
 {
@@ -49,6 +59,26 @@ public class BitbankStreamService : IBitbankStreamService
         };
 
         _client = new SocketIOClient.SocketIO(uri, options);
+        /*
+        _client = new SocketIOClient.SocketIO(uri, options, services =>
+        {
+            services.AddSystemTextJson(new JsonSerializerOptions
+            {
+                TypeInfoResolver = BitbankJsonContext.Default
+            });
+        });
+        */
+
+        _client.OnError += (sender, errorDescription) =>
+        {
+            Debug.WriteLine($"Socket.IO Error occurred: {errorDescription}");
+
+            _dispatcherService.TryEnqueue(() =>
+            {
+                (App.Current as App)?.AppendErrorLog($"Socket.IO Error occurred @BitbankStreamService: {errorDescription}", "");
+                (App.Current as App)?.SaveErrorLog();
+            });
+        };
 
         _client.OnConnected += OnClientConnected;
 
@@ -59,6 +89,83 @@ public class BitbankStreamService : IBitbankStreamService
 
         _client.On("message", response =>
         {
+            string rawJsonArray = response.RawText ?? string.Empty;
+
+            if (string.IsNullOrEmpty(rawJsonArray)) return Task.CompletedTask;
+
+            // Parse the text directly into a DOM Document (100% Native AOT safe)
+            using var document = JsonDocument.Parse(rawJsonArray);
+            JsonElement rootArray = document.RootElement;
+
+            // Ensure it is a valid array containing at least the event name and your payload argument
+            if (rootArray.ValueKind == JsonValueKind.Array && rootArray.GetArrayLength() > 1)
+            {
+                // Index 0 is the event name ("message"). Index 1 is the actual object payload.
+                JsonElement firstArgument = rootArray[1];
+
+                // Safely check 'room_name' via reflection-free DOM APIs
+                if (firstArgument.TryGetProperty("room_name", out JsonElement roomProperty) && roomProperty.ValueKind == JsonValueKind.String)
+                {
+                    string roomName = roomProperty.GetString() ?? string.Empty;
+
+                    //Debug.WriteLine($"--> Received message for room: {roomName}");
+
+                    if (roomName.StartsWith("ticker_"))
+                    {
+                        var root = firstArgument.Deserialize(BitbankJsonContext.Default.BitbankTickerRoot);//response.GetValue<BitbankTickerRoot>(0);
+
+                        if (root?.Message?.Data != null)
+                        {
+                            ProcessTickerData(root);
+                        }
+                        else
+                        {
+                            Debug.WriteLine("--> Received ticker message with null data. Ignoring.");
+                        }
+                    }
+                    else if (roomName.StartsWith("depth_whole_"))
+                    {
+                        var root = firstArgument.Deserialize(BitbankJsonContext.Default.BitbankDepthRoot);//response.GetValue<BitbankDepthRoot>(0);
+
+                        if (root?.Message?.Data != null)
+                        {
+                            ProcessDepthData(root);
+                        }
+                    }
+                    else
+                    {
+                        Debug.WriteLine($"--> Received data for an unhandled room: {roomName}");
+
+                        _dispatcherService.TryEnqueue(() => {
+                            (App.Current as App)?.AppendErrorLog($"--> Received data for an unhandled room: {roomName}", "");
+                            (App.Current as App)?.SaveErrorLog();
+                        });
+
+                        return Task.CompletedTask;
+                    }
+                }
+                else
+                {
+                    Debug.WriteLine("--> Received message without a valid 'room_name'. Ignoring.");
+                    _dispatcherService.TryEnqueue(() => {
+                        (App.Current as App)?.AppendErrorLog($"--> Received message without a valid 'room_name'", "");
+                        (App.Current as App)?.SaveErrorLog();
+                    });
+                    return Task.CompletedTask;
+                }
+            }
+            else
+            {
+                Debug.WriteLine("--> Received message that is not a valid array or has insufficient elements. Ignoring.");
+                _dispatcherService.TryEnqueue(() => {
+                    (App.Current as App)?.AppendErrorLog($"--> Received message that is not a valid array or has insufficient elements", "");
+                    (App.Current as App)?.SaveErrorLog();
+                });
+                return Task.CompletedTask;
+            }
+
+            // Another way. Both are valid and not safe for AOT. 
+            /*
             var element = response.GetValue<System.Text.Json.JsonElement?>(0);
             if (!element.HasValue) return Task.CompletedTask;
 
@@ -104,11 +211,24 @@ public class BitbankStreamService : IBitbankStreamService
                 Debug.WriteLine($"--> Received data for an unhandled room: {roomName}");
                 return Task.CompletedTask;
             }
-
+            */
             return Task.CompletedTask;
         });
 
-        await _client.ConnectAsync();
+        try
+        {
+            await _client.ConnectAsync();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Failed to connect initially @BitbankStreamService: {ex}");
+
+            _dispatcherService.TryEnqueue(() =>
+            {
+                (App.Current as App)?.AppendErrorLog($"Failed to connect initially @BitbankStreamService: {ex}", "");
+                (App.Current as App)?.SaveErrorLog();
+            });
+        }
     }
 
     private void ProcessTickerData(BitbankTickerRoot root)

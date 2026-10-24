@@ -526,7 +526,10 @@ public sealed partial class MainWindow : Window
         {
             Debug.WriteLine($"Error disposing MainViewModel: {ex}");
             (Application.Current as App)?.AppendErrorLog("MainWindow_Closed", $"{ex}");
-            (Application.Current as App)?.SaveErrorLog();
+        }
+        finally
+        {
+            (App.Current as App)?.SaveErrorLog();
         }
     }
 

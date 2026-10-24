@@ -1761,6 +1761,11 @@ public partial class MainViewModel : ObservableObject, IDisposable
         catch (Exception ex)
         {
             Debug.WriteLine($"Error in InitializeAndStartAsync: {ex}");
+
+            _dispatcherService.TryEnqueue(() => {
+                (App.Current as App)?.AppendErrorLog("Error InitializeAndStartAsync", ex.ToString());
+                (App.Current as App) ?.SaveErrorLog();
+            });
         }
     }
 

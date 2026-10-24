@@ -2322,7 +2322,7 @@ public partial class PairViewModel : ObservableObject, IDisposable
                     return;
                 }
 
-                Debug.WriteLine($"UpdateCurrentCandle() updating candle for {PairCode} at {candleStart:yyyy-MM-dd HH:mm:ss} with price {data.Last:N0}");
+                //Debug.WriteLine($"UpdateCurrentCandle() updating candle for {PairCode} at {candleStart:yyyy-MM-dd HH:mm:ss} with price {data.Last:N0}");
                 //candles[i] = new FinancialPoint(candleStart, high, open, price, low);
                 candle.Close = price;
                 candle.High = high;

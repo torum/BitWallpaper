@@ -17,11 +17,12 @@
 	  <AssemblyVersion>2.1.0.0</AssemblyVersion>
 
 	  <WindowsPackageType>None</WindowsPackageType>
-	  <EnableMsixTooling>false</EnableMsixTooling>
 	  <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+
+
+	  <EnableMsixTooling>false</EnableMsixTooling>
 	  <!--
 	  <PublishAot>true</PublishAot>
-
 	  <AppxPackageIncludePrivateSymbols>true</AppxPackageIncludePrivateSymbols>
 	  <NativeDebugSymbols>true</NativeDebugSymbols>
 	  <StripSymbols>false</StripSymbols>
@@ -32,11 +33,13 @@
 	  <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
 	  <TrimmerSingleWarn>false</TrimmerSingleWarn>
 	  <Optimize>true</Optimize>
+	  <TrimMode>partial</TrimMode>
+	  <IsTrimmable>true</IsTrimmable>
 
 	  <CsWinRTAotWarningLevel>3</CsWinRTAotWarningLevel>
 
 	  <!-- Code quality
-	  <AnalysisLevel>latest-recommended</AnalysisLevel> -->
+      <AnalysisLevel>latest-recommended</AnalysisLevel> -->
 	  <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	  
   </PropertyGroup>
@@ -116,11 +119,14 @@
   </PropertyGroup>
 
   <!-- Publish Properties -->
-  <PropertyGroup>
-    <PublishReadyToRun Condition="'$(Configuration)' == 'Debug'">False</PublishReadyToRun>
-    <PublishReadyToRun Condition="'$(Configuration)' != 'Debug'">True</PublishReadyToRun>
-    <PublishTrimmed Condition="'$(Configuration)' == 'Debug'">False</PublishTrimmed>
-    <PublishTrimmed Condition="'$(Configuration)' != 'Debug'">True</PublishTrimmed>
-    <ApplicationIcon>Assets\BitWallpaper.ico</ApplicationIcon>
-  </PropertyGroup>
+<PropertyGroup>
+	<!--
+	<PublishReadyToRun Condition="'$(Configuration)' == 'Debug'">False</PublishReadyToRun>
+	<PublishReadyToRun Condition="'$(Configuration)' != 'Debug'">True</PublishReadyToRun>
+	<PublishTrimmed Condition="'$(Configuration)' == 'Debug'">False</PublishTrimmed>
+	<PublishTrimmed Condition="'$(Configuration)' != 'Debug'">True</PublishTrimmed>
+	-->
+	<PublishTrimmed>True</PublishTrimmed>
+	<ApplicationIcon>Assets\BitWallpaper.ico</ApplicationIcon>
+</PropertyGroup>
 </Project>
