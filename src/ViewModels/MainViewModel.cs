@@ -32,7 +32,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private readonly bool _isLiveChartsOn = true;
 
     private static readonly SemaphoreSlim _asyncLock = new SemaphoreSlim(1, 1);
-    private bool _isNotificationManagerInitialized = false;
+    private bool _isNotificationManagerInitialized;
+    private bool _isNotificationEnabled = true;
+
     private readonly IBitbankStreamService _bitbankStreamService;
     private readonly IConfigurationService _configurationService;
     private readonly IDispatcherService _dispatcherService;
@@ -96,8 +98,14 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
         catch (System.Runtime.InteropServices.COMException ex)
         {
+            _isNotificationEnabled = false;
             _isNotificationManagerInitialized = false;
             Debug.WriteLine("NotificationManager registration failed: " + ex);
+
+            foreach (var pair in Pairs)
+            {
+                pair.IsNotificationEnabled = _isNotificationEnabled;
+            }
         }
 
         // For developing purposes, we can set this to true to avoid starting the ticker service and charts loading.

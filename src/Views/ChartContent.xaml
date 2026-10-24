@@ -200,7 +200,7 @@
                                     </MenuFlyout>
                                 </AppBarButton.Flyout>
                             </AppBarButton>
-                            <AppBarButton Label="{x:Bind PairVM.AlarmLabel, Mode=OneWay}" IsCompact="False" Margin="0" Padding="0" Opacity="1" Click="AppBarButton_Click" Visibility="Collapsed">
+                            <AppBarButton Label="{x:Bind PairVM.AlarmLabel, Mode=OneWay}" IsCompact="False" Margin="0" Padding="0" Opacity="1" Click="AppBarButton_Click" Visibility="{x:Bind PairVM.IsNotificationEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <AppBarButton.Icon>
                                     <PathIcon>
                                         <PathIcon.Data>

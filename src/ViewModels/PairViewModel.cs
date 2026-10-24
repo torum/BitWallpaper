@@ -393,6 +393,23 @@ public partial class PairViewModel : ObservableObject, IDisposable
         }
     }
 
+    private bool _isNotificationEnabled = true;
+    public bool IsNotificationEnabled
+    {
+        get => _isNotificationEnabled;
+        set
+        {
+            if (_isNotificationEnabled == value)
+            {
+                return;
+            }
+
+            _isNotificationEnabled = value;
+            OnPropertyChanged(nameof(IsNotificationEnabled));
+        }
+    }
+
+
     #endregion
 
     #region == Options ==
