@@ -20,7 +20,7 @@ public sealed partial class GridViewPage : Page
             int columns = MyUniformGrid.MaximumRowsOrColumns;
             int rows = (int)Math.Ceiling((double)totalItems / columns);
 
-            Debug.WriteLine($"Total Items: {totalItems}, Columns: {columns}, Rows: {rows}");
+            //Debug.WriteLine($"Total Items: {totalItems}, Columns: {columns}, Rows: {rows}");
 
             // Calculate exact available spacing
             double totalHorizontalSpacing = MyUniformGrid.MinColumnSpacing * (columns - 1);

@@ -1406,7 +1406,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private string _ltpLtcJpy = "";
+    private string _ltpLtcJpy = "...";
     public string LtpLtcJpy
     {
         get => _ltpLtcJpy;
@@ -1422,7 +1422,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private string _ltpMonaJpy = "";
+    private string _ltpMonaJpy = "...";
     public string LtpMonaJpy
     {
         get => _ltpMonaJpy;
@@ -1438,7 +1438,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private string _ltpBccJpy = "";
+    private string _ltpBccJpy = "...";
     public string LtpBccJpy
     {
         get => _ltpBccJpy;
@@ -1454,7 +1454,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private string _ltpXlmJpy = "";
+    private string _ltpXlmJpy = "...";
     public string LtpXlmJpy
     {
         get => _ltpXlmJpy;
@@ -1470,7 +1470,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private string _ltpQtumJpy = "";
+    private string _ltpQtumJpy = "...";
     public string LtpQtumJpy
     {
         get => _ltpQtumJpy;
@@ -1486,7 +1486,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private string _ltpBatJpy = "";
+    private string _ltpBatJpy = "...";
     public string LtpBatJpy
     {
         get => _ltpBatJpy;
@@ -1502,7 +1502,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private string _ltpOmgJpy = "";
+    private string _ltpOmgJpy = "...";
     public string LtpOmgJpy
     {
         get => _ltpOmgJpy;
@@ -1518,7 +1518,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private string _ltpXymJpy = "";
+    private string _ltpXymJpy = "...";
     public string LtpXymJpy
     {
         get => _ltpXymJpy;
@@ -1534,7 +1534,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private string _ltpLinkJpy = "";
+    private string _ltpLinkJpy = "...";
     public string LtpLinkJpy
     {
         get => _ltpLinkJpy;
@@ -1550,7 +1550,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private string _ltpMkrJpy = "";
+    private string _ltpMkrJpy = "...";
     public string LtpMkrJpy
     {
         get => _ltpMkrJpy;
@@ -1566,7 +1566,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private string _ltpBobaJpy = "";
+    private string _ltpBobaJpy = "...";
     public string LtpBobaJpy
     {
         get => _ltpBobaJpy;
@@ -1582,7 +1582,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private string _ltpEnjJpy = "";
+    private string _ltpEnjJpy = "...";
     public string LtpEnjJpy
     {
         get => _ltpEnjJpy;
@@ -1598,7 +1598,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private string _ltpMaticJpy = "";
+    private string _ltpMaticJpy = "...";
     public string LtpMaticJpy
     {
         get => _ltpMaticJpy;
@@ -1614,7 +1614,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private string _ltpDotJpy = "";
+    private string _ltpDotJpy = "...";
     public string LtpDotJpy
     {
         get => _ltpDotJpy;
@@ -1630,7 +1630,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private string _ltpDogeJpy = "";
+    private string _ltpDogeJpy = "...";
     public string LtpDogeJpy
     {
         get => _ltpDogeJpy;
@@ -1646,7 +1646,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private string _ltpAstrJpy = "";
+    private string _ltpAstrJpy = "...";
     public string LtpAstrJpy
     {
         get => _ltpAstrJpy;
@@ -1662,7 +1662,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private string _ltpAdaJpy = "";
+    private string _ltpAdaJpy = "...";
     public string LtpAdaJpy
     {
         get => _ltpAdaJpy;
@@ -1678,7 +1678,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private string _ltpAvaxJpy = "";
+    private string _ltpAvaxJpy = "...";
     public string LtpAvaxJpy
     {
         get => _ltpAvaxJpy;
@@ -1694,7 +1694,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private string _ltpAxsJpy = "";
+    private string _ltpAxsJpy = "...";
     public string LtpAxsJpy
     {
         get => _ltpAxsJpy;
@@ -1710,7 +1710,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private string _ltpFlrJpy = "";
+    private string _ltpFlrJpy = "...";
     public string LtpFlrJpy
     {
         get => _ltpFlrJpy;
@@ -1726,7 +1726,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private string _ltpSandJpy = "";
+    private string _ltpSandJpy = "...";
     public string LtpSandJpy
     {
         get => _ltpSandJpy;
