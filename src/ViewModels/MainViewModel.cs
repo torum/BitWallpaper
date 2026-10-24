@@ -1,12 +1,16 @@
 using BitWallpaper.Helpers;
 using BitWallpaper.Models;
 using BitWallpaper.Services.Contracts;
+using BitWallpaper.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
+using Microsoft.Windows.AppNotifications;
+using Microsoft.Windows.AppNotifications.Builder;
 using System.Collections.ObjectModel;
 using System.Reflection;
 using Windows.ApplicationModel;
+using WinRT;
 
 namespace BitWallpaper.ViewModels;
 
@@ -16,17 +20,25 @@ public record IsEnabledState
     public PairCodes PairCode { get; set; }
 }
 
-public partial class MainViewModel : ObservableObject
+public class ShowBalloonEventArgs(string title, string text) : EventArgs
+{
+    public string? Title { get; private set; } = title;
+    public string? Text { get; private set; } = text;
+}
+
+public partial class MainViewModel : ObservableObject, IDisposable
 {
     private readonly bool _isWebSocketOn = true;
     private readonly bool _isLiveChartsOn = true;
 
     private static readonly SemaphoreSlim _asyncLock = new SemaphoreSlim(1, 1);
-
+    private bool _isNotificationManagerInitialized = false;
     private readonly IBitbankStreamService _bitbankStreamService;
     private readonly IConfigurationService _configurationService;
     private readonly IDispatcherService _dispatcherService;
+    private readonly BitWallpaper.Helpers.NotificationManager notificationManager = new();
 
+    public event EventHandler<ShowBalloonEventArgs>? ShowBalloon;
     public event EventHandler<IsEnabledState>? IsEnabledChanged;
 
     public MainViewModel(IBitbankStreamService bitbankStreamService, IConfigurationService configurationService, IDispatcherService dispatcherService)
@@ -66,14 +78,31 @@ public partial class MainViewModel : ObservableObject
         IsOnSandJpy = config.IsOnSandJpy;
         OnPropertyChanged(nameof(EnabledPairs));
 
+        // Load the pairs from the configuration service into the Pairs collection
+        _configurationService.GetPairs(Pairs);
+
         IsEnabledChanged += OnIsEnabledChanged;
+        ShowBalloon += DoShowBalloon;
 
         _bitbankStreamService.TickerUpdated += OnBitbankStreamService_TickerUpdated;
         _bitbankStreamService.DepthUpdated += OnBitbankStreamService_DepthUpdated;
 
+        // Will crash due to WinAppSDK bug.
+        //https://github.com/microsoft/WindowsAppSDK/issues/6071
+        try
+        {
+            AppNotificationManager.Default.Register();
+            _isNotificationManagerInitialized = true;
+        }
+        catch (System.Runtime.InteropServices.COMException ex)
+        {
+            _isNotificationManagerInitialized = false;
+            Debug.WriteLine("NotificationManager registration failed: " + ex);
+        }
+
         // For developing purposes, we can set this to true to avoid starting the ticker service and charts loading.
         _isWebSocketOn = true;
-        _isLiveChartsOn = false;
+        _isLiveChartsOn = true;
 
 #if DEBUG
         IsSaveLog = true;
@@ -145,34 +174,51 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    private bool _isSystemBackdropSupported = true;
-    public bool IsSystemBackdropSupported
+    private bool _isMicaSupported;
+    public bool IsMicaSupported
     {
-        get => _isSystemBackdropSupported;
+        get => _isMicaSupported;
         set
         {
-            if (_isSystemBackdropSupported == value)
+            if (_isMicaSupported == value)
             {
                 return;
             }
 
-            _isSystemBackdropSupported = value;
-            OnPropertyChanged(nameof(IsSystemBackdropSupported));
+            _isMicaSupported = value;
+            OnPropertyChanged(nameof(IsMicaSupported));
         }
     }
 
-    private ElementTheme _elementTheme = ElementTheme.Default;
-    public ElementTheme ElementTheme
+
+    private bool _isBackdropSupported = true;
+    public bool IsBackdropSupported
     {
-        get => _elementTheme;
+        get => _isBackdropSupported;
         set
         {
-            if (_elementTheme == value)
+            if (_isBackdropSupported == value)
             {
                 return;
             }
 
-            _elementTheme = value;
+            _isBackdropSupported = value;
+            OnPropertyChanged(nameof(IsBackdropSupported));
+        }
+    }
+
+    private ElementTheme _theme = ElementTheme.Default;
+    public ElementTheme Theme
+    {
+        get => _theme;
+        set
+        {
+            if (_theme == value)
+            {
+                return;
+            }
+
+            _theme = value;
             OnPropertyChanged(nameof(ElementTheme));
         }
     }
@@ -199,7 +245,7 @@ public partial class MainViewModel : ObservableObject
                 version = Assembly.GetExecutingAssembly().GetName().Version!;
             }
 
-            return $"{App.AppName} - {version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
+            return $"{version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
         }
     }
 
@@ -207,6 +253,7 @@ public partial class MainViewModel : ObservableObject
 
     #region == Pairs ==
 
+    // TODO: No longer neeed?
     public Dictionary<string, PairCodes> GetPairs { get; set; } = new Dictionary<string, PairCodes>()
         {
             {"btc_jpy", PairCodes.btc_jpy},
@@ -1805,6 +1852,9 @@ public partial class MainViewModel : ObservableObject
     public void UpdateCurrentSettings()
     {
         var config = _configurationService.CurrentConfiguration;
+        
+        config.Theme = Theme;
+        config.SystemBackdrop = Material;
 
         config.IsSaveLog = IsSaveLog;
 
@@ -1836,6 +1886,34 @@ public partial class MainViewModel : ObservableObject
         config.IsOnFlrJpy = IsOnFlrJpy;
         config.IsOnSandJpy = IsOnSandJpy;
 
+    }
+
+    public void Dispose()
+    {
+        _bitbankStreamService.TickerUpdated -= OnBitbankStreamService_TickerUpdated;
+        _bitbankStreamService.DepthUpdated -= OnBitbankStreamService_DepthUpdated;
+        IsEnabledChanged -= OnIsEnabledChanged;
+        ShowBalloon -= DoShowBalloon;
+
+        try
+        {
+            foreach (var pair in Pairs)
+            {
+                pair.Dispose();
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error disposing PairViewModels: {ex}");
+        }
+
+        if (_isNotificationManagerInitialized)
+        {
+            AppNotificationManager.Default.Unregister();
+            _isNotificationManagerInitialized = false;
+        }
+
+        Debug.WriteLine($"MainViewModel disposed at {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
     }
 
     #endregion
@@ -2000,6 +2078,41 @@ public partial class MainViewModel : ObservableObject
                         throw new NotImplementedException();
                 }
             });
+
+
+            #region == Alarm ==
+
+            if (pairViewModel.AlarmPlus > 0)
+            {
+                if (pairViewModel.Ltp >= pairViewModel.AlarmPlus)
+                {
+                    pairViewModel.HighLowInfoTextColorFlag = true;
+                    pairViewModel.HighLowInfoText = pairViewModel.PairString + "Alarm";
+
+                    ShowBalloonEventArgs ag = new((pairViewModel.PairString + " High Price Alarm"), pairViewModel.AlarmPlusString);
+
+                    pairViewModel.AlarmPlus = 0;
+
+                    ShowBalloon?.Invoke(this, ag);
+                }
+            }
+
+            if (pairViewModel.AlarmMinus > 0)
+            {
+                if (pairViewModel.Ltp <= pairViewModel.AlarmMinus)
+                {
+                    pairViewModel.HighLowInfoTextColorFlag = false;
+                    pairViewModel.HighLowInfoText = pairViewModel.PairString + "Alarm";
+
+                    ShowBalloonEventArgs ag = new(pairViewModel.PairString + " Low Price Alarm", pairViewModel.AlarmMinusString);
+
+                    pairViewModel.AlarmMinus = 0;
+
+                    ShowBalloon?.Invoke(this, ag);
+                }
+            }
+
+            #endregion
         }
         else
         {
@@ -2029,18 +2142,67 @@ public partial class MainViewModel : ObservableObject
 
     #region == Commands ==
 
+    [DynamicWindowsRuntimeCast(typeof(FrameworkElement))]
     [RelayCommand]
-    private void SwitchTheme()
+    private void SwitchTheme(ElementTheme? param)
     {
-        //
+        if (param is null)
+        {
+            return;
+        }
+
+        if (Theme == param)
+        {
+            return;
+        }
+
+        Theme = (ElementTheme)param;
+
+        var main = App.GetService<MainWindow>();
+
+        if (main.Content is FrameworkElement rootElement)
+        {
+            rootElement.RequestedTheme = Theme;
+
+            main?.SetCapitionButtonColor();
+        }
     }
 
     [RelayCommand]
-    private void SwitchSystemBackdrop()
+    private void SwitchSystemBackdrop(string? backdrop)
     {
-        //
+        if (backdrop == null)
+        {
+            return;
+        }
+
+        var main = App.GetService<MainWindow>();
+
+        if (Enum.TryParse(backdrop, out SystemBackdropOption cacheBackdrop))
+        {
+            main?.SwitchBackdrop(cacheBackdrop);
+        }
     }
 
     #endregion
+
+    private void DoShowBalloon(object? sender, ShowBalloonEventArgs arg)
+    {
+        if (!_isNotificationManagerInitialized)
+        {
+            Debug.WriteLine("Notification Manager is not initialized. Cannot show notification.");
+            return;
+        }
+
+        // https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/notifications/app-notifications/app-notifications-quickstart?tabs=cs
+        var appNotification = new AppNotificationBuilder().AddText(arg.Title).AddText(arg.Text).SetTimeStamp(new DateTime(2017, 04, 15, 19, 45, 00, DateTimeKind.Utc)).BuildNotification();
+
+        //.AddButton(new AppNotificationButton("OK")
+        //.AddArgument("action", "dissmiss"))
+        //.SetTimeStamp(new DateTime(2017, 04, 15, 19, 45, 00, DateTimeKind.Utc));
+
+        //.SetScenario(AppNotificationScenario.Alarm)
+        AppNotificationManager.Default.Show(appNotification);
+    }
 
 }

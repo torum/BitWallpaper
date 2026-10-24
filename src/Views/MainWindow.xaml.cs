@@ -1,4 +1,5 @@
 using BitWallpaper.Models;
+using BitWallpaper.Services;
 using BitWallpaper.Services.Contracts;
 using BitWallpaper.ViewModels;
 using LiveChartsCore.Themes;
@@ -20,6 +21,7 @@ public sealed partial class MainWindow : Window
     private int _winRestoreHeight = 768;
     private int _winRestoreTop = 100;
     private int _winRestoreLeft = 100;
+    private ElementTheme _theme = ElementTheme.Default;
     private bool _isClosing;
 
     [DynamicWindowsRuntimeCast(typeof(OverlappedPresenter))]
@@ -39,6 +41,11 @@ public sealed partial class MainWindow : Window
 
         LoadSettings();
 
+        _shell.RequestedTheme = _theme;
+
+        //// Let's not set caption button color here, because it will affect normal dim when activate/deactivate. Only set caption button color when theme is changed.
+        SetCapitionButtonColor();
+
         _shell.Loaded += Shell_Loaded;
 
         this.AppWindow.Closing += AppWindow_Closing;
@@ -49,7 +56,7 @@ public sealed partial class MainWindow : Window
 
         if (this.AppWindow.Presenter is OverlappedPresenter presenter)
         {
-            presenter.PreferredMinimumWidth = 700;
+            presenter.PreferredMinimumWidth = 778;
             presenter.PreferredMinimumHeight = 600;
         }
     }
@@ -66,21 +73,20 @@ public sealed partial class MainWindow : Window
     [DynamicWindowsRuntimeCast(typeof(FrameworkElement))]
     private void LoadSettings()
     {
-        /*
         if (Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())
         {
             _vm.IsAcrylicSupported = true;
 
-            _vm.IsBackdropEnabled = true;
+            _vm.IsBackdropSupported = true;
         }
         if (Microsoft.UI.Composition.SystemBackdrops.MicaController.IsSupported())
         {
             _vm.IsMicaSupported = true;
 
-            _vm.IsBackdropEnabled = true;
+            _vm.IsBackdropSupported = true;
         }
 
-        if (!System.IO.File.Exists(App.AppConfigFilePath))
+        if (!System.IO.File.Exists(_configurationService.ConfigFilePath))
         {
             // Sets default.
             if (Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())
@@ -89,7 +95,7 @@ public sealed partial class MainWindow : Window
                 SystemBackdrop = new DesktopAcrylicBackdrop();
                 _vm.Material = SystemBackdropOption.Acrylic;
 
-                _vm.IsBackdropEnabled = true;
+                _vm.IsBackdropSupported = true;
             }
             else if (Microsoft.UI.Composition.SystemBackdrops.MicaController.IsSupported())
             {
@@ -100,14 +106,13 @@ public sealed partial class MainWindow : Window
                 };
                 _vm.Material = SystemBackdropOption.Mica;
 
-                _vm.IsBackdropEnabled = true;
+                _vm.IsBackdropSupported = true;
             }
 
             _theme = ElementTheme.Default;
 
             return;
         }
-        */
 
         //OverlappedPresenterState? winState = null; // For AOT workaround, don't set default, = OverlappedPresenterState.Restored;
 
@@ -190,7 +195,7 @@ public sealed partial class MainWindow : Window
                 appWindow.MoveAndResize(new Windows.Graphics.RectInt32(config.MainWindow.Left, config.MainWindow.Top, config.MainWindow.Width, config.MainWindow.Height));
             }
         }
-        /*
+
         // Apply theme and backdrop
         if (config.SystemBackdrop != SystemBackdropOption.None)
         {
@@ -199,7 +204,99 @@ public sealed partial class MainWindow : Window
         }
         _vm.Material = config.SystemBackdrop;
         SwitchBackdrop(config.SystemBackdrop);
-        */
+    }
+
+    public void SwitchBackdrop(SystemBackdropOption backdrop)
+    {
+        //var vm = App.GetService<MainViewModel>();
+
+        if (backdrop == SystemBackdropOption.Mica)
+        {
+            if (Microsoft.UI.Composition.SystemBackdrops.MicaController.IsSupported())
+            {
+                this.SystemBackdrop = new MicaBackdrop()
+                {
+                    Kind = MicaKind.Base
+                };
+                _vm.Material = SystemBackdropOption.Mica;
+
+                _vm.IsBackdropSupported = true;
+            }
+        }
+        else if (backdrop == SystemBackdropOption.MicaAlt)
+        {
+            if (Microsoft.UI.Composition.SystemBackdrops.MicaController.IsSupported())
+            {
+                this.SystemBackdrop = new MicaBackdrop()
+                {
+                    Kind = MicaKind.BaseAlt
+                };
+                _vm.Material = SystemBackdropOption.MicaAlt;
+
+                _vm.IsBackdropSupported = true;
+            }
+        }
+        else if (backdrop == SystemBackdropOption.Acrylic)
+        {
+            if (Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())
+            {
+                this.SystemBackdrop = new DesktopAcrylicBackdrop();
+
+                _vm.Material = SystemBackdropOption.Acrylic;
+
+                _vm.IsBackdropSupported = true;
+            }
+        }
+        else if (backdrop == SystemBackdropOption.None)
+        {
+            this.SystemBackdrop = null;
+
+            _vm.Material = SystemBackdropOption.None;
+            _vm.IsBackdropSupported = false;
+            _vm.Theme = ElementTheme.Default;
+            if (this.Content is ShellPage root)
+            {
+                root.RequestedTheme = _vm.Theme;
+
+                SetCapitionButtonColor();
+            }
+
+            this.SystemBackdrop = null;
+        }
+    }
+
+    [DynamicWindowsRuntimeCast(typeof(FrameworkElement))]
+    public void SetCapitionButtonColor()
+    {
+        // This is a workaround for the WinAppSDK/WinUI3 bug that caption button color is not updated when theme is changed.
+        // Use AppWindow.TitleBar.PreferredTheme instead of Color. It will affect normal dim when activate/deactivate.
+
+        if (this.Content is null)
+        {
+            return;
+        }
+
+        var currentTheme = ((FrameworkElement)Content).ActualTheme;
+
+        if (currentTheme == ElementTheme.Dark)
+        {
+            this.AppWindow.TitleBar.PreferredTheme = TitleBarTheme.Dark;
+        }
+        else if (currentTheme == ElementTheme.Light)
+        {
+            this.AppWindow.TitleBar.PreferredTheme = TitleBarTheme.Light;
+        }
+        else
+        {
+            if (Application.Current.RequestedTheme == ApplicationTheme.Dark)
+            {
+                this.AppWindow.TitleBar.PreferredTheme = TitleBarTheme.Dark;
+            }
+            else
+            {
+                this.AppWindow.TitleBar.PreferredTheme = TitleBarTheme.Light;
+            }
+        }
     }
 
     [DynamicWindowsRuntimeCast(typeof(OverlappedPresenter))]
@@ -401,7 +498,7 @@ public sealed partial class MainWindow : Window
             }
         }
 
-        await _configurationService.SaveConfigurationAsync();
+        await _configurationService.SaveConfigurationAsync(_vm.Pairs);
 
         // Wait for the ticker service to stop gracefully
         await _bitbankStreamService.StopAsync();
@@ -420,6 +517,17 @@ public sealed partial class MainWindow : Window
         this.SizeChanged -= Window_SizeChanged;
         this.AppWindow.Changed -= AppWindow_Changed;
         this.Activated -= Window_Activated;
+
+        try
+        {
+            _vm.Dispose();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error disposing MainViewModel: {ex}");
+            (Application.Current as App)?.AppendErrorLog("MainWindow_Closed", $"{ex}");
+            (Application.Current as App)?.SaveErrorLog();
+        }
     }
 
 }

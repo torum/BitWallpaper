@@ -42,6 +42,7 @@ public sealed partial class ShellPage : Page
         ("settings", typeof(SettingsPage)),
     ];
 
+    private MainWindow? _mainWindow;
     private readonly INavigationService _navigationService;
     private static readonly SemaphoreSlim _asyncLock = new SemaphoreSlim(1, 1);
 
@@ -55,14 +56,21 @@ public sealed partial class ShellPage : Page
         _navigationService.Initialize(NavigationFrame, _pages.ToDictionary(p => p.Tag, p => p.Page));
 
         this.Loaded += ShellPage_Loaded;
+        this.Unloaded += ShellPage_Unloaded;
+    }
+
+    private void ShellPage_Unloaded(object sender, RoutedEventArgs e)
+    {
+
+        this.Loaded -= ShellPage_Loaded;
+
+        _mainWindow?.Activated -= MainWindow_Activated;
     }
 
     public MainViewModel ViewModel { get; }
 
     private async void ShellPage_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
-        this.Loaded -= ShellPage_Loaded;
-
         try
         {
             //_ = RunSafeAsync(ViewModel.InitializeAndStartAsync, nameof(ViewModel.InitializeAndStartAsync));
@@ -107,13 +115,35 @@ public sealed partial class ShellPage : Page
         }
     }
 
-    public void Initialize(Microsoft.UI.Xaml.Window window)
+    public void Initialize(MainWindow window)
     {
         // Perform any initialization logic here
 
         window.SetTitleBar(AppTitleBar);
+
+        _mainWindow = window;
+        _mainWindow?.Activated += MainWindow_Activated;
     }
 
+    private void MainWindow_Activated(object sender, Microsoft.UI.Xaml.WindowActivatedEventArgs args)
+    {
+        var compositor = Microsoft.UI.Xaml.Media.CompositionTarget.GetCompositorForCurrentThread();
+        var visual = Microsoft.UI.Xaml.Hosting.ElementCompositionPreview.GetElementVisual(AppTitle);
+
+        var animation = compositor.CreateScalarKeyFrameAnimation();
+        if (args.WindowActivationState != WindowActivationState.CodeActivated)
+        {
+            animation.InsertKeyFrame(0f, 1f); // Start opacity
+            animation.InsertKeyFrame(1f, 0.5f); // End opacity
+        }
+        else
+        {
+            animation.InsertKeyFrame(0f, 0.5f); // Start opacity
+            animation.InsertKeyFrame(1f, 1f); // End opacity
+        }
+        animation.Duration = TimeSpan.FromMilliseconds(600);
+        visual.StartAnimation("Opacity", animation);
+    }
 
     private async void NavigationViewControl_Loaded(object sender, RoutedEventArgs e)
     {

@@ -18,7 +18,7 @@ using System.Runtime.Intrinsics.Arm;
 
 namespace BitWallpaper.ViewModels;
 
-public partial class PairViewModel : ObservableObject
+public partial class PairViewModel : ObservableObject, IDisposable
 {
     private DateTime lastChartLoadedDateTime = DateTime.MinValue;
     public event EventHandler<bool>? DepthScrollCenter;
@@ -1609,9 +1609,12 @@ public partial class PairViewModel : ObservableObject
     // Called from MainViewModel.
     public async Task UpdateDepthDataAsync(BitbankDepthData data)
     {
-        if (!IsSelectedActive || !IsPaneOpen || !IsEnabled)
+        if (!IsSelectedActive || !IsEnabled)
         {
-            Debug.WriteLine($"UpdateDepthDataAsync() skipped for {PairCode} because IsSelectedActive={IsSelectedActive}, IsPaneOpen={IsPaneOpen}, IsEnabled={IsEnabled}");
+            // Let's update even if the pane is not open.
+            // || !IsPaneOpen 
+            Debug.WriteLine($"UpdateDepthDataAsync() skipped for {PairCode} because IsSelectedActive={IsSelectedActive}, IsEnabled={IsEnabled}");
+            return;
         }
 
         if (data.DepthPair != PairCode)
@@ -1674,6 +1677,14 @@ public partial class PairViewModel : ObservableObject
                 Debug.WriteLine($"UpdateDepthDataAsync() exception for {PairCode}: {ex}");
             }
         });
+    }
+
+    public void Dispose()
+    {
+        _dispatcherTimerChart.Stop();
+        _dispatcherTimerChart.Tick -= OnTimerChart;
+
+        // TODO: Dispose other resources if necessary
     }
 
     #endregion
@@ -2375,9 +2386,11 @@ public partial class PairViewModel : ObservableObject
 
     private void UpdateDepth(DepthResult dpr)
     {
-        if (!IsSelectedActive || !IsPaneOpen || !IsEnabled)
+        if (!IsSelectedActive|| !IsEnabled)
         {
-            Debug.WriteLine($"UpdateDepth() skipped for {PairCode} because IsSelectedActive={IsSelectedActive}, IsPaneOpen={IsPaneOpen}, IsEnabled={IsEnabled}");
+            // || !IsPaneOpen 
+            Debug.WriteLine($"UpdateDepth() skipped for {PairCode} because IsSelectedActive={IsSelectedActive}, IsEnabled={IsEnabled}");
+            return;
         }
 
         // まとめグルーピング単位 

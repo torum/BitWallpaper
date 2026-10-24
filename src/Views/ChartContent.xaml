@@ -147,13 +147,13 @@
                                     ZoomMode="X">
 
                 </lvc:CartesianChart>
-                <Border HorizontalAlignment="Left" VerticalAlignment="Top" Margin="8" Padding="8,4" CornerRadius="4" Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1">
+                <Border x:Name="FloatingBorder" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="8" Padding="8,4" CornerRadius="4" Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1">
                     <StackPanel>
                         <StackPanel x:Name="SecondaryTitle" Grid.Row="0" Grid.Column="0" Margin="4,0,0,0">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Margin="6,12,6,0" Text="{x:Bind Path=PairVM.PairString, Mode=OneWay}" FontSize="{StaticResource LargeFontSize}" Style="{StaticResource BaseTextBlockStyle}"/>
-                                <TextBlock Margin="6,12,6,0" Text="{x:Bind Mode=OneWay, Path=PairVM.LtpString}" FontSize="{StaticResource LargeFontSize}" Style="{StaticResource BaseTextBlockStyle}"/>
-                                <TextBlock Margin="6,12,6,0" Text="{x:Bind PairVM.PercentChange, Mode=OneWay}" FontSize="{StaticResource LargeFontSize}" Style="{StaticResource BaseTextBlockStyle}"/>
+                                <TextBlock Margin="6,12,6,0" Text="{x:Bind Mode=OneWay, Path=PairVM.LtpString}" FontWeight="Bold" FontSize="{StaticResource LargeFontSize}" Style="{StaticResource BaseTextBlockStyle}"/>
+                                <TextBlock Margin="6,12,6,0" Text="{x:Bind PairVM.PercentChange, Mode=OneWay}" Opacity="{StaticResource CustumTextOpacity}" FontSize="{StaticResource LargeFontSize}" Style="{StaticResource BaseTextBlockStyle}"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="6,6,6,0">
                             </StackPanel>
@@ -200,7 +200,7 @@
                                     </MenuFlyout>
                                 </AppBarButton.Flyout>
                             </AppBarButton>
-                            <AppBarButton Label="{x:Bind PairVM.AlarmLabel, Mode=OneWay}" IsCompact="False" Margin="0" Padding="0" Opacity="1" Click="AppBarButton_Click">
+                            <AppBarButton Label="{x:Bind PairVM.AlarmLabel, Mode=OneWay}" IsCompact="False" Margin="0" Padding="0" Opacity="1" Click="AppBarButton_Click" Visibility="Collapsed">
                                 <AppBarButton.Icon>
                                     <PathIcon>
                                         <PathIcon.Data>
@@ -216,7 +216,6 @@
                             </AppBarButton>
 
                         </StackPanel>
-
                     </StackPanel>
                 </Border>
             </Grid>
@@ -226,11 +225,23 @@
             <VisualStateGroup>
                 <VisualState>
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="2000" />
+                        <AdaptiveTrigger MinWindowWidth="648" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
+                        <Setter Target="FloatingBorder.Margin" Value="8"/>
                         <!--
                         <Setter Target="SplitViewControl.IsPaneOpen" Value="True"/>
+                        -->
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="550" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="FloatingBorder.Margin" Value="8,48"/>
+                        <!--
+                        <Setter Target="SplitViewControl.IsPaneOpen" Value="False"/>
                         -->
                     </VisualState.Setters>
                 </VisualState>
@@ -239,6 +250,18 @@
                         <AdaptiveTrigger MinWindowWidth="1" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
+                        <Setter Target="FloatingBorder.Margin" Value="8,48"/>
+                        <!--
+                        <Setter Target="SplitViewControl.IsPaneOpen" Value="False"/>
+                        -->
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="FloatingBorder.Margin" Value="8"/>
                         <!--
                         <Setter Target="SplitViewControl.IsPaneOpen" Value="False"/>
                         -->

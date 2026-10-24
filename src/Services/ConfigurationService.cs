@@ -1,8 +1,11 @@
-﻿using Microsoft.UI.Windowing;
-using Microsoft.UI.Xaml;
-using BitWallpaper.Models;
+﻿using BitWallpaper.Models;
 using BitWallpaper.Services.Contracts;
+using BitWallpaper.ViewModels;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
 using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -33,7 +36,8 @@ public sealed class ConfigurationService : IConfigurationService
     private bool _isInitialized;
     private bool _isConfigLoaded;
     private string? _configFilePath = string.Empty;
-    private XDocument? _xdoc;
+    private XDocument? _xDoc;
+    private XElement? _xPairs;
     private readonly IDispatcherService _dispatcherService;
 
     public ConfigurationService(IDispatcherService dispatcherService)
@@ -45,13 +49,15 @@ public sealed class ConfigurationService : IConfigurationService
     }
 
     public Models.Configuration CurrentConfiguration { get; private set; }
+    public string ConfigFilePath => _configFilePath ?? string.Empty;
 
     public void Initialize(string configFilePath)
     {
         _configFilePath = configFilePath;
         _isConfigLoaded = false;
         CurrentConfiguration = new Models.Configuration();
-        _xdoc = null;
+        _xDoc = null;
+        _xPairs = null;
         _isInitialized = true;
 
         var folderPath = Path.GetDirectoryName(configFilePath);
@@ -96,8 +102,8 @@ public sealed class ConfigurationService : IConfigurationService
 
         try
         {
-            _xdoc = XDocument.Load(_configFilePath);
-            if (_xdoc.Root is null)
+            _xDoc = XDocument.Load(_configFilePath);
+            if (_xDoc.Root is null)
             {
                 return config;
             }
@@ -105,7 +111,7 @@ public sealed class ConfigurationService : IConfigurationService
             #region == Window setting ==
             
             // Main Window element
-            var mainWindow = _xdoc.Root.Element("MainWindow");
+            var mainWindow = _xDoc.Root.Element("MainWindow");
             if (mainWindow is not null)
             {
                 int wY = 24;
@@ -247,7 +253,7 @@ public sealed class ConfigurationService : IConfigurationService
 
             #region == Theme ==
 
-            var opts = _xdoc.Root.Element("Theme");
+            var opts = _xDoc.Root.Element("Theme");
             if (opts != null)
             {
                 // Old name. Leave it for backward compatibility.
@@ -309,7 +315,7 @@ public sealed class ConfigurationService : IConfigurationService
             #region == Options ==
 
             // TODO: Change to "Options" in the future, but keep "Opts" for backward compatibility.
-            opts = _xdoc.Root.Element("Opts");
+            opts = _xDoc.Root.Element("Opts");
             if (opts is not null)
             {
                 var attrs = opts.Attribute("IsSaveLog");
@@ -729,8 +735,11 @@ public sealed class ConfigurationService : IConfigurationService
                 }
 
             }
-            
+
             #endregion
+
+            // Save lator to be retrieved by GetPairs() method.
+            _xPairs = _xDoc.Root.Element("Pairs");
 
             _isConfigLoaded = true;
         }
@@ -745,7 +754,161 @@ public sealed class ConfigurationService : IConfigurationService
         return CurrentConfiguration;
     }
 
-    public async Task SaveConfigurationAsync()
+    public void GetPairs(ObservableCollection<PairViewModel> pairs)
+    {
+        // Each Pairs
+        if (_xPairs == null)
+        {
+            return;
+        }
+
+        var pairList = _xPairs.Elements("Pair");
+
+        foreach (var hoge in pairList)
+        {
+            if (hoge is not XElement element)
+                continue;
+
+            var xvalue = element.Attribute("PairCode");
+            if (xvalue == null)
+            {
+                continue;
+            }
+            if (string.IsNullOrEmpty(xvalue.Value))
+            {
+                continue;
+            }
+
+            try
+            {
+                var pair = pairs.FirstOrDefault(x => x.PairCode.ToString() == xvalue.Value);
+                if (pair is not null)
+                {
+                    // TODO:
+                    //pair.IsChartTooltipVisible = MainVM.IsChartTooltipVisible;
+
+                    var attrv = hoge.Attribute("IsEnabled");
+                    if (attrv != null)
+                    {
+                        if (!string.IsNullOrEmpty(attrv.Value))
+                        {
+                            pair.IsEnabled = attrv.Value == "True";
+                        }
+                    }
+
+                    attrv = hoge.Attribute("IsPaneOpen");
+                    if (attrv != null)
+                    {
+                        if (!string.IsNullOrEmpty(attrv.Value))
+                        {
+                            pair.IsPaneOpen = attrv.Value == "True";
+                        }
+                    }
+
+                    attrv = hoge.Attribute("CandleType");
+                    if (attrv != null)
+                    {
+                        if (!string.IsNullOrEmpty(attrv.Value))
+                        {
+                            var candleTypeString = attrv.Value;
+
+                            if (candleTypeString == "OneMin")
+                            {
+                                pair.SelectedCandleType = CandleTypes.OneMin;
+                            }
+                            else if (candleTypeString == "FiveMin")
+                            {
+                                pair.SelectedCandleType = CandleTypes.FiveMin;
+                            }
+                            else if (candleTypeString == "FifteenMin")
+                            {
+                                pair.SelectedCandleType = CandleTypes.FifteenMin;
+                            }
+                            else if (candleTypeString == "ThirtyMin")
+                            {
+                                pair.SelectedCandleType = CandleTypes.ThirtyMin;
+                            }
+                            else if (candleTypeString == "OneHour")
+                            {
+                                pair.SelectedCandleType = CandleTypes.OneHour;
+                            }
+                            else if (candleTypeString == "FourHour")
+                            {
+                                pair.SelectedCandleType = CandleTypes.FourHour;
+                            }
+                            else if (candleTypeString == "EightHour")
+                            {
+                                pair.SelectedCandleType = CandleTypes.EightHour;
+                            }
+                            else if (candleTypeString == "TwelveHour")
+                            {
+                                pair.SelectedCandleType = CandleTypes.TwelveHour;
+                            }
+                            else if (candleTypeString == "OneDay")
+                            {
+                                pair.SelectedCandleType = CandleTypes.OneDay;
+                            }
+                            else if (candleTypeString == "OneWeek")
+                            {
+                                pair.SelectedCandleType = CandleTypes.OneWeek;
+                            }
+                            else if (candleTypeString == "OneMonth")
+                            {
+                                pair.SelectedCandleType = CandleTypes.OneMonth;
+                            }
+                        }
+                    }
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception@GetPairs: {ex}");
+                _dispatcherService.TryEnqueue(() =>
+                {
+                    (App.Current as App)?.AppendErrorLog("Exception@GetPairs", ex.ToString());
+                });
+            }
+        }
+    }
+
+    private static XmlElement SetPairs(ObservableCollection<PairViewModel> pairs, XmlDocument doc)
+    {
+        // Each pairs
+        var xPairs = doc.CreateElement(string.Empty, "Pairs", string.Empty);
+        foreach (var hoge in pairs)
+        {
+            var xPair = doc.CreateElement(string.Empty, "Pair", string.Empty);
+
+            var xAttrs = doc.CreateAttribute("PairCode");
+            xAttrs.Value = hoge.PairCode.ToString();
+            xPair.SetAttributeNode(xAttrs);
+
+            xAttrs = doc.CreateAttribute("IsEnabled");
+            xAttrs.Value = hoge.IsEnabled.ToString();
+            xPair.SetAttributeNode(xAttrs);
+
+            xAttrs = doc.CreateAttribute("IsPaneOpen");
+            xAttrs.Value = hoge.IsPaneOpen.ToString();
+            xPair.SetAttributeNode(xAttrs);
+
+            xAttrs = doc.CreateAttribute("CandleType");
+            xAttrs.Value = hoge.SelectedCandleType.ToString();
+            xPair.SetAttributeNode(xAttrs);
+
+            xAttrs = doc.CreateAttribute("IsChartTooltipVisible");
+            xAttrs.Value = "";// TODO:
+            xPair.SetAttributeNode(xAttrs);
+
+            xPairs.AppendChild(xPair);
+
+        }
+        
+        return xPairs;
+    }
+
+    public async Task SaveConfigurationAsync(ObservableCollection<PairViewModel> pairs)
     {
         if (!_isInitialized)
         {
@@ -766,7 +929,7 @@ public sealed class ConfigurationService : IConfigurationService
         Debug.WriteLine("SaveConfigurationAsync()");
 
         // TODO: Load xdoc from global variable if exists, and apply changes to it, then save it back to file.
-        //_xdoc
+        //_xDoc
 
         var config = CurrentConfiguration;
 
@@ -984,6 +1147,10 @@ public sealed class ConfigurationService : IConfigurationService
 
         #endregion
 
+        // Each pairs
+        var xPairs = SetPairs(pairs, doc);
+        root.AppendChild(xPairs);
+
         try
         {
             // Now this is redundant, because we already create the directory in Initialize() method.
@@ -1000,6 +1167,7 @@ public sealed class ConfigurationService : IConfigurationService
         //catch (System.IO.FileNotFoundException) { }
         catch (Exception ex)
         {
+            Debug.WriteLine($"Exception@SaveConfigurationAsync: {ex}");
             _dispatcherService.TryEnqueue(() =>
             {
                 (App.Current as App)?.AppendErrorLog("Exception@SaveConfigurationAsync", ex.ToString());

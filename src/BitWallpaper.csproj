@@ -14,6 +14,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
+	  <AssemblyVersion>2.1.0.0</AssemblyVersion>
+
 	  <WindowsPackageType>None</WindowsPackageType>
 	  <EnableMsixTooling>false</EnableMsixTooling>
 	  <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
@@ -38,7 +40,6 @@
 	  <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	  
   </PropertyGroup>
-
 
   <ItemGroup>
     <Manifest Include="$(ApplicationManifest)" />
