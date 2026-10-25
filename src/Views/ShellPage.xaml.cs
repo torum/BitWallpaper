@@ -73,6 +73,8 @@ public sealed partial class ShellPage : Page
     {
         try
         {
+            await Task.Yield();
+
             //_ = RunSafeAsync(ViewModel.InitializeAndStartAsync, nameof(ViewModel.InitializeAndStartAsync));
             await ViewModel.InitializeAndStartAsync();
 
@@ -86,6 +88,8 @@ public sealed partial class ShellPage : Page
                 if (NavigationFrame.Navigate(page, pairViewModel))
                 {
                     NavigationViewControl.SelectedItem = NavigationViewControl.MenuItems.OfType<NavigationViewItem>().Where(x => x.Tag?.ToString()?.Equals(pairViewModel.PairCode.ToString()) == true).FirstOrDefault();//.First();
+
+                    await Task.Yield();
 
                     //_ = RunSafeAsync(() => ViewModel.SetSelectedPairFromCodeAsync(pairViewModel.PairCode), nameof(ViewModel.SetSelectedPairFromCodeAsync));
                     await ViewModel.SetSelectedPairFromCodeAsync(pairViewModel.PairCode);

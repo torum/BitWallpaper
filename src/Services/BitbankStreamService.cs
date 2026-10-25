@@ -1,5 +1,6 @@
 ﻿using BitWallpaper.Models;
 using BitWallpaper.Services.Contracts;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using SocketIOClient;
 using SocketIOClient.Common;
 using System.Text.Json;
@@ -11,6 +12,7 @@ namespace BitWallpaper.Services;
 [JsonSerializable(typeof(BitbankDepthRoot))]
 //[JsonSerializable(typeof(BitbankTransactionsRoot))] 
 [JsonSerializable(typeof(JsonElement?))]
+[JsonSerializable(typeof(JsonDocument))]
 [JsonSerializable(typeof(string))] // Primitive types if needed
 [JsonSerializable(typeof(object[]))] // This tells the AOT source generator how to handle outgoing event payloads.
 [JsonSerializable(typeof(PairCodes))]
@@ -89,10 +91,9 @@ public class BitbankStreamService : IBitbankStreamService
 
         _client.On("message", response =>
         {
+            // Another way. Both are valid and not safe for AOT.
+            
             string rawJsonArray = response.RawText ?? string.Empty;
-
-            if (string.IsNullOrEmpty(rawJsonArray)) return Task.CompletedTask;
-
             // Parse the text directly into a DOM Document (100% Native AOT safe)
             using var document = JsonDocument.Parse(rawJsonArray);
             JsonElement rootArray = document.RootElement;

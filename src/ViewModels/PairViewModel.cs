@@ -45,18 +45,12 @@ public partial class PairViewModel : ObservableObject, IDisposable
         _depthGrouping100 = grouping100;
         _depthGrouping1000 = grouping1000;
 
-        // Temp testing.
-        //_ = ChangeCandleType(CandleTypes.OneHour);
-
         IsChartTooltipVisible = false;
 
         // Chart update timer
         _dispatcherTimerChart.Tick += OnTimerChart;
         _dispatcherTimerChart.Interval = chartUpdateInterval;  // Temp testing. new(0, 5, 0);
         _dispatcherTimerChart.Start(); // Testing without updating the chart.. using ticker as we go.
-
-        //_bitbankStreamService
-
     }
 
     #region == Properties ==
@@ -1626,11 +1620,9 @@ public partial class PairViewModel : ObservableObject, IDisposable
     // Called from MainViewModel.
     public async Task UpdateDepthDataAsync(BitbankDepthData data)
     {
-        if (!IsSelectedActive || !IsEnabled)
+        if (!IsSelectedActive || !IsEnabled || !IsPaneOpen)
         {
-            // Let's update even if the pane is not open.
-            // || !IsPaneOpen 
-            Debug.WriteLine($"UpdateDepthDataAsync() skipped for {PairCode} because IsSelectedActive={IsSelectedActive}, IsEnabled={IsEnabled}");
+            Debug.WriteLine($"UpdateDepthDataAsync() skipped for {PairCode} because IsSelectedActive={IsSelectedActive}, IsEnabled={IsEnabled}, IsPaneOpen={IsPaneOpen}");
             return;
         }
 
@@ -2436,10 +2428,9 @@ public partial class PairViewModel : ObservableObject, IDisposable
 
     private void UpdateDepth(DepthResult dpr)
     {
-        if (!IsSelectedActive|| !IsEnabled)
+        if (!IsSelectedActive|| !IsEnabled || !IsPaneOpen)
         {
-            // || !IsPaneOpen 
-            Debug.WriteLine($"UpdateDepth() skipped for {PairCode} because IsSelectedActive={IsSelectedActive}, IsEnabled={IsEnabled}");
+            Debug.WriteLine($"UpdateDepth() skipped for {PairCode} because IsSelectedActive={IsSelectedActive}, IsEnabled={IsEnabled}, IsPaneOpen={IsPaneOpen}");
             return;
         }
 
