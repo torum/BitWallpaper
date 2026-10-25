@@ -344,7 +344,7 @@ public partial class PairViewModel : ObservableObject, IDisposable
             _isSelectedActive = value;
             OnPropertyChanged(nameof(IsSelectedActive));
 
-            if (_isSelectedActive)
+            if (_isSelectedActive && _isPaneOpen)
             {
                 _bitbankStreamService.JoinDepthRoomAsync(_p);
             }
@@ -384,6 +384,15 @@ public partial class PairViewModel : ObservableObject, IDisposable
 
             _isPaneOpen = value;
             OnPropertyChanged(nameof(IsPaneOpen));
+
+            if (_isPaneOpen)
+            {
+                _bitbankStreamService.JoinDepthRoomAsync(_p);
+            }
+            else
+            {
+                _bitbankStreamService.LeaveDepthRoomAsync(_p);
+            }
         }
     }
 

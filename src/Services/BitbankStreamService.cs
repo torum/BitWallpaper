@@ -392,6 +392,12 @@ public class BitbankStreamService : IBitbankStreamService
 
         if (string.IsNullOrWhiteSpace(pairCode.ToString())) return;
 
+        if (_depthRoom.Equals($"depth_whole_{pairCode.ToString().ToLower()}", StringComparison.OrdinalIgnoreCase)) 
+        { 
+            Debug.WriteLine($"--> Already joined depth room: {_depthRoom}. No action taken.");
+            return; 
+        }
+
         if (!string.IsNullOrWhiteSpace(_depthRoom))
         {
             Debug.WriteLine($"--> Already joined depth room: {_depthRoom}. Leaving it first...");
