@@ -15,34 +15,58 @@
     <Nullable>enable</Nullable>
 
 	  <AssemblyVersion>2.1.0.0</AssemblyVersion>
-
-	  <WindowsPackageType>None</WindowsPackageType>
+	  
+	  <!-- always -->
+	  <SelfContained>true</SelfContained>
 	  <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 
 
+	  <!-- Unpackaged Debug Developing -->
+	  <WindowsPackageType>None</WindowsPackageType>
 	  <EnableMsixTooling>false</EnableMsixTooling>
-	  <!--
-	  <PublishAot>true</PublishAot>
-	  <AppxPackageIncludePrivateSymbols>true</AppxPackageIncludePrivateSymbols>
-	  <NativeDebugSymbols>true</NativeDebugSymbols>
-	  <StripSymbols>false</StripSymbols>
-	  <DebugType>full</DebugType>
-	  -->
-
-	  <IsAotCompatible>true</IsAotCompatible>
+	  
+	  <!-- SocketIOClient is not compatible with Native AOT -->
+	  <IsAotCompatible>false</IsAotCompatible>
+	  <PublishTrimmed>false</PublishTrimmed>
 	  <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
 	  <TrimmerSingleWarn>false</TrimmerSingleWarn>
 	  <Optimize>true</Optimize>
-	  <TrimMode>partial</TrimMode>
-	  <IsTrimmable>true</IsTrimmable>
+	  <IsTrimmable>false</IsTrimmable>
 
 	  <CsWinRTAotWarningLevel>3</CsWinRTAotWarningLevel>
 
-	  <!-- Code quality
-      <AnalysisLevel>latest-recommended</AnalysisLevel> -->
-	  <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	  <!-- Release Publish Packaging 
+	  <WindowsPackageType>MSIX</WindowsPackageType>
+	  <AppxPackage>true</AppxPackage>
+	  <EnableMsixTooling>true</EnableMsixTooling>
+	  <AppxPackageDir>AppPackages\</AppxPackageDir>
+	  <AppxBundle>Never</AppxBundle>
+	  <AppxBundlePlatforms>x64|arm64</AppxBundlePlatforms>
+	  <GenerateTestArtifacts>True</GenerateTestArtifacts>
+	  <IncludeSymbols>True</IncludeSymbols>
+	  <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	  <AppxPackageIncludePrivateSymbols>true</AppxPackageIncludePrivateSymbols>
+	  <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+	  <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
+	  <StripSymbols>false</StripSymbols>
+	  -->
 	  
+	  <!-- Unpackaged SingleFile SelfContained Release Publish 
+	  <WindowsPackageType>None</WindowsPackageType>
+	  <AppxPackage>false</AppxPackage>
+	  <EnableMsixTooling>true</EnableMsixTooling>
+	  <PublishSingleFile>true</PublishSingleFile>
+	  <IncludeNativeLibrariesForSelfContained>true</IncludeNativeLibrariesForSelfContained>
+-->
+
   </PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+		<!-- Code quality
+      <AnalysisLevel>latest-recommended</AnalysisLevel> -->
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+	</PropertyGroup>
 
   <ItemGroup>
     <Manifest Include="$(ApplicationManifest)" />
@@ -105,6 +129,78 @@
     <Content Update="Assets\BitWallpaper.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Update="Assets\CryptLogos\ada.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\astr.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\avax.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\axs.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\bat.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\bcc.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\boba.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\btc.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\doge.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\dot.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\enj.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\eth.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\flr.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\link.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\ltc.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\matic.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\mkr.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\mona.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\omg.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\qtum.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\sand.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\xlm.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\xrp.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\CryptLogos\xym.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">
@@ -130,7 +226,6 @@
 	<PublishTrimmed Condition="'$(Configuration)' == 'Debug'">False</PublishTrimmed>
 	<PublishTrimmed Condition="'$(Configuration)' != 'Debug'">True</PublishTrimmed>
 	-->
-	<PublishTrimmed>True</PublishTrimmed>
 	<ApplicationIcon>Assets\BitWallpaper.ico</ApplicationIcon>
 </PropertyGroup>
 </Project>

@@ -2066,14 +2066,17 @@ public partial class MainViewModel : ObservableObject, IDisposable
             {
                 if (pairViewModel.Ltp >= pairViewModel.AlarmPlus)
                 {
-                    pairViewModel.HighLowInfoTextColorFlag = true;
-                    pairViewModel.HighLowInfoText = pairViewModel.PairString + "Alarm";
+                    _dispatcherService.TryEnqueue(() =>
+                    {
+                        pairViewModel.HighLowInfoTextColorFlag = true;
+                        pairViewModel.HighLowInfoText = pairViewModel.PairString + "Alarm";
 
-                    ShowBalloonEventArgs ag = new((pairViewModel.PairString + " High Price Alarm"), pairViewModel.AlarmPlusString);
+                        ShowBalloonEventArgs ag = new((pairViewModel.PairString + " High Price Alarm"), pairViewModel.AlarmPlusString);
 
-                    pairViewModel.AlarmPlus = 0;
+                        pairViewModel.AlarmPlus = 0;
 
-                    ShowBalloon?.Invoke(this, ag);
+                        ShowBalloon?.Invoke(this, ag);
+                    });
                 }
             }
 
@@ -2081,14 +2084,17 @@ public partial class MainViewModel : ObservableObject, IDisposable
             {
                 if (pairViewModel.Ltp <= pairViewModel.AlarmMinus)
                 {
-                    pairViewModel.HighLowInfoTextColorFlag = false;
-                    pairViewModel.HighLowInfoText = pairViewModel.PairString + "Alarm";
+                    _dispatcherService.TryEnqueue(() =>
+                    {
+                        pairViewModel.HighLowInfoTextColorFlag = false;
+                        pairViewModel.HighLowInfoText = pairViewModel.PairString + "Alarm";
 
-                    ShowBalloonEventArgs ag = new(pairViewModel.PairString + " Low Price Alarm", pairViewModel.AlarmMinusString);
+                        ShowBalloonEventArgs ag = new(pairViewModel.PairString + " Low Price Alarm", pairViewModel.AlarmMinusString);
 
-                    pairViewModel.AlarmMinus = 0;
+                        pairViewModel.AlarmMinus = 0;
 
-                    ShowBalloon?.Invoke(this, ag);
+                        ShowBalloon?.Invoke(this, ag);
+                    });
                 }
             }
 
@@ -2174,15 +2180,28 @@ public partial class MainViewModel : ObservableObject, IDisposable
             return;
         }
 
-        // https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/notifications/app-notifications/app-notifications-quickstart?tabs=cs
-        var appNotification = new AppNotificationBuilder().AddText(arg.Title).AddText(arg.Text).SetTimeStamp(new DateTime(2017, 04, 15, 19, 45, 00, DateTimeKind.Utc)).BuildNotification();
+        _dispatcherService.TryEnqueue(() =>
+        {
+            try
+            {
+                Debug.WriteLine($"Showing notification: Title='{arg.Title}', Text='{arg.Text}'");
 
-        //.AddButton(new AppNotificationButton("OK")
-        //.AddArgument("action", "dissmiss"))
-        //.SetTimeStamp(new DateTime(2017, 04, 15, 19, 45, 00, DateTimeKind.Utc));
+                // https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/notifications/app-notifications/app-notifications-quickstart?tabs=cs
+                var appNotification = new AppNotificationBuilder().AddText(arg.Title).AddText(arg.Text).SetTimeStamp(DateTime.Now).BuildNotification();
 
-        //.SetScenario(AppNotificationScenario.Alarm)
-        AppNotificationManager.Default.Show(appNotification);
+                //.AddButton(new AppNotificationButton("OK")
+                //.AddArgument("action", "dissmiss"))
+                //.SetTimeStamp(new DateTime(2017, 04, 15, 19, 45, 00, DateTimeKind.Utc));
+
+                //.SetScenario(AppNotificationScenario.Alarm)
+                AppNotificationManager.Default.Show(appNotification);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error while showing notification: {ex}");
+            }
+
+        });
     }
 
 }

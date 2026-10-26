@@ -1,0 +1,37 @@
+* Edit the app version number in the source.
+* Edit the app version number in the Package.appxmanifest.
+* Edit project source code so that the source can be compiled as packaged app.
+
+
+(A) Create package bundle file for Microsoft store.
+-------
+dotnet publish BitWallpaper.csproj -c Release -r win-x64 -p:RuntimeIdentifierOverride=win-x64 -p:PublishAppxPackage=true /p:AppxPackageIncludePrivateSymbols=true -p:WindowsAppSDKSelfContained=true -p:WindowsPackageType=MSIX --self-contained true
+
+dotnet publish BitWallpaper.csproj -c Release -r win-arm64 -p:RuntimeIdentifierOverride=win-arm64 -p:PublishAppxPackage=true /p:AppxPackageIncludePrivateSymbols=true -p:WindowsAppSDKSelfContained=true -p:WindowsPackageType=MSIX --self-contained true
+-------
+
+
+
+Create MSIX and Output folder inside AppPackages folder.
+Put msix files into "AppPackages\MSIX" folder.
+Put .appxsym or .msixsym files (optional but recommended for debugging) into the Output folder
+
+-------
+cd "C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\"
+
+./makeappx.exe bundle /d "C:\Users\torum\Source\Repos\BitWallpaper\src\AppPackages\MSIX" /p "C:\Users\torum\Source\Repos\BitWallpaper\src\AppPackages\Output\BitWallpaper_0.0.0.0_x64_arm64_bundle.msixbundle"
+-------
+
+Put .msixbundle into the Output folder along with the  .appxsym or .msixsym files (optional but recommended for debugging)
+Change file name of .msixbundle according to the version.
+Select those files and zip it (don't zip the folder).
+Rename and change file extension to MPDCtrl_0.0.0.0_x64_arm64_bundle.msixupload
+
+=======
+
+(B) Unpackaged single self-contained exe file.
+----
+dotnet publish BitWallpaper.csproj -c Release -r win-x64 -p:WindowsPackageType=None -p:WindowsAppSDKSelfContained=true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfContained=true --self-contained true
+
+
+----

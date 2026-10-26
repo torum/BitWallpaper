@@ -16,7 +16,7 @@ namespace BitWallpaper.Services;
 [JsonSerializable(typeof(string))] // Primitive types if needed
 [JsonSerializable(typeof(object[]))] // This tells the AOT source generator how to handle outgoing event payloads.
 [JsonSerializable(typeof(PairCodes))]
-internal partial class BitbankJsonContext : JsonSerializerContext {}
+internal partial class BitbankJsonContext : JsonSerializerContext { }
 
 public class BitbankStreamService : IBitbankStreamService
 {
@@ -165,6 +165,8 @@ public class BitbankStreamService : IBitbankStreamService
                 return Task.CompletedTask;
             }
 
+            return Task.CompletedTask;
+
             // Another way. Both are valid and not safe for AOT. 
             /*
             var element = response.GetValue<System.Text.Json.JsonElement?>(0);
@@ -212,13 +214,14 @@ public class BitbankStreamService : IBitbankStreamService
                 Debug.WriteLine($"--> Received data for an unhandled room: {roomName}");
                 return Task.CompletedTask;
             }
-            */
+            
             return Task.CompletedTask;
+            */
         });
 
         try
         {
-            await _client.ConnectAsync();
+            await _client.ConnectAsync(CancellationToken.None);
         }
         catch (Exception ex)
         {
