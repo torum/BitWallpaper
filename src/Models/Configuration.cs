@@ -33,8 +33,8 @@ public class Configuration
     public bool IsSaveLog { get; set; } = false;
 
     public bool IsOnBtcJpy { get; set; } = true;
-    public bool IsOnXrpJpy { get; set; } = true;
-    public bool IsOnEthJpy { get; set; } = true;
+    public bool IsOnXrpJpy { get; set; } = false;
+    public bool IsOnEthJpy { get; set; } = false;
 
 
     public bool IsOnLtcJpy { get; set; } = false;

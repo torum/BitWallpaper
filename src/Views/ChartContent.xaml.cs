@@ -1,4 +1,5 @@
 using BitWallpaper.ViewModels;
+using BitWallpaper.Views.Dialogs;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Automation.Provider;
@@ -118,7 +119,6 @@ public sealed partial class ChartContent : UserControl
         {
             return;
         }
-        /*
         ContentDialogContent dialog = new();
 
         if (PairVM.AlarmPlus > 0)
@@ -133,7 +133,7 @@ public sealed partial class ChartContent : UserControl
 
         // XamlRoot must be set in the case of a ContentDialog running in a Desktop app
         dialog.XamlRoot = XamlRoot;
-        dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
+        //dialog.Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style;
         dialog.Title = "Notification";
         dialog.PrimaryButtonText = "Set";
         dialog.CloseButtonText = "Cancel";
@@ -147,7 +147,6 @@ public sealed partial class ChartContent : UserControl
             PairVM.AlarmPlus = dialog.HighPrice;
             PairVM.AlarmMinus = dialog.LowPrice;
         }
-        */
     }
 
     private void DepthListBox_DoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
