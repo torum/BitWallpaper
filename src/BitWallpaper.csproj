@@ -1,65 +1,64 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
-    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-    <RootNamespace>BitWallpaper</RootNamespace>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Platforms>x86;x64;ARM64</Platforms>
-    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-$([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture.ToString().ToLowerInvariant())</RuntimeIdentifier>
-    <PublishProfile Condition="Exists('Properties\PublishProfiles\win-$(Platform).pubxml')">win-$(Platform).pubxml</PublishProfile>
-    <UseWinUI>true</UseWinUI>
-    <WinUISDKReferences>false</WinUISDKReferences>
-    <EnableMsixTooling>true</EnableMsixTooling>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+		<TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+		<RootNamespace>BitWallpaper</RootNamespace>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<Platforms>x86;x64;ARM64</Platforms>
+		<RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-$([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture.ToString().ToLowerInvariant())</RuntimeIdentifier>
+		<PublishProfile Condition="Exists('Properties\PublishProfiles\win-$(Platform).pubxml')">win-$(Platform).pubxml</PublishProfile>
+		<UseWinUI>true</UseWinUI>
+		<WinUISDKReferences>false</WinUISDKReferences>
+		<EnableMsixTooling>true</EnableMsixTooling>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
 
-	  <AssemblyVersion>2.1.0.0</AssemblyVersion>
-	  
-	  <!-- always -->
-	  <SelfContained>true</SelfContained>
-	  <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+		<AssemblyVersion>2.1.0.0</AssemblyVersion>
 
+		<!-- always -->
+		<SelfContained>true</SelfContained>
+		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 
-	  <!-- Unpackaged Debug Developing -->
-	  <WindowsPackageType>None</WindowsPackageType>
-	  <EnableMsixTooling>false</EnableMsixTooling>
-	  
-	  <!-- SocketIOClient is not compatible with Native AOT -->
-	  <IsAotCompatible>false</IsAotCompatible>
-	  <PublishTrimmed>false</PublishTrimmed>
-	  <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
-	  <TrimmerSingleWarn>false</TrimmerSingleWarn>
-	  <Optimize>true</Optimize>
-	  <IsTrimmable>false</IsTrimmable>
+		<!-- Unpackaged Debug Developing
+		<WindowsPackageType>None</WindowsPackageType>
+		<EnableMsixTooling>false</EnableMsixTooling>
+	   -->
 
-	  <CsWinRTAotWarningLevel>3</CsWinRTAotWarningLevel>
+		<!-- SocketIOClient is not compatible with Native AOT -->
+		<IsAotCompatible>false</IsAotCompatible>
+		<PublishTrimmed>false</PublishTrimmed>
+		<SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
+		<TrimmerSingleWarn>false</TrimmerSingleWarn>
+		<Optimize>true</Optimize>
+		<IsTrimmable>false</IsTrimmable>
 
-	  <!-- Release Publish Packaging 
-	  <WindowsPackageType>MSIX</WindowsPackageType>
-	  <AppxPackage>true</AppxPackage>
-	  <EnableMsixTooling>true</EnableMsixTooling>
-	  <AppxPackageDir>AppPackages\</AppxPackageDir>
-	  <AppxBundle>Never</AppxBundle>
-	  <AppxBundlePlatforms>x64|arm64</AppxBundlePlatforms>
-	  <GenerateTestArtifacts>True</GenerateTestArtifacts>
-	  <IncludeSymbols>True</IncludeSymbols>
-	  <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-	  <AppxPackageIncludePrivateSymbols>true</AppxPackageIncludePrivateSymbols>
-	  <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
-	  <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
-	  <StripSymbols>false</StripSymbols>
-	  -->
-	  
-	  <!-- Unpackaged SingleFile SelfContained Release Publish 
-	  <WindowsPackageType>None</WindowsPackageType>
-	  <AppxPackage>false</AppxPackage>
-	  <EnableMsixTooling>true</EnableMsixTooling>
-	  <PublishSingleFile>true</PublishSingleFile>
-	  <IncludeNativeLibrariesForSelfContained>true</IncludeNativeLibrariesForSelfContained>
--->
+		<CsWinRTAotWarningLevel>3</CsWinRTAotWarningLevel>
 
-  </PropertyGroup>
+		<!-- Release Publish Packaging -->
+		<WindowsPackageType>MSIX</WindowsPackageType>
+		<AppxPackage>true</AppxPackage>
+		<EnableMsixTooling>true</EnableMsixTooling>
+		<AppxPackageDir>AppPackages\</AppxPackageDir>
+		<AppxBundle>Never</AppxBundle>
+		<AppxBundlePlatforms>x64|arm64</AppxBundlePlatforms>
+		<GenerateTestArtifacts>True</GenerateTestArtifacts>
+		<IncludeSymbols>True</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<AppxPackageIncludePrivateSymbols>true</AppxPackageIncludePrivateSymbols>
+		<GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+		<AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
+		<StripSymbols>false</StripSymbols>
+
+		<!-- Unpackaged SingleFile SelfContained Release Publish 
+		<WindowsPackageType>None</WindowsPackageType>
+		<AppxPackage>false</AppxPackage>
+		<EnableMsixTooling>true</EnableMsixTooling>
+		<PublishSingleFile>true</PublishSingleFile>
+		<IncludeNativeLibrariesForSelfContained>true</IncludeNativeLibrariesForSelfContained>
+		-->
+
+	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
 		<!-- Code quality
@@ -68,164 +67,164 @@
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 	</PropertyGroup>
 
-  <ItemGroup>
-    <Manifest Include="$(ApplicationManifest)" />
-  </ItemGroup>
+	<ItemGroup>
+		<Manifest Include="$(ApplicationManifest)" />
+	</ItemGroup>
 
-  <!--
+	<!--
     Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
     Tools extension to be activated for this project even if the Windows App SDK Nuget
     package has not yet been restored.
-  -->
-  <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
-    <ProjectCapability Include="Msix" />
-  </ItemGroup>
+    -->
+	<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+		<ProjectCapability Include="Msix" />
+	</ItemGroup>
 
-  <!--
+	<!--
     Microsoft.Windows.SDK.BuildTools.WinApp adds first-class support for
     `dotnet run` on packaged WinUI apps: it hooks the .NET CLI Run target to
     register a debug identity via the winapp CLI and launch the app with
     package identity (AUMID).
     Set <EnableWinAppRunSupport>false</EnableWinAppRunSupport> in a
     <PropertyGroup> above to opt out.
-  -->
-  <ItemGroup>
-	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.14" />
-	  <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.14" />
-	  <!--
+    -->
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.14" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="10.0.14" />
+		<!--
 	  <PackageReference Include="Microsoft.WindowsAppSDK.Foundation" Version="2.3.12" />
 	  <PackageReference Include="Microsoft.WindowsAppSDK.InteractiveExperiences" Version="2.1.9" />
 	  <PackageReference Include="Microsoft.WindowsAppSDK.Runtime" Version="2.5.1" />
 	  <PackageReference Include="Microsoft.WindowsAppSDK.WinUI" Version="2.3.9" />
 	  -->
-	  <!--
+		<!--
 	  https://github.com/Live-Charts/LiveCharts2/issues/2138
 	  https://github.com/mono/SkiaSharp/issues/3372
 	  https://github.com/microsoft/WindowsAppSDK/issues/6071
 	  -->
-	  <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260921001" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260921001" />
 
-	  <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.1" />
-	  <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.3.1" />
-	  <PackageReference Include="Microsoft.Windows.SDK.BuildTools.MSIX" Version="1.7.260930100">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	  </PackageReference>
-	  <PackageReference Include="LiveChartsCore.SkiaSharpView.WinUI" Version="2.0.5" />
-	  <PackageReference Include="SocketIOClient" Version="4.0.5" />
-  </ItemGroup>
-  <ItemGroup>
-    <Using Include="System.Diagnostics" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Update="Assets\BitWallpaper.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\CryptLogos\ada.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\CryptLogos\astr.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\CryptLogos\avax.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\CryptLogos\axs.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\CryptLogos\bat.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\CryptLogos\bcc.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\CryptLogos\boba.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\CryptLogos\btc.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\CryptLogos\doge.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\CryptLogos\dot.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\CryptLogos\enj.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\CryptLogos\eth.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\CryptLogos\flr.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\CryptLogos\link.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\CryptLogos\ltc.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\CryptLogos\matic.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\CryptLogos\mkr.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\CryptLogos\mona.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\CryptLogos\omg.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\CryptLogos\qtum.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\CryptLogos\sand.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\CryptLogos\xlm.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\CryptLogos\xrp.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Assets\CryptLogos\xym.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+		<PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.1" />
+		<PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.3.1" />
+		<PackageReference Include="Microsoft.Windows.SDK.BuildTools.MSIX" Version="1.7.260930100">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="LiveChartsCore.SkiaSharpView.WinUI" Version="2.0.5" />
+		<PackageReference Include="SocketIOClient" Version="4.0.5" />
+	</ItemGroup>
+	<ItemGroup>
+		<Using Include="System.Diagnostics" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<Content Update="Assets\BitWallpaper.ico">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\CryptLogos\ada.svg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\CryptLogos\astr.svg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\CryptLogos\avax.svg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\CryptLogos\axs.svg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\CryptLogos\bat.svg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\CryptLogos\bcc.svg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\CryptLogos\boba.svg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\CryptLogos\btc.svg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\CryptLogos\doge.svg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\CryptLogos\dot.svg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\CryptLogos\enj.svg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\CryptLogos\eth.svg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\CryptLogos\flr.svg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\CryptLogos\link.svg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\CryptLogos\ltc.svg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\CryptLogos\matic.svg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\CryptLogos\mkr.svg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\CryptLogos\mona.svg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\CryptLogos\omg.svg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\CryptLogos\qtum.svg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\CryptLogos\sand.svg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\CryptLogos\xlm.svg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\CryptLogos\xrp.svg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\CryptLogos\xym.svg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
 
-  <!--
+	<!--
     Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution
     Explorer "Package and Publish" context menu entry to be enabled for this project even if
     the Windows App SDK Nuget package has not yet been restored.
-  -->
-  <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
-    <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
-  </PropertyGroup>
+    -->
+	<PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+		<HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
+	</PropertyGroup>
 
-  <!-- Publish Properties -->
-<PropertyGroup>
-	<!--
-	<PublishReadyToRun Condition="'$(Configuration)' == 'Debug'">False</PublishReadyToRun>
-	<PublishReadyToRun Condition="'$(Configuration)' != 'Debug'">True</PublishReadyToRun>
-	<PublishTrimmed Condition="'$(Configuration)' == 'Debug'">False</PublishTrimmed>
-	<PublishTrimmed Condition="'$(Configuration)' != 'Debug'">True</PublishTrimmed>
-	-->
-	<ApplicationIcon>Assets\BitWallpaper.ico</ApplicationIcon>
-</PropertyGroup>
+	<!-- Publish Properties -->
+	<PropertyGroup>
+		<!--
+		<PublishReadyToRun Condition="'$(Configuration)' == 'Debug'">False</PublishReadyToRun>
+		<PublishReadyToRun Condition="'$(Configuration)' != 'Debug'">True</PublishReadyToRun>
+		<PublishTrimmed Condition="'$(Configuration)' == 'Debug'">False</PublishTrimmed>
+		<PublishTrimmed Condition="'$(Configuration)' != 'Debug'">True</PublishTrimmed>
+		-->
+		<ApplicationIcon>Assets\BitWallpaper.ico</ApplicationIcon>
+	</PropertyGroup>
 </Project>
