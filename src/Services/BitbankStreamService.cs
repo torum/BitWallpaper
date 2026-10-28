@@ -92,74 +92,87 @@ public class BitbankStreamService : IBitbankStreamService
         _client.On("message", response =>
         {
             // Another way. Both are valid and not safe for AOT.
-            
-            string rawJsonArray = response.RawText ?? string.Empty;
-            // Parse the text directly into a DOM Document (100% Native AOT safe)
-            using var document = JsonDocument.Parse(rawJsonArray);
-            JsonElement rootArray = document.RootElement;
-
-            // Ensure it is a valid array containing at least the event name and your payload argument
-            if (rootArray.ValueKind == JsonValueKind.Array && rootArray.GetArrayLength() > 1)
+            try
             {
-                // Index 0 is the event name ("message"). Index 1 is the actual object payload.
-                JsonElement firstArgument = rootArray[1];
+                string rawJsonArray = response.RawText ?? string.Empty;
+                // Parse the text directly into a DOM Document (100% Native AOT safe)
+                using var document = JsonDocument.Parse(rawJsonArray);
+                JsonElement rootArray = document.RootElement;
 
-                // Safely check 'room_name' via reflection-free DOM APIs
-                if (firstArgument.TryGetProperty("room_name", out JsonElement roomProperty) && roomProperty.ValueKind == JsonValueKind.String)
+                // Ensure it is a valid array containing at least the event name and your payload argument
+                if (rootArray.ValueKind == JsonValueKind.Array && rootArray.GetArrayLength() > 1)
                 {
-                    string roomName = roomProperty.GetString() ?? string.Empty;
+                    // Index 0 is the event name ("message"). Index 1 is the actual object payload.
+                    JsonElement firstArgument = rootArray[1];
 
-                    //Debug.WriteLine($"--> Received message for room: {roomName}");
-
-                    if (roomName.StartsWith("ticker_"))
+                    // Safely check 'room_name' via reflection-free DOM APIs
+                    if (firstArgument.TryGetProperty("room_name", out JsonElement roomProperty) && roomProperty.ValueKind == JsonValueKind.String)
                     {
-                        var root = firstArgument.Deserialize(BitbankJsonContext.Default.BitbankTickerRoot);//response.GetValue<BitbankTickerRoot>(0);
+                        string roomName = roomProperty.GetString() ?? string.Empty;
 
-                        if (root?.Message?.Data != null)
+                        //Debug.WriteLine($"--> Received message for room: {roomName}");
+
+                        if (roomName.StartsWith("ticker_"))
                         {
-                            ProcessTickerData(root);
+                            var root = firstArgument.Deserialize(BitbankJsonContext.Default.BitbankTickerRoot);//response.GetValue<BitbankTickerRoot>(0);
+
+                            if (root?.Message?.Data != null)
+                            {
+                                ProcessTickerData(root);
+                            }
+                            else
+                            {
+                                Debug.WriteLine("--> Received ticker message with null data. Ignoring.");
+                            }
+                        }
+                        else if (roomName.StartsWith("depth_whole_"))
+                        {
+                            var root = firstArgument.Deserialize(BitbankJsonContext.Default.BitbankDepthRoot);//response.GetValue<BitbankDepthRoot>(0);
+
+                            if (root?.Message?.Data != null)
+                            {
+                                ProcessDepthData(root);
+                            }
                         }
                         else
                         {
-                            Debug.WriteLine("--> Received ticker message with null data. Ignoring.");
-                        }
-                    }
-                    else if (roomName.StartsWith("depth_whole_"))
-                    {
-                        var root = firstArgument.Deserialize(BitbankJsonContext.Default.BitbankDepthRoot);//response.GetValue<BitbankDepthRoot>(0);
+                            Debug.WriteLine($"--> Received data for an unhandled room: {roomName}");
 
-                        if (root?.Message?.Data != null)
-                        {
-                            ProcessDepthData(root);
+                            _dispatcherService.TryEnqueue(() => {
+                                (App.Current as App)?.AppendErrorLog($"--> Received data for an unhandled room: {roomName}", "");
+                                (App.Current as App)?.SaveErrorLog();
+                            });
+
+                            return Task.CompletedTask;
                         }
                     }
                     else
                     {
-                        Debug.WriteLine($"--> Received data for an unhandled room: {roomName}");
-
+                        Debug.WriteLine("--> Received message without a valid 'room_name'. Ignoring.");
                         _dispatcherService.TryEnqueue(() => {
-                            (App.Current as App)?.AppendErrorLog($"--> Received data for an unhandled room: {roomName}", "");
+                            (App.Current as App)?.AppendErrorLog($"--> Received message without a valid 'room_name'", "");
                             (App.Current as App)?.SaveErrorLog();
                         });
-
                         return Task.CompletedTask;
                     }
                 }
                 else
                 {
-                    Debug.WriteLine("--> Received message without a valid 'room_name'. Ignoring.");
+                    Debug.WriteLine("--> Received message that is not a valid array or has insufficient elements. Ignoring.");
                     _dispatcherService.TryEnqueue(() => {
-                        (App.Current as App)?.AppendErrorLog($"--> Received message without a valid 'room_name'", "");
+                        (App.Current as App)?.AppendErrorLog($"--> Received message that is not a valid array or has insufficient elements", "");
                         (App.Current as App)?.SaveErrorLog();
                     });
                     return Task.CompletedTask;
                 }
+
             }
-            else
+            catch (Exception ex)
             {
-                Debug.WriteLine("--> Received message that is not a valid array or has insufficient elements. Ignoring.");
-                _dispatcherService.TryEnqueue(() => {
-                    (App.Current as App)?.AppendErrorLog($"--> Received message that is not a valid array or has insufficient elements", "");
+                Debug.WriteLine($"--> Exception during message processing: {ex}");
+                _dispatcherService.TryEnqueue(() =>
+                {
+                    (App.Current as App)?.AppendErrorLog($"--> Exception during message processing: {ex}", "");
                     (App.Current as App)?.SaveErrorLog();
                 });
                 return Task.CompletedTask;
@@ -225,7 +238,7 @@ public class BitbankStreamService : IBitbankStreamService
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Failed to connect initially @BitbankStreamService: {ex}");
+            Debug.WriteLine($"--> Failed to connect initially @BitbankStreamService: {ex}");
 
             _dispatcherService.TryEnqueue(() =>
             {
@@ -314,18 +327,30 @@ public class BitbankStreamService : IBitbankStreamService
     private async void OnClientConnected(object? sender, EventArgs e)
     {
         if (_client == null) return;
+
         _isConnected = true;
 
         Debug.WriteLine("--> Successfully connected to Bitbank Stream. Subscribing now..." + string.Join(", ", _tickerRooms));
 
-        //var rooms = new[] { "ticker_btc_jpy", "ticker_eth_jpy", "ticker_xrp_jpy" };
-
-        if (_tickerRooms.Length == 0) return;
-
-        foreach (var room in _tickerRooms)
+        try
         {
-            var roomArray = new[] { room };
-            await _client.EmitAsync("join-room", roomArray);
+            if (_tickerRooms.Length == 0) return;
+
+            foreach (var room in _tickerRooms)
+            {
+                var roomArray = new[] { room };
+                await _client.EmitAsync("join-room", roomArray);
+                await Task.Delay(100); 
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"--> Exception EmitAsync OnClientConnected: {ex}");
+            _dispatcherService.TryEnqueue(() =>
+            {
+                (App.Current as App)?.AppendErrorLog($"--> Exception EmitAsync OnClientConnected: {ex}", "");
+                (App.Current as App)?.SaveErrorLog();
+            });
         }
     }
 
@@ -427,7 +452,10 @@ public class BitbankStreamService : IBitbankStreamService
         // Emit 'join-room' to tell the Bitbank server to start streaming this data
         await _client.EmitAsync("join-room", roomArray);
 
-        _depthRoom = $"depth_whole_{pairCode.ToString().ToLower()}";
+        lock (_lock)
+        {
+            _depthRoom = $"depth_whole_{pairCode.ToString().ToLower()}";
+        }
 
         Debug.WriteLine($"--> Joined room: {_depthRoom}");
     }
@@ -456,7 +484,10 @@ public class BitbankStreamService : IBitbankStreamService
         // Emit 'leave-room' to tell the Bitbank server to stop streaming this data
         await _client.EmitAsync("leave-room", roomArray);
 
-        _depthRoom = string.Empty;
+        lock (_lock)
+        {
+            _depthRoom = string.Empty;
+        }
 
         Debug.WriteLine($"--> Left room: {room}");
     }
@@ -474,12 +505,21 @@ public class BitbankStreamService : IBitbankStreamService
                     Debug.WriteLine("--> Disconnecting from Bitbank Stream...");
                     await _client.DisconnectAsync(); // 1. Signal graceful disconnect to server
                 }
+
+                _client.Dispose();
             }
             catch (System.Net.WebSockets.WebSocketException)
             {
                 /* Swallow any concurrent connection drops */
             }
-            _client.Dispose();
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"--> Exception during disconnect: {ex}");
+            }
+            finally
+            {
+                _isConnected = false;
+            }
         }
     }
 

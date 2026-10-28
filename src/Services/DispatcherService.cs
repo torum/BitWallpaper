@@ -66,6 +66,8 @@ public sealed class DispatcherService : IDispatcherService
         }
     }
 
+    public bool HasThreadAccess => _queue?.HasThreadAccess ?? false;
+
     /*
     // Awaitable action
     public Task EnqueueAsync(Action action) => _queue.EnqueueAsync(action);

@@ -114,7 +114,7 @@ public partial class App : Application
 
             // Single instance.
             // https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/migrate-to-windows-app-sdk/guides/applifecycle
-            var mainInstance = Microsoft.Windows.AppLifecycle.AppInstance.FindOrRegisterForKey("MPDCtrlMain");
+            var mainInstance = Microsoft.Windows.AppLifecycle.AppInstance.FindOrRegisterForKey("BitWallpaperMain");
             // If the instance that's executing the OnLaunched handler right now
             // isn't the "main" instance.
             if (!mainInstance.IsCurrent)

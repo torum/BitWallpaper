@@ -14,7 +14,6 @@ public sealed partial class ChartContent : UserControl
         InitializeComponent();
 
         this.DataContext = PairVM;
-
     }
 
     public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(nameof(PairViewModel),
@@ -31,19 +30,23 @@ public sealed partial class ChartContent : UserControl
 
     private static void ValueChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
     {
-        ((ChartContent)sender).ValueChanged();
+        ((ChartContent)sender).ValueChanged((PairViewModel)args.OldValue, (PairViewModel)args.NewValue);
     }
 
-    private void ValueChanged()
+    private void ValueChanged(PairViewModel oldVm, PairViewModel newVm)
     {
-        if (PairVM == null)
+        // Unsubscribe from the OLD view model if it exists
+        if (oldVm != null)
         {
-            return;
+            oldVm.DepthScrollCenter -= OnDepthScrollCenter;
         }
+        // Subscribe to the NEW view model
+        if (newVm != null)
+        {
+            newVm.DepthScrollCenter += OnDepthScrollCenter;
 
-        this.DataContext = PairVM;
-
-        PairVM.DepthScrollCenter += OnDepthScrollCenter;
+            this.DataContext = PairVM;
+        }
     }
 
     private void OnDepthScrollCenter(object? sender, bool e)

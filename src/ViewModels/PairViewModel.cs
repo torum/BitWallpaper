@@ -21,7 +21,6 @@ namespace BitWallpaper.ViewModels;
 public partial class PairViewModel : ObservableObject, IDisposable
 {
     private DateTime lastChartLoadedDateTime = DateTime.MinValue;
-    public event EventHandler<bool>? DepthScrollCenter;
     private bool _isChartLoading;
     private readonly List<DateTime> _chartTimes = [];
     private bool _isChartRefreshRunning;
@@ -30,6 +29,8 @@ public partial class PairViewModel : ObservableObject, IDisposable
     private readonly IBitbankHttpSearvice _bitbankHttpSearvice;
     private readonly IBitbankStreamService _bitbankStreamService;
     private readonly IDispatcherService _dispatcherService;
+
+    public event EventHandler<bool>? DepthScrollCenter;
 
     public PairViewModel(PairCodes p, double fontSize, string ltpFormstString, string currencyFormstString, decimal grouping100, decimal grouping1000)
     {
@@ -346,11 +347,11 @@ public partial class PairViewModel : ObservableObject, IDisposable
 
             if (_isSelectedActive && _isPaneOpen)
             {
-                _bitbankStreamService.JoinDepthRoomAsync(_p);
+                _ = RunSafeAsync(() => _bitbankStreamService.JoinDepthRoomAsync(_p), nameof(_bitbankStreamService.JoinDepthRoomAsync));
             }
             else
             {
-                _bitbankStreamService.LeaveDepthRoomAsync(_p);
+                _ = RunSafeAsync(() => _bitbankStreamService.LeaveDepthRoomAsync(_p), nameof(_bitbankStreamService.LeaveDepthRoomAsync));
             }
         }
     }
@@ -2192,6 +2193,8 @@ public partial class PairViewModel : ObservableObject, IDisposable
 
     private async Task UpdateChartAsync()
     {
+        Debug.Assert(_dispatcherService.HasThreadAccess, "***UpdateChartAsync must be called on the UI thread.***");
+
         if (!IsChartInitAndLoaded || !IsEnabled || !IsSelectedActive || _isChartRefreshRunning) 
         {
             // || !IsSelectedActive
@@ -2311,6 +2314,8 @@ public partial class PairViewModel : ObservableObject, IDisposable
     // From Streaming Ticker Data
     private void UpdateCandleUsingTickerData(DateTime tickTime, BitbankTickerData data)
     {
+        Debug.Assert(_dispatcherService.HasThreadAccess, "***UpdateCandleUsingTickerData must be called on the UI thread.***");
+
         try
         {
             if (Series[1].Values is not ObservableCollection<FinancialPoint> candles) { return; }
@@ -2359,7 +2364,7 @@ public partial class PairViewModel : ObservableObject, IDisposable
 
             if (Series[0].Values is ObservableCollection<DateTimePoint> volumes)
             {
-                if (volumes[volumes.Count-1].DateTime != candleStart)
+                if (volumes[volumes.Count - 1].DateTime != candleStart)
                 {
                     // TODO: we need to load chart independently after all.
                     // data.Vol is 24-hour rolling volume. So, we can't use it here.
@@ -2371,7 +2376,7 @@ public partial class PairViewModel : ObservableObject, IDisposable
 
             if (Series[1].Values is ObservableCollection<FinancialPoint>)
             {
-                if (candles[candles.Count-1].Date != candleStart)
+                if (candles[candles.Count - 1].Date != candleStart)
                 {
                     candles.Add(new FinancialPoint(candleStart, (double)data.Last, (double)data.Last, (double)data.Last, (double)data.Last));
                     Debug.WriteLine($"UpdateCandleUsingTickerData Added Candlestick for {PairCode}: {candleStart:yyyy-MM-dd HH:mm:ss} Open: {(double)data.Last}, High: {(double)data.Last}, Low: {(double)data.Last}, Close: {(double)data.Last}, Volume: {0}");
@@ -2388,7 +2393,6 @@ public partial class PairViewModel : ObservableObject, IDisposable
             Debug.WriteLine($"UpdateCurrentCandle() exception for {PairCode}: {ex}");
             return;
         }
-
     }
 
     private static DateTime GetCandleStartDate(DateTime time, CandleTypes candleType)
@@ -2437,6 +2441,8 @@ public partial class PairViewModel : ObservableObject, IDisposable
 
     private void UpdateDepth(DepthResult dpr)
     {
+        Debug.Assert(_dispatcherService.HasThreadAccess, "***UpdateDepth must be called on the UI thread.***");
+
         if (!IsSelectedActive|| !IsEnabled || !IsPaneOpen)
         {
             Debug.WriteLine($"UpdateDepth() skipped for {PairCode} because IsSelectedActive={IsSelectedActive}, IsEnabled={IsEnabled}, IsPaneOpen={IsPaneOpen}");
@@ -2669,6 +2675,31 @@ public partial class PairViewModel : ObservableObject, IDisposable
     #region == Transaction ==
 
     #endregion
+
+    private async Task RunSafeAsync(Func<Task> work, string name, bool continueOnCapturedContext = false)
+    {
+        try
+        {
+            if (continueOnCapturedContext)
+            {
+                await work().ConfigureAwait(false);
+            }
+            else
+            {
+                await work();// no ConfigureAwait(false): continuations stay on the UI thread
+            }
+        }
+        //catch (OperationCanceledException) when (_cts.IsCancellationRequested) { }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Exception @{name}: {ex.Message}{Environment.NewLine}StackTrace: {ex.StackTrace}");
+            _dispatcherService.TryEnqueue(() =>
+            {
+                (Application.Current as App)?.AppendErrorLog($"Exception @{name}", $"{ex.Message}{Environment.NewLine}StackTrace: {ex.StackTrace}");
+                (Application.Current as App)?.SaveErrorLog();
+            });
+        }
+    }
 
     #endregion
 

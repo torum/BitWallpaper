@@ -1780,7 +1780,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
             Debug.WriteLine($"SetSelectedPairFromCodeAsync() called for {pairCode} at {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
         }
 
-        await _asyncLock.WaitAsync();
+        await _asyncLock.WaitAsync(TimeSpan.FromSeconds(2));
 
         try
         {
@@ -1790,7 +1790,6 @@ public partial class MainViewModel : ObservableObject, IDisposable
             {
                 if (_isLiveChartsOn)
                     await SelectedPair.InitializeAndLoadAsync();
-                //_ = RunSafeAsync(() => SelectedPair.InitializeAndLoadAsync(), nameof(SelectedPair.InitializeAndLoadAsync));
             }
             else
             {
@@ -1810,7 +1809,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     public async Task SetSelectedAllPairsFromCodeAsync()
     {
-        await _asyncLock.WaitAsync();
+        await _asyncLock.WaitAsync(TimeSpan.FromSeconds(2));
 
         try
         {
@@ -1820,7 +1819,6 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
                 if (_isLiveChartsOn)
                     await pairVM.InitializeAndLoadAsync();
-                //_ = RunSafeAsync(() => pairVM.InitializeAndLoadAsync(), nameof(pairVM.InitializeAndLoadAsync));
             }
         }
         finally
@@ -1881,6 +1879,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
             {
                 pair.Dispose();
             }
+
+            _asyncLock.Dispose();
         }
         catch (Exception ex)
         {
@@ -2058,7 +2058,6 @@ public partial class MainViewModel : ObservableObject, IDisposable
                         throw new NotImplementedException();
                 }
             });
-
 
             #region == Alarm ==
 
