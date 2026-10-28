@@ -15,7 +15,6 @@ public partial class BooleanToVisibilityConverter : IValueConverter
         return Visibility.Collapsed;
     }
 
-    [DynamicWindowsRuntimeCast(typeof(Visibility))]
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
         if (value is Visibility visibility)

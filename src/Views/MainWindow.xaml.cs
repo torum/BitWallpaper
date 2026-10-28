@@ -24,7 +24,6 @@ public sealed partial class MainWindow : Window
     private ElementTheme _theme = ElementTheme.Default;
     private bool _isClosing;
 
-    [DynamicWindowsRuntimeCast(typeof(OverlappedPresenter))]
     public MainWindow(IConfigurationService configurationService, IBitbankStreamService bitbankStreamService)
     {
         _vm = App.GetService<MainViewModel>();
@@ -69,8 +68,6 @@ public sealed partial class MainWindow : Window
 
     }
 
-    [DynamicWindowsRuntimeCast(typeof(OverlappedPresenter))]
-    [DynamicWindowsRuntimeCast(typeof(FrameworkElement))]
     private void LoadSettings()
     {
         if (Microsoft.UI.Composition.SystemBackdrops.DesktopAcrylicController.IsSupported())
@@ -265,7 +262,6 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    [DynamicWindowsRuntimeCast(typeof(FrameworkElement))]
     public void SetCapitionButtonColor()
     {
         // This is a workaround for the WinAppSDK/WinUI3 bug that caption button color is not updated when theme is changed.
@@ -299,7 +295,6 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    [DynamicWindowsRuntimeCast(typeof(OverlappedPresenter))]
     private void Window_Activated(object sender, WindowActivatedEventArgs args)
     {
         // Ensure that the restore position and sizes are updated when the window is activated, especially after being minimized or restored.
@@ -321,7 +316,6 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    [DynamicWindowsRuntimeCast(typeof(OverlappedPresenter))]
     private void Window_SizeChanged(object sender, WindowSizeChangedEventArgs args)
     {
         if (this.AppWindow.Presenter is OverlappedPresenter presenter)
@@ -336,7 +330,6 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    [DynamicWindowsRuntimeCast(typeof(OverlappedPresenter))]
     private void AppWindow_Changed(AppWindow sender, AppWindowChangedEventArgs args)
     {
         if (!args.DidPositionChange)
@@ -363,7 +356,6 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    [DynamicWindowsRuntimeCast(typeof(OverlappedPresenter))]
     private async void AppWindow_Closing(AppWindow sender, AppWindowClosingEventArgs args)
     {
         Debug.WriteLine("AppWindow_Closing");

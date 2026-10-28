@@ -261,7 +261,6 @@ public sealed partial class ShellPage : Page
         }
     }
 
-    [DynamicWindowsRuntimeCast(typeof(NavigationViewItem))]
     private void NavigationFrame_Navigated(object sender, NavigationEventArgs e)
     {
         if (e.SourcePageType == typeof(SettingsPage) || (NavigationFrame.SourcePageType == typeof(SettingsPage)))

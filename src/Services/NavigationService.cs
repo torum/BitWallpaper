@@ -17,7 +17,6 @@ public class NavigationService : INavigationService
         _pageMap = pages;
     }
 
-    [DynamicWindowsRuntimeCast(typeof(NavigationViewItem))]
     public bool NavigateTo(object? selectedPage, object? parameter, SlideNavigationTransitionEffect effect)
     {
         try

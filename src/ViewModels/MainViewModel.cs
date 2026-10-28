@@ -2128,7 +2128,6 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     #region == Commands ==
 
-    [DynamicWindowsRuntimeCast(typeof(FrameworkElement))]
     [RelayCommand]
     private void SwitchTheme(ElementTheme? param)
     {
