@@ -6,7 +6,7 @@ public interface IBitbankStreamService
 {
     event EventHandler<BitbankTickerData>? TickerUpdated;
     event EventHandler<BitbankDepthData>? DepthUpdated;
-
+    event EventHandler<ErrorInfo>? ErrorOccured;
     void Initialize(List<PairCodes> pairCodes);
 
     Task StartAsync();

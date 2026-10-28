@@ -11,6 +11,7 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.Painting.Effects;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using SkiaSharp;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -26,15 +27,16 @@ public partial class PairViewModel : ObservableObject, IDisposable
     private bool _isChartRefreshRunning;
     private readonly DispatcherTimer _dispatcherTimerChart = new();
 
-    private readonly IBitbankHttpSearvice _bitbankHttpSearvice;
+    private readonly IBitbankHttpService _bitbankHttpService;
     private readonly IBitbankStreamService _bitbankStreamService;
     private readonly IDispatcherService _dispatcherService;
 
     public event EventHandler<bool>? DepthScrollCenter;
+    public event EventHandler<ErrorInfo>? ErrorOccured;
 
     public PairViewModel(PairCodes p, double fontSize, string ltpFormstString, string currencyFormstString, decimal grouping100, decimal grouping1000)
     {
-        _bitbankHttpSearvice = App.GetService<IBitbankHttpSearvice>();
+        _bitbankHttpService = App.GetService<IBitbankHttpService>();
         _bitbankStreamService = App.GetService<IBitbankStreamService>();    
         _dispatcherService = App.GetService<IDispatcherService>();
 
@@ -52,6 +54,8 @@ public partial class PairViewModel : ObservableObject, IDisposable
         _dispatcherTimerChart.Tick += OnTimerChart;
         _dispatcherTimerChart.Interval = chartUpdateInterval;  // Temp testing. new(0, 5, 0);
         _dispatcherTimerChart.Start(); // Testing without updating the chart.. using ticker as we go.
+
+        _bitbankHttpService.ErrorOccured += OnErrorOccured;
     }
 
     #region == Properties ==
@@ -1703,7 +1707,11 @@ public partial class PairViewModel : ObservableObject, IDisposable
         _dispatcherTimerChart.Stop();
         _dispatcherTimerChart.Tick -= OnTimerChart;
 
+        _bitbankHttpService.ErrorOccured -= OnErrorOccured;
+
         // TODO: Dispose other resources if necessary
+
+        GC.SuppressFinalize(this);
     }
 
     #endregion
@@ -2137,7 +2145,7 @@ public partial class PairViewModel : ObservableObject, IDisposable
             }
 
             //
-            var csr = await _bitbankHttpSearvice.GetCandlestickAsync(pair.ToString(), ctString, dtString);
+            var csr = await _bitbankHttpService.GetCandlestickAsync(pair.ToString(), ctString, dtString);
 
             if (!IsEnabled)
             {
@@ -2210,7 +2218,7 @@ public partial class PairViewModel : ObservableObject, IDisposable
         {
             // Replace this with a request for only the latest API period.
             // GetCandlesticksAsync currently downloads multiple days/years.
-            var refreshed = await _bitbankHttpSearvice.GetLatestCandlesticksAsync(PairCode, SelectedCandleType);
+            var refreshed = await _bitbankHttpService.GetLatestCandlesticksAsync(PairCode, SelectedCandleType);
 
             if (refreshed is null ||
                 Series[1].Values is not ObservableCollection<FinancialPoint> prices ||
@@ -2692,13 +2700,20 @@ public partial class PairViewModel : ObservableObject, IDisposable
         //catch (OperationCanceledException) when (_cts.IsCancellationRequested) { }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Exception @{name}: {ex.Message}{Environment.NewLine}StackTrace: {ex.StackTrace}");
-            _dispatcherService.TryEnqueue(() =>
+            Debug.WriteLine($"Exception @{name}: {ex}");
+
+            var errorInfo = new ErrorInfo(ErrType.Unexpected)
             {
-                (Application.Current as App)?.AppendErrorLog($"Exception @{name}", $"{ex.Message}{Environment.NewLine}StackTrace: {ex.StackTrace}");
-                (Application.Current as App)?.SaveErrorLog();
-            });
+                ErrorMessage = $"{ex.Message} ({ex.GetType().FullName}) @{name}",
+                ErrorSeverity = InfoBarSeverity.Warning
+            };
+            ErrorOccured?.Invoke(this, errorInfo);
         }
+    }
+
+    private void OnErrorOccured(object? sender, ErrorInfo errorInfo)
+    {
+        this.ErrorOccured?.Invoke(this, errorInfo);
     }
 
     #endregion

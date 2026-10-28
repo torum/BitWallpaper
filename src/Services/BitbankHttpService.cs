@@ -1,10 +1,11 @@
 ﻿using BitWallpaper.Models;
 using BitWallpaper.Services.Contracts;
+using Microsoft.UI.Xaml.Controls;
 using System.Text.Json;
 
 namespace BitWallpaper.Services;
 
-public class BitbankHttpSearvice : IBitbankHttpSearvice
+public class BitbankHttpService : IBitbankHttpService
 {
     private readonly HttpClient? _client;
 
@@ -12,7 +13,9 @@ public class BitbankHttpSearvice : IBitbankHttpSearvice
 
     private readonly IHttpClientFactory _httpClientFactory;
 
-    public BitbankHttpSearvice(IHttpClientFactory httpClientFactory)
+    public event EventHandler<ErrorInfo>? ErrorOccured;
+
+    public BitbankHttpService(IHttpClientFactory httpClientFactory)
     {
         _httpClientFactory = httpClientFactory;
         _client = _httpClientFactory.CreateClient("BitDeskX");
@@ -194,12 +197,27 @@ public class BitbankHttpSearvice : IBitbankHttpSearvice
                 System.Diagnostics.Debug.WriteLine("GetCandlestick: HttpRequestException - " + ex.Message);
             }
 
-            //TODO
+            var errorInfo = new ErrorInfo(ErrType.ConnectionError)
+            {
+                ErrorMessage = $"{ex.Message} @GetCandlestickAsync.",
+                ErrorSeverity = InfoBarSeverity.Warning
+            };
+
+            ErrorOccured?.Invoke(this, errorInfo);
+
             return null;
         }
         catch (Exception ex)
         {
             Debug.WriteLine("GetCandlestick: Exception - " + ex.Message);
+
+            var errorInfo = new ErrorInfo(ErrType.Unexpected)
+            {
+                ErrorMessage = $"{ex.Message} ({ex.GetType().FullName}) @GetCandlestickAsync.",
+                ErrorSeverity = InfoBarSeverity.Warning
+            };
+            ErrorOccured?.Invoke(this, errorInfo);
+
             return null;
         }
 

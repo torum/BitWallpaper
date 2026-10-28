@@ -5,6 +5,7 @@ using BitWallpaper.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
 using System.Collections.ObjectModel;
@@ -88,6 +89,11 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
         _bitbankStreamService.TickerUpdated += OnBitbankStreamService_TickerUpdated;
         _bitbankStreamService.DepthUpdated += OnBitbankStreamService_DepthUpdated;
+        _bitbankStreamService.ErrorOccured += OnErrorOccured;
+        foreach (var pair in Pairs)
+        {
+            pair.ErrorOccured += OnErrorOccured;
+        }
 
         // Will crash due to WinAppSDK bug.
         //https://github.com/microsoft/WindowsAppSDK/issues/6071
@@ -1745,6 +1751,70 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     #endregion
 
+    #region == Error ==
+
+    public InfoBarSeverity InfoBarSeverity
+    {
+        get;
+        set
+        {
+            if (field == value)
+            {
+                return;
+            }
+
+            field = value;
+            OnPropertyChanged();
+        }
+    } = InfoBarSeverity.Warning;
+
+    public string InfoBarMessage
+    {
+        get;
+        set
+        {
+            if (field == value)
+            {
+                return;
+            }
+
+            field = value;
+            OnPropertyChanged();
+        }
+    } = string.Empty;
+
+    public string InfoBarTitle
+    {
+        get;
+        set
+        {
+            if (field == value)
+            {
+                return;
+            }
+
+            field = value;
+            OnPropertyChanged();
+        }
+    } = string.Empty;
+
+    public bool IsInfoBarOpen
+    {
+        get;
+        set
+        {
+            if (field == value)
+            {
+                return;
+            }
+
+            field = value;
+            OnPropertyChanged();
+        }
+    }
+
+    #endregion
+
     #endregion
 
     #region == Public Methods ==
@@ -1870,6 +1940,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
     {
         _bitbankStreamService.TickerUpdated -= OnBitbankStreamService_TickerUpdated;
         _bitbankStreamService.DepthUpdated -= OnBitbankStreamService_DepthUpdated;
+        _bitbankStreamService.ErrorOccured -= OnErrorOccured;
+
         IsEnabledChanged -= OnIsEnabledChanged;
         ShowBalloon -= DoShowBalloon;
 
@@ -1877,6 +1949,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         {
             foreach (var pair in Pairs)
             {
+                pair.ErrorOccured -= OnErrorOccured;
                 pair.Dispose();
             }
 
@@ -1894,6 +1967,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
 
         Debug.WriteLine($"MainViewModel disposed at {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+
+        GC.SuppressFinalize(this);
     }
 
     #endregion
@@ -2123,52 +2198,16 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    #endregion
-
-    #region == Commands ==
-
-    [RelayCommand]
-    private void SwitchTheme(ElementTheme? param)
+    private void OnErrorOccured(object? sender, ErrorInfo errorInfo)
     {
-        if (param is null)
+        _dispatcherService.TryEnqueue(() =>
         {
-            return;
-        }
-
-        if (Theme == param)
-        {
-            return;
-        }
-
-        Theme = (ElementTheme)param;
-
-        var main = App.GetService<MainWindow>();
-
-        if (main.Content is FrameworkElement rootElement)
-        {
-            rootElement.RequestedTheme = Theme;
-
-            main?.SetCapitionButtonColor();
-        }
+            InfoBarSeverity = errorInfo.ErrorSeverity;
+            InfoBarMessage = errorInfo.ErrorMessage;
+            InfoBarTitle = errorInfo.ErrorTitle;
+            IsInfoBarOpen = true;
+        });
     }
-
-    [RelayCommand]
-    private void SwitchSystemBackdrop(string? backdrop)
-    {
-        if (backdrop == null)
-        {
-            return;
-        }
-
-        var main = App.GetService<MainWindow>();
-
-        if (Enum.TryParse(backdrop, out SystemBackdropOption cacheBackdrop))
-        {
-            main?.SwitchBackdrop(cacheBackdrop);
-        }
-    }
-
-    #endregion
 
     private void DoShowBalloon(object? sender, ShowBalloonEventArgs arg)
     {
@@ -2201,5 +2240,52 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
         });
     }
+
+    #endregion
+
+    #region == Commands ==
+
+    [RelayCommand]
+    private void SwitchTheme(ElementTheme? param)
+    {
+        if (param is null)
+        {
+            return;
+        }
+
+        if (Theme == param)
+        {
+            return;
+        }
+
+        Theme = (ElementTheme)param;
+
+        var main = App.GetService<MainWindow>();
+
+        if (main.Content is FrameworkElement rootElement)
+        {
+            rootElement.RequestedTheme = Theme;
+
+            main?.SetCapitionButtonColor();
+        }
+    }
+
+    [RelayCommand]
+    private static void SwitchSystemBackdrop(string? backdrop)
+    {
+        if (backdrop == null)
+        {
+            return;
+        }
+
+        var main = App.GetService<MainWindow>();
+
+        if (Enum.TryParse(backdrop, out SystemBackdropOption cacheBackdrop))
+        {
+            main?.SwitchBackdrop(cacheBackdrop);
+        }
+    }
+
+    #endregion
 
 }

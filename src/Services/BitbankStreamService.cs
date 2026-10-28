@@ -1,6 +1,7 @@
 ﻿using BitWallpaper.Models;
 using BitWallpaper.Services.Contracts;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.UI.Xaml.Controls;
 using SocketIOClient;
 using SocketIOClient.Common;
 using System.Text.Json;
@@ -25,11 +26,14 @@ public class BitbankStreamService : IBitbankStreamService
     private string _depthRoom = string.Empty;
     private bool _isInitialized;
     private bool _isConnected;
+    private bool _isDisconnecting;
     private readonly Lock _lock = new();
     private readonly IDispatcherService _dispatcherService;
 
     public event EventHandler<BitbankTickerData>? TickerUpdated;
     public event EventHandler<BitbankDepthData>? DepthUpdated;
+
+    public event EventHandler<ErrorInfo>? ErrorOccured;
 
     public BitbankStreamService(IDispatcherService dispatcherService)
     {
@@ -52,12 +56,18 @@ public class BitbankStreamService : IBitbankStreamService
             return;
         }
 
+        if (_isConnected) return;
+
         // Bitbank Socket.IO endpoint (Engine.IO v4)
         var uri = new Uri("wss://stream.bitbank.cc");
         var options = new SocketIOOptions
         {
             EIO = EngineIO.V4,
-            Transport = TransportProtocol.WebSocket
+            Transport = TransportProtocol.WebSocket,
+            ConnectionTimeout = TimeSpan.FromSeconds(4),
+
+            Reconnection = true,
+            ReconnectionAttempts = 3,
         };
 
         _client = new SocketIOClient.SocketIO(uri, options);
@@ -75,11 +85,14 @@ public class BitbankStreamService : IBitbankStreamService
         {
             Debug.WriteLine($"Socket.IO Error occurred: {errorDescription}");
 
-            _dispatcherService.TryEnqueue(() =>
+            var errorInfo = new ErrorInfo(ErrType.ConnectionError)
             {
-                (App.Current as App)?.AppendErrorLog($"Socket.IO Error occurred @BitbankStreamService: {errorDescription}", "");
-                (App.Current as App)?.SaveErrorLog();
-            });
+                ErrorMessage = errorDescription,
+                ErrorSeverity = InfoBarSeverity.Warning
+            };
+
+            ErrorOccured?.Invoke(this, errorInfo);
+
         };
 
         _client.OnConnected += OnClientConnected;
@@ -87,6 +100,19 @@ public class BitbankStreamService : IBitbankStreamService
         _client.OnDisconnected += (sender, e) =>
         {
             Debug.WriteLine($"--> Disconnected: {e}");
+
+            if (_isDisconnecting)
+            {
+                return;
+            }
+
+            var errorInfo = new ErrorInfo(ErrType.ConnectionError)
+            {
+                ErrorMessage = e,
+                ErrorSeverity = InfoBarSeverity.Informational
+            };
+
+            ErrorOccured?.Invoke(this, errorInfo);
         };
 
         _client.On("message", response =>
@@ -170,11 +196,15 @@ public class BitbankStreamService : IBitbankStreamService
             catch (Exception ex)
             {
                 Debug.WriteLine($"--> Exception during message processing: {ex}");
-                _dispatcherService.TryEnqueue(() =>
+
+                var errorInfo = new ErrorInfo(ErrType.ResposeParseError)
                 {
-                    (App.Current as App)?.AppendErrorLog($"--> Exception during message processing: {ex}", "");
-                    (App.Current as App)?.SaveErrorLog();
-                });
+                    ErrorMessage = $"{ex.Message} ({ex.GetType().FullName})",
+                    ErrorSeverity = InfoBarSeverity.Warning
+                };
+
+                ErrorOccured?.Invoke(this, errorInfo);
+
                 return Task.CompletedTask;
             }
 
@@ -234,17 +264,75 @@ public class BitbankStreamService : IBitbankStreamService
 
         try
         {
-            await _client.ConnectAsync(CancellationToken.None);
+            await _client.ConnectAsync();
+        }
+        catch (SocketIOClient.Exceptions.ConnectionException ex)
+        {
+            Debug.WriteLine($"--> SocketIOClient.Exceptions.ConnectionException ConnectAsync() @BitbankStreamService: {ex.Message}");
+
+            var errorInfo = new ErrorInfo(ErrType.ConnectionError)
+            {
+                ErrorMessage = ex.Message,
+                ErrorSeverity = InfoBarSeverity.Warning
+            };
+
+            ErrorOccured?.Invoke(this, errorInfo);
+        }
+        catch (System.TimeoutException ex)
+        {
+            Debug.WriteLine($"--> System.TimeoutException ConnectAsync() @BitbankStreamService: {ex.Message}");
+
+            var errorInfo = new ErrorInfo(ErrType.ConnectionError)
+            {
+                ErrorMessage = ex.Message,
+                ErrorSeverity = InfoBarSeverity.Warning
+            };
+
+            ErrorOccured?.Invoke(this, errorInfo);
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"--> Failed to connect initially @BitbankStreamService: {ex}");
+            Debug.WriteLine($"--> Failed to connect. @BitbankStreamService: {ex}");
 
-            _dispatcherService.TryEnqueue(() =>
+            var errorInfo = new ErrorInfo(ErrType.ConnectionError)
             {
-                (App.Current as App)?.AppendErrorLog($"Failed to connect initially @BitbankStreamService: {ex}", "");
-                (App.Current as App)?.SaveErrorLog();
-            });
+                ErrorMessage = $"{ex.Message} ({ex.GetType().FullName})",
+                ErrorSeverity = InfoBarSeverity.Warning
+            };
+
+            ErrorOccured?.Invoke(this, errorInfo);
+        }
+    }
+
+    private async void OnClientConnected(object? sender, EventArgs e)
+    {
+        if (_client == null) return;
+
+        _isConnected = true;
+
+        Debug.WriteLine("--> Successfully connected to Bitbank Stream. Subscribing now..." + string.Join(", ", _tickerRooms));
+
+        try
+        {
+            if (_tickerRooms.Length == 0) return;
+
+            foreach (var room in _tickerRooms)
+            {
+                var roomArray = new[] { room };
+                await _client.EmitAsync("join-room", roomArray);
+                await Task.Delay(100);
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"--> Exception EmitAsync OnClientConnected: {ex}");
+
+            var errorInfo = new ErrorInfo(ErrType.ResposeParseError)
+            {
+                ErrorMessage = $"{ex.Message} ({ex.GetType().FullName}) @OnClientConnected.",
+                ErrorSeverity = InfoBarSeverity.Warning
+            };
+            ErrorOccured?.Invoke(this, errorInfo);
         }
     }
 
@@ -276,7 +364,7 @@ public class BitbankStreamService : IBitbankStreamService
 
         if (root.RoomName.StartsWith("ticker_"))
         {
-            string pair = (root.RoomName ?? "unknown").Replace("ticker_", "");
+            string pair = (root.RoomName ?? "").Replace("ticker_", "");
             if (Enum.TryParse(pair, true, out PairCodes pairCode))
             {
                 var data = root.Message.Data with { TickerPair = pairCode };
@@ -284,7 +372,7 @@ public class BitbankStreamService : IBitbankStreamService
             }
             else
             {
-                Debug.WriteLine($"--> Unknown pair code received: {pair}");
+                Debug.WriteLine($"--> Unknown pair code received: {pair}.");
                 return;
             }
         }
@@ -305,7 +393,7 @@ public class BitbankStreamService : IBitbankStreamService
 
         if (root.RoomName.StartsWith("depth_whole_"))
         {
-            string pair = (root.RoomName ?? "unknown").Replace("depth_whole_", "");
+            string pair = (root.RoomName ?? "").Replace("depth_whole_", "");
             if (Enum.TryParse(pair, true, out PairCodes pairCode))
             {
                 var data = root.Message.Data with { DepthPair = pairCode };
@@ -313,7 +401,7 @@ public class BitbankStreamService : IBitbankStreamService
             }
             else
             {
-                Debug.WriteLine($"--> Unknown pair code received: {pair}");
+                Debug.WriteLine($"--> Unknown pair code received: {pair}.");
                 return;
             }
         }
@@ -321,36 +409,6 @@ public class BitbankStreamService : IBitbankStreamService
         {
             Debug.WriteLine($"--> Received message for unknown room type: {root.RoomName}. Ignoring.");
             return;
-        }
-    }
-
-    private async void OnClientConnected(object? sender, EventArgs e)
-    {
-        if (_client == null) return;
-
-        _isConnected = true;
-
-        Debug.WriteLine("--> Successfully connected to Bitbank Stream. Subscribing now..." + string.Join(", ", _tickerRooms));
-
-        try
-        {
-            if (_tickerRooms.Length == 0) return;
-
-            foreach (var room in _tickerRooms)
-            {
-                var roomArray = new[] { room };
-                await _client.EmitAsync("join-room", roomArray);
-                await Task.Delay(100); 
-            }
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"--> Exception EmitAsync OnClientConnected: {ex}");
-            _dispatcherService.TryEnqueue(() =>
-            {
-                (App.Current as App)?.AppendErrorLog($"--> Exception EmitAsync OnClientConnected: {ex}", "");
-                (App.Current as App)?.SaveErrorLog();
-            });
         }
     }
 
@@ -364,7 +422,7 @@ public class BitbankStreamService : IBitbankStreamService
 
         if (_tickerRooms.Contains($"ticker_{pairCode.ToString().ToLower()}", StringComparer.OrdinalIgnoreCase)) return;
 
-        Debug.WriteLine("--> Joining Bitbank Stream rooms...");
+        Debug.WriteLine($"--> Joining Bitbank Stream rooms...ticker_{pairCode}.");
 
         // Wrap the room string in an array, matching your subscription pattern
         var roomArray = new[] { $"ticker_{pairCode.ToString().ToLower()}" };
@@ -379,7 +437,7 @@ public class BitbankStreamService : IBitbankStreamService
             _tickerRooms = [.. roomList];
         }
 
-        Debug.WriteLine($"--> Joined room: {pairCode}");
+        Debug.WriteLine($"--> Joined room: ticker_{pairCode}.");
     }
 
     public async Task LeaveTickerRoomAsync(PairCodes pairCode)
@@ -394,7 +452,7 @@ public class BitbankStreamService : IBitbankStreamService
 
         if (!_tickerRooms.Contains(room, StringComparer.OrdinalIgnoreCase)) return;
 
-        Debug.WriteLine("--> Leaving Bitbank Stream rooms...");
+        Debug.WriteLine($"--> Leaving Bitbank Stream rooms...{room}.");
 
         // Wrap the room string in an array, matching your subscription pattern
         var roomArray = new[] { room };
@@ -409,7 +467,7 @@ public class BitbankStreamService : IBitbankStreamService
             _tickerRooms = [.. roomList];
 
         }
-        Debug.WriteLine($"--> Left room: {room}");
+        Debug.WriteLine($"--> Left room: {room}.");
     }
 
     public async Task JoinDepthRoomAsync(PairCodes pairCode)
@@ -430,7 +488,7 @@ public class BitbankStreamService : IBitbankStreamService
         {
             Debug.WriteLine($"--> Already joined depth room: {_depthRoom}. Leaving it first...");
 
-            string pair = (_depthRoom ?? "unknown").Replace("depth_whole_", "");
+            string pair = (_depthRoom ?? "").Replace("depth_whole_", "");
             if (!string.IsNullOrWhiteSpace(pair))
             {
                 if (Enum.TryParse(pair, true, out PairCodes currentPairCode))
@@ -439,12 +497,17 @@ public class BitbankStreamService : IBitbankStreamService
                 }
                 else
                 {
-                    Debug.WriteLine($"--> Unknown pair code received for depth room: {pair}");
+                    Debug.WriteLine($"--> Unknown pair code received for depth room: {pair}.");
                 }
+            }
+            else
+            {
+                Debug.WriteLine($"--> Current depth room is empty or invalid. Cannot leave.");
+                return;
             }
         }
 
-        Debug.WriteLine($"--> Joining Bitbank Stream rooms...{_depthRoom}");
+        Debug.WriteLine($"--> Joining Bitbank Stream room...depth_whole_{pairCode}.");
 
         // Wrap the room string in an array, matching your subscription pattern
         var roomArray = new[] { $"depth_whole_{pairCode.ToString().ToLower()}" };
@@ -457,7 +520,7 @@ public class BitbankStreamService : IBitbankStreamService
             _depthRoom = $"depth_whole_{pairCode.ToString().ToLower()}";
         }
 
-        Debug.WriteLine($"--> Joined room: {_depthRoom}");
+        Debug.WriteLine($"--> Joined room: {_depthRoom}.");
     }
 
     public async Task LeaveDepthRoomAsync(PairCodes pairCode)
@@ -472,11 +535,11 @@ public class BitbankStreamService : IBitbankStreamService
 
         if (!_depthRoom.Equals(room, StringComparison.OrdinalIgnoreCase))
         {
-            Debug.WriteLine($"--> Not currently in depth room: {room}. Current depth room: {_depthRoom}");
+            Debug.WriteLine($"--> Not currently in depth room: {room}. Current depth room: {_depthRoom}.");
             return;
         }
 
-        Debug.WriteLine("--> Leaving Bitbank Stream rooms...");
+        Debug.WriteLine($"--> Leaving Bitbank Stream room...{room}.");
 
         // Wrap the room string in an array, matching your subscription pattern
         var roomArray = new[] { room };
@@ -489,11 +552,14 @@ public class BitbankStreamService : IBitbankStreamService
             _depthRoom = string.Empty;
         }
 
-        Debug.WriteLine($"--> Left room: {room}");
+        Debug.WriteLine($"--> Left room: {room}.");
     }
 
     public async Task StopAsync()
     {
+        if (_isDisconnecting) return;
+        _isDisconnecting = true;
+
         _client?.OnConnected -= OnClientConnected;
 
         if (_client is not null && _isConnected == true)
@@ -506,7 +572,7 @@ public class BitbankStreamService : IBitbankStreamService
                     await _client.DisconnectAsync(); // 1. Signal graceful disconnect to server
                 }
 
-                _client.Dispose();
+                _client?.Dispose();
             }
             catch (System.Net.WebSockets.WebSocketException)
             {

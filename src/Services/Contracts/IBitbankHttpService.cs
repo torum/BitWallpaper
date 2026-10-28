@@ -4,8 +4,10 @@ using System.Threading.Tasks;
 
 namespace BitWallpaper.Services.Contracts;
 
-public interface IBitbankHttpSearvice
+public interface IBitbankHttpService
 {
+    event EventHandler<ErrorInfo>? ErrorOccured;
+
     Task<CandlestickResult?> GetCandlestickAsync(string pair, string CandleType, string YYYYMMDDD);
 
     Task<List<Ohlcv>?> GetLatestCandlesticksAsync(PairCodes pair, CandleTypes ct);
