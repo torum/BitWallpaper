@@ -196,6 +196,25 @@ public partial class App : Application
 
     private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
     {
+        if (e.Exception.InnerExceptions.All(ex => ex is OperationCanceledException))
+        {
+            e.SetObserved();
+            return;
+        }
+
+        var inner = e.Exception.Flatten().InnerException;
+        // Check if the exception originates from a network drop or SocketIO background task
+        if (inner is System.Net.Http.HttpRequestException ||
+            inner is System.Net.Sockets.SocketException ||
+            inner is System.Net.WebSockets.WebSocketException ||
+            e.Exception.StackTrace?.Contains("SocketIOClient") == true)
+        {
+            System.Diagnostics.Debug.WriteLine($"[Suppressed Network Background Exception]: {inner?.Message}");
+
+            e.SetObserved();
+            return;
+        }
+
         // Flatten so nested AggregateExceptions are unwrapped, and log full details (type, message, stack trace).
         var details = e.Exception.Flatten().ToString();
 

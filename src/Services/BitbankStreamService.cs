@@ -109,7 +109,7 @@ public class BitbankStreamService : IBitbankStreamService
             var errorInfo = new ErrorInfo(ErrType.ConnectionError)
             {
                 ErrorMessage = e,
-                ErrorSeverity = InfoBarSeverity.Informational
+                ErrorSeverity = InfoBarSeverity.Warning
             };
 
             ErrorOccured?.Invoke(this, errorInfo);

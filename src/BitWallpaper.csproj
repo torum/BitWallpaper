@@ -6,7 +6,7 @@
 		<RootNamespace>BitWallpaper</RootNamespace>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<Platforms>x64;ARM64</Platforms>
-		<RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-$([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture.ToString().ToLowerInvariant())</RuntimeIdentifier>
+		<RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
 		<PublishProfile Condition="Exists('Properties\PublishProfiles\win-$(Platform).pubxml')">win-$(Platform).pubxml</PublishProfile>
 		<UseWinUI>true</UseWinUI>
 		<WinUISDKReferences>false</WinUISDKReferences>
@@ -16,10 +16,6 @@
 		<Optimize>true</Optimize>
 
 		<AssemblyVersion>2.1.0.0</AssemblyVersion>
-
-		<!-- always -->
-		<SelfContained>true</SelfContained>
-		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 
 		<!-- Unpackaged Debug Developing -->
 		<WindowsPackageType>None</WindowsPackageType>
@@ -34,12 +30,12 @@
 		<TrimmerSingleWarn>false</TrimmerSingleWarn>
 
 		<!-- Release Publish Packaging 
-		<WindowsPackageType>MSIX</WindowsPackageType>
 		<AppxPackage>true</AppxPackage>
+		<WindowsPackageType>MSIX</WindowsPackageType>
 		<EnableMsixTooling>true</EnableMsixTooling>
 		<AppxPackageDir>AppPackages\</AppxPackageDir>
 		<AppxBundle>Always</AppxBundle>
-		<AppxBundlePlatforms>x64</AppxBundlePlatforms>
+		<AppxBundlePlatforms>x64|arm64</AppxBundlePlatforms>
 		<GenerateTestArtifacts>True</GenerateTestArtifacts>
 		<IncludeSymbols>True</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -55,6 +51,10 @@
 		<PublishSingleFile>true</PublishSingleFile>
 		<IncludeNativeLibrariesForSelfContained>true</IncludeNativeLibrariesForSelfContained>
 		-->
+
+		<!-- always -->
+		<SelfContained>true</SelfContained>
+		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 
 	</PropertyGroup>
 
