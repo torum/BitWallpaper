@@ -11,15 +11,8 @@ using Microsoft.Windows.AppNotifications.Builder;
 using System.Collections.ObjectModel;
 using System.Reflection;
 using Windows.ApplicationModel;
-using WinRT;
 
 namespace BitWallpaper.ViewModels;
-
-public record IsEnabledState
-{
-    public bool IsEnabled { get; set; }
-    public PairCodes PairCode { get; set; }
-}
 
 public class ShowBalloonEventArgs(string title, string text) : EventArgs
 {
