@@ -20,9 +20,9 @@ Pairs: BTC/JPY, XRP/JPY, ETH/JPY, LTC/JPY, MONA/JPY, BCC/JPY, XLM/JPY, QTUM/JPY,
 
 ## Screenshots:
 
-<img width="800" alt="Bitwallpaper" src="https://github.com/torum/BitWallpaper/docs/Images/BitWallpaper-screenshot-V2.1-full.png">
+<img width="800" alt="Bitwallpaper" src="https://github.com/torum/BitWallpaper/blob/master/docs/Images/BitWallpaper-screenshot-V2.1-full.png">
 
-<img width="800" alt="Bitwallpaper, grid view" src="https://github.com/torum/BitWallpaper/docs/Images/BitWallpaper-screenshot-V2.1-grid.png">
+<img width="800" alt="Bitwallpaper, grid view" src="https://github.com/torum/BitWallpaper/blob/master/docs/Images/BitWallpaper-screenshot-V2.1-grid.png">
 
 
 
