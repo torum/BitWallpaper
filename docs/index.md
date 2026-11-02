@@ -20,14 +20,9 @@ Pairs: BTC/JPY, XRP/JPY, ETH/JPY, LTC/JPY, MONA/JPY, BCC/JPY, XLM/JPY, QTUM/JPY,
 
 ## Screenshots:
 
-Mica  
-![alt text](https://github.com/torum/BitWallpaper/blob/master/docs/Images/BitWallpaper-screenshot-V2-full.png?raw=true)
+<img width="800" alt="Bitwallpaper" src="https://github.com/torum/BitWallpaper/docs/Images/BitWallpaper-screenshot-V2.1-full.png">
 
-Acrylic  
-![alt text](https://github.com/torum/BitWallpaper/blob/master/docs/Images/BitWallpaper-screenshot-V2-full-AcrylicSystemBackdrop2.png?raw=true)
-
-Small display, compact  
-![alt text](https://github.com/torum/BitWallpaper/blob/master/docs/Images/BitWallpaper-screenshot-V2-small.png?raw=true)
+<img width="800" alt="Bitwallpaper, grid view" src="https://github.com/torum/BitWallpaper/docs/Images/BitWallpaper-screenshot-V2.1-grid.png">
 
 
 
