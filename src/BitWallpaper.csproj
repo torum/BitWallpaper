@@ -15,11 +15,11 @@
 		<Nullable>enable</Nullable>
 		<Optimize>true</Optimize>
 
-		<AssemblyVersion>2.1.0.0</AssemblyVersion>
+		<AssemblyVersion>2.1.1.0</AssemblyVersion>
 
-		<!-- Unpackaged Debug Developing -->
+		<!-- Unpackaged Debug Developing 
 		<WindowsPackageType>None</WindowsPackageType>
-		<EnableMsixTooling>false</EnableMsixTooling>
+		<EnableMsixTooling>false</EnableMsixTooling>-->
 
 		<!-- SocketIOClient is not compatible with Native AOT -->
 		<IsAotCompatible>false</IsAotCompatible>
@@ -29,7 +29,7 @@
 		<SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
 		<TrimmerSingleWarn>false</TrimmerSingleWarn>
 
-		<!-- Release Publish Packaging 
+		<!-- Release Publish Packaging -->
 		<AppxPackage>true</AppxPackage>
 		<WindowsPackageType>MSIX</WindowsPackageType>
 		<EnableMsixTooling>true</EnableMsixTooling>
@@ -38,11 +38,10 @@
 		<AppxBundlePlatforms>x64|arm64</AppxBundlePlatforms>
 		<GenerateTestArtifacts>True</GenerateTestArtifacts>
 		<IncludeSymbols>True</IncludeSymbols>
-		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<AppxPackageIncludePrivateSymbols>true</AppxPackageIncludePrivateSymbols>
 		<GenerateAppInstallerFile>False</GenerateAppInstallerFile>
 		<AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
-		<StripSymbols>false</StripSymbols>-->
+		<StripSymbols>false</StripSymbols>
 
 		<!-- Unpackaged SingleFile SelfContained Release Publish 
 		<WindowsPackageType>None</WindowsPackageType>
@@ -90,7 +89,7 @@
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.14" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="10.0.14" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="2.6.4" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="2.6.5" />
 		<!--
 		<PackageReference Include="Microsoft.WindowsAppSDK.Foundation" Version="2.3.12" />
 		<PackageReference Include="Microsoft.WindowsAppSDK.InteractiveExperiences" Version="2.1.9" />

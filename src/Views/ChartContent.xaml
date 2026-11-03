@@ -177,8 +177,13 @@
                                 <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind Path=PairVM.Low24String, Mode=OneWay}" Margin="6,0,0,0" Style="{StaticResource CaptionTextBlockStyle}" Opacity="{StaticResource CustumTextOpacity}"></TextBlock>
                             </Grid>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1" Margin="0,6,0,0">
-                            <AppBarButton Label="{x:Bind PairVM.SelectedCandleTypeLabelString, Mode=OneWay}" ToolTipService.ToolTip="CandleType" IsCompact="False" Margin="0" Padding="0" Opacity="1">
+                        <Grid Grid.Row="0" Grid.Column="1" Margin="0,6,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <AppBarButton Grid.Column="0" Label="{x:Bind PairVM.SelectedCandleTypeLabelString, Mode=OneWay}" ToolTipService.ToolTip="CandleType" IsCompact="False" Margin="0" Padding="0" Opacity="1">
                                 <AppBarButton.Icon>
                                     <PathIcon>
                                         <PathIcon.Data>
@@ -205,7 +210,7 @@
                                     </MenuFlyout>
                                 </AppBarButton.Flyout>
                             </AppBarButton>
-                            <AppBarButton Label="{x:Bind PairVM.AlarmLabel, Mode=OneWay}" IsCompact="False" Margin="0" Padding="0" Opacity="1" Click="AppBarButton_Click" Visibility="{x:Bind PairVM.IsNotificationEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <AppBarButton Grid.Column="1" Label="{x:Bind PairVM.AlarmLabel, Mode=OneWay}" IsCompact="False" Margin="0" Padding="0" Opacity="1" Click="AppBarButton_Click" Visibility="{x:Bind PairVM.IsNotificationEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <AppBarButton.Icon>
                                     <PathIcon>
                                         <PathIcon.Data>
@@ -214,13 +219,12 @@
                                     </PathIcon>
                                 </AppBarButton.Icon>
                             </AppBarButton>
-                            <AppBarButton x:Name="PanelOpenClose" Icon="OpenPane" Label="show" IsCompact="False" x:Uid="AppCommand_DisplayInfoPanel" Command="{x:Bind PairVM.TogglePaneVisibilityCommand}" Margin="0,0,4,0" Padding="0" Opacity="1">
+                            <AppBarButton x:Name="PanelOpenClose" Grid.Column="2" HorizontalAlignment="Right" Icon="OpenPane" Label="show" IsCompact="False" x:Uid="AppCommand_DisplayInfoPanel" Command="{x:Bind PairVM.TogglePaneVisibilityCommand}" Margin="0,0,0,0" Padding="0" Opacity="1">
                                 <AppBarButton.KeyboardAccelerators>
                                     <KeyboardAccelerator Modifiers="Control" Key="I" />
                                 </AppBarButton.KeyboardAccelerators>
                             </AppBarButton>
-
-                        </StackPanel>
+                        </Grid>
                     </StackPanel>
                 </Border>
             </Grid>

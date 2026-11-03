@@ -12,7 +12,7 @@
   <Identity
     Name="60132torumyax.BitWallpaper"
     Publisher="CN=F3079A96-760D-4F53-9E00-374C09B6D4B1"
-    Version="2.1.0.0" />
+    Version="2.1.1.0" />
 
   <mp:PhoneIdentity PhoneProductId="036cad60-97ec-44b9-a323-e5d929f4861a" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
