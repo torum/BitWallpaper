@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+		<TargetFramework>net11.0-windows10.0.26100.0</TargetFramework>
 		<TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
 		<RootNamespace>BitWallpaper</RootNamespace>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
@@ -17,9 +17,9 @@
 
 		<AssemblyVersion>2.1.1.0</AssemblyVersion>
 
-		<!-- Unpackaged Debug Developing 
+		<!-- Unpackaged Debug Developing -->
 		<WindowsPackageType>None</WindowsPackageType>
-		<EnableMsixTooling>false</EnableMsixTooling>-->
+		<EnableMsixTooling>false</EnableMsixTooling>
 
 		<!-- SocketIOClient is not compatible with Native AOT -->
 		<IsAotCompatible>false</IsAotCompatible>
@@ -29,7 +29,7 @@
 		<SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
 		<TrimmerSingleWarn>false</TrimmerSingleWarn>
 
-		<!-- Release Publish Packaging -->
+		<!-- Release Publish Packaging 
 		<AppxPackage>true</AppxPackage>
 		<WindowsPackageType>MSIX</WindowsPackageType>
 		<EnableMsixTooling>true</EnableMsixTooling>
@@ -41,7 +41,7 @@
 		<AppxPackageIncludePrivateSymbols>true</AppxPackageIncludePrivateSymbols>
 		<GenerateAppInstallerFile>False</GenerateAppInstallerFile>
 		<AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
-		<StripSymbols>false</StripSymbols>
+		<StripSymbols>false</StripSymbols>-->
 
 		<!-- Unpackaged SingleFile SelfContained Release Publish 
 		<WindowsPackageType>None</WindowsPackageType>
@@ -87,8 +87,8 @@
     -->
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.14" />
-		<PackageReference Include="Microsoft.Extensions.Http" Version="10.0.14" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="11.0.0" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="2.6.5" />
 		<!--
 		<PackageReference Include="Microsoft.WindowsAppSDK.Foundation" Version="2.3.12" />
