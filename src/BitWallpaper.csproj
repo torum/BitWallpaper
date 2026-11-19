@@ -12,6 +12,7 @@
 		<WinUISDKReferences>false</WinUISDKReferences>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Features>runtime-async=on</Features>
 		<Nullable>enable</Nullable>
 		<Optimize>true</Optimize>
 
@@ -89,7 +90,7 @@
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="11.0.0" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="2.6.5" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="2.7.0" />
 		<!--
 		<PackageReference Include="Microsoft.WindowsAppSDK.Foundation" Version="2.3.12" />
 		<PackageReference Include="Microsoft.WindowsAppSDK.InteractiveExperiences" Version="2.1.9" />
@@ -105,7 +106,7 @@
 	  -->
 
 		<PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.1" />
-		<PackageReference Include="LiveChartsCore.SkiaSharpView.WinUI" Version="2.1.0-dev-798" />
+		<PackageReference Include="LiveChartsCore.SkiaSharpView.WinUI" Version="2.2.0" />
 		<PackageReference Include="SocketIOClient" Version="4.0.5" />
 	</ItemGroup>
 	<ItemGroup>
