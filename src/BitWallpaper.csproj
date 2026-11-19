@@ -16,7 +16,7 @@
 		<Nullable>enable</Nullable>
 		<Optimize>true</Optimize>
 
-		<AssemblyVersion>2.1.1.0</AssemblyVersion>
+		<AssemblyVersion>2.1.2.0</AssemblyVersion>
 
 		<!-- Unpackaged Debug Developing -->
 		<WindowsPackageType>None</WindowsPackageType>
@@ -44,6 +44,9 @@
 		<AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
 		<StripSymbols>false</StripSymbols>-->
 
+		<PdbCmfx64ExeFullPath>C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.52.37025\bin\Hostx64\x64\mspdbcmf.exe</PdbCmfx64ExeFullPath>
+		<PdbCmfx86ExeFullPath>C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.52.37025\bin\Hostx64\x86\mspdbcmf.exe</PdbCmfx86ExeFullPath>
+
 		<!-- Unpackaged SingleFile SelfContained Release Publish 
 		<WindowsPackageType>None</WindowsPackageType>
 		<AppxPackage>false</AppxPackage>
@@ -56,6 +59,18 @@
 		<SelfContained>true</SelfContained>
 		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(RuntimeIdentifier)'=='win-arm64'">
+		<PdbCmfx64ExeFullPath>C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.52.37025\bin\Hostx64\arm64\mspdbcmf.exe</PdbCmfx64ExeFullPath>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(RuntimeIdentifier)'=='win-x64'">
+		<PdbCmfx64ExeFullPath>C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.52.37025\bin\Hostx64\x64\mspdbcmf.exe</PdbCmfx64ExeFullPath>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(RuntimeIdentifier)'=='win-x86'">
+		<PdbCmfx64ExeFullPath>C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.52.37025\bin\Hostx64\x86\mspdbcmf.exe</PdbCmfx64ExeFullPath>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
@@ -91,6 +106,10 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="11.0.0" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="2.7.0" />
+		<PackageReference Include="Microsoft.Windows.SDK.BuildTools.MSIX" Version="1.7.261102100">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 		<!--
 		<PackageReference Include="Microsoft.WindowsAppSDK.Foundation" Version="2.3.12" />
 		<PackageReference Include="Microsoft.WindowsAppSDK.InteractiveExperiences" Version="2.1.9" />
